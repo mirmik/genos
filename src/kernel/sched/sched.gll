@@ -1,0 +1,8 @@
+regmodule
+{
+	name = "sched";
+	sources = 
+	{
+		cxx = {"schedee.cpp", "sched.cpp"}
+	};	
+};

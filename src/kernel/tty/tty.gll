@@ -1,0 +1,19 @@
+regmodule {
+	name = "tty", 
+	sources = {
+		cc = {
+			"serial_driver.c",
+			"tty.c",
+			"straight_ldisc.c",
+		}
+	}
+}
+
+regmodule {
+	name = "stub_serial_driver", 
+	sources = {
+		cc = {
+			"stub_serial_driver.c"
+		}
+	}
+}

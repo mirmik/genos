@@ -1,0 +1,4 @@
+#ifndef GQ_SERIALIZATOR_H
+#define GQ_SERIALIZATOR_H
+
+#endif

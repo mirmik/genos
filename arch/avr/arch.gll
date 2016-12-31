@@ -1,0 +1,57 @@
+regmodule {
+	name = "genos_avr_head",
+	sources = {
+		cc = {
+			"src/asm/atmega/vectors.S", 
+			"src/asm/atmega/irqcall.S", 
+			"src/asm/atmega/start.S", 
+		}
+	}
+}
+
+regmodule {
+	name = "arch.avr2560",
+	sources = {
+		cc = {"src/asm/systime.c", "src/asm/arch.c", "src/asm/procdelay.c", "atmega2560/src/periph/devices.c"},
+	},
+	modules = {
+	--	{name = "avr_gpio"},
+		{name = "avr_periph_usart"},
+		{name = "avr_periph_tc"},
+	},
+}
+
+regmodule {
+	name = "avr_periph_usart",
+	sources = {
+		cc = {"src/dev/usart.c"},
+	},
+}
+
+regmodule {
+	name = "avr_periph_tc",
+	sources = {
+		cc = {"src/drivers/timer_device.c"},
+	},
+}
+
+regmodule {
+	name = "arch_diag.avr2560",
+	sources = {
+		cc = {"src/asm/diag.c"},
+	}
+}
+
+regmodule {
+	name = "subst.avr2560",
+	sources = {
+		cc = {"src/asm/context.c", "src/asm/switch_context.S"},
+	}
+}
+
+regmodule {
+	name = "avr_gpio",
+	sources = {
+		cc = {"src/drivers/gpio.c"},
+	},
+}

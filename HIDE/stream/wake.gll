@@ -1,0 +1,6 @@
+regmodule {
+	name = "weakstream",
+	sources = {
+		cxx = {"weak.cpp"} 
+	}
+}

@@ -1,0 +1,8 @@
+regmodule {
+	name = "SerialDevice",
+	sources = {
+		cxx = {
+			"SerialDevice.cpp", "SerialDriver.cpp", "SerialDiscipline.cpp", "UartRingDriver.cpp"
+		} 
+	}
+}

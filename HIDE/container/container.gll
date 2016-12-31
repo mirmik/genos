@@ -1,0 +1,8 @@
+regmodule
+{
+	name = "hashtable",
+	sources = 
+	{
+		cxx = {"hashtable.cpp"}
+	}
+}

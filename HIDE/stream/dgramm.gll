@@ -1,0 +1,6 @@
+regmodule {
+	name = "dgramm",
+	sources = {
+		cxx = {"dgramm.cpp"} 
+	}
+}

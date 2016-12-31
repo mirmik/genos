@@ -1,0 +1,37 @@
+regmodule
+{
+	name = "arch.linux64",
+	sources = 
+	{
+		cc = {"asm/arch.c"},
+		cxx = {"asm/atomic.cpp"},
+	}
+}
+
+regmodule
+{
+	name = "arch.linux32",
+	sources = 
+	{
+		cc = {"asm/arch.c"},
+		cxx = {"asm/atomic.cpp"},
+	}
+}
+
+regmodule
+{
+	name = "arch_diag.linux64",
+	sources = 
+	{
+		cc = {"asm/diag.c"},
+	}
+}
+
+regmodule
+{
+	name = "arch_diag.linux32",
+	sources = 
+	{
+		cc = {"asm/diag.c"},
+	}
+}

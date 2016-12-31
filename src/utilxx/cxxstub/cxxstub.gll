@@ -1,0 +1,7 @@
+regmodule {
+	name = "cxxstub",
+	sources = 
+	{
+		cxx = {"cxxstub.cpp"},
+	}
+}

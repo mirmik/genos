@@ -1,0 +1,27 @@
+regmetamodule
+{
+	name = "diag",
+	implementations =
+	{
+		"impl",
+		"stub",
+	}
+}
+
+regmodule
+{
+	name = "diag.stub",
+	sources = 
+	{
+		cc = {"diag_stub.c"}
+	}
+}
+
+regmodule
+{
+	name = "diag.impl",
+	sources = 
+	{
+		cc = {"diag_impl.c"}
+	}
+}

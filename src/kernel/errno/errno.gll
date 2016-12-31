@@ -1,0 +1,13 @@
+regmetamodule
+{
+	name = "errno"
+}
+
+regmodule
+{
+	name = "errno.static",
+	sources = 
+	{
+		cc = {"static_errno.c"}
+	}
+}

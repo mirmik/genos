@@ -1,0 +1,7 @@
+regmodule
+{
+	name = "serialization",
+	sources = {
+		cxx = {"serialization.cpp", "hserial.cpp"},
+	},
+}

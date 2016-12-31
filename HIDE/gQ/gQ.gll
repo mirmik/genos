@@ -1,0 +1,6 @@
+regmodule {
+	name = "gQBase",
+	sources = {
+		cxx = {"gQBase.cpp", "gQAllocator.cpp"}
+	}
+}

@@ -1,0 +1,40 @@
+regmetamodule
+{
+	name = "dprint",
+	implementations = 
+	{
+		"stub",
+		"manually",
+		"diag",
+	},
+}
+
+regmodule
+{
+	name = "dprint.stub",
+	sources = 
+	{
+		cc = {"dprint_func_stub.c", "dprint_stub.c"}
+	}
+}
+
+regmodule
+{
+	name = "dprint.diag",
+	sources = 
+	{
+		cc = {"dprint_func_impl.c", "dprint_diag.c", "assembler.c"},
+		cxx = {"dprintxx.cpp"},
+	},
+	loc_cc = "-Wno-pointer-to-int-cast"
+}
+
+regmodule
+{
+	name = "dprint.manually",
+	sources = 
+	{
+		cc = {"dprint_func_impl.c", "dprint_manually.c", "assembler.c"},
+		cxx = {"dprintxx.cpp"},
+	}
+}

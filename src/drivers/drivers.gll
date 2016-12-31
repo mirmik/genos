@@ -1,0 +1,15 @@
+regmodule
+{
+	name = "drivers_tty",
+	sources =
+	{
+		cxx = {"serial/tty.cpp"},
+	},
+}
+
+regmodule {
+	name = "stm32f4xx_drivers",
+	sources = {
+		cxx = {"serial/stm32usart.cpp"}
+	}
+}

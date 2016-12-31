@@ -1,0 +1,6 @@
+regmodule {
+	name = "resources",
+	sources = {
+		cxx = {"resources.cpp"}
+	}
+}

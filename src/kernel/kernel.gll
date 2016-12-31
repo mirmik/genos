@@ -1,0 +1,6 @@
+regmodule {
+	name = "genos_kernel",
+	sources = {
+		cxx = {"kernel.cpp", "irq/csection.cpp"}
+	}
+}

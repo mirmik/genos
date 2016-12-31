@@ -1,0 +1,29 @@
+regmodule {
+	name = "glib",
+	modules = 
+	{
+		{name = "gxx"},
+		{name = "new"},
+		{name = "errno.static"},
+		
+		{name = "malloc_ops"},	
+	}
+}
+
+
+regmodule {
+	name = "gsys",
+	sources = {
+		cc = {
+			"src/kernel/panic/end_of_programm.c", 
+			"src/kernel/cxx/cxx_invoke_constructors.c",
+			"src/kernel/cxx/__cxa_pure_virtual.c",
+			"src/kernel/csection.c"
+		},
+	},
+	modules = {
+		{name = "gsys_irq"},
+	},
+}
+
+

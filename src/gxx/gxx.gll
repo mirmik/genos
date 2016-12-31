@@ -1,0 +1,9 @@
+regmodule {
+	name = "gxx",
+	sources = {
+		cxx = {"ByteArray.cpp", 
+		--"SerialBuffer.cpp", 
+		"buffer.cpp", "base.cpp", "to_string.cpp", "hashstrategy.cpp", "hash.cpp", "hexarchive.cpp"}
+	}
+}
+--"nullarchive.cpp"

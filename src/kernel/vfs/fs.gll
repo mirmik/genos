@@ -1,0 +1,13 @@
+regmodule {
+	name = "ramfs",
+	sources = {
+		cxx = {"ramfs.cpp"}
+	}
+}
+
+regmodule {
+	name = "fs",
+	sources = {
+		cxx = {"fs.cpp"}
+	}
+}
