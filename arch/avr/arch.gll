@@ -1,4 +1,4 @@
-regmodule {
+--[[regmodule {
 	name = "genos_avr_head",
 	sources = {
 		cc = {
@@ -54,4 +54,4 @@ regmodule {
 	sources = {
 		cc = {"src/drivers/gpio.c"},
 	},
-}
+}]]

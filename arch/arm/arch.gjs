@@ -16,6 +16,6 @@ Module("genos.include.arch.stm32f407", {
 		ldscripts : ["stm32/stm32f407/ldscript.ld"],
 	},
 	modules : [
-		{name : "genos.arch.stm32"},
 	],
+	depends : ["genos.arch.stm32",]
 })

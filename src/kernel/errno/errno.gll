@@ -1,4 +1,4 @@
-regmetamodule
+--[[regmetamodule
 {
 	name = "errno"
 }
@@ -10,4 +10,4 @@ regmodule
 	{
 		cc = {"static_errno.c"}
 	}
-}
+}]]

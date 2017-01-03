@@ -1,10 +1,10 @@
 Module("genos.include.libc", {
 	modules : [
-		{name : "genos.libc"},
 	],
 	opts : {
 		includePaths : ["include"]
-	}
+	},
+	depends : ["genos.libc"],
 })
 
 var libc = []

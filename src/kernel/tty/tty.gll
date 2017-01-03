@@ -1,4 +1,4 @@
-regmodule {
+--[[regmodule {
 	name = "tty", 
 	sources = {
 		cc = {
@@ -16,4 +16,4 @@ regmodule {
 			"stub_serial_driver.c"
 		}
 	}
-}
+}]]

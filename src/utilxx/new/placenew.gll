@@ -1,6 +1,6 @@
-regmodule {
+--[[regmodule {
 	name = "new",
 	sources = {
 		cxx = {"new.cpp"}
 	}
-} 
+}]]

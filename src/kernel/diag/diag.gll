@@ -1,27 +1,11 @@
-regmetamodule
-{
-	name = "diag",
-	implementations =
-	{
-		"impl",
-		"stub",
+Implementation("genos.diag", "stub", {
+	sources = {
+		cc = "diag_stub.c"		
 	}
-}
+})
 
-regmodule
-{
-	name = "diag.stub",
-	sources = 
-	{
-		cc = {"diag_stub.c"}
-	}
-}
-
-regmodule
-{
-	name = "diag.impl",
-	sources = 
-	{
-		cc = {"diag_impl.c"}
-	}
-}
+Implementation("genos.diag", "impl", {
+	sources = {
+		cc = "diag_impl.c"		
+	}	
+})

@@ -1,6 +1,6 @@
-regmodule {
+--[[regmodule {
 	name = "lin_malloc",
 	sources = {
 		cc = {"malloc.c", "realloc.c"}
 	}
-}
+}]]

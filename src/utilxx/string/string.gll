@@ -1,8 +1,8 @@
-regmodule 
+--[[regmodule 
 {
 	name = "gstring",
 	sources = 
 	{
 		cxx = {"string.cpp", "to_string.cpp"}
 	}
-}
+}]]

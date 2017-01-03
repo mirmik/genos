@@ -1,4 +1,4 @@
-regmodule
+--[[regmodule
 {
 	name = "drivers_tty",
 	sources =
@@ -12,4 +12,4 @@ regmodule {
 	sources = {
 		cxx = {"serial/stm32usart.cpp"}
 	}
-}
+}]]

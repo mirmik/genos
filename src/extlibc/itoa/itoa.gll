@@ -1,8 +1,8 @@
-regmodule
+--[[regmodule
 {
 	name = "itoa",
 	sources =
 	{
 		cc = {"itoa.c"}
 	}
-}
+}]]

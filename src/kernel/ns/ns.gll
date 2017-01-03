@@ -1,6 +1,6 @@
-regmodule {
+--[[regmodule {
 	name = "kernel_ns",
 	sources = {
 		cxx = {"ns.cpp", "ops.cpp"}
 	}
-}
+}]]

@@ -1,6 +1,5 @@
-regmodule {
-	name = "gsys_irq",
+Module("genos.irqtbl", {
 	sources = {
-		cc = {"do_irq.c", "irq.c", "irq_stub.c"}
+		cc = "do_irq.c irq.c irq_stub.c"
 	}
-}
+})

@@ -1,17 +1,25 @@
-regmodule
-{
-	name = "libc",
-	sources =
-	{
-		cc = paths.find_relative("*.c",CURDIR, CURDIR),	
+Module("genos.include.libc", {
+	opts = {
+		includePaths = "include"
 	},
-}
+	depends = "genos.libc",
+})
 
-regmodule
-{
-	name = "ctype",
-	sources =
-	{
-		cc = {"ctype/ctype.c"},	
+local libc = {}
+local pattern = '.*%.c'
+local hide = '.*HIDE.*'
+
+local stdlib = find.findInTree(pathops.resolve(script.currentDir, "stdlib"), pattern, hide)
+local string = find.findInTree(pathops.resolve(script.currentDir, "string"), pattern, hide)
+local inttypes = find.findInTree(pathops.resolve(script.currentDir, "inttypes"), pattern, hide)
+
+Module("genos.libc", {
+	sources = {
+		cc = table.arrayConcat(stdlib, string, inttypes),	
 	},
-}
+	opts = {
+		options = {
+			cc = "-Wno-implicit-function-declaration"
+		}
+	}
+})

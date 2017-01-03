@@ -1,4 +1,4 @@
-regmodule {
+--[[regmodule {
 	name = "ramfs",
 	sources = {
 		cxx = {"ramfs.cpp"}
@@ -10,4 +10,4 @@ regmodule {
 	sources = {
 		cxx = {"fs.cpp"}
 	}
-}
+}]]
