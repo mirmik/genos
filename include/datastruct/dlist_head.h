@@ -92,8 +92,14 @@ container_of(ptr, type, member)
 #define dlist_next_entry(pos, member) \
 dlist_entry((pos)->member.next, decltypeof(*(pos)), member)
 
+#define dlist_prev_entry(pos, member) \
+dlist_entry((pos)->member.prev, decltypeof(*(pos)), member)
+
 #define dlist_first_entry(ptr, type, member) \
 dlist_entry((ptr)->next, type, member)
+
+#define dlist_last_entry(ptr, type, member) \
+dlist_entry((ptr)->prev, type, member)
 
 #define dlist_for_each(pos, head) \
 for (pos = (head)->next; pos != (head); pos = pos->next)

@@ -11,7 +11,7 @@
 #	define CONFIG_ARCH_CORTEXM4
 #	define BYTE_ORDER_LITTLE_ENDIAN
 #else
-#	error "Need to define any stm32 chip"
+#	error "Need to define any stm32 chip CONFIG_ARCH_CHIP_XXXXXXX"
 #endif
 
 /* NVIC priority levels *************************************************************/
