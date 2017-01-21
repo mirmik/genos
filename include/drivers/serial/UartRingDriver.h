@@ -1,7 +1,7 @@
 #ifndef GENOS_UART_RING_DRIVER_H
 #define GENOS_UART_RING_DRIVER_H
 
-#include <communication/ttycls/SerialDriver.h>
+#include <drivers/serial/SerialDriver.h>
 #include <utilxx/classes/ByteRing.h>
 
 //UART/USART Driver
@@ -13,6 +13,9 @@ public:
 	ByteRing rxring;
 	
 	Uart* m_uart;
+
+	WaitQueue txwq;
+	WaitQueue rxwq;
 
 public:
 	UartRingDriver(Uart* uart, char* txbuffer, size_t txsize, char* rxbuffer, size_t rxsize);
@@ -29,6 +32,9 @@ public:
 	void tcHandler();
 
 	void begin(UartParams* params);
+
+	bool waitwrite(WaiterBasic* waiter);
+	bool waitread(WaiterBasic* waiter);
 };
 
 #endif

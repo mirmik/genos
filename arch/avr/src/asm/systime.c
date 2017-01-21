@@ -1,7 +1,7 @@
 #include "genos_configure.h"
 #include <kernel/systime.h>
 #include <avr/io.h>
-#include <hal/ipl.h>
+#include <hal/irq.h>
 #include <debug/dprint.h>
 
 #define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
@@ -34,10 +34,10 @@ void system_tick() {
 
 uint32_t millis() {
 	uint32_t m;
-	ipl_t save = ipl_save();
+	irqstate_t save = global_irq_save();
 
 	m = __millis;
-	ipl_restore(save);
+	global_irq_restore(save);
 
 	return m;
 }
@@ -46,7 +46,7 @@ uint32_t micros()
 {
 	uint32_t m;
 	uint8_t t;
-	ipl_t save = ipl_save();
+	irqstate_t save = global_irq_save();
 
 	m = jiffies;
 #if defined(TCNT0)
@@ -65,7 +65,7 @@ uint32_t micros()
 		m++;
 #endif
 
-	ipl_restore(save);
+	global_irq_restore(save);
 	
 	return ((m << 8) + t) * (64 / clockCyclesPerMicrosecond());
 }

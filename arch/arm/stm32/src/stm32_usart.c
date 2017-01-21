@@ -32,7 +32,7 @@ inline int usart_tx_complete_irq_enable(struct usart_regs * usart, uint8_t stat)
 	debug_print("usart_tx_complete_irq_enable");
 }
 
-#include <drivers/serial/stm32_uart.h>
+/*#include <drivers/serial/stm32_uart.h>
 #include <mem/alloc.h>
 
 int stm32_uart_putc(struct uart* u, char c) {
@@ -67,7 +67,7 @@ int stm32_uart_txbegin(struct uart* u) {
 
 int stm32_uart_txend(struct uart* u) {
 	debug_print("stm32_uart_txend::TODO\r\n");
-}
+}*/
 
 //void stm32_uart_irq_rx_handler(void* uart) {
 //	RETYPE(struct stm32_uart*, su, uart);

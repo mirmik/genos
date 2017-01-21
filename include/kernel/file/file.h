@@ -2,10 +2,17 @@
 #define GENOS_FILE_H
 
 #include <proto/print.h>
+#include <kernel/wait/wait.h>
+
+/*FileAbstract это еще не файл.
+FileAbstract ничего не зает об ОС и не умеет работать 
+с блокирующим вводом, реализуя только асинхронный интерфейс
+Однако, он предоставляет функцию wait для надстройки 
+блокирующего io*/
 
 class FileAbstract : public Print {
 public:
-	char getc() {
+	virtual char getc() {
 		char c;
 		read(&c, 1);
 		return c;
@@ -18,6 +25,11 @@ public:
 	virtual int room() = 0;
 
 	virtual int flush() = 0;
+
+	/*Файлы устройств могут поддерживать waiter-ы для
+	сигнализации другим частям системы о том, что */
+	virtual bool waitread(WaiterBasic& waiter) { return false; };
+	virtual bool waitwrite(WaiterBasic& waiter) { return false; };
 };
 
 #endif

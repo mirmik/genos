@@ -76,6 +76,9 @@ public:
 		return (head >= tail) ? m_size - 1 + ( tail - head ) : ( tail - head ) - 1;
 	};
 
+	size_t size() {
+		return m_size;
+	};
 };
 
 #endif

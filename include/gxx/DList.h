@@ -19,7 +19,7 @@ namespace gxx {
 			dlist_del(&list);
 		}
 	
-		bool is_empty() {
+		bool empty() {
 			return dlist_is_empty(&list);
 		};
 	

@@ -1,6 +1,7 @@
 #ifndef GENOS_UART_H
 #define GENOS_UART_H
 
+#include <drivers/serial/SerialDriver.h>
 #include <inttypes.h>
 #include <kernel/irq.h>
 
@@ -8,7 +9,7 @@
 
 class SerialDriver;
 
-class UartParams {
+struct UartParams {
 	enum Parity {
 		ParityNone,
 		ParityEven,
@@ -32,22 +33,22 @@ public:
 	using TXHandler = void(*)(void*);
 	using TCHandler = void(*)(void*);
 
-	virtual int putc(char c)  = 0;
-	virtual int getc()  = 0;
+	virtual int putc(char c) = 0;
+	virtual int getc() = 0;
 
 	int syncPutc(char c);
 	int syncGetc();
 
-	virtual int avail()  = 0;
-	virtual int room()  = 0;
+	virtual int avail() = 0;
+	virtual int room() = 0;
 
-	virtual int enable(bool en)  = 0;
-	virtual int enableRX(bool en)  = 0;
-	virtual int enableTX(bool en)  = 0;
+	virtual int enable(bool en) = 0;
+	virtual int enableRX(bool en) = 0;
+	virtual int enableTX(bool en) = 0;
 
-	virtual int irqEnableRX(bool en)  = 0;
-	virtual int irqEnableTX(bool en)  = 0;
-	virtual int irqEnableTC(bool en)  = 0;
+	virtual int irqEnableRX(bool en) = 0;
+	virtual int irqEnableTX(bool en) = 0;
+	virtual int irqEnableTC(bool en) = 0;
 	
 	virtual int setup(UartParams *params) = 0;
 

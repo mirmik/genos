@@ -1,8 +1,7 @@
---[[regmodule {
-	name = "SerialDevice",
+Module("genos.kernel.serial", {
 	sources = {
 		cxx = {
-			"SerialDevice.cpp", "SerialDriver.cpp", "SerialDiscipline.cpp", "UartRingDriver.cpp"
+			"SerialDriver.cpp", "UartRingDriver.cpp"
 		} 
 	}
-}]]
+})

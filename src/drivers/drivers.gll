@@ -1,15 +1,7 @@
---[[regmodule
-{
-	name = "drivers_tty",
-	sources =
-	{
-		cxx = {"serial/tty.cpp"},
-	},
-}
-
-regmodule {
-	name = "stm32f4xx_drivers",
+Module("genos.drivers.avr", {
 	sources = {
-		cxx = {"serial/stm32usart.cpp"}
+		cxx = {
+			"serial/avr/HardwareUsart.cpp"
+		}
 	}
-}]]
+})

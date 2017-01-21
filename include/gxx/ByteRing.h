@@ -10,60 +10,63 @@ namespace gxx {
 
 		char* m_data;
 		
-		size_t size;
-		size_t head;
-		size_t tail;
+		size_t m_size;
+		size_t m_head;
+		size_t m_tail;
 
 		inline void fixup(size_t& ref) {
-			while (ref >= size) ref -= size; 
+			while (ref >= m_size) ref -= m_size; 
 		}
 
 	public:
-		ByteRing() : m_data(nullptr), size(0), head(0), tail(0), BasicAllocated() {}
+		ByteRing() : m_data(nullptr), m_size(0), m_head(0), m_tail(0), BasicAllocated() {}
 
 		void reserve(size_t sz) {
 			m_data = (char*) m_alloc->reallocate(m_data, sz);
-			size = sz;
+			m_size = sz;
 		}
 
 		void invalidate() {
 			if (m_data) m_alloc->deallocate(m_data);
 			m_data = nullptr;
-			size = 0;
-			head = 0;
-			tail = 0;
+			m_size = 0;
+			m_head = 0;
+			m_tail = 0;
 		}
 
 		bool is_empty() {
-			return head == tail;
+			return m_head == m_tail;
 		}
 
 		bool is_full() {
-			return head == (tail ? tail : size) - 1;
+			return m_head == (m_tail ? m_tail : m_size) - 1;
 		}
 
 		int putc(char c) {
 			if (is_full()) return -1;
-			*(m_data + head++) = c;
-			fixup(head);
+			*(m_data + m_head++) = c;
+			fixup(m_head);
 			return 1;
 		}
 	
 		int getc() {
 			if (is_empty()) return -1;
-			char c = *(m_data + tail++);
-			fixup(tail);
+			char c = *(m_data + m_tail++);
+			fixup(m_tail);
 			return c;
 		}
 
 		size_t avail() { 
-			return (head >= tail) ? head - tail : size + head - tail; 
+			return (m_head >= m_tail) ? m_head - m_tail : m_size + m_head - m_tail; 
 		};
 
 		size_t room() {
-			return (head >= tail) ? size - 1 + ( tail - head ) : ( tail - head ) - 1;
+			return (m_head >= m_tail) ? m_size - 1 + ( m_tail - m_head ) : ( m_tail - m_head ) - 1;
 		};
 
+		size_t size() {
+			return m_size;
+		};
 	};
 
 };

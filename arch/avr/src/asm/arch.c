@@ -49,6 +49,6 @@ void arch_shutdown(arch_shutdown_mode_t mode) {
 		case ARCH_SHUTDOWN_MODE_ABORT:
 		break;
 	};
-	ipl_disable();
+	global_irq_disable();
 	while(1);
 }

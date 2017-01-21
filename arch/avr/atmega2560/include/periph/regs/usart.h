@@ -5,13 +5,13 @@
 #include <kernel/irq.h>
 
 struct usart_regs {
-	reg_t ucsr_a;
-	reg_t ucsr_b;
-	reg_t ucsr_c;
-	reg_t reserve0;
-	reg_t ubrr_l;
-	reg_t ubrr_h;
-	reg_t udr;
+	volatile uint8_t ucsr_a;
+	volatile uint8_t ucsr_b;
+	volatile uint8_t ucsr_c;
+	volatile uint8_t reserve0;
+	volatile uint8_t ubrr_l;
+	volatile uint8_t ubrr_h;
+	volatile uint8_t udr;
 } __attribute__((packed));
 
 #endif 

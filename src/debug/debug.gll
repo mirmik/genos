@@ -10,7 +10,7 @@ Implementation("genos.dprint", "diag", {
 		cxx = "dprintxx.cpp",
 	},
 
-	options = {
+	flags = {
 		cc = "-Wno-pointer-to-int-cast",
 	},
 

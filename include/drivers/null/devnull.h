@@ -1,30 +1,29 @@
-#ifndef KERNEL_DEVNULL_H
-#define KERNEL_DEVNULL_H
+#ifndef GENOS_DEVNULL_H
+#define GENOS_DEVNULL_H
 
-#include <kernel/fs/chardev.h>
-#include <string.h>
+#include <limits.h>
+#include <kernel/file/file.h>
 
-class DevNull : public Kernel::CharDev {
-
-	int write(const char* data, int length, uint8_t opt) {
-		return length;
+class DevNull : public FileAbstract {
+	int write(const char* data, size_t size) {
+		return size;
 	}
-
-	int read(char* data, int length, uint8_t opt) {
-		memset(data, length, 0);
-		return length;
-	}
-
-	int close() {
+	
+	int read(char* data, size_t size) {
 		return 0;
 	}
 
-	Kernel::dirent* readdir(char*, int) {
-		return nullptr;
-	};
+	int avail() { 
+		return 0; 
+	}
+	
+	int room() { 
+		return INT_MAX; 
+	}
 
+	int flush() {
+		return 0;
+	}
 };
 
-extern DevNull devnull;
-
-#endif
+#endif 

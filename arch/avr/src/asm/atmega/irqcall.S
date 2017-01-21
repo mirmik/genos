@@ -1,5 +1,5 @@
 #include "genos_configure.h"
-#include "asm/irq.h"
+#include "periph/irqdefs.h"
 #include "excptmacros.h"
 
 

@@ -1,9 +1,9 @@
 print(text.green("GLINK START"))
 
-local files = find.findInTree("../genos", ".*.gll$", ".*HIDE.*")
+local files = find.findInTree("..", ".*.gll$", ".*HIDE.*")
 script:evalFile(files, _ENV)
 
-compiler = CXXModuleCompiler:new{
+compiler = CXXDeclarativeCompiler:new{
 	buildutils = { 
 		CXX = "g++", 
 		CC = "gcc", 
@@ -27,26 +27,8 @@ compiler = CXXModuleCompiler:new{
 	},
 	builddir = "./build",
 }
---compiler.debugInfo = true;
---compiler.parallel = true;
 
-if (OPTS[1]) then
-	if OPTS[1] == "clean" then
-		compiler:cleanBuildDirectory()
-		os.exit(0)
-	elseif OPTS[1] == "rebuild" then
-		compiler.rebuild = true 
-	elseif OPTS[1] == "install" then
-		os.execute("bash ./install.sh")
-		os.exit(1) 
-	else
-		error(text.red("Unresolved Parametr"))
-	end
-end
-
-if (OPTS.parallel) then
-	compiler.parallel = true
-end
+compiler:standartArgsRoutine(OPTS)
 
 Module("main", {
 	sources = {

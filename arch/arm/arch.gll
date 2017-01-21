@@ -14,9 +14,8 @@ Module("genos.arch.stm32", {
 })
 
 Module("genos.include.arch.stm32f407", {
-	opts = {
-		includePaths = {"include", "stm32/include", "stm32/stm32f407/include"},
-		ldscripts = "stm32/stm32f407/ldscript.ld",
-	},
+	includePaths = {"include", "stm32/include", "stm32/stm32f407/include"},
+	ldscripts = "stm32/stm32f407/ldscript.ld",
+	
 	depends = "genos.arch.stm32",
 })

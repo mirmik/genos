@@ -1,11 +1,10 @@
-#include <communication/ttycls/UartRingDriver.h>
+#include <drivers/serial/UartRingDriver.h>
 
 UartRingDriver::UartRingDriver(Uart* uart, char* txbuffer, size_t txsize, char* rxbuffer, size_t rxsize) : SerialDriver() {
 	txring.init(txbuffer, txsize);
 	rxring.init(rxbuffer, rxsize);
 	m_uart = uart;
 	m_uart->setDriver(this);
-
 }
 
 int UartRingDriver::write(const char* data, size_t size) {
@@ -20,6 +19,9 @@ int UartRingDriver::write(const char* data, size_t size) {
 	};
 
 	ret += txring.write(data, size - ret);
+
+	//if (!txwq.empty() && txring.room() > txring.size() / 2)
+	//	txwq.wakeUp();
 
 	global_irq_enable();
 
@@ -52,13 +54,23 @@ void UartRingDriver::txHandler() {
 	m_uart->putc(txring.getc());
 }
 
+bool UartRingDriver::waitread(WaiterBasic* waiter) {
+	rxwq.addWaiter(waiter);
+	return true;
+}
+
+bool UartRingDriver::waitwrite(WaiterBasic* waiter) {
+	txwq.addWaiter(waiter);
+	return true;
+}
+
 void UartRingDriver::tcHandler() {
 	panic("tcHandler");
 }
 
 void UartRingDriver::rxHandler(char c) {
 	rxring.putc(c);
-	rxwaiter.signal();
+	rxwq.wakeUp();
 }
 
 void UartRingDriver::begin(UartParams* params) {

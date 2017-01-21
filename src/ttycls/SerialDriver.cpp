@@ -1,4 +1,4 @@
-#include <communication/ttycls/SerialDevice.h>
+//#include <communication/ttycls/SerialDevice.h>
 
 //static FalsePredicate<SerialDriver*, char> __falsePredicate;
 

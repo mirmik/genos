@@ -1,7 +1,5 @@
 Module("genos.include.libc", {
-	opts = {
-		includePaths = "include"
-	},
+	includePaths = "include",
 	depends = "genos.libc",
 })
 
@@ -17,9 +15,7 @@ Module("genos.libc", {
 	sources = {
 		cc = table.arrayConcat(stdlib, string, inttypes),	
 	},
-	opts = {
-		options = {
-			cc = "-Wno-implicit-function-declaration"
-		}
+	flags = {
+		cc = "-Wno-implicit-function-declaration"
 	}
 })
