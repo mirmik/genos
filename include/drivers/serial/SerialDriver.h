@@ -14,7 +14,7 @@
 	implementations : UartRingDriver
 */
 
-class SerialDriver : public FileAbstract {
+class SerialDriver : public DeviceFile {
 public:
 	//FileAbstract api:
 	//virtual char getc();

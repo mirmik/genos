@@ -3,11 +3,11 @@
 #include <gxx/DList.h>
 #include <util/bits.h>
 
-gxx::DList<schedee, &schedee::lnk> runlist;
+gxx::DList<schedee, &schedee::lnk> runlist[PRIORITY_TOTAL];
 gxx::DList<schedee, &schedee::lnk> waitlist;
 gxx::DList<schedee, &schedee::lnk> zombielist;
 
-bool __noschedule = false;
+static bool __noschedule = false;
 
 void set_state_run(schedee *sch) {
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_RUN);
@@ -25,9 +25,8 @@ void scheduler_block() {
 	__nonschedule = true;
 }
 
-
 void scheduler_unblock() {
-	scheduler_unblock = false;
+	__nonschedule = false;
 }
 
 int schedule() {

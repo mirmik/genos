@@ -4,7 +4,7 @@
 #include <limits.h>
 #include <kernel/file/file.h>
 
-class DevNull : public FileAbstract {
+class DevNull : public DeviceFile {
 	int write(const char* data, size_t size) {
 		return size;
 	}

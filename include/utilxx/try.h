@@ -1,217 +1,220 @@
 #ifndef UTILXX_TRY_H
 #define UTILXX_TRY_H
 
+#include "assert.h"
+
 namespace mtry {
 	template<typename T> 
-	struct abstract {
-		T data;
-		abstract(T d) : data(d) {}
-		//inline void move(abstract&& other) {	data = std::move(other.data); } 
-		inline void destructor() { data.~T(); }
-		operator T() { return data; }
+	struct tryhelper {
+		using type = T;
+		using storedtype = T;
+		template <typename Arg>
+		static void constructor(type& ths, Arg oth) {
+			new (&ths) type(std::forward<Arg>(oth));
+		}
+		static void destructor(type& ths) {ths.~type();};
+		static void constructor(type& ths) {
+			new (&ths) type();
+		};
 	};
 	
 	template<typename T> 
-	struct abstract<T&> {
-		T& data;
-		abstract(T& d) : data(d) {	std::cout << "abstract(T&)" << std::endl; };
-		//inline void move(abstract&& other) { data = other.data; } 
-		inline void destructor() {}
-		operator T&() {return data;}
+	struct tryhelper<T&> {
+		using type = T&;
+		using storedtype = std::reference_wrapper<T>;
+		template <typename Arg>
+		static void constructor(storedtype& ths, Arg oth) {
+			new (&ths) storedtype(oth);	
+		}
+		static void destructor(storedtype& ths) {ths.~storedtype();};
+		static void constructor(storedtype& ths) {};
 	};
 	
 	template<typename T> 
-	struct abstract<T&&> {
-		T&& data;
-		abstract(T& d) : data(std::move(d)) {};
-		abstract(T&& d) : data(std::move(d)) {};
-		//inline void move(abstract& other) { data = other.data; } 
-		inline void destructor() {}
-		operator T&&() {return std::move(data);}
+	struct tryhelper<T&&> {
+		using type = T&&;
+		using storedtype = T&&;
+		template <typename Arg>
+		static void constructor(type& ths, Arg oth) {	
+			ths = oth;
+		}
+		static void destructor(type& ths) {};
+		static void constructor(type& ths) {};
 	};
 		
 	struct error {
 		int8_t code;
 		std::string info;
-		explicit error(int8_t c) : code(c), info() {std::cout << "error(int)" << std::endl;}
-		explicit error(int8_t c, std::string str) : code(c), info(str) {std::cout << "error(int,str)" << std::endl;}
-		error(error&& e) : code(e.code), info(std::move(e.info)) {
-			std::cout << "error(error&&)" << std::endl;
-		}; 
-	
-		error& operator=(error&& other) {
-			std::cout << "error(error&&)" << std::endl;
-			code = other.code; info = std::move(other.info);
-		};
-		//error() = default;
-
-		~error() {	
-			std::cout << "~error()" << std::endl;
-		}
+		explicit error(int8_t c) : code(c), info() {}
+		explicit error(int8_t c, const char* str) : code(c), info(str) {}
+		explicit error(int8_t c, std::string str) : code(c), info(str) {}
+		explicit error(int8_t c, std::string&& str) : code(c), info(std::move(str)) {}
+		
+		error(error&& e) = default;
+		error& operator=(error&& other) = default;		
+		~error() = default;
 	};
 	
-	/*struct error {
-		int8_t code;
-		int16_t des = 0;
-		explicit error(int8_t c) : code(c) {	
-			std::cout << "error(int)" << std::endl;
-		}
-		error(error&& e) : code(e.code) {
-			std::cout << "error(error&&)" << std::endl;
-		}; 
-	
-		error& operator=(error&& other) {
-			std::cout << "=error(error&&)" << std::endl;
-			code = other.code;
-		};
-		//error() = default;
-
-		~error() {	
-			std::cout << "~error()" << des++ << std::endl;
-		}
-	};*/
-
 	template <typename T, typename E = error>
-	struct result {
-		using Result = T;
-		uint8_t iserror;
+	class result {
+	public:
+		using Stored = typename tryhelper<T>::storedtype;
+		using Result = Stored;
+		uint8_t _iserror;
 		union {
-			//abstract<T> data;
-			T data;
-			E error;
+			Stored _data;
+			E _error;
 		};
+	
+	public:
 		
-		result(const T& r) : iserror(false), data(r) {
-			std::cout << "result(constT&)" << std::endl;
-		}
+		template<typename U>
+		result(U&& r) :	_iserror(false), _data(std::forward<U>(r)) {}
+		result(E&& e) : _iserror(true), _error(std::forward<E>(e)) {}
 		
-		result(T&& r) :	iserror(false), data(std::move(r))
-		{
-			std::cout << "result(T&&)" << std::endl;
-		}
-		
-		result(E&& e) : iserror(true) {
-			std::cout << "result(E&&)" << std::endl;
-			error = std::move(e);
-			std::cout << error.info << std::endl;
-			//std::cout << e.info << std::endl;
-			std::cout << "ENDresult(E&&)" << std::endl;
-		}
-		
-		result(result&& res) : iserror(res.iserror) {
-			std::cout << "result(result&&)" << std::endl;
-			if (iserror) {
-				error = std::move(res.error);
-				std::cout << "HERE" << std::endl;
+		result(result&& res) : _iserror(res._iserror) {
+			if (_iserror) {
+				new (&_error) E(std::move(res._error));
 			} else { 
-				data = std::move(res.data);
+				//new (&_data) Stored(std::move(res._data));
+				tryhelper<T>::constructor(_data, std::move(res._data));
 			}; 
-			iserror = 2;
+			_iserror = 2;
 		}
 		
 		~result() {
-			std::cout << "~result" << std::endl;
-			switch (iserror) {
-				//case 1: error.~E(); break;
-				//case 0: data.~T(); break;
+			switch (_iserror) {
+				case 1: _error.~E(); break;
+				//case 0: _data.~Stored(); break;
+				case 0: tryhelper<T>::destructor(_data); break;
 				default: break;	
 			};		
 		}
 	
 		inline void restore(T&& r) {
-			iserror = false;
-			error.~error();
-			data = std::forward<T>(r);	
+			_iserror = false;
+			_error.~error();
+			_data = std::forward<T>(r);	
 		}
 	
+		Result& getData() {
+			assert(_iserror == 0);
+			return _data;
+		}
+		
+		Result& getData(std::function<void(E&)> h) {
+			if (_iserror == 1) {
+				h(_error);
+			}
+			return _data;
+		}		
+
+		E& getError() {
+			assert(_iserror == 1);
+			return _error;
+		}
+		
+		bool iserror() {
+			return _iserror;
+		}
+
 		operator T() {
-			return data;
+			assert(iserror == 0);
+			return _data;
 		}
 
 		inline void restore() {
-			iserror = false;
-			error.~error();
-			data = Result();	
+			assert(_iserror == 1);
+			_iserror = false;
+			_error.~error();
+			tryhelper<T>::constructor(_data);	
 		}
 	
 		operator bool() {
-			return iserror;
+			return _iserror;
 		}
 	};
-	
-	/*template <typename E>
+
+	template <typename E>
 	struct result<void, E> {
 		using Result = void;
-		uint8_t iserror;
-		uint8_t& data = iserror;
-		E error;
+		uint8_t _iserror;
+		union {
+			E _error;
+		};
 		
-		result(E&& e) : iserror(true), error(std::forward<E>(e)) {
+		result() : _iserror(false) {}
+		result(E&& e) : _iserror(true), _error(std::move(e)) {}
+		
+		result(result&& res) : _iserror(res._iserror) {
+			if (_iserror) {
+				new (&_error) E(std::move(res._error));
+			} else { }; 
+			_iserror = 2;
 		}
-		
-		result(result&& res) : 
-			iserror(2), 
-			error(std::move(res.error)) 
-		{
-			printf("result(result&&)");
-		}
-		
-		result() : iserror(false) {};
-		result(const result& res) = delete;
-		
-		void operator=(result&& res) = delete;
-		void operator=(const result& res) = delete;
 		
 		~result() {
-			printf("~result");
-			switch (iserror) {
-				case 1: error.~E(); break;
+			switch (_iserror) {
+				case 1: _error.~E(); break;
 				default: break;	
 			};		
 		}
 	
+		void getData() {
+			assert(_iserror == 0);
+		}
+		
+		E& getError() {
+			assert(_iserror == 1);
+			return _error;
+		}
+		
+		bool iserror() {
+			return _iserror;
+		}
+
 		inline void restore() {
-			iserror = false;
-			error.~error();
+			assert(_iserror == 1);
+			_iserror = false;
+			_error.~error();
 		}
 	
 		operator bool() {
-			return iserror;
+			return _iserror;
 		}
-	};*/
+	};
 }
 
 #define tryS(invoke) ({												\
 	auto&& __result = ({invoke;}); 									\
-			printf("HERE");										\
-	if (__result.iserror) return std::move(__result.error);			\
-	std::move(__result.data);										\
+	if (__result.iserror()) return std::move(__result.getError());			\
+	__result.getData();										\
 }) 
 
 #define tryH(invoke,err,handler) ({									\
 	__label__ try_label;											\
 	auto&& __result = ({invoke;});										\
-	if (__result.iserror) {											\
-		auto&& err = __result.error; 								\
+	if (__result.iserror()) {											\
+		auto& err = __result.getError(); 								\
 		handler; 													\
-		return std::move(__result.error);							\
+		return std::move(__result.getError());							\
 	}; 																\
 	try_label:														\
-	__result.data;													\
+	__result.getData();													\
 })
 
 #define tryP(invoke,err,handler) ({									\
 	__label__ try_label;											\
 	auto&& __result = ({invoke;});									\
-	if (__result.iserror) {											\
-		auto&& err = __result.error; 								\
+	if (__result.iserror()) {											\
+		auto& err = __result.getError(); 								\
 		handler; 													\
 		__result.restore();											\
 	}; 																\
 	try_label:														\
-	__result.data;													\
+	__result._data;												\
 })
 
-#define try_return(val) ({__result.restore(val); goto try_label;})
+#define try_restore(val) ({__result.restore(val); goto try_label;})
 
 #endif

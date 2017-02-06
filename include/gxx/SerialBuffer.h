@@ -1,7 +1,7 @@
 #ifndef GQ_SERIAL_BUFFER_H
 #define GQ_SERIAL_BUFFER_H
 
-#include "genos_configure.h"
+//#include "genos_configure.h"
 
 #include <gxx/utility.h>
 #include <gxx/Allocator.h>

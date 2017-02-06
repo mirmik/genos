@@ -32,4 +32,6 @@ public:
 	virtual bool waitwrite(WaiterBasic& waiter) { return false; };
 };
 
+class DeviceFile : public FileAbstract {};
+
 #endif

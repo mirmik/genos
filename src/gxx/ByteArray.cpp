@@ -1,32 +1,43 @@
 #include <gxx/ByteArray.h>
 #include <debug/dprint.h>
 #include "util/numconvert.h"
-#include "util/ascii_convert.h"
+//#include "util/ascii_convert.h"
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 
+#ifndef DEBUG
+#define DEBUG 0
+#endif
+
 namespace gxx {
 
-	ByteArray::ByteArray()  : m_data(nullptr), m_capacity(0), m_size(0), BasicAllocated() {}
+	ByteArray::ByteArray()  : m_data(nullptr), m_capacity(0), m_size(0), BasicAllocated() {
+
+	}
 
 	ByteArray::ByteArray(const ByteArray& other) : ByteArray() {
+		if (DEBUG) printf("str(const str&)\n");
 		*this = other;
 	}
 
 	ByteArray::ByteArray(ByteArray&& other) : ByteArray() {
+		if (DEBUG) printf("str(str&&)\n");
 		move(other);
 	}
 
 	ByteArray::ByteArray(const char* str) : ByteArray() {
+		if (DEBUG) printf("str(const char*)\n");
 		if (str) copy(str, strlen(str));
 	}
 
-	ByteArray::ByteArray(const gxx::buffer& buf) : ByteArray() {
-		if (buf.data()) copy((const char*)buf.data(), buf.size());
-	};
+	//ByteArray::ByteArray(const gxx::buffer& buf) : ByteArray() {
+	//	if (DEBUG) printf("str(const str&)\n");
+	//	if (buf.data()) copy((const char*)buf.data(), buf.size());
+	//};
 
 	ByteArray::~ByteArray() {
+		if (DEBUG) printf("~str\n");
 		if (m_data) m_alloc->deallocate(m_data);
 	};
 
@@ -43,7 +54,10 @@ namespace gxx {
 
 
 	void ByteArray::move(ByteArray &rhs) {
+		if (DEBUG) printf("deallocate %s\n", rhs.c_str());
+		if (DEBUG) printf("deallocate %p\n", m_data);
 		if (m_data) m_alloc->deallocate(m_data);
+		if (DEBUG) printf("end deallocate\n");
 		m_data = rhs.m_data;
 		m_capacity = rhs.m_capacity;
 		m_size = rhs.m_size;
@@ -51,6 +65,7 @@ namespace gxx {
 		rhs.m_data = nullptr;
 		rhs.m_capacity = 0;
 		rhs.m_size = 0;
+		if (DEBUG) printf("end move\n");
 	}
 
 
@@ -61,15 +76,18 @@ namespace gxx {
 	}
 
 	ByteArray & ByteArray::operator = (const ByteArray &rhs) {
+		if (DEBUG) printf("=str(const str&) ");
 		if (this == &rhs) return *this;
 		
 		if (rhs.m_data) copy(rhs.m_data, rhs.m_size);
 		else invalidate();
 		
+		if (DEBUG) printf("%s\n", c_str());
 		return *this;
 	}
 	
 	ByteArray & ByteArray::operator = (ByteArray &&rval) {
+		if (DEBUG) printf("=str(str&&)\n");
 		if (this != &rval) move(rval);
 		return *this;
 	}
@@ -234,16 +252,16 @@ namespace gxx {
 		return ByteArray(buf);
 	};
 
-	ByteArray hexdata(const void* data, size_t sz) {
-		ByteArray buf;
-		buf.reserve(sz * 2 + 1);
-		char* dst = buf.data();
-		const uint8_t* src = (const uint8_t*) data;
-		for (int i = 0; i < sz; i++) {
-			byte2hex(dst, *src++);
-			dst = dst + 2;
-		}
-	};
+	//ByteArray hexdata(const void* data, size_t sz) {
+	//	ByteArray buf;
+	//	buf.reserve(sz * 2 + 1);
+	//	char* dst = buf.data();
+	//	const uint8_t* src = (const uint8_t*) data;
+	//	for (int i = 0; i < sz; i++) {
+	//		byte2hex(dst, *src++);
+	//		dst = dst + 2;
+	//	}
+	//};
 
 	ByteArray ByteArray::format(const char* fmt, ...) {
 		char buf[128];

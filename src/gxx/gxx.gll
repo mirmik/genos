@@ -1,9 +1,20 @@
---[[regmodule {
-	name = "gxx",
+Module("genos_gxx", {
 	sources = {
 		cxx = {"ByteArray.cpp", 
-		--"SerialBuffer.cpp", 
+		"SerialBuffer.cpp", 
 		"buffer.cpp", "base.cpp", "to_string.cpp", "hashstrategy.cpp", "hash.cpp", "hexarchive.cpp"}
 	}
-}]]
---"nullarchive.cpp"
+})
+
+Module("gxx.bytearray", {
+	sources = {
+		cxx = "ByteArray.cpp"
+	},
+	depends = "gxx.base"
+})
+
+Module("gxx.base", {
+	sources = {
+		cxx = "base.cpp"
+	}
+})

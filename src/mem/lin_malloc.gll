@@ -1,6 +1,5 @@
---[[regmodule {
-	name = "lin_malloc",
+Module("genos.lin_malloc", {
 	sources = {
 		cc = {"malloc.c", "realloc.c"}
 	}
-}]]
+})

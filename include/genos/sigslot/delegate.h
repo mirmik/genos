@@ -115,6 +115,13 @@ class delegate
 	//	object = d.object;
 	//	method = d.method;
 	//};
+
+	/*template <typename Functor>
+	delegate(const Functor& functor) {
+		object = reinterpret_cast <obj_t> (ptr_obj);
+		method.method = horrible_cast<mtd_t, R(T::*)(Args ...)>(mtd);
+	};*/
+
 			
 	delegate& operator=(const delegate& d) {
 		object = d.object;

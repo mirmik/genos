@@ -1,6 +1,10 @@
 #ifndef UTIL_MACRO_H
 #define UTIL_MACRO_H
 
+//compat names
+#define STRINGIFY(x) __MACRO_STRING(x)
+#define CAT(x,y) __MACRO_CONCATE(x,y)
+
 //Раскрытие
 #define MACRO_EXPAND(m) m
 
@@ -24,5 +28,6 @@
 
 //Короткий синоним для MACRO_GUARD
 #define __mgrd(symbol) MACRO_GUARD(symbol)
+
 
 #endif

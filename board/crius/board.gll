@@ -1,0 +1,14 @@
+Module("genos.board.crius", {
+	sources = {
+		directory = "src",
+		cxx = "board.cpp",
+	},
+
+	depends = {
+		"genos.arch.atmega2560"
+	}
+})
+
+Module("genos.include.board.crius", {
+	includePaths = "include"
+})

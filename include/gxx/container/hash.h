@@ -2,8 +2,15 @@
 #define GENOS_HASH_H
 
 #include <string.h>
-#include "genos_configure.h"
 #include <inttypes.h>
+
+#ifdef GENOS_CONFIGURE
+#	include "genos_configure.h"
+#endif
+
+#ifdef GXX_DEFAULT_SEED
+#define GXX_DEFAULT_SEED 0xABCDEFAB
+#endif
 
 namespace gxx {
 

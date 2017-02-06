@@ -5,6 +5,17 @@ Module("genos.arch.avr.head", {
 			"src/asm/atmega/irqcall.S", 
 			"src/asm/atmega/start.S",  
 			"src/asm/atmega/end_of_programm.c", 
+		}
+	}
+})
+
+Module("genos.arch.atmega2560", {
+	modules = {
+		{name = "genos.arch.avr.head"}
+	},
+
+	sources = {
+		cc = {
 			"src/drivers/gpio.c",
 			"src/asm/diag.c",
 			"src/asm/arch.c",
@@ -17,8 +28,9 @@ Module("genos.arch.avr.head", {
 Module("genos.include.arch.atmega2560", {
 	includePaths = "include atmega2560/include",
 	ldscripts = "atmega2560/ldscripts/flash.ld",
-	depends = "genos.arch.avr.head"
+	depends = "genos.arch.atmega2560"
 }) 
+
 
 --[[regmodule {
 	name = "arch.avr2560",
