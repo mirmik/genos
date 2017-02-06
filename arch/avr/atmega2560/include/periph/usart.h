@@ -17,7 +17,7 @@ struct usart_data {
 };
 
 static const usart_data usart0_data = { USART0, ATMEGA_IRQ_U0RX };
-static const usart_data usart0_data = { USART1, ATMEGA_IRQ_U1RX };
-static const usart_data usart0_data = { USART2, ATMEGA_IRQ_U2RX };
+static const usart_data usart1_data = { USART1, ATMEGA_IRQ_U1RX };
+static const usart_data usart2_data = { USART2, ATMEGA_IRQ_U2RX };
 
 #endif

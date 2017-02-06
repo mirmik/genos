@@ -1,7 +1,7 @@
 Module("genos.board.crius", {
 	sources = {
 		directory = "src",
-		cxx = "board.cpp",
+		cc = "board.c",
 	},
 
 	depends = {
