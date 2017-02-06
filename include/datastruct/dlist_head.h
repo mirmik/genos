@@ -17,6 +17,8 @@ struct dlist_head
 	)
 };
 
+#define DLIST_HEAD_INIT(name) { &(name), &(name) }
+
 __BEGIN_DECLS
 
 static inline void dlist_init(struct dlist_head* head)

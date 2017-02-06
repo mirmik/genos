@@ -4,3 +4,9 @@
 		cxx = {"kernel.cpp", "irq/csection.cpp"}
 	}
 }]]
+
+Module("genos.csection", {
+	sources = {
+		cc  = "csection.c"
+	}
+})

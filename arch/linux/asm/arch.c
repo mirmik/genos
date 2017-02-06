@@ -7,6 +7,7 @@ extern struct diag_ops terminal_diag;
 void arch_init(void)
 {
 	diag_setup(&terminal_diag);
+	diag_init();
 };
 
 void arch_idle(void)

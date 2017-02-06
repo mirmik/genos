@@ -1,24 +1,34 @@
-#ifndef KERNEL_NAMESPACE_FILE_H
-#define KERNEL_NAMESPACE_FILE_H
+#ifndef KERNEL_FS_FILE_H
+#define KERNEL_FS_FILE_H
 
 #include <inttypes.h>
-#include <debug/dprint.h>
 
-#include <gxx/ByteArray.h>
+struct file;
 
-namespace Kernel {
+typedef int(*kernel_write_t)(struct file*, struct query_t* query);
+typedef int(*kernel_read_t)(struct file*, struct query_t* query);
 
-	class dirent;
+typedef int(*write_t)(struct file*, const void*, size_t);
+typedef int(*read_t)(struct file*, const void*, size_t);
 
-	class File {
-	public:
-		uint8_t 	flags;
+typedef int(*avail_t)(struct file*);
+typedef int(*room_t)(struct file*);
+typedef int(*flush_t)(struct file*);
 
-		virtual int close() = 0;
-		virtual int write(const char* data, int length, uint8_t opt) = 0;
-		virtual int read(char* data, int length, uint8_t opt) = 0;
-		virtual Kernel::dirent* readdir(char* data, int lmax) = 0;
-	};
-};
+struct file_operations {
+	write_t kernel_write;
+	read_t kernel_read;
+
+	write_t write;
+	read_t read;
+
+	avail_t avail;
+	room_t room;
+	flush_t flush;
+}
+
+struct file {
+	struct file_operations * fops;
+}
 
 #endif

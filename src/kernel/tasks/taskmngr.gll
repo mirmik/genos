@@ -1,0 +1,6 @@
+Module ("genos.taskmngr", {
+	sources = {
+		cc = {"taskmngr.c"}
+	},
+	depends = "genos.csection"
+}) 

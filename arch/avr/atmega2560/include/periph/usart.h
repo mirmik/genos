@@ -1,30 +1,23 @@
 #ifndef AVR2560_USART_CLASS_H
 #define AVR2560_USART_CLASS_H
 
-#include <drivers/serial/Uart.h>
 #include <periph/regs/usart.h>
 
-class Usart : public Uart {
-	
-	volatile uart_regs *regs;
+#define USART_BASE_0 0xC0
+#define USART_BASE_1 0xC8
+#define USART_BASE_2 0xD0
 
-public:
-	virtual void putc(char c) {}
-	virtual char getc() {}
-	
-	virtual bool hasrx() {}
-	virtual bool maytx() {}
-	
-	virtual void txEnable(bool) {}
-	virtual void rxEnable(bool) {}
+#define USART0 ((struct usart_regs *)(USART_BASE_0))
+#define USART1 ((struct usart_regs *)(USART_BASE_1))
+#define USART2 ((struct usart_regs *)(USART_BASE_2))
 
-	virtual int setup(const Uart::Settings& param) {}
-
-//	Usart(volatile uart_regs* addr) : regs(addr) {}
+struct usart_data {
+	struct usart_regs* regs;
+	int8_t irqbase;
 };
 
-extern Usart usart0; 
-extern Usart usart1; 
-extern Usart usart2; 
+static const usart_data usart0_data = { USART0, ATMEGA_IRQ_U0RX };
+static const usart_data usart0_data = { USART1, ATMEGA_IRQ_U1RX };
+static const usart_data usart0_data = { USART2, ATMEGA_IRQ_U2RX };
 
 #endif
