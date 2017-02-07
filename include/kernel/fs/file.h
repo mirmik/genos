@@ -2,29 +2,29 @@
 #define KERNEL_FS_FILE_H
 
 #include <inttypes.h>
+#include <compiler.h>
 
-struct file;
+struct file_s;
+typedef struct file_s file_t;
 
-typedef int(*write_t)(struct file*, const void*, size_t);
-typedef int(*read_t)(struct file*, const void*, size_t);
-typedef int(*avail_t)(struct file*);
-typedef int(*room_t)(struct file*);
-typedef int(*flush_t)(struct file*);
+typedef int(*file_write_t)(struct file_s*, const void*, size_t);
+typedef int(*file_read_t)(struct file_s*, const void*, size_t);
 
 struct file_operations {
-	write_t kernel_write;
-	read_t kernel_read;
+	file_write_t write;
+	file_read_t read;
+};
 
-	write_t write;
-	read_t read;
+struct file_s {
+	const struct file_operations * fops;
+};
 
-	avail_t avail;
-	room_t room;
-	flush_t flush;
+__BEGIN_DECLS
+
+static inline void file_init(file_t* filp, const struct file_operations* fops) {
+	filp->fops = fops;
 }
 
-struct file {
-	struct file_operations * fops;
-}
+__END_DECLS
 
 #endif
