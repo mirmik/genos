@@ -99,8 +99,19 @@ inline static int ring_getc(struct ring_head* r, char* buffer) {
 	if (ring_empty(r)) return 0;	
 	char c = *(buffer + r->tail);
 	ring_move_tail_one(r);
-	return 1;
+	return c;
 };
+
+inline static int ring_write(struct ring_head* r, char* buffer, const char* data, size_t size) {
+	int ret = 0;
+	while(size--) {
+		if(!ring_putc(r, buffer, *data++)) {
+			return ret;
+		};
+		ret++;
+	}
+	return ret;
+}
 
 #define ring_for_each(n,r) \
 for(size_t n = (r)->tail; n != (r)->head; n = (n+1)%(r)->size)

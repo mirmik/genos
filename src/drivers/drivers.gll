@@ -4,5 +4,6 @@ Module("genos.arch.atmega2560.drivers.usart", {
 			"serial/avr/usart.c",
 			"serial/uartring.c"
 		}
-	}
+	},
+	depends = "genos.fs.chardev"
 })

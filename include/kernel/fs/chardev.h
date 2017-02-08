@@ -6,8 +6,8 @@
 struct chardev_s;
 typedef struct chardev_s chardev_t;
 
-typedef int(*chardev_write_t)(struct chardev_s*, const void*, size_t);
-typedef int(*chardev_read_t)(struct chardev_s*, const void*, size_t);
+typedef int(*chardev_write_t)(struct chardev_s*, const char*, size_t);
+typedef int(*chardev_read_t)(struct chardev_s*, const char*, size_t);
 typedef int(*chardev_avail_t)(struct chardev_s*);
 typedef int(*chardev_room_t)(struct chardev_s*);
 

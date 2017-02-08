@@ -37,9 +37,7 @@ typedef int(*uart_room_t)(struct uartdev_s*);
 typedef int(*uart_setup_t)(struct uartdev_s*, struct uart_params* params);
 typedef int(*uart_startup_t)(struct uartdev_s*);
 
-typedef int(*uart_irq_enable_rx_t)(struct uartdev_s*, bool en);
-typedef int(*uart_irq_enable_tx_t)(struct uartdev_s*, bool en);
-typedef int(*uart_irq_enable_tc_t)(struct uartdev_s*, bool en);
+typedef int(*uart_irq_enable_t)(struct uartdev_s*, bool en);
 
 
 struct uart_operations {
@@ -51,9 +49,9 @@ struct uart_operations {
 	uart_startup_t startup;
 	uart_setup_t setup;
 
-	uart_irq_enable_rx_t irq_enable_rx;
-	uart_irq_enable_rx_t irq_enable_tx;
-	uart_irq_enable_rx_t irq_enable_tc;
+	uart_irq_enable_t irq_enable_rx;
+	uart_irq_enable_t irq_enable_tx;
+	uart_irq_enable_t irq_enable_tc;
 };
 
 struct uartdev_s {
