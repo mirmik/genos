@@ -1,4 +1,4 @@
-Module("genos.arch.atmega2560.drivers.usart", {
+Implementation("genos.arch.atmega2560.drivers.usart", "cc", {
 	sources = {
 		cc = {
 			"serial/avr/usart.c",
@@ -6,4 +6,13 @@ Module("genos.arch.atmega2560.drivers.usart", {
 		}
 	},
 	depends = "genos.fs.chardev"
+})
+
+Implementation("genos.arch.atmega2560.drivers.usart", "cxx", {
+	sources = {
+		cxx = {
+			"serial/avr/UsartDevice.cpp",
+			"serial/avr/UsartDriver.cpp",
+		}
+	},
 })

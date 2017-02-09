@@ -1,0 +1,14 @@
+Module("genos.board.arduino_mega", {
+	sources = {
+		directory = "src",
+		cc = "board.c",
+	},
+
+	depends = {
+		"genos.arch.atmega2560"
+	}
+})
+
+Module("genos.include.board.arduino_mega", {
+	includePaths = "include"
+})

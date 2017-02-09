@@ -2,15 +2,16 @@
 #define CRIUS_BOARD_H
 
 #define RED_LED 13
-#define GREEN_LED 30
-#define YELLOW_LED 31
 
 #include <compiler.h>
+#include <hal/arch.h>
 
 __BEGIN_DECLS
 
 void board_init();
-void board_shutdown(ARCH_SHUTDOWN_MODE_ABORT);
+void board_shutdown(arch_shutdown_mode_t mode) __attribute__((noreturn));
+
+void emergency_stop();
 
 __END_DECLS
 

@@ -16,6 +16,10 @@ class ByteRing {
 	}
 
 public:
+	ByteRing(){};
+
+	ByteRing(char* buffer, size_t size) : m_data(buffer), m_size(size), head(0), tail(0) {};
+
 	void init(char* buffer, size_t size) {
 		m_data = buffer;
 		m_size = size;

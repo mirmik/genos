@@ -10,7 +10,7 @@ FileAbstract ничего не зает об ОС и не умеет работ�
 Однако, он предоставляет функцию wait для надстройки 
 блокирующего io*/
 
-class FileAbstract : public Print {
+class File : public Print {
 public:
 	virtual char getc() {
 		char c;
@@ -28,10 +28,10 @@ public:
 
 	/*Файлы устройств могут поддерживать waiter-ы для
 	сигнализации другим частям системы о том, что */
-	virtual bool waitread(WaiterBasic& waiter) { return false; };
-	virtual bool waitwrite(WaiterBasic& waiter) { return false; };
+	//virtual bool waitread(WaiterBasic& waiter) { return false; };
+	//virtual bool waitwrite(WaiterBasic& waiter) { return false; };
 };
 
-class DeviceFile : public FileAbstract {};
+class CharDevFile : public File {};
 
 #endif

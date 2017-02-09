@@ -4,6 +4,7 @@
 #include "debug/dprint.h"
 #include "util/location.h"
 #include "kernel/panic.h"
+#include "board.h"
 
 #define assert(condition) \
 	  ({__assert(condition, #condition, "");})
@@ -21,7 +22,7 @@
 		debug_print_location(current_location()); 	\
 		debug_print("condition: ");					\
 		debug_print(strcond); dln();				\
-		arch_shutdown(ARCH_SHUTDOWN_MODE_HALT);		\
+		board_shutdown(ARCH_SHUTDOWN_MODE_ABORT);	\
 		}											\
 	} while(0)				
 

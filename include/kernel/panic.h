@@ -3,7 +3,8 @@
 
 #include "debug/dprint.h"
 
-#include <hal/arch.h>
+//#include <hal/arch.h>
+#include <board.h>
 #include <hal/irq.h>
 
 #include "util/location.h"
@@ -17,7 +18,7 @@
 		debug_print("message: ");					\
 		debug_print(__VA_ARGS__);					\
 		dln();										\
-		arch_shutdown(ARCH_SHUTDOWN_MODE_HALT);		\
+		board_shutdown(ARCH_SHUTDOWN_MODE_ABORT);	\
 	} while (0)
 
 #endif
