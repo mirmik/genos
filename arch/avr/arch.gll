@@ -31,6 +31,11 @@ Module("genos.include.arch.atmega2560", {
 	depends = "genos.arch.atmega2560"
 }) 
 
+Module("gxx.avr", {
+	sources = {
+		cxx = {"gxx/atomic.cpp"}
+	}
+}) 
 
 --[[regmodule {
 	name = "arch.avr2560",
