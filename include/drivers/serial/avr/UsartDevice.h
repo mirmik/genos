@@ -6,6 +6,7 @@
 #include <kernel/file/file.h>
 #include <periph/usart.h>
 #include <utilxx/classes/ByteRing.h>
+#include <gxx/array.h>
 
 class UsartDevice : public CharDevFile, public UsartDriver {
 
@@ -27,7 +28,7 @@ public:
 	int begin();
 	int end();
 
-	UsartDevice(usart_regs* regs, int irqbase, char* txbuffer, size_t txsize, char* rxbuffer, size_t rxsize);
+	UsartDevice(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf);
 
 	friend void interruptHandler_UsartRX(UsartDevice* usart);
 	friend void interruptHandler_UsartTX(UsartDevice* usart);

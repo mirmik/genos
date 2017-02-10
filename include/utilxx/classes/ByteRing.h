@@ -5,24 +5,25 @@
 
 class ByteRing {
 
-	char* m_data;	
-	size_t m_size;
-	
+	//char* m_buf.data();	
+	//size_t m_buf.size();
+	gxx::buffer m_buf;
+
 	size_t head;
 	size_t tail;
 
 	inline void fixup(size_t& ref) {
-		while (ref >= m_size) ref -= m_size; 
+		while (ref >= m_buf.size()) ref -= m_buf.size(); 
 	}
 
 public:
 	ByteRing(){};
 
-	ByteRing(char* buffer, size_t size) : m_data(buffer), m_size(size), head(0), tail(0) {};
+	ByteRing(gxx::buffer buf) : m_buf(buf), head(0), tail(0) {};
 
 	void init(char* buffer, size_t size) {
-		m_data = buffer;
-		m_size = size;
+		m_buf.data(buffer);
+		m_buf.size(size);
 		head = tail = 0;
 	}
 
@@ -31,12 +32,12 @@ public:
 	}
 
 	bool full() {
-		return head == (tail ? tail : m_size) - 1;
+		return head == (tail ? tail : m_buf.size()) - 1;
 	}
 
 	int putc(char c) {
 		if (full()) return 0;
-		*(m_data + head++) = c;
+		*(m_buf.data() + head++) = c;
 		fixup(head);
 		return 1;
 	}
@@ -54,7 +55,7 @@ public:
 
 	int getc() {
 		if (empty()) return -1;
-		char c = *(m_data + tail++);
+		char c = *(m_buf.data() + tail++);
 		fixup(tail);
 		return c;
 	}
@@ -73,15 +74,15 @@ public:
 	}
 
 	size_t avail() { 
-		return (head >= tail) ? head - tail : m_size + head - tail; 
+		return (head >= tail) ? head - tail : m_buf.size() + head - tail; 
 	};
 
 	size_t room() {
-		return (head >= tail) ? m_size - 1 + ( tail - head ) : ( tail - head ) - 1;
+		return (head >= tail) ? m_buf.size() - 1 + ( tail - head ) : ( tail - head ) - 1;
 	};
 
 	size_t size() {
-		return m_size;
+		return m_buf.size();
 	};
 };
 

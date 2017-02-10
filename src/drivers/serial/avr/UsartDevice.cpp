@@ -8,13 +8,8 @@ void interruptHandler_UsartRX(UsartDevice* usart);
 void interruptHandler_UsartTX(UsartDevice* usart);
 void interruptHandler_UsartTC(UsartDevice* usart);
 
-UsartDevice::UsartDevice(
-	usart_regs* regs, 
-	int irqbase, 
-	char* txbuffer, size_t txsize, 
-	char* rxbuffer, size_t rxsize
-	)
- : UsartDriver(regs, irqbase), m_txring(txbuffer, txsize), m_rxring(rxbuffer, rxsize) {}
+UsartDevice::UsartDevice(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf)
+ : UsartDriver(udata.regs, udata.irqbase), m_txring(txbuf), m_rxring(rxbuf) {}
 
 
 int UsartDevice::begin() {
