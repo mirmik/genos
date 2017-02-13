@@ -6,7 +6,7 @@
 namespace gxx {
 
 	template<typename T>
-	inline bool compare(T a, T b) { return a == b; }
+	inline bool compare(const T& a, const T& b) { return a == b; }
 
 	inline bool compare(const char* a, const char* b) {
 		return !strcmp(a,b);

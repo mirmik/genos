@@ -25,7 +25,7 @@ public:
 		hlist_del(&(obj.*member));
 	}
 
-	bool is_empty() {
+	bool empty() {
 		return first == nullptr;
 	}
 

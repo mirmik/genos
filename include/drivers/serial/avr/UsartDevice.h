@@ -20,6 +20,9 @@ private:
 public:
 	int write(const char* data, size_t size);
 	int read(char* data, size_t size);
+
+	int getc();
+
 	int flush();
 
 	int avail();

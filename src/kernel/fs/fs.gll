@@ -1,5 +1,11 @@
-Module("genos.fs.chardev", {
+Implementation("genos.fs.chardev", "cc", {
 	sources = {
 		cc = "chardev.c"
+	}
+})
+
+Implementation("genos.fs.chardev", "cxx", {
+	sources = {
+		cxx = "CharDevFile.cpp"
 	}
 })

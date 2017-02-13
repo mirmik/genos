@@ -55,6 +55,11 @@ int UsartDevice::read(char* data, size_t size) {
 	return m_rxring.read(data, size);
 }
 
+int UsartDevice::getc() {
+	return m_rxring.getc();
+}
+
+
 int UsartDevice::flush() {
 
 }
@@ -71,6 +76,7 @@ int UsartDevice::room() {
 void interruptHandler_UsartRX(UsartDevice* usart) {
 	//panic("rxHandler");
 	if (usart->m_rxring.putc(usart->recvbyte()) == 0) panic("USART OVERPUT");
+	usart->rxevent.emit_one();
 }
 
 void interruptHandler_UsartTX(UsartDevice* usart) {

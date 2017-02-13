@@ -21,7 +21,7 @@ namespace gxx {
 		return other.hash(seed);
 	}
 
-	inline size_t hash(const char *p, size_t len, uint32_t seed) {
+	inline size_t hash(const char * p, size_t len, uint32_t seed) {
 		size_t h = seed;
 		for (int i = 0; i < len; ++i)
 			h = 31 * h + p[i];

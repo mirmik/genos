@@ -45,6 +45,11 @@ namespace gxx {
 			return line;
 		};
 
+		char* c_str_noconst() {
+			line[cursor] = 0;
+			return line;
+		};
+
 		gxx::buffer to_buffer() {
 			return gxx::buffer(line, cursor);
 		}

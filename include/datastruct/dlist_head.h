@@ -14,6 +14,10 @@ struct dlist_head
 
 	__if_cplusplus(
 	inline dlist_head() : next(this), prev(this) {};
+	inline ~dlist_head() { 
+		prev->next = next;
+		next->prev = prev;
+	};
 	)
 };
 

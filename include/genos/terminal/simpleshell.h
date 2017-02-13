@@ -37,7 +37,11 @@ public:
 		delegate<int,int,char**> ref;
 
 		if (!strcmp(argvc.v[0], "help")) {
-			dprln("HELP: TODO");
+			//dprln("HELP: TODO");
+			for (auto rec : dict) {
+
+			}
+
 			return RetCodeOK;
 		}
 
@@ -47,13 +51,13 @@ public:
 		return ref(argvc.c, argvc.v);
 	}
 
-	int execute_s(char* _str) {	
+	int execute_safe(const char* _str) {	
 		char str[128];
 		strcpy(str,_str);
 		return execute(str);
 	}
 
-	void executor(char* str) {
+	void execute_info(char* str) {
 		auto ret = execute(str);
 		if (ret) dprln(strerr(ret).c_str());
 	}
@@ -71,7 +75,7 @@ public:
 			case WrongArgsData: 
 				return gxx::string("WrongArgsData");
 			default: 
-				return gxx::string::format("UnregistredRetCode %d", retcode);
+				return gxx::string("UnregistredRetCode ") += retcode;
 		};
 	};
 };

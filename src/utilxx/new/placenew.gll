@@ -1,6 +1,5 @@
---[[regmodule {
-	name = "new",
+Module("placenew", {
 	sources = {
 		cxx = {"new.cpp"}
 	}
-}]]
+})

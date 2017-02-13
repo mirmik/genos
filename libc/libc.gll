@@ -10,10 +10,11 @@ local hide = '.*HIDE.*'
 local stdlib = find.findInTree(pathops.resolve(script.currentDir, "stdlib"), pattern, hide)
 local string = find.findInTree(pathops.resolve(script.currentDir, "string"), pattern, hide)
 local inttypes = find.findInTree(pathops.resolve(script.currentDir, "inttypes"), pattern, hide)
+local ctype = find.findInTree(pathops.resolve(script.currentDir, "ctype"), pattern, hide)
 
 Module("genos.libc", {
 	sources = {
-		cc = table.arrayConcat(stdlib, string, inttypes),	
+		cc = table.arrayConcat(inttypes, stdlib, string, ctype),	
 	},
 	flags = {
 		cc = "-Wno-implicit-function-declaration"

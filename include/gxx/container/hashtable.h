@@ -7,33 +7,31 @@
 
 namespace gxx {
 
-	struct BasicHashTable : public BasicAllocated {
-		struct hlist_head* m_table;
-		size_t m_tableSize;
+	class BasicHashTable : public BasicAllocated {
+	public:
+		gxx::objbuf<hlist_head> m_htable;
 		size_t m_total;
 		size_t (*m_strategy) (BasicHashTable*);
 
 	public:
-		BasicHashTable() : m_table(nullptr), m_tableSize(0)
-			, m_total(0), m_strategy(nullptr) {}	
+		BasicHashTable() : m_htable(nullptr, 0), m_total(0), m_strategy(nullptr) {}	
 
 		~BasicHashTable() {
-			if (m_table) m_alloc->deallocate(m_table);
+			if (m_htable.data()) m_alloc->deallocate(m_htable.data());
 		}
 
 		void reserve(size_t sz) {
-			hlist_head* newtbl = (hlist_head*) 
-				m_alloc->constructArray<hlist_head>(sz);
+			hlist_head* newtbl = (hlist_head*) m_alloc->constructArray<hlist_head>(sz);
 			if (!is_valid()) {
-				m_table = newtbl;
-				m_tableSize = sz;
+				m_htable.data(newtbl);
+				m_htable.size(sz);
 				m_total = 0;
 				return;
 			}
 			relocate(newtbl, sz);
-			m_alloc->deallocate(m_table);
-			m_table = newtbl;
-			m_tableSize = sz;
+			m_alloc->deallocate(m_htable.data());
+			m_htable.data(newtbl);
+			m_htable.size(sz);
 		}
 
 		void setStrategy(size_t (*func) (BasicHashTable*)) {
@@ -43,7 +41,7 @@ namespace gxx {
 		virtual void relocate(hlist_head* dst, size_t dstsize) = 0;
 
 		bool is_valid() const {
-			return m_table;
+			return m_htable.cdata();
 		}
 	};
 	

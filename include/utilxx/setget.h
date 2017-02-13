@@ -7,7 +7,12 @@ void name(decltype(param) value) {			\
 } 							
 
 #define GETTER(name,param) 					\
-decltype(param) name() {					\
+auto name() {								\
+	return param;							\
+} 
+
+#define CONST_GETTER(name,param) 			\
+const auto name() const {					\
 	return param;							\
 } 
 

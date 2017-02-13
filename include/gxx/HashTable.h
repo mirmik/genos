@@ -13,13 +13,15 @@
 
 namespace gxx {
 
-	template <typename T, hlist_node T::* link, typename K, K T::*keyfield>	
+	template <typename T, hlist_node T::* link>	
 	class HashTable : public BasicHashTable {
 		using hlist = HList<T,link>;
 
+		using K = typename gxx::remove_cv<typename gxx::remove_reference<decltype(((T*)nullptr)->getkey())>::type>::type;
+
 	private:
 		void put_to_cell(hlist_head* h, size_t sz, T& obj) {
-			size_t cellnum = gxx::hash(obj.*keyfield, gxx::defaultSeed) % sz;
+			size_t cellnum = obj.hash(gxx::defaultSeed) % sz;
 			hlist& cell = *(hlist*)(h + cellnum);
 			cell.push_front(obj);						
 		}
@@ -30,30 +32,27 @@ namespace gxx {
 		~HashTable() {}
 
 		void relocate(hlist_head* pdst, size_t dstsize) {
-			for (int i = 0; i < m_tableSize; i++) {
-				hlist& cell = *(hlist*)(m_table + i);
-				typename hlist::iterator it = cell.begin(); 
-				while(it != cell.end()) {
-					T& r = *it;
-					++it;
-					put_to_cell(pdst, dstsize, r);	
-				}
+			//for (int i = 0; i < m_htable.size(); i++) {
+			for (auto href : m_htable) {
+				hlist& cell = *(hlist*)(&href);
+				auto it = cell.begin(); 
+				while(it != cell.end()) put_to_cell(pdst, dstsize, *it++);	
 			}
 		};
 
 		void put(T& obj) {
 			m_total++;
-			assert((m_table && m_tableSize != 0) || m_strategy);
+			assert((m_htable.data() && m_htable.size() != 0) || m_strategy);
 			check_memstrategy();
-			put_to_cell(m_table, m_tableSize, obj);
+			put_to_cell(m_htable.data(), m_htable.size(), obj);
 		}
 
 		bool get(const K& key, T*& ptr) const {
 			if (!is_valid()) return false;
-			size_t cellnum = gxx::hash(key, gxx::defaultSeed) % m_tableSize;
-			hlist& cell = *(hlist*)(m_table + cellnum);
+			size_t cellnum = gxx::hash(key, gxx::defaultSeed) % m_htable.csize();
+			hlist& cell = *(hlist*)(m_htable.cdata() + cellnum);
 			auto it = gxx::find_if(cell.begin(), cell.end(), [key](const T& ref) -> bool {
-				return gxx::compare(ref.*keyfield, key);
+				return gxx::compare(ref.getkey(), key);
 			});
 			if (it == cell.end()) return false;
 			ptr = &*it; 
@@ -73,17 +72,64 @@ namespace gxx {
 			gxx::string str;
 			str.reserve(128);
 			str << "[";
-			for(int i = 0; i < m_tableSize; i++)
-				str << ((hlist*)(m_table + i))->total() << ',';
+			for(int i = 0; i < m_htable.size(); i++)
+				str << ((hlist*)(m_htable.cdata() + i))->total() << ',';
 			str << "]";
 			return gxx::move(str.shrink_to_print());
 		}
-	
+		
+		class iterator {
+		public:
+			gxx::objbuf<hlist>&							table;
+			typename gxx::objbuf<hlist>::iterator 		ittbl;
+			typename hlist::iterator 					itcell;
+		
+			void __find_next_cell() {
+				auto e = table.end();
+				for(;ittbl != e; ++ittbl) {
+					if (!ittbl->empty()) {
+						itcell = ittbl->begin();
+						return;
+					}
+				}
+				itcell = nullptr;
+			}
+
+		public:
+			iterator(gxx::objbuf<hlist>& _table, typename gxx::objbuf<hlist>::iterator _ittbl, typename hlist::iterator _itcell) 
+				: table(_table), ittbl(_ittbl), itcell(_itcell) {}		
+			
+			iterator(gxx::objbuf<hlist>& _table) : table(_table) {
+				ittbl = table.begin();
+				__find_next_cell();				
+			}
+
+			iterator operator++(int) { iterator i = *this; ++*this; return i; }
+			iterator operator++() { 
+				if(++itcell != ittbl->end()) return *this;
+				__find_next_cell();
+				return *this;
+			}
+			//iterator operator--(int) {  }
+			//iterator operator--() {  }
+			bool operator!= (const iterator& b) {return ittbl != b.ittbl || itcell != b.itcell;}
+			bool operator== (const iterator& b) {return ittbl == b.ittbl && itcell == b.itcell;}
+					
+			T& operator*() {return *member_container<T, hlist_head, link>(&*itcell);};
+			T* operator->() {return member_container<T, hlist_head, link>(&*itcell);};
+		};
+
+		iterator begin() { 
+			return iterator(m_htable); 
+		}
+
+		iterator end() { 
+			return iterator(m_htable, m_htable.end(), nullptr); 
+		}
 	};
 };
 
-#define GXX_HASHTABLE(type,link,key) \
-gxx::HashTable<type,&type::link,decltype(type::key),&type::key>
+#define GXX_HASHTABLE(type,link) gxx::HashTable<type,&type::link>
 	/*template < typename T, hlist_node type::* link, typename K, K type::* keyfield>
 	class HashTable
 	{

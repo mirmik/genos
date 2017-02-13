@@ -1,55 +1,31 @@
-#ifndef GENOS_KERNEL_EVENT_H
-#define GENOS_KERNEL_EVENT_H
+#ifndef GENOS_EVENT_H
+#define GENOS_EVENT_H
 
-#include <datastruct/dlist_head.h>
-#include <compiler.h>
+#include <gxx/DList.h>
+#include <genos/sigslot/delegate.h>
 
-struct event_slot_s;
-typedef void(*event_action_t)(struct event_slot_s*, void*);
+class event_slot {
+public:
+	dlist_head lnk;
+	fastdelegate<void> m_dlg;
 
-typedef struct event_s {
-	struct dlist_head list;
-} event_t;
+	event_slot(fastdelegate<void> dlg) : m_dlg(dlg) {}
+	event_slot(void(*func)(void*), void* arg) : m_dlg(func, arg) {}
+};
 
-#define EVENT_INIT(name) { { &name.list, &name.list } }
+class event_signal {
+	gxx::DList<event_slot, &event_slot::lnk> list;
 
-typedef struct event_slot_s {
-	//manage
-	struct dlist_head lnk;
-
-	//handler
-	event_action_t action;
-	void* priv;
-} event_slot_t;
-
-__BEGIN_DECLS
-
-static inline void event_slot_init(event_slot_t* es, event_action_t action, void* arg) {
-	dlist_init(&es->lnk);
-	es->action = action;
-	es->priv = arg;
-}
-
-static inline void event_emit(event_t * event) {
-	event_slot_t *es, *next;
-	dlist_for_each_entry_safe(es, next, &event->list, lnk) {
-		es->action(es, es->priv);
+public:
+	void bind(event_slot& slot) {
+		list.push_back(slot);
 	}
-}
 
-static inline void event_emit_one(event_t * event) {
-	event_slot_t *es = dlist_first_entry(&event->list, event_slot_t, lnk);
-	es->action(es, es->priv);
-}
-
-static inline void event_bind(event_slot_t* es, event_t* event) {
-	dlist_add_back(&es->lnk, &event->list);
-}
-
-static inline void event_unbind(event_slot_t* es) {
-	dlist_del(&es->lnk);
-}
-
-__END_DECLS
+	void emit() {}
+	
+	void emit_one() {
+		if (!list.empty()) list.begin()->m_dlg();
+	}
+};
 
 #endif
