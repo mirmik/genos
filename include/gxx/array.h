@@ -13,6 +13,20 @@ namespace gxx {
 		GETTER(data, &m_array[0]);
 		GETTER(bytesize, Size * sizeof(T));
 		GETTER(size, Size);
+
+		operator gxx::slice<T>() { return slice(); }
+
+		gxx::slice<T> slice(){
+			return gxx::slice<T>(m_array, Size);
+		}
+
+		gxx::slice<T> slice(size_t len){
+			return gxx::slice<T>(m_array, len);
+		}
+
+		gxx::slice<T> slice(size_t first, size_t len){
+			return gxx::slice<T>(m_array + first, len);
+		}
 	};
 }
 

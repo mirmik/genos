@@ -49,8 +49,8 @@ namespace gxx {
 
 		bool get(const K& key, T*& ptr) const {
 			if (!is_valid()) return false;
-			size_t cellnum = gxx::hash(key, gxx::defaultSeed) % m_htable.csize();
-			hlist& cell = *(hlist*)(m_htable.cdata() + cellnum);
+			size_t cellnum = gxx::hash(key, gxx::defaultSeed) % m_htable.size();
+			hlist& cell = *(hlist*)(m_htable.data() + cellnum);
 			auto it = gxx::find_if(cell.begin(), cell.end(), [key](const T& ref) -> bool {
 				return gxx::compare(ref.getkey(), key);
 			});
@@ -73,15 +73,15 @@ namespace gxx {
 			str.reserve(128);
 			str << "[";
 			for(int i = 0; i < m_htable.size(); i++)
-				str << ((hlist*)(m_htable.cdata() + i))->total() << ',';
+				str << ((hlist*)(m_htable.data() + i))->total() << ',';
 			str << "]";
 			return gxx::move(str.shrink_to_print());
 		}
 		
 		class iterator {
 		public:
-			gxx::objbuf<hlist>&							table;
-			typename gxx::objbuf<hlist>::iterator 		ittbl;
+			gxx::slice<hlist>&							table;
+			typename gxx::slice<hlist>::iterator 		ittbl;
 			typename hlist::iterator 					itcell;
 		
 			void __find_next_cell() {
@@ -96,10 +96,10 @@ namespace gxx {
 			}
 
 		public:
-			iterator(gxx::objbuf<hlist>& _table, typename gxx::objbuf<hlist>::iterator _ittbl, typename hlist::iterator _itcell) 
+			iterator(gxx::slice<hlist>& _table, typename gxx::slice<hlist>::iterator _ittbl, typename hlist::iterator _itcell) 
 				: table(_table), ittbl(_ittbl), itcell(_itcell) {}		
 			
-			iterator(gxx::objbuf<hlist>& _table) : table(_table) {
+			iterator(gxx::slice<hlist>& _table) : table(_table) {
 				ittbl = table.begin();
 				__find_next_cell();				
 			}

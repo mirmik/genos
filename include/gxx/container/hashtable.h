@@ -9,7 +9,7 @@ namespace gxx {
 
 	class BasicHashTable : public BasicAllocated {
 	public:
-		gxx::objbuf<hlist_head> m_htable;
+		gxx::slice<hlist_head> m_htable;
 		size_t m_total;
 		size_t (*m_strategy) (BasicHashTable*);
 
@@ -41,7 +41,7 @@ namespace gxx {
 		virtual void relocate(hlist_head* dst, size_t dstsize) = 0;
 
 		bool is_valid() const {
-			return m_htable.cdata();
+			return m_htable.data();
 		}
 	};
 	
