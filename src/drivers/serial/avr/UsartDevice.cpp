@@ -12,40 +12,39 @@ UsartDevice::UsartDevice(const usart_data& udata, gxx::buffer txbuf, gxx::buffer
  : UsartDriver(udata.regs, udata.irqbase), m_txring(txbuf), m_rxring(rxbuf) {}
 
 
-int UsartDevice::begin() {
+int UsartDevice::begin(int32_t baud, 
+		Uart::Parity parity, 
+		Uart::StopBits stopBits, 
+		Uart::DataBits dataBits) {
 	enable(true);	
 	
+	setup(baud, parity, stopBits, dataBits);
+
 	setIRQHandlers(
 		(IRQHandler) interruptHandler_UsartRX, this,
 		(IRQHandler) interruptHandler_UsartTX, this,
 		(IRQHandler) interruptHandler_UsartTC, this
 	);
-	//setIRQHandler(m_irqbase + 1, (IRQHandler) __interruptHandlerTX, this);
-	//setIRQHandler(m_irqbase + 2, (IRQHandler) __interruptHandlerTC, this);
+
 	enableRX(true);
 	enableTX(true);
 	
 	irqEnableRX(true);
-	//irqEnableTX(true);
-	//irqEnableTC(true);
 }
 
 int UsartDevice::write(const char* data, size_t size) {
-	int ret = 0;
 	if (size == 0) return 0;
 
+	int ret = 0;
 	auto save = global_irq_save();
 
 	if (cansend() && m_txring.empty()) {
 		ret += sendbyte(*data++);
 		irqEnableTX(true);
 	};
-
 	ret += m_txring.write(data, size - ret);
 
-	//if (!txwq.empty() && txring.room() > txring.size() / 2)
-	//	txwq.wakeUp();
-
+	txevent.emit_one();
 	global_irq_restore(save);
 
 	return ret;
@@ -74,7 +73,6 @@ int UsartDevice::room() {
 
 
 void interruptHandler_UsartRX(UsartDevice* usart) {
-	//panic("rxHandler");
 	if (usart->m_rxring.putc(usart->recvbyte()) == 0) panic("USART OVERPUT");
 	usart->rxevent.emit_one();
 }

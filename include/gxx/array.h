@@ -10,9 +10,10 @@ namespace gxx {
 		T m_array[Size];
 		
 	public:
-		GETTER(data, &m_array[0]);
-		GETTER(bytesize, Size * sizeof(T));
-		GETTER(size, Size);
+		CONSTREF_GETTER(data, m_array);
+		
+		VALUE_GETTER(bytesize, Size * sizeof(T));
+		VALUE_GETTER(size, Size);
 
 		operator gxx::slice<T>() { return slice(); }
 

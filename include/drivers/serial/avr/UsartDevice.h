@@ -28,7 +28,11 @@ public:
 	int avail();
 	int room();
 
-	int begin();
+	int begin(int32_t baud = 9600, 
+		Uart::Parity parity = Uart::ParityNone, 
+		Uart::StopBits stopBits = Uart::StopBitsOne, 
+		Uart::DataBits dataBits = Uart::DataBitsEight);
+	
 	int end();
 
 	UsartDevice(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf);

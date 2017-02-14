@@ -12,11 +12,10 @@ namespace gxx {
 		size_t m_size;
 
 	public:
-		SETGET(data, m_data);
-		SETGET(size, m_size);
-		CONST_GETTER(data, m_data);
-		CONST_GETTER(size, m_size);
-		GETTER(bytesize, m_size * sizeof(T));
+		ACCESSOR(data, m_data);
+		ACCESSOR(size, m_size);
+		
+		VALUE_GETTER(bytesize, m_size * sizeof(T));
 
 		slice_type() : m_data(nullptr), m_size(0) {};
 		slice_type(T* data, size_t size) : m_data(data), m_size(size) {}
