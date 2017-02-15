@@ -3,6 +3,7 @@
 
 #include <gxx/utility.h>
 #include <gxx/functional.h>
+#include <gxx/iterator_base_funcs.h>
 	
 	//Elliminate any previously defined macro
 	#undef min
@@ -11,8 +12,7 @@
 	//#pragma GCC visibility push(default)
 	
 	namespace gxx{
-		
-		
+				
 		template<class InputIterator, class Function>  
 		Function for_each(InputIterator first, InputIterator last, Function f)
 		{
@@ -169,6 +169,53 @@
 			}
 			return first;
 		}
+
+
+		template<class ForwardIt, class T, class Compare = gxx::less<T>>
+		ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T& value, Compare comp = Compare())
+		{
+		    ForwardIt it;
+		    typename gxx::iterator_traits<ForwardIt>::difference_type count, step;
+		    count = gxx::distance(first,last);
+		 
+		    while (count > 0) {
+		        it = first;
+		        step = count / 2;
+		        gxx::advance(it, step);
+		        if (comp(*it, value)) {
+		            first = ++it;
+		            count -= step + 1;
+		        }
+		        else
+		            count = step;
+		    }
+		    return first;
+		}
+
+		template<class ForwardIt, class T, class Compare = gxx::less<T>>
+		ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& value, Compare comp = Compare())
+		{
+		    ForwardIt it;
+		    typename gxx::iterator_traits<ForwardIt>::difference_type count, step;
+		    count = gxx::distance(first,last);
+		 
+		    while (count > 0) {
+		        it = first; 
+		        step = count / 2;
+		        gxx::advance(it, step);
+		        if (!comp(value, *it)) {
+		            first = ++it;
+		            count -= step + 1;
+		        } else count = step;
+		    }
+		    return first;
+		}
+
+		template<class ForwardIt, class T, class Compare>
+		gxx::pair<ForwardIt,ForwardIt> equal_range(ForwardIt first, ForwardIt last, const T& value, Compare comp) {
+		    return gxx::make_pair(gxx::lower_bound(first, last, value, comp), gxx::upper_bound(first, last, value, comp));
+		}
+
 		/*
 		template<class InputIterator, class T>  
 		typename iterator_traits<InputIterator>::difference_type
