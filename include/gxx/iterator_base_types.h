@@ -63,6 +63,30 @@ namespace gxx {
 		typedef typename Iterator::reference         reference;
 	};
 
+	/*
+
+	template<typename _Iterator, typename = __void_t<>>
+	struct __iterator_traits { };
+
+	template<typename _Iterator>
+	struct __iterator_traits<_Iterator, 
+			   __void_t<typename _Iterator::iterator_category,
+						typename _Iterator::value_type,
+						typename _Iterator::difference_type,
+						typename _Iterator::pointer,
+						typename _Iterator::reference>>
+	{
+		typedef typename _Iterator::iterator_category iterator_category;
+		typedef typename _Iterator::value_type        value_type;
+		typedef typename _Iterator::difference_type   difference_type;
+		typedef typename _Iterator::pointer           pointer;
+		typedef typename _Iterator::reference         reference;
+	};
+
+	template<typename _Iterator> struct iterator_traits : public __iterator_traits<_Iterator> { };
+
+	*/
+
 	/// Partial specialization for pointer types.
 	template<typename Tp>
 	struct iterator_traits<Tp*>
