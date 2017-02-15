@@ -6,6 +6,7 @@
 #include <gxx/utility.h>
 #include <debug/dprint.h>
 #include <utilxx/type_analize.h>
+#include <utilxx/setget.h>
 
 namespace gxx {
 
@@ -101,12 +102,9 @@ public:
 	Allocator* m_alloc;
 
 public:
-	void setAllocator(Allocator* newalloc) {
-		m_alloc = newalloc;
-	};
+	ACCESSOR(allocator, m_alloc);
 
-	BasicAllocated() : m_alloc(gxx::defaultAllocator) {};
-	BasicAllocated(Allocator* alloc) : m_alloc(alloc) {};
+	BasicAllocated(Allocator* alloc = gxx::defaultAllocator) : m_alloc(alloc) {};
 	BasicAllocated(const BasicAllocated& other) {
 		m_alloc = other.m_alloc;
 	};
