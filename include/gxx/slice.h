@@ -2,6 +2,7 @@
 #define GXX_SLICE_H
 
 #include <inttypes.h>
+#include <stdlib.h>
 #include <utilxx/setget.h>
 
 namespace gxx {

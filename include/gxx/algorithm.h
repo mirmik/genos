@@ -310,21 +310,13 @@
 			}
 			return true;
 		}
-		
-		template<class ForwardIterator1, class ForwardIterator2>  
-		ForwardIterator1 search(ForwardIterator1 first1, ForwardIterator1 last1,
-		ForwardIterator2 first2, ForwardIterator2 last2)
-		{
-			equal_to<typename iterator_traits<ForwardIterator1>::value_type> c;
-			return search(first1, last1, first2, last2, c);
-		}
-		
-		
-		template<class ForwardIterator1, class ForwardIterator2, class BinaryPredicate>  
+		*/
+				
+		template<class ForwardIterator1, class ForwardIterator2, class BinaryPredicate = equal_to<typename iterator_traits<ForwardIterator1>::value_type>>  
 		ForwardIterator1
 		search(ForwardIterator1 first1, ForwardIterator1 last1,
 		ForwardIterator2 first2, ForwardIterator2 last2,
-		BinaryPredicate pred)
+		BinaryPredicate pred = BinaryPredicate())
 		{
 			while(first1 != last1){
 				ForwardIterator1 temp1(first1);
@@ -343,35 +335,11 @@
 			}
 			return last1;
 		}
-		
-		
-		template<class ForwardIterator, class Size, class T>  
-		ForwardIterator
-		search_n(ForwardIterator first, ForwardIterator last, Size count, const T& value)
-		{
-			while( first != last ){
-				if(*first == value){
-					ForwardIterator temp(first);
-					Size i = 1;
-					++first;	//Avoid doing the same comparison over again
-					while(i < count && *temp == value){
-						++first;
-						++i;
-					}
-					if(i == count){
-						return first;
-					}
-				}
-				++first;
-			}
-			return first;		
-		}
-		
-		
-		template<class ForwardIterator, class Size, class T, class BinaryPredicate>  
+
+		template<class ForwardIterator, class Size, class T, class BinaryPredicate = equal_to<typename iterator_traits<ForwardIterator>::value_type>>  
 		ForwardIterator
 		search_n(ForwardIterator first, ForwardIterator last,
-		Size count, const T& value, BinaryPredicate pred)
+		Size count, const T& value, BinaryPredicate pred = BinaryPredicate())
 		{
 			while( first != last ){
 				if( pred(*first, value) ){
@@ -392,8 +360,7 @@
 			
 		}
 		
-		// subclause _lib.alg.modifying.operations_, modifying sequence operations:
-*/		
+		
 		template<class InputIterator, class OutputIterator>  
 		OutputIterator
 		copy(InputIterator first, InputIterator last, OutputIterator result)
@@ -469,9 +436,9 @@
 		}
 		
 		template<class T>   void swap(T& a, T& b){
-			T temp(a);
-			a = b;
-			b = temp;
+			T temp(gxx::move(a));
+			a = gxx::move(b);
+			b = gxx::move(temp);
 		}
 		
 		template<class ForwardIterator1, class ForwardIterator2>  

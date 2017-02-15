@@ -13,6 +13,7 @@ namespace gxx {
 	class vector {
 	public:
 		using iterator = T*;
+		using const_iterator = const T*;
 
 	private:
 		//resources
@@ -40,13 +41,10 @@ namespace gxx {
 			return 1;
 		}
 
-		iterator begin() {
-			return m_data;
-		}
-
-		iterator end() {
-			return m_data + m_size;
-		}
+		iterator begin() { return m_data; }
+		iterator end() { return m_data + m_size; }
+		iterator rbegin() { return m_data + m_size - 1; }
+		iterator rend() { return m_data - 1; }
 	
 		template <typename ... Args>
 		void emplace_back(Args ... args) {
@@ -59,6 +57,25 @@ namespace gxx {
 			reserve(m_size + 1);
 			gxx::constructor(m_data + m_size, ref);
 			m_size++; 
+		}
+
+		iterator insert(const_iterator pos, const T& value) {
+			//TODO insert optimization 
+			size_t _pos = pos - m_data;
+
+			reserve(m_size + 1);
+			m_size++; 
+			
+			iterator first = m_data + _pos;
+			iterator last = gxx::prev(end());
+			gxx::move_backward(first, last, end());
+			*first = value;
+			
+			return first;
+		}
+
+		iterator insert_sorted(T const& item) {
+		    return insert(gxx::upper_bound(begin(), end(), item ), item);
 		}
 	
 		T& operator[](size_t num) {

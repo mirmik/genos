@@ -7,7 +7,7 @@
 #include <gxx/allocator.h>
 
 namespace gxx {
-	template<
+	/*template<
 		typename K, 
 		typename V, 
 		class Compare = gxx::less<K>, 
@@ -30,7 +30,7 @@ namespace gxx {
 		Compare 	m_comp;		
 
 	public:
-		CONSTREF_GETTER(data, m_data)
+		CONSTREF_GETTER(data, Parent::m_data)
 		CONSTREF_GETTER(size, Parent::m_size)
 		CONSTREF_GETTER(capacity, Parent::m_capacity)
 
@@ -40,7 +40,7 @@ namespace gxx {
 		map() : map( Compare() ) {}
 		explicit map( const Compare& comp, const Allocator& alloc = Allocator() ) 
 			: Parent(alloc), m_comp(comp) {};
-	};
+	};*/
 }
 
 #endif 
