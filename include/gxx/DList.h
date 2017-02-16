@@ -1,8 +1,10 @@
 #ifndef GENOS_DLIST_H
 #define GENOS_DLIST_H
 
+#include <stdlib.h>
 #include "datastruct/dlist_head.h"
 #include "utilxx/member.h" 
+#include <gxx/algorithm.h>
 
 namespace gxx {
 
@@ -62,50 +64,68 @@ namespace gxx {
 		void round_left() {
 			push_back(*begin());
 		};
-	
+
 		class iterator {
+		public:
+			using iterator_category = bidirectional_iterator_tag;
+			using value_type = type;
+			using difference_type = ptrdiff_t;
+			using pointer = type*;
+			using reference = type&;
+
 		public:
 			dlist_head* current;
 		public:
-			iterator(dlist_head* head) : current(head) {};		
+			iterator() : current(nullptr) {};	
+			iterator(dlist_head* head) : current(head) {};	
+			iterator(const iterator& other) : current(other.current) {};		
 					
 			iterator operator++(int) { iterator i = *this; current=current->next; return i; }
 			iterator operator++() { current=current->next; return *this; }
 			iterator operator--(int) { iterator i = *this; current=current->prev; return i; }
 			iterator operator--() { current=current->prev; return *this; }
-			bool operator!= (const iterator& b) {return current != b.current;};
-			bool operator== (const iterator& b) {return current == b.current;};
+			bool operator!= (const iterator& b) {return current != b.current;}
+			bool operator== (const iterator& b) {return current == b.current;}
 					
-			type& operator*() {return *member_container<type, dlist_head, member>(current);};
-			type* operator->() {return member_container<type, dlist_head, member>(current);};
+			type& operator*() {return *member_container<type, dlist_head, member>(current);}
+			type* operator->() {return member_container<type, dlist_head, member>(current);}
 		};
 	
 		class reverse_iterator {
 		private:
 			dlist_head* current;
 		public:
-			reverse_iterator(dlist_head* head) : current(head) {};		
+			reverse_iterator(dlist_head* head) : current(head) {}	
 					
 			reverse_iterator operator++(int) { reverse_iterator i = *this; current=current->prev; return i; }
 			reverse_iterator operator++() { current=current->prev; return *this; }
 			reverse_iterator operator--(int) { reverse_iterator i = *this; current=current->next; return i; }
 			reverse_iterator operator--() { current=current->next; return *this; }
-			bool operator!= (const reverse_iterator& b) {return current != b.current;};
-			bool operator== (const reverse_iterator& b) {return current == b.current;};
+			bool operator!= (const reverse_iterator& b) {return current != b.current;}
+			bool operator== (const reverse_iterator& b) {return current == b.current;}
 					
-			type& operator*() {return *member_container<type, dlist_head, member>(current);};
-			type* operator->() {return member_container<type, dlist_head, member>(current);};
+			type& operator*() {return *member_container<type, dlist_head, member>(current);}
+			type* operator->() {return member_container<type, dlist_head, member>(current);}
 		};
 	
-		iterator begin() {return iterator(list.next);};
-		iterator end() {return iterator(&list);};
+		iterator begin() {return iterator(list.next);}
+		iterator end() {return iterator(&list);}
 		
-		iterator begin() const {return iterator((dlist_head*)list.next);};
-		iterator end() const {return iterator((dlist_head*)&list);};
+		iterator begin() const {return iterator((dlist_head*)list.next);}
+		iterator end() const {return iterator((dlist_head*)&list);}
 
-		reverse_iterator rbegin() {return reverse_iterator(list.prev);};
-		reverse_iterator rend() {return reverse_iterator(&list);};
+		reverse_iterator rbegin() {return reverse_iterator(list.prev);}
+		reverse_iterator rend() {return reverse_iterator(&list);}
 	
+
+		iterator insert(iterator it, type & obj) {
+			dlist_move_prev(&(obj.*member), it.current);			
+		}
+
+		iterator insert_sorted(type & item) {
+		    return insert(gxx::upper_bound(begin(), end(), item ), item);
+		}
+
 	/*	gxx::string to_info() const
 		{
 			gxx::string str;

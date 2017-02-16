@@ -14,6 +14,16 @@ public:
 	uint8_t flags;
 
 	schedee() : flags(0) { dlist_init(&lnk); }
+
+	virtual void execute() = 0;
 };
+
+class automate_schedee : schedee {
+public:
+	automate_schedee() : schedee() {  }
+
+	virtual void execute() {}
+};
+
 
 #endif

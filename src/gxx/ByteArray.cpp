@@ -6,6 +6,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include <gxx/algorithm.h>
+
 #ifndef DEBUG
 #define DEBUG 0
 #endif
@@ -252,6 +254,11 @@ namespace gxx {
 		return ByteArray(buf);
 	};
 
+
+	bool ByteArray::operator < (const ByteArray& other) const {
+		return strncmp(data(), other.data(), gxx::min(size(), other.size())) < 0;
+	};
+
 	//ByteArray hexdata(const void* data, size_t sz) {
 	//	ByteArray buf;
 	//	buf.reserve(sz * 2 + 1);
@@ -295,7 +302,7 @@ namespace gxx {
 		return *this;
 	}
 	
-	size_t ByteArray::size() const {
+	/*size_t ByteArray::size() const {
 		return m_size;
 	}; 
 
@@ -305,7 +312,7 @@ namespace gxx {
 
 	char* ByteArray::data() const {
 		return m_data;
-	};
+	};*/
 
 /*string & string::copy(const __FlashStringHelper *pstr, unsigned int length)
 {

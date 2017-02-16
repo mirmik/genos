@@ -15,11 +15,6 @@ struct tasklet {
 	void(*action)(struct tasklet* tsk);
 };
 
-struct io_tasklet {
-	struct tasklet task;
-
-	struct dlist_head iolnk;
-};
 
 __BEGIN_DECLS
 
@@ -27,11 +22,6 @@ static inline void tasklet_init(struct tasklet* tsk, void(*action)(struct taskle
 	dlist_init(&tsk->tlnk);
 	tsk->status = TASKLET_UNPLANED;
 	tsk->action = action;
-}
-
-static inline void io_tasklet_init(struct io_tasklet* iot, void(*action)(struct tasklet*)) {
-	tasklet_init(&iot->task, action);
-	dlist_init(&iot->iolnk);
 }
 
 void tasklet_plan(struct tasklet* tsk);

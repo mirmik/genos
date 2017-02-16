@@ -6,6 +6,7 @@
 #include <gxx/container/hash.h>
 
 #include <gxx/buffer.h>
+#include <utilxx/setget.h>
 
 namespace gxx {
 
@@ -16,6 +17,10 @@ namespace gxx {
 		size_t m_size;
 	
 	public:
+		CONSTREF_GETTER(data, m_data);
+		CONSTREF_GETTER(capacity, m_capacity);
+		CONSTREF_GETTER(size, m_size);
+
 		ByteArray();
 		ByteArray(const ByteArray& other);
 		ByteArray(ByteArray&& other);
@@ -28,9 +33,10 @@ namespace gxx {
 		ByteArray(const gxx::buffer& buf);
 		void release();
 
-		size_t size() const;
-		size_t capacity() const;
-		char* data() const;
+		//size_t size() const;
+		//size_t capacity() const;
+		//char* data() const;
+
 		uint8_t reserve(size_t sz);
 		uint8_t changeBuffer(size_t sz);
 	
@@ -71,6 +77,8 @@ namespace gxx {
 		static ByteArray format(const char* fmt, ...);
 
 		static ByteArray hexdata(const void* data, size_t sz);
+
+		bool operator < (const ByteArray& other) const;
 
 		template<typename T>
 		ByteArray & operator+= (T obj) {

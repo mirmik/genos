@@ -1,4 +1,5 @@
 #include "hal/arch.h"
+#include "hal/irq.h"
 #include "avr/io.h"
 #include "kernel/diag.h"
 #include "util/stub.h"
@@ -32,13 +33,13 @@ int usart0_diag_init()
 
 int usart0_diag_putchar(char c)
 {
-	char temp;
-	temp = SREG;
+	irqstate_t save = global_irq_save();
 	UCSR0A |= 1<<TXC0;
 	while ((UCSR0A & (1 << UDRE0)) == 0) {};  
 	UDR0=c; 
+	//while ((UCSR0A & (1 << UDRE0)) == 0) {}; 
 	while ((UCSR0A & (1 << TXC0)) == 0) {}; 
-	SREG = temp;
+	global_irq_restore(save);
 };
 
 struct diag_ops usart0_diag;

@@ -4,3 +4,9 @@
 		cxx = {"ns.cpp", "ops.cpp"}
 	}
 }]]
+
+Module ("genos.namespace", {
+	sources = {
+		cxx = "NameSpace.cpp"
+	}
+})
