@@ -1,4 +1,4 @@
-Module ("genos.taskmngr", {
+Module ("genos.kernel.tasklets", {
 	sources = {
 		cc = {"taskmngr.c"}
 	},

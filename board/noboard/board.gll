@@ -1,6 +1,10 @@
---[[regmodule {
-	name = "stm32f4-discovery",
+Module("genos.board.noboard", {
 	sources = {
-		cc = {"src/board.c"}
+		directory = "src",
+		cc = "board.c",
 	}
-}]]
+})
+
+Module("genos.include.board.noboard", {
+	includePaths = "include"
+})

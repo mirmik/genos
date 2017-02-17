@@ -17,14 +17,17 @@ static bool __noschedule = false;
 
 void set_state_run(schedee *sch) {
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_RUN);
+	runlist[sch->prio].push_back(*sch);
 }
 
 void set_state_wait(schedee *sch) {
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_WAIT);
+	waitlist.push_back(*sch);
 }
 
 void set_state_zombie(schedee *sch) {
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_ZOMBIE);
+	zombielist.push_back(*sch);
 }
 
 void scheduler_block() {

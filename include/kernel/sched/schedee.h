@@ -11,18 +11,28 @@
 class schedee {
 public:
 	dlist_head lnk;
-	uint8_t flags;
+	uint8_t prio = 0;
+	uint8_t flags = 0;
 
-	schedee() : flags(0) { dlist_init(&lnk); }
+	schedee() : lnk() { }
+
+	void Run();
+	void Stop();
+	void Exit();
 
 	virtual void execute() = 0;
 };
 
-class automate_schedee : schedee {
+class automate_schedee : public schedee {
 public:
 	automate_schedee() : schedee() {  }
 
-	virtual void execute() {}
+	virtual void execute() {
+		Routine();
+	}
+
+protected:
+	virtual void Routine() = 0;
 };
 
 
