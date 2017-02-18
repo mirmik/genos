@@ -34,6 +34,7 @@ void set_state_final(schedee *sch) {
 }
 
 void set_state_zombie(schedee *sch) {
+	debug_print("set_state_zombie "); dprhexln((uintptr_t)sch);
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_ZOMBIE);
 	dlist_del_init(&sch->lnk);
 //	zombielist.move_back(*sch);

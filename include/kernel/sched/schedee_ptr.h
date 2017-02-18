@@ -1,6 +1,6 @@
 #ifndef KERNEL_SCHEDEE_H
 #define KERNEL_SCHEDEE_H
-/*
+
 class schedee;
 
 class schedee_ptr {
@@ -20,5 +20,5 @@ private:
 	//schedee* raw() { return sch; }
 	//friend class schedee;
 };
-*/
+
 #endif

@@ -1,8 +1,8 @@
 #include <kernel/sched/schedee.h>
 #include <kernel/sched/scheduler.h>
 
-schedee::schedee(schedee* parent) : lnk(), parent( parent ) {
-	set_final_release(this,true);
+schedee::schedee() : lnk() {
+//	set_final_release(this,true);
 }
 
 schedee& schedee::Run() {
@@ -26,7 +26,7 @@ void schedee::Exit() {
 void schedee::final() {
 	set_state_zombie(this);
 
-	if (final_callback) final_callback(this, result);
+	if (final_callback) final_callback(this);
 
 	if (is_final_deallocated(this)) { 
 		gxx::destructor(this);
@@ -62,15 +62,16 @@ schedee& schedee::final_release(bool en) {
 //	return *this;
 //}
 
-schedee& schedee::final_handler(void(*f)(schedee*, void*)) {
+schedee& schedee::final_handler(void(*f)(schedee*)) {
 	//if (final_callback == nullptr);
 	final_callback = f;
 }
 
-schedee& schedee::final_handler(void(*f)()) {
-	return final_handler((void(*)(schedee*, void*)) f);
-}
-
+//schedee& schedee::final_argument(void* arg) {
+//	argument = arg;
+//	return *this;
+//}
+/*
 schedee& schedee::Result(void* res) {
 	result = res;
 	return *this;
@@ -78,4 +79,4 @@ schedee& schedee::Result(void* res) {
 
 void* schedee::Result() {
 	return result;
-}
+}*/

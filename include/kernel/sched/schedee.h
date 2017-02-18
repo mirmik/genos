@@ -30,15 +30,14 @@ public:
 //	uint8_t ref = 1;
 
 //	schedee_ptr parent;
-	schedee* parent;
+	//void* argument;
+	//void* result;
 
-	void* result;
-
-	void(*final_callback)(schedee* sch, void* result) = nullptr;
+	void(*final_callback)(schedee* sch) = nullptr;
 
 	//schedee_ptr инициализируется без инкремента счетчика ссылок,
 	//т.к. инициализируется raw указателем.
-	schedee( schedee* parent );
+	schedee();
 
  	virtual ~schedee() { }
 
@@ -53,8 +52,14 @@ public:
 	schedee& final_deallocate(bool en);
 	schedee& final_release(bool en);
 	
-	schedee& final_handler(void(*)(schedee*, void*));
-	schedee& final_handler(void(*)());
+	schedee& final_handler(void(*)(schedee*));
+
+	template<typename F> 
+	schedee& final_handler(F f) {
+		return final_handler((void(*)(schedee*)) f);
+	}
+
+	schedee& final_argument(void*);
 
 	bool Completed();
 	bool operator==(const schedee& other) { return this == &other; }
@@ -66,7 +71,7 @@ public:
 
 class automate_schedee : public schedee {
 protected:
-	automate_schedee( schedee* parent = current_schedee() ) : schedee(parent) {  }
+	automate_schedee() { }
 	~automate_schedee() { }
 
 protected:
@@ -81,7 +86,7 @@ protected:
 
 class delegate_schedee : public schedee {
 public:
-	delegate_schedee(delegate<void> dlg, schedee* parent = current_schedee() ) : schedee( parent ), m_dlg(dlg) {  }
+	delegate_schedee(delegate<void> dlg) : m_dlg(dlg) {  }
 	~delegate_schedee() { }
 
 private:
@@ -96,15 +101,14 @@ protected:
 };
 
 
-static void resume_parent_schedee(schedee* sch, void* result) {
-	sch -> parent -> Result(result);
-	sch -> parent -> Run();
-}
+//static void resume_parent_schedee(schedee* sch) {
+//	((schedee*)sch->argument) -> Run();
+//}
 
-extern gxx::DList<schedee, &schedee::lnk> waitlist;
-static void resume_parent_schedee_safe(schedee* sch, void* result) {
-	if ( gxx::find(waitlist.begin(), waitlist.end(), *sch) != waitlist.end()) 
-		resume_parent_schedee(sch, result);
-}
+//extern gxx::DList<schedee, &schedee::lnk> waitlist;
+//static void resume_parent_schedee_safe(schedee* sch) {
+//	if ( gxx::find(waitlist.begin(), waitlist.end(), *sch) != waitlist.end()) 
+//		resume_parent_schedee(sch);
+//}
 
 #endif
