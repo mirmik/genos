@@ -17,7 +17,7 @@ struct dlist_head
 	inline ~dlist_head() { 
 		prev->next = next;
 		next->prev = prev;
-	};
+	}
 	)
 };
 

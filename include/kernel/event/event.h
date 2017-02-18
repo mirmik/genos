@@ -7,10 +7,7 @@
 class event_slot {
 public:
 	dlist_head lnk;
-	fastdelegate<void> m_dlg;
-
-	event_slot(fastdelegate<void> dlg) : m_dlg(dlg) {}
-	event_slot(void(*func)(void*), void* arg) : m_dlg(func, arg) {}
+	virtual void routine(void* sender) = 0;
 };
 
 class event_signal {
@@ -18,14 +15,32 @@ class event_signal {
 
 public:
 	void bind(event_slot& slot) {
-		list.push_back(slot);
+		list.move_back(slot);
 	}
 
-	void emit() {}
-	
-	void emit_one() {
-		if (!list.empty()) list.begin()->m_dlg();
+	void emit(void* sender) {
+		if (!list.empty()){
+			auto end = list.end();
+			for (auto it = list.begin(); it != end; it++) {
+				it->routine(sender);
+			}
+		}
 	}
+	
+	void emit_one(void* sender) {
+		if (!list.empty()) list.begin()->routine(sender);
+	}
+};
+
+class debug_event_slot : public event_slot {
+	const char* m_message;
+
+	void routine(void* sender) override {
+		debug_print(m_message);dln();
+	}
+
+public:
+	debug_event_slot(const char* message) : m_message(message){}
 };
 
 #endif

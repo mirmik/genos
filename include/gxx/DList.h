@@ -25,20 +25,20 @@ namespace gxx {
 			return dlist_is_empty(&list);
 		};
 	
-		void push_front(type& obj) {
+		void move_front(type& obj) {
 			dlist_move_next(&(obj.*member), &list);
 		};
 		
-		void push_back(type& obj) {
+		void move_back(type& obj) {
 			dlist_move_prev(&(obj.*member), &list);
 		};
 		
-		void push_next(type& obj, type& head) {
+		void move_next(type& obj, type& head) {
 			assert(is_linked(head));
 			dlist_move_next(&(obj.*member), &(head.*member));
 		};
 		
-		void push_prev(type& obj, type& head) {
+		void move_prev(type& obj, type& head) {
 			assert(is_linked(head));
 			dlist_move_prev(&(obj.*member), &(head.*member));
 		};
@@ -62,7 +62,7 @@ namespace gxx {
 		};
 	
 		void round_left() {
-			push_back(*begin());
+			move_back(*begin());
 		};
 
 		class iterator {

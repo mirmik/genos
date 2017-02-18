@@ -1,6 +1,8 @@
 #ifndef GXX_ALLOCATOR_H
 #define GXX_ALLOCATOR_H
 
+#include <stdlib.h>
+
 namespace gxx {
 	template<typename T>
 	class allocator {
