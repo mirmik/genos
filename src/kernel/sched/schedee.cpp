@@ -32,51 +32,14 @@ void schedee::final() {
 		gxx::destructor(this);
 		scheduler_free(this);
 	}
-	//if (is_final_release(this)) {
-	//	release();
-	//}
 }
-
-/*void schedee::release() {
-	ref--;
-	if (ref == 0) {
-		if (is_final_deallocated(this)) { 
-			gxx::destructor(this);
-			scheduler_free(this);
-		}
-	}
-}*/
 
 schedee& schedee::final_deallocate(bool en) {
 	set_final_deallocate(this, en);
 	return *this;
 }
-/*
-schedee& schedee::final_release(bool en) {
-	set_final_release(this, en);
-	return *this;
-}*/
-
-//schedee& schedee::result_deallocate(bool en) {
-//	set_result_deallocate(this, en);
-//	return *this;
-//}
 
 schedee& schedee::final_handler(void(*f)(schedee*)) {
 	//if (final_callback == nullptr);
 	final_callback = f;
 }
-
-//schedee& schedee::final_argument(void* arg) {
-//	argument = arg;
-//	return *this;
-//}
-/*
-schedee& schedee::Result(void* res) {
-	result = res;
-	return *this;
-}
-
-void* schedee::Result() {
-	return result;
-}*/
