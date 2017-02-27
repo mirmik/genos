@@ -47,9 +47,9 @@ namespace gxx {
 		iterator rend() { return m_data - 1; }
 	
 		template <typename ... Args>
-		void emplace_back(Args ... args) {
+		void emplace_back(Args&& ... args) {
 			reserve(m_size + 1);
-			gxx::constructor(m_data + m_size, args ...);
+			gxx::constructor(m_data + m_size, gxx::forward<Args>(args)...);
 			m_size++; 
 		}
 	

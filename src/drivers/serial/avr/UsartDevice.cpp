@@ -44,7 +44,7 @@ int UsartDevice::write(const char* data, size_t size) {
 	};
 	ret += m_txring.write(data, size - ret);
 
-	txevent.emit_one();
+	txevent.emit_one(this);
 	global_irq_restore(save);
 
 	return ret;
@@ -74,7 +74,7 @@ int UsartDevice::room() {
 
 void interruptHandler_UsartRX(UsartDevice* usart) {
 	if (usart->m_rxring.putc(usart->recvbyte()) == 0) panic("USART OVERPUT");
-	usart->rxevent.emit_one();
+	usart->rxevent.emit_one(usart);
 }
 
 void interruptHandler_UsartTX(UsartDevice* usart) {

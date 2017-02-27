@@ -44,8 +44,8 @@ namespace gxx{
 	}
 	
 	template<typename T, typename ... Args>
-	void constructor(T* ptr, Args ... args) {
-		new(ptr) T(args ...);
+	void constructor(T* ptr, Args&& ... args) {
+		new(ptr) T(gxx::forward<Args>(args)...);
 	}
 	
 	template<typename T>

@@ -42,6 +42,10 @@ namespace gxx {
 		gxx::slice_type<T> slice(size_t first, size_t len){
 			return gxx::slice_type<T>(m_data + first, len);
 		}
+	
+		T& operator[](int i) {
+			return *(m_data + i);
+		}
 	};
 
 	//Это хак для того, чтобы определить в классе slice метод slice.
