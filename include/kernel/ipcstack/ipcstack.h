@@ -2,7 +2,10 @@
 #define GENOS_IPCSTACK_H
 
 #include <gxx/slice.h>
+#include <gxx/ByteArray.h>
+#include <gxx/vector.h>
 #include <genos/sigslot/delegate.h>
+#include <gxx/DList.h>
 
 enum MsgItemType{
 	Nil = 0,
@@ -42,6 +45,7 @@ public:
 		~item(){};
 	};
 
+	//data
 	gxx::slice<item> m_stack;
 	int total = 0;
 

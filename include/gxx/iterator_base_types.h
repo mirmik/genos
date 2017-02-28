@@ -1,6 +1,8 @@
 #ifndef GXX_ITERATOR_BASE_TYPES_H
 #define GXX_ITERATOR_BASE_TYPES_H
 
+#include <cstddef>
+
 namespace gxx {
 	///  Marking input iterators.
 	struct input_iterator_tag { };

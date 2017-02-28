@@ -19,3 +19,9 @@ Module("gxx.base", {
 		cxx = "base.cpp"
 	}
 })
+
+Module("gxx.hashtable", {
+	sources = {
+		cxx = "hashstrategy.cpp"
+	}
+})
