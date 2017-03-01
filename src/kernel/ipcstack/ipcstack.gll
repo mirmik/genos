@@ -1,0 +1,5 @@
+Module ("genos.kernel.ipcstack", {
+	sources = {
+		cxx = {"item.cpp"}
+	},
+}) 

@@ -7,6 +7,8 @@
 
 #include <kernel/ipcstack/item.h>
 
+#include <assert.h>
+
 struct ipcstack {
 public:
 	//data
@@ -54,6 +56,16 @@ static void stack_push_string(struct ipcstack* stack, const char* data, size_t s
 	it->str = str;
 }
 
+static void stack_push_vector(struct ipcstack* stack) {
+	assert(stack->total != stack->size);
+	stack_item* it = stack->buffer + stack->total++;
+	it->type = ItemType::Vector;
+
+	struct vector_item* vec = construct_vector_item();
+
+	it->vec = vec;
+}
+
 static char* stack_push_empty_string(struct ipcstack* stack, size_t size) {
 	assert(stack->total != stack->size);
 	stack_item* it = stack->buffer + stack->total++;
@@ -65,15 +77,14 @@ static char* stack_push_empty_string(struct ipcstack* stack, size_t size) {
 	return str->data;
 }
 
-
-stack_item* stack_get_item(struct ipcstack* stack, int index) {
+static stack_item* stack_get_item(struct ipcstack* stack, int index) {
 	index = index < 0 ? index + stack->total : index;
 	assert(index >= 0);
 	assert(index < stack->total);
 	return stack->buffer + index;
 }
 
-int32_t stack_get_bool(struct ipcstack* stack, int index, int* isbool = NULL) {
+static int32_t stack_get_bool(struct ipcstack* stack, int index, int* isbool = NULL) {
 	stack_item* it = stack_get_item(stack, index);
 	if (it->type == ItemType::Bool) {
 		if (isbool) *isbool = 1; 
@@ -85,7 +96,7 @@ int32_t stack_get_bool(struct ipcstack* stack, int index, int* isbool = NULL) {
 	}
 }
 
-int32_t stack_get_int32(struct ipcstack* stack, int index, int* isi32 = NULL) {
+static int32_t stack_get_int32(struct ipcstack* stack, int index, int* isi32 = NULL) {
 	stack_item* it = stack_get_item(stack, index);
 	if (it->type == ItemType::Int32) {
 		if (isi32) *isi32 = 1; 
@@ -97,7 +108,7 @@ int32_t stack_get_int32(struct ipcstack* stack, int index, int* isi32 = NULL) {
 	}
 }
 
-int32_t stack_get_string_size(struct ipcstack* stack, int index, int* isstr = NULL) {
+static int32_t stack_get_string_size(struct ipcstack* stack, int index, int* isstr = NULL) {
 	stack_item* it = stack_get_item(stack, index);
 	if (it->type == ItemType::String) {
 		if (isstr) *isstr = 1; 
@@ -109,7 +120,7 @@ int32_t stack_get_string_size(struct ipcstack* stack, int index, int* isstr = NU
 	}
 }
 
-int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t bufsize,  int* isstr = NULL) {
+static int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t bufsize,  int* isstr = NULL) {
 	stack_item* it = stack_get_item(stack, index);
 	if (it->type == ItemType::String) {
 		size_t csize = it->str->size < bufsize ? it->str->size : bufsize;
@@ -119,96 +130,45 @@ int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t
 	else {
 		if (isstr) *isstr = 0; 
 		return 0;
-	}
-	
+	}	
 }
 
-	/*gxx::string& get_string(int index) {
-		item& it = get_item(index);
-		assert(it.type == MsgItemType::String);
-		return it.str;
+static void stack_item_addref(stack_item* it) {
+	switch (it->type) {
+		case ItemType::String: 		it->str->ref++;  break;
+		case ItemType::Vector: 		it->vec->ref++;  break;
+		case ItemType::Dictionary: 	it->dct->ref++;  break;
 	}
+}
 
-	gxx::vector<item>& get_vector(int index) {
-		item& it = get_item(index);
-		assert(it.type == MsgItemType::Vector);
-		return it.vec;
-	}*/
+void stack_release_item(stack_item* it);
 
-/*
-	void push_word(uintptr_t word) {
-		assert(total != m_stack.size());
-		item& it = m_stack[total++];
-		it.type = MsgItemType::Word;
-		it.uptr = word;
+static int32_t stack_vector_append(struct ipcstack* stack, int32_t vecindex, int32_t itemindex) {
+	stack_item* vecit = stack_get_item(stack, vecindex);
+	stack_item* itit = stack_get_item(stack, itemindex);
+	if (vecit->type == ItemType::Vector) {
+		stack_item_addref(itit);
+		vector_item_append(vecit->vec, itit);
 	}
+	else {
+		return -1;
+	}	
+}
 
-	void push_int32(int32_t val) {
-		assert(total != m_stack.size());
-		item& it = m_stack[total++];
-		it.type = MsgItemType::Int32;
-		it.i32 = val;
-	}
-
-	void push_buffer(char* data, size_t size) {
-		assert(total != m_stack.size());
-		item& it = m_stack[total++];
-		it.type = MsgItemType::Buffer;
-		it.buf = gxx::slice<char>(data, size);		
-	}
-
-	void push_buffer(gxx::buffer buf) {
-		push_buffer(buf.data(), buf.size());		
-	}
-
-	void push_allocated_buffer(const char* data, size_t size) {
-		assert(total != m_stack.size());
-		item& it = m_stack[total++];
-		it.type = MsgItemType::AllocatedBuffer;
-		char* __data = strndup(data, size);
-		it.buf = gxx::slice<char>(__data, size);				
-	}
-
-	/*void push_string() {
-		assert(total != m_stack.size());
-		item& it = m_stack[total++];
-		it.type = MsgItemType::String;
-		new (&it.str) gxx::string();		
-	}
-
-	void push_vector() {
-		assert(total != m_stack.size());
-		item& it = m_stack[total++];
-		it.type = MsgItemType::Vector;
-		new (&it.vec) gxx::vector<item>();		
-	}
-
-	void vector_append(int count) {
-		gxx::vector<item>& vec = get_vector(- count - 1);
-		vec.reserve(vec.size() + count);
-		for (int i = -1; i > - count - 1; i--) {
-			vec.emplace_back(gxx::move(get_item(i)));
-		}
-		pop(count);
-	}*/
-
-void stack_pop(struct ipcstack* stack, int count) {
+static void stack_pop(struct ipcstack* stack, int count) {
 	assert(stack->total >= count);
 	while(count--) {
 		stack_item* it = stack->buffer + (stack->total - 1); 
 		
-		switch (it->type) {
-			case ItemType::String: release_string_item(it->str);  break;
-		}
+		stack_release_item(it);
 
 		stack->total--;
 	}
 }
 
-void stack_pop_all(struct ipcstack* stack) {
+static void stack_pop_all(struct ipcstack* stack) {
 	stack_pop(stack, stack->total);
 }
-
 
 static const char* stack_item_type_2_str(uint8_t type) {
 	switch (type) {
@@ -223,26 +183,15 @@ static const char* stack_item_type_2_str(uint8_t type) {
 	}
 }
 
+void debug_stack_item_dump(struct stack_item* it);
 static void debug_ipcstack_dump(struct ipcstack* stack) {
 	debug_print("ipcstack_dump. total: "); debug_printdec_int32(stack->total); dln();
 	for (int i = 0; i < stack->total; i++) {
 		stack_item* it = stack->buffer + i;
 		debug_print(stack_item_type_2_str(it->type)); debug_print(": ");
-		switch(it->type) {
-			//case ItemType::: debug_write(it.buf.data(), it.buf.size()); break;
-			case ItemType::Bool: debug_print(it->i32 ? "true" : "false"); break;
-			case ItemType::Nil: break;
-			case ItemType::Int32: debug_printdec_int32(it->i32); break;
-			case ItemType::Float: debug_print("TODO"); break;
-			case ItemType::String: debug_write(it->str->data, it->str->size); break;
-		}
+		debug_stack_item_dump(it);
 		dln();
 	}
 }
-/*
-class ipcservice {
-public:
-	virtual void execute(ipcstack& stack, delegate<void> callback) = 0;
-};*/
 
 #endif

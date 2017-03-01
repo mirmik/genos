@@ -1,6 +1,7 @@
 #ifndef GENOS_KERNEL_ITEM_STRING_H
 #define GENOS_KERNEL_ITEM_STRING_H
 
+#include <debug/dprint.h>
 #include <kernel/ipcstack/item.h>
 
 #include <string.h>

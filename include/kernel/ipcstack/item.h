@@ -5,6 +5,8 @@ struct string_item;
 struct vector_item;
 struct dictionary_item;
 
+#include <inttypes.h>
+
 enum ItemType {
 	//BasicTypes
 	Int32 = 0,
