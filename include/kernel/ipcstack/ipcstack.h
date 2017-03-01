@@ -1,82 +1,129 @@
 #ifndef GENOS_IPCSTACK_H
 #define GENOS_IPCSTACK_H
 
-#include <gxx/slice.h>
-#include <gxx/ByteArray.h>
-#include <gxx/vector.h>
-#include <genos/sigslot/delegate.h>
-#include <gxx/DList.h>
+#include <kernel/ipcstack/string.h>
+#include <kernel/ipcstack/vector.h>
+#include <kernel/ipcstack/dictionary.h>
 
-enum MsgItemType{
-	Nil = 0,
-	Buffer = 1,
-	AllocatedBuffer = 2,
-	Word = 3,
-	Int32 = 4,
-	
-	String = 5,
-	Vector = 6,
-};
+#include <kernel/ipcstack/item.h>
 
-
-class ipcstack {
+struct ipcstack {
 public:
-	class item {
-	public:
-		uint8_t type;
-		union {
-			int32_t 			i32;
-			uintptr_t 			uptr;
-			gxx::slice<char> 	buf;
-			gxx::string 		str;
-			gxx::vector<item> 	vec; 
-		};
-
-		item(item&& other) {
-			memcpy(this, &other, sizeof(item));
-		}
-
-		item& operator=(item&& other) {
-			memcpy(this, &other, sizeof(item));
-			return *this;
-		}
-
-		item(){};
-		~item(){};
-	};
-
 	//data
-	gxx::slice<item> m_stack;
+	stack_item* buffer;
+	size_t 		size;
 	int total = 0;
 
-	ipcstack(gxx::slice<item> slc) : m_stack(slc) {} 
+	ipcstack(gxx::slice<stack_item> slc) : buffer(slc.data()), size(slc.size()) {} 
+};
 
-	item& get_item(int index) {
-		index = index < 0 ? index + total : index;
-		assert(index >= 0);
-		assert(index < total);
-		return m_stack[index];
+static void stack_push_nil(struct ipcstack* stack) {
+	assert(stack->total != stack->size);
+	stack_item* it = stack->buffer + stack->total++;
+	it->type = ItemType::Nil;
+}
+
+static void stack_push_bool(struct ipcstack* stack, int8_t val) {
+	assert(stack->total != stack->size);
+	stack_item* it = stack->buffer + stack->total++;
+	it->type = ItemType::Bool;
+	it->i32 = val;
+}
+
+static void stack_push_int32(struct ipcstack* stack, int32_t val) {
+	assert(stack->total != stack->size);
+	stack_item* it = stack->buffer + stack->total++;
+	it->type = ItemType::Int32;
+	it->i32 = val;
+}
+
+static void stack_push_float(struct ipcstack* stack, float val) {
+	assert(stack->total != stack->size);
+	stack_item* it = stack->buffer + stack->total++;
+	it->type = ItemType::Float;
+	it->flt = val;
+}
+
+static void stack_push_string(struct ipcstack* stack, const char* data, size_t size) {
+	assert(stack->total != stack->size);
+	stack_item* it = stack->buffer + stack->total++;
+	it->type = ItemType::String;
+
+	struct string_item* str = construct_string_item(data, size);
+
+	it->str = str;
+}
+
+static char* stack_push_empty_string(struct ipcstack* stack, size_t size) {
+	assert(stack->total != stack->size);
+	stack_item* it = stack->buffer + stack->total++;
+	it->type = ItemType::String;
+
+	struct string_item* str = construct_empty_string_item(size);
+
+	it->str = str;
+	return str->data;
+}
+
+
+stack_item* stack_get_item(struct ipcstack* stack, int index) {
+	index = index < 0 ? index + stack->total : index;
+	assert(index >= 0);
+	assert(index < stack->total);
+	return stack->buffer + index;
+}
+
+int32_t stack_get_bool(struct ipcstack* stack, int index, int* isbool = NULL) {
+	stack_item* it = stack_get_item(stack, index);
+	if (it->type == ItemType::Bool) {
+		if (isbool) *isbool = 1; 
+		return it->i32 != 0;
 	}
-
-	int32_t get_int32(int index) {
-		item& it = get_item(index);
-		assert(it.type == MsgItemType::Int32);
-		return it.i32;
+	else {
+		if (isbool) *isbool = 0; 
+		return 0;
 	}
+}
 
-	uintptr_t get_word(int index) {
-		item& it = get_item(index);
-		assert(it.type == MsgItemType::Word);
-		return it.uptr;
+int32_t stack_get_int32(struct ipcstack* stack, int index, int* isi32 = NULL) {
+	stack_item* it = stack_get_item(stack, index);
+	if (it->type == ItemType::Int32) {
+		if (isi32) *isi32 = 1; 
+		return it->i32;
 	}
-
-	gxx::buffer get_buffer(int index) {
-		item& it = get_item(index);
-		assert(it.type == MsgItemType::Buffer || it.type == MsgItemType::AllocatedBuffer);
-		return it.buf;
+	else {
+		if (isi32) *isi32 = 0; 
+		return 0;
 	}
+}
 
-	gxx::string& get_string(int index) {
+int32_t stack_get_string_size(struct ipcstack* stack, int index, int* isstr = NULL) {
+	stack_item* it = stack_get_item(stack, index);
+	if (it->type == ItemType::String) {
+		if (isstr) *isstr = 1; 
+		return it->str->size;
+	}
+	else {
+		if (isstr) *isstr = 0; 
+		return 0;
+	}
+}
+
+int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t bufsize,  int* isstr = NULL) {
+	stack_item* it = stack_get_item(stack, index);
+	if (it->type == ItemType::String) {
+		size_t csize = it->str->size < bufsize ? it->str->size : bufsize;
+		memcpy(buffer, it->str->data, csize);
+		return csize;
+	}
+	else {
+		if (isstr) *isstr = 0; 
+		return 0;
+	}
+	
+}
+
+	/*gxx::string& get_string(int index) {
 		item& it = get_item(index);
 		assert(it.type == MsgItemType::String);
 		return it.str;
@@ -86,14 +133,9 @@ public:
 		item& it = get_item(index);
 		assert(it.type == MsgItemType::Vector);
 		return it.vec;
-	}
+	}*/
 
-	void push_nil() {
-		assert(total != m_stack.size());
-		item& it = m_stack[total++];
-		it.type = MsgItemType::Nil;
-	}
-
+/*
 	void push_word(uintptr_t word) {
 		assert(total != m_stack.size());
 		item& it = m_stack[total++];
@@ -127,7 +169,7 @@ public:
 		it.buf = gxx::slice<char>(__data, size);				
 	}
 
-	void push_string() {
+	/*void push_string() {
 		assert(total != m_stack.size());
 		item& it = m_stack[total++];
 		it.type = MsgItemType::String;
@@ -148,70 +190,59 @@ public:
 			vec.emplace_back(gxx::move(get_item(i)));
 		}
 		pop(count);
-	}
+	}*/
 
-	void pop(int count) {
-		assert(total >= count);
-		while(count--) {
-			item& it = m_stack[total - 1]; 
-			
-			switch (it.type) {
-				case MsgItemType::Word:
-				case MsgItemType::Nil:
-				case MsgItemType::Int32:
-				case MsgItemType::Buffer: 
-					it.type = MsgItemType::Nil; 
-				break;
-
-				case MsgItemType::AllocatedBuffer: 
-					free(it.buf.data()); 
-					it.type = MsgItemType::Nil; 
-				break;
-
-				case MsgItemType::String: 
-					it.str.~ByteArray();
-					it.type = MsgItemType::Nil; 
-				break;
-			}
-			total--;
+void stack_pop(struct ipcstack* stack, int count) {
+	assert(stack->total >= count);
+	while(count--) {
+		stack_item* it = stack->buffer + (stack->total - 1); 
+		
+		switch (it->type) {
+			case ItemType::String: release_string_item(it->str);  break;
 		}
-	}
 
-	void pop_all() {
-		pop(total);
+		stack->total--;
 	}
+}
 
-	const char* item_type_2_str(uint8_t type) {
-		switch (type) {
-			case MsgItemType::Nil:				return "Nil";
-			case MsgItemType::Buffer:			return "Buffer";
-			case MsgItemType::Word:				return "Word";
-			case MsgItemType::Int32:			return "Int32";
-			case MsgItemType::Vector:			return "Vector";
-			default: 							return "UnresolvedType";
+void stack_pop_all(struct ipcstack* stack) {
+	stack_pop(stack, stack->total);
+}
+
+
+static const char* stack_item_type_2_str(uint8_t type) {
+	switch (type) {
+		case ItemType::Nil:				return "Nil";
+		case ItemType::Int32:			return "Int32";
+		case ItemType::Float:			return "Float";
+		case ItemType::Bool:			return "Bool";
+		case ItemType::Vector:			return "Vector";
+		case ItemType::String:			return "String";
+		case ItemType::Dictionary:		return "Dictionary";
+		default: 						return "UnresolvedType";
+	}
+}
+
+static void debug_ipcstack_dump(struct ipcstack* stack) {
+	debug_print("ipcstack_dump. total: "); debug_printdec_int32(stack->total); dln();
+	for (int i = 0; i < stack->total; i++) {
+		stack_item* it = stack->buffer + i;
+		debug_print(stack_item_type_2_str(it->type)); debug_print(": ");
+		switch(it->type) {
+			//case ItemType::: debug_write(it.buf.data(), it.buf.size()); break;
+			case ItemType::Bool: debug_print(it->i32 ? "true" : "false"); break;
+			case ItemType::Nil: break;
+			case ItemType::Int32: debug_printdec_int32(it->i32); break;
+			case ItemType::Float: debug_print("TODO"); break;
+			case ItemType::String: debug_write(it->str->data, it->str->size); break;
 		}
+		dln();
 	}
-
-	void debug_stack_dump() {
-		debug_print("ipcstack_dump. total: "); debug_printdec_int32(total); dln();
-		for (int i = 0; i < total; i++) {
-			auto& it = m_stack[i];
-			debug_print(item_type_2_str(it.type)); debug_print(": ");
-			switch(m_stack[i].type) {
-				case MsgItemType::Buffer: debug_write(it.buf.data(), it.buf.size()); break;
-				case MsgItemType::Nil: break;
-				case MsgItemType::Word: debug_printhex_ptr((void*)it.uptr); break;
-				case MsgItemType::Int32: debug_printdec_int32(it.i32); break;
-				case MsgItemType::Vector: debug_printdec_int32(it.vec.size()); break;
-			}
-			dln();
-		}
-	}
-};
-
+}
+/*
 class ipcservice {
 public:
 	virtual void execute(ipcstack& stack, delegate<void> callback) = 0;
-};
+};*/
 
 #endif

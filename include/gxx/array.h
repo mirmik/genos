@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <utilxx/setget.h>
+#include <gxx/slice.h>
 
 namespace gxx {
 	template<typename T, size_t Size>
