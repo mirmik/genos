@@ -15,4 +15,5 @@ Implementation("genos.arch.atmega2560.drivers.usart", "cxx", {
 			"serial/avr/UsartDriver.cpp",
 		}
 	},
+	depends = "genos.fs.chardev",
 })

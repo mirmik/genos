@@ -31,3 +31,5 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 	};
 	arch_shutdown(mode);	
 }
+
+__attribute__((weak)) void emergency_stop() {}
