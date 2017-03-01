@@ -1,32 +1,30 @@
-#ifndef GENOS_KERNEL_FILE_H
-#define GENOS_KERNEL_FILE_H
+#ifndef KERNEL_FS_FILE_H
+#define KERNEL_FS_FILE_H
 
-#include <defines/off_t.h>
-#include <defines/size_t.h>
-#include <defines/ssize_t.h>
+#include <inttypes.h>
+#include <compiler.h>
 
-#include <proto/stream.h>
+struct file_s;
+typedef struct file_s file_t;
 
-class File : public Stream {
+typedef int(*file_write_t)(struct file_s*, const void*, size_t);
+typedef int(*file_read_t)(struct file_s*, const void*, size_t);
 
-public:
-
-	enum Type {
-		ftype_tty,
-		ftype_pipe,		
-	};
-
-	Type type;
-	
-	virtual int open();	
-	virtual int close();
-
-	virtual int write(const char* str, size_t len);
-	virtual int read(char* str, size_t len);
-
-	virtual off_t seek(off_t offset, int whence);
-	//virtual int ioctl(int cmd, unsigned long arg);
-
+struct file_operations {
+	file_write_t write;
+	file_read_t read;
 };
+
+struct file_s {
+	const struct file_operations * fops;
+};
+
+__BEGIN_DECLS
+
+static inline void file_init(file_t* filp, const struct file_operations* fops) {
+	filp->fops = fops;
+}
+
+__END_DECLS
 
 #endif

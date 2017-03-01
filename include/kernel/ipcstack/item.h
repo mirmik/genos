@@ -6,6 +6,7 @@ struct vector_item;
 struct dictionary_item;
 
 #include <inttypes.h>
+#include <compiler.h>
 
 enum ItemType {
 	//BasicTypes
@@ -30,5 +31,12 @@ struct stack_item {
 		dictionary_item* 	dct;
 	};	
 };
+
+__BEGIN_DECLS
+
+void stack_release_item(struct stack_item* it);
+void debug_stack_item_dump(struct stack_item* it);
+
+__END_DECLS
 
 #endif

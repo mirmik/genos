@@ -7,16 +7,12 @@ struct dictionary_item {
 	uint8_t ref;
 };
 
-static dictionary_item* construct_dictionary_item() {
-	struct dictionary_item* dct = new dictionary_item; 
-	dct->ref = 1;
-	return dct;
-}
+__BEGIN_DECLS
 
-static void release_dictionary_item(struct dictionary_item* dct) {
-	if( ! --dct->ref ) {
-		delete dct;
-	}
-}
+dictionary_item* construct_dictionary_item();
+
+void release_dictionary_item(struct dictionary_item* dct);
+
+__END_DECLS
 
 #endif

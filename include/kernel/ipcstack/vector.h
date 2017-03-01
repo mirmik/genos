@@ -12,35 +12,16 @@ struct vector_item {
 	gxx::Vector<stack_item> vec;
 };
 
-static vector_item* construct_vector_item() {
-	struct vector_item* vec = new vector_item; 
-	vec->ref = 1;
-	return vec;
-}
+__BEGIN_DECLS
 
-static void release_vector_item(struct vector_item* vec) {
-	if( ! --vec->ref ) {
-		auto end = vec->vec.end();
-		for(auto it = vec->vec.begin(); it!=end; it++) {
-			stack_release_item(it);
-		}
+vector_item* construct_vector_item();
 
-		delete vec;
-	}
-}
+void release_vector_item(struct vector_item* vec);
 
-static void vector_item_append(struct vector_item* vec, struct stack_item* it) {
-	vec->vec.push_back(*it);
-}
+void vector_item_append(struct vector_item* vec, struct stack_item* it);
 
-static void debug_stack_vector_dump(struct vector_item* vec) {
-	debug_print("[");
-	auto end = vec->vec.end();
-	for(auto it = vec->vec.begin(); it != end; it++) {
-		debug_stack_item_dump(&*it); 
-		if(it + 1 != end) debug_print(",");
-	}
-	debug_print("]");
-}
+void debug_stack_vector_dump(struct vector_item* vec);
+
+__END_DECLS
 
 #endif
