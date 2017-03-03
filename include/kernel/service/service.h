@@ -1,6 +1,8 @@
 #ifndef GENOS_SERVICE_H
 #define GENOS_SERVICE_H
 
+#include <kernel/service/errno.h>
+
 #include <kernel/sysalloc.h>
 #include <compiler.h>
 
@@ -27,13 +29,10 @@ public:
 struct service;
 
 struct service_operations {
-	uint8_t(*receive_query)(struct service* ths, struct query *q);
-	void(*reply_answer)(struct service* ths, struct query *q);
-};
-
-struct client_operations {
 	int(*send_query)(struct service* ths, struct query *q);
-	void(*receive_answer)(struct service* ths, struct query *q);
+	int(*receive_query)(struct service* ths, struct query *q);
+	int(*reply_answer)(struct service* ths, struct query *q);
+	int(*receive_answer)(struct service* ths, struct query *q);
 };
 
 class service {
@@ -42,7 +41,6 @@ public:
 	gxx::DList<query, &query::lnk> queries;
 
 	const struct service_operations* hops;
-	const struct client_operations* cops;
 	qid_t qid;
 
 	//hashtable routine

@@ -1,4 +1,5 @@
 #include <kernel/sched/scheduler.h>
+#include <kernel/sched/stubschedee.h>
 
 #include <gxx/DList.h>
 #include <util/bits.h>

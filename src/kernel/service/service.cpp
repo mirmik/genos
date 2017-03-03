@@ -44,16 +44,16 @@ void release_query(struct query *q) {
 int __kernel_send_query(struct gstack *stack, qid_t rqid, struct service * s) {
 	struct query *q = construct_query(stack, rqid, s->qid);
 	
-	assert(s && s->cops);
+	if (!(s && s->hops && s->hops->send_query)) return ERROR_WRONG_SENDER;
 	
-	int ret = s->cops->send_query(s, q);
+	int ret = s->hops->send_query(s, q);
 	release_query(q);
 	return ret;
 }
 
 int kernel_transport_query(struct query* q) {
 	struct service *r = kernel_get_service(q->receiver);
-	assert(r && r->hops);
+	if (!(r && r->hops)) return ERROR_WRONG_RECEIVER;
 	return r->hops->receive_query(r, q);	
 }
 

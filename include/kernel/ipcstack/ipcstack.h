@@ -16,6 +16,7 @@ public:
 	stack_item* buffer;
 	size_t 		size;
 	int total = 0;
+	int errstat;
 
 	ipcstack(gxx::slice<stack_item> slc) : buffer(slc.data()), size(slc.size()) {} 
 };
@@ -48,8 +49,19 @@ int32_t stack_vector_append(struct ipcstack* stack, int32_t vecindex, int32_t it
 void stack_pop(struct ipcstack* stack, int count);
 void stack_pop_all(struct ipcstack* stack);
 
+void stack_set_errstate(struct ipcstack* stack, int err);
+
 const char* stack_item_type_2_str(uint8_t type);
 void debug_ipcstack_dump(struct ipcstack* stack);
+
+
+// lib
+void stack_set_error(struct ipcstack* stack, int errcode, const char* message);
+
+int stack_is_error(struct ipcstack* stack);
+const char* stack_error_message(struct ipcstack* stack);
+
+
 
 __END_DECLS
 

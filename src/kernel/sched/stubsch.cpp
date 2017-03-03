@@ -1,7 +1,6 @@
 #include <kernel/sched/schedee.h>
+#include <kernel/sched/stubschedee.h>
 
 stub_schedee::stub_schedee() { 
-	//cops = NULL;
-	hops = NULL;
-	cops = &stub_schedee_service_operations;
+	hops = &stub_schedee_service_operations;
 }

@@ -162,6 +162,16 @@ void stack_pop_all(struct ipcstack* stack) {
 	stack_pop(stack, stack->total);
 }
 
+void stack_set_errstate(struct ipcstack* stack, int err) {
+	stack->errstat = err;
+}
+
+void stack_set_error(struct ipcstack* stack, int errcode, const char* message) {
+	stack_set_errstate(stack, errcode);
+	stack_pop_all(stack);
+	stack_push_local_string(stack, message, strlen(message));
+}
+
 const char* stack_item_type_2_str(uint8_t type) {
 	switch (type) {
 		case ItemType::Nil:				return "Nil";
@@ -176,11 +186,20 @@ const char* stack_item_type_2_str(uint8_t type) {
 }
 
 void debug_ipcstack_dump(struct ipcstack* stack) {
-	debug_print("ipcstack_dump. total: "); debug_printdec_int32(stack->total); dln();
+	debug_print("ipcstack_dump. total: "); debug_printdec_int32(stack->total); 
+	debug_print(", errstat: "); debug_printdec_int32(stack->errstat); dln();
 	for (int i = 0; i < stack->total; i++) {
 		stack_item* it = stack->buffer + i;
 		debug_print(stack_item_type_2_str(it->type)); debug_print(": ");
 		debug_stack_item_dump(it);
 		dln();
 	}
+}
+
+int stack_is_error(struct ipcstack* stack) {
+	return stack->errstat;
+}
+
+const char* stack_error_message(struct ipcstack* stack) {
+	return stack_get_item(stack, -1)->str->data;
 }
