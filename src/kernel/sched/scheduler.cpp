@@ -9,7 +9,8 @@ gxx::DList<schedee, &schedee::lnk> runlist[PRIORITY_TOTAL];
 gxx::DList<schedee, &schedee::lnk> waitlist;
 gxx::DList<schedee, &schedee::lnk> finallist;
 
-schedee* __current_schedee;
+stub_schedee __stubschedee;
+schedee* __current_schedee = &__stubschedee;
 schedee* current_schedee() { return __current_schedee; }
 void current_schedee(schedee* sch) { __current_schedee = sch; }
 

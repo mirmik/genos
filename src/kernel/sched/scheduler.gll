@@ -1,6 +1,6 @@
 Module("genos.kernel.scheduler", {
 	sources = {
-		cxx = "scheduler.cpp schedee.cpp schedee_ptr.cpp"
+		cxx = "scheduler.cpp schedee.cpp schedee_ptr.cpp stubsch.cpp"
 	},
 	depends = "genos.kernel.tasklets"
 })

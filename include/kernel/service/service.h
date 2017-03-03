@@ -9,13 +9,31 @@
 #include <kernel/ipcstack/ipcstack.h>
 #include <kernel/id/id.h>
 
-class query {
+#define WAIT_REPLY 0
+#define FAST_REPLY 1
+#define ERROR_REPLY 2
+
+struct query {
 public:
 	dlist_head lnk;
+	
 	ipcstack *stack;
+	int16_t errstat;
 
 	qid_t sender;
 	qid_t receiver;
+};
+
+struct service;
+
+struct service_operations {
+	uint8_t(*receive_query)(struct service* ths, struct query *q);
+	void(*reply_answer)(struct service* ths, struct query *q);
+};
+
+struct client_operations {
+	int(*send_query)(struct service* ths, struct query *q);
+	void(*receive_answer)(struct service* ths, struct query *q);
 };
 
 class service {
@@ -23,8 +41,11 @@ public:
 	hlist_node hlnk;
 	gxx::DList<query, &query::lnk> queries;
 
+	const struct service_operations* hops;
+	const struct client_operations* cops;
 	qid_t qid;
 
+	//hashtable routine
 	qid_t getkey() const {
 		return qid;
 	}
@@ -36,31 +57,16 @@ public:
 
 __BEGIN_DECLS
 
-static struct query * construct_query(struct ipcstack *stack, qid_t sender, qid_t receiver) {
-	struct query* q = (struct query*) sysalloc(sizeof(query));
-	dlist_init(&q->lnk);
-	q->stack = stack;
-	q->sender = sender;
-	q->receiver = receiver;
-	return q;
-}
+struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender);
+void release_query(struct query *q);
 
-struct service* get_service(qid_t qid);
+int __kernel_send_query(struct gstack *stack, qid_t rqid, qid_t sqid) ;
 
-static void release_query(struct query *q) {
-	sysfree(q);
-}
+int kernel_send_query(qid_t receiver, struct gstack *stack);
+int kernel_receive_query(struct query **ppq);
+int kernel_reply_query(struct query *q);
 
-static void __service_add_query(struct service *s, struct query *q) {
-	s->queries.move_back(*q);
-}
-
-static int service_add_query(qid_t qid, struct query *q) {
-	struct service *s = get_service(qid); 
-	if (!s) return -1;
-	__service_add_query(s, q);
-	return 0;
-}
+int kernel_transport_query(struct query *q);
 
 __END_DECLS
 

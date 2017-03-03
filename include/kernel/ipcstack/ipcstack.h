@@ -19,6 +19,7 @@ public:
 
 	ipcstack(gxx::slice<stack_item> slc) : buffer(slc.data()), size(slc.size()) {} 
 };
+#define gstack ipcstack
 
 __BEGIN_DECLS
 
