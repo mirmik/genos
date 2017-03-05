@@ -27,7 +27,7 @@ public:
 		head = tail = 0;
 	}
 
-	bool empty() {
+	bool empty() volatile {
 		return head == tail;
 	}
 

@@ -62,8 +62,6 @@ void stack_set_error(struct ipcstack* stack, int errcode, const char* message);
 int stack_is_error(struct ipcstack* stack);
 const char* stack_error_message(struct ipcstack* stack);
 
-
-
 __END_DECLS
 
 #endif

@@ -53,8 +53,8 @@ static int autom_schedee_add_query(struct service* s, struct query *q) {
 	{
 		*asch->ppstack = q->stack;
 		*asch->retqid = q->sender;
-
-		schedee_set_state_wait(asch, SCHEDEE_STATE_RUN);
+	
+		schedee_set_state_run(asch);
 	}
 	return 0;
 }

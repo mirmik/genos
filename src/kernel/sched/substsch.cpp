@@ -39,7 +39,7 @@ static int subst_schedee_add_query(struct service* s, struct query *q) {
 		*ssch->ppstack = q->stack;
 		*ssch->retqid = q->sender;
 
-		schedee_set_state_wait(ssch, SCHEDEE_STATE_RUN);
+		schedee_set_state_run(ssch);
 	}
 	return 0;
 }

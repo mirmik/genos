@@ -60,7 +60,7 @@ int UsartDevice::getc() {
 
 
 int UsartDevice::flush() {
-
+	while(!m_txring.empty());
 }
 
 int UsartDevice::avail() {
