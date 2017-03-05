@@ -17,26 +17,35 @@ void current_schedee(schedee* sch) { __current_schedee = sch; }
 
 static bool __noschedule = false;
 
-void set_state_run(schedee *sch) {
-	assert(!bits_mask(sch->flags, SCHEDEE_STATE_ZOMBIE));
+bool schedee_state_is(schedee *sch, uint8_t state) {
+	return bits_mask(sch->flags, SCHEDEE_STATE_MASK) == state;
+}
+
+void schedee_set_state_run(schedee *sch) {
+	assert((sch->flags & SCHEDEE_STATE_MASK) != SCHEDEE_STATE_ZOMBIE);
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_RUN);
 	runlist[sch->prio].move_back(*sch);
 }
 
-void set_state_wait(schedee *sch) {
-	if (bits_mask(sch->flags, SCHEDEE_STATE_ZOMBIE)) return;
-	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_WAIT);
-	waitlist.move_back(*sch);
+void schedee_set_state_wait(schedee *sch, uint8_t state) {
+	assert((sch->flags & SCHEDEE_STATE_MASK) != SCHEDEE_STATE_ZOMBIE);
+	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, state);
+	if (state == SCHEDEE_STATE_RUN) {
+		runlist[sch->prio].move_back(*sch);
+	}
+	else {
+		waitlist.move_back(*sch);
+	} 
 }
 
-void set_state_final(schedee *sch) {
-	assert(!bits_mask(sch->flags, SCHEDEE_STATE_ZOMBIE));
+void schedee_set_state_final(schedee *sch) {
+	assert((sch->flags & SCHEDEE_STATE_MASK) != SCHEDEE_STATE_ZOMBIE);
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_FINAL);
 	finallist.move_back(*sch);
 }
 
-void set_state_zombie(schedee *sch) {
-	debug_print("set_state_zombie "); dprhexln((uintptr_t)sch);
+void schedee_set_state_zombie(schedee *sch) {
+	//debug_print("set_state_zombie "); dprhexln((uintptr_t)sch);
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_ZOMBIE);
 	dlist_del_init(&sch->lnk);
 //	zombielist.move_back(*sch);
@@ -49,7 +58,7 @@ void set_final_deallocate(schedee *sch, bool en) {
 void set_final_release(schedee *sch, bool en) {
 	bits_lvl_mask(sch->flags, SCHEDEE_FINAL_RELEASE, en);
 }
-
+/*
 bool state_is_run(schedee *sch) {
 	return bits_mask(sch->flags, SCHEDEE_STATE_RUN);
 }
@@ -60,7 +69,7 @@ bool state_is_wait(schedee *sch) {
 
 bool state_is_zombie(schedee *sch) {
 	return bits_mask(sch->flags, SCHEDEE_STATE_ZOMBIE);
-}
+}*/
 
 bool is_final_deallocated(schedee *sch) {
 	return bits_mask(sch->flags, SCHEDEE_FINAL_DEALLOCATE);
@@ -80,6 +89,11 @@ void scheduler_unblock() {
 
 void genos_idle()__attribute__((weak));
 void genos_idle() {}
+
+void kernel_schedule_empty()__attribute__((weak));
+void kernel_schedule_empty() {
+	panic("kernel_schedule_empty");
+}
 
 void scheduler_free(void*) __attribute__((weak));
 void scheduler_free(void* ptr) { free(ptr); };
@@ -103,6 +117,8 @@ void __schedule__() {
 	for (priolvl = PRIORITY_TOTAL - 1; priolvl >= 0; --priolvl) {
 		if (!runlist[priolvl].empty()) goto runschedee;
 	}
+	dprln(waitlist.size());
+	if (waitlist.empty()) kernel_schedule_empty();
 	genos_idle();
 	goto __schedule_loop;	
 	//panic("nobody to run");
@@ -114,11 +130,9 @@ void __schedule__() {
 
 	//Перемещаем в конец списка.
 	runlist[priolvl].move_back(sch);
-	sch.execute();
-
-	//while (sch.signals & sch.signals_mask) sch.signal_handler();
-	//if (sch.is_ready()) sch.execute();
-	//if (sch.is_ready()) runlist[sch.dyn_prio].move_back(sch);
-
+	
+	//Если execute вернет SCHEDULE_RESUME (1), цикл завершается. 
+	//SCHEDULE_REPEAT (0) ведет к следующей итерации.
+	if (sch.execute()) return;
 	goto __schedule_loop;
 }

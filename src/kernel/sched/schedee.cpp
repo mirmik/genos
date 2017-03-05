@@ -6,12 +6,12 @@ schedee::schedee() : lnk() {
 }
 
 schedee& schedee::Run() {
-	set_state_run(this);
+	schedee_set_state_run(this);
 	return *this;
 }
 
 schedee& schedee::Stop() {
-	set_state_wait(this);
+	schedee_set_state_wait(this, SCHEDEE_BLOCKED_STOP);
 	return *this;
 }
 
@@ -20,11 +20,11 @@ bool schedee::Completed() {
 }
 
 void schedee::Exit() {
-	set_state_final(this);
+	schedee_set_state_final(this);
 }
 
 void schedee::final() {
-	set_state_zombie(this);
+	schedee_set_state_zombie(this);
 
 	if (final_callback) final_callback(this);
 

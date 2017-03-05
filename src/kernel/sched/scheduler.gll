@@ -4,3 +4,10 @@ Module("genos.kernel.scheduler", {
 	},
 	depends = "genos.kernel.tasklets"
 })
+
+Module("genos.kernel.subst_schedee", {
+	sources = {
+		cxx = "substsch.cpp"
+	},
+	depends = "genos.kernel.scheduler"
+})

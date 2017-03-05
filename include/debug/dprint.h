@@ -172,7 +172,7 @@ void dprhex(int64_t obj);
 void dpr_dump(void* obj, uint32_t size);
 void dpr_dump_ascii(void* obj, uint32_t size);
 
-template<typename T> void dprptr(const T*& obj) 
+template<typename T> void dprptr(const T* const& obj) 
 	{ debug_printhex_ptr((void*)obj); };
 
 template<typename T> void dprln(const T& obj) 

@@ -9,28 +9,23 @@
 #include <gxx/DList.h>
 #include <gxx/HashTable.h>
 #include <kernel/ipcstack/ipcstack.h>
+#include <kernel/service/query.h>
 #include <kernel/id/id.h>
 
-#define WAIT_REPLY 0
-#define FAST_REPLY 1
-#define ERROR_REPLY 2
+#define WAIT_ANSWER 0
+#define FAST_ANSWER 1
 
-struct query {
-public:
-	dlist_head lnk;
-	
-	ipcstack *stack;
-	int16_t errstat;
+#define WAIT_RECEIVE 0
+#define FAST_RECEIVE 1
 
-	qid_t sender;
-	qid_t receiver;
-};
+#define ERROR_REPLY -1
 
 struct service;
 
 struct service_operations {
-	int(*send_query)(struct service* ths, struct query *q);
-	int(*receive_query)(struct service* ths, struct query *q);
+	int(*send_query)(struct service* ths, struct gstack* stack, qid_t rqid);
+	int(*add_query)(struct service* ths, struct query *q);
+	int (*receive_query)(struct service* ths, qid_t q, struct gstack** ppstack, qid_t *retqid);
 	int(*reply_answer)(struct service* ths, struct query *q);
 	int(*receive_answer)(struct service* ths, struct query *q);
 };
@@ -51,6 +46,8 @@ public:
 	size_t hash(size_t seed) const {
 		return qid ^ seed;
 	}
+
+	~service () { hlist_del(&hlnk); }
 };
 
 __BEGIN_DECLS
@@ -61,10 +58,14 @@ void release_query(struct query *q);
 int __kernel_send_query(struct gstack *stack, qid_t rqid, qid_t sqid) ;
 
 int kernel_send_query(qid_t receiver, struct gstack *stack);
-int kernel_receive_query(struct query **ppq);
-int kernel_reply_query(struct query *q);
+int kernel_receive_query(qid_t sender, struct ipcstack **ppstack, qid_t * retqid);
+int kernel_reply_query(qid_t receiver);
 
 int kernel_transport_query(struct query *q);
+int kernel_transport_answer(struct query *q);
+
+query* kernel_service_find_query(struct service *s, qid_t qid);
+void kernel_service_unlink_query(struct service* s, struct query* q);
 
 __END_DECLS
 

@@ -12,13 +12,13 @@ struct dlist_head
 	struct dlist_head* next;
 	struct dlist_head* prev;
 
-	__if_cplusplus(
+	/*__if_cplusplus(
 	inline dlist_head() : next(this), prev(this) {};
 	inline ~dlist_head() { 
 		prev->next = next;
 		next->prev = prev;
 	}
-	)
+	)*/
 };
 
 #define DLIST_HEAD_INIT(name) { &(name), &(name) }

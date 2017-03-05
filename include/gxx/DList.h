@@ -65,6 +65,14 @@ namespace gxx {
 			move_back(*begin());
 		};
 
+		int size() {
+			int i = 0;
+			for(auto& v : *this) {
+				i++;
+			}
+			return i;
+		};
+
 		class iterator {
 		public:
 			using iterator_category = bidirectional_iterator_tag;

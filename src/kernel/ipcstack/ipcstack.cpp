@@ -28,7 +28,7 @@ void stack_push_float(struct ipcstack* stack, float val) {
 	it->flt = val;
 }
 
-void stack_push_string(struct ipcstack* stack, const char* data, size_t size) {
+void stack_push_bytestring(struct ipcstack* stack, const char* data, size_t size) {
 	assert(stack->total != stack->size);
 	stack_item* it = stack->buffer + stack->total++;
 	it->type = ItemType::String;
@@ -36,6 +36,10 @@ void stack_push_string(struct ipcstack* stack, const char* data, size_t size) {
 	struct string_item* str = construct_string_item(data, size);
 
 	it->str = str;
+}
+
+void stack_push_string(struct ipcstack* stack, const char* data) {
+	stack_push_bytestring(stack, data, strlen(data));
 }
 
 char* stack_push_empty_string(struct ipcstack* stack, size_t size) {

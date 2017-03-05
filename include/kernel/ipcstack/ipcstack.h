@@ -16,7 +16,7 @@ public:
 	stack_item* buffer;
 	size_t 		size;
 	int total = 0;
-	int errstat;
+	int errstat = 0;
 
 	ipcstack(gxx::slice<stack_item> slc) : buffer(slc.data()), size(slc.size()) {} 
 };
@@ -29,7 +29,8 @@ void stack_push_bool(struct ipcstack* stack, int8_t val);
 void stack_push_int32(struct ipcstack* stack, int32_t val);
 void stack_push_float(struct ipcstack* stack, float val);
 
-void stack_push_string(struct ipcstack* stack, const char* data, size_t size);
+void stack_push_string(struct ipcstack* stack, const char* str);
+void stack_push_bytestring(struct ipcstack* stack, const char* data, size_t size);
 char* stack_push_empty_string(struct ipcstack* stack, size_t size);
 void stack_push_local_string(struct ipcstack* stack, const char* data, size_t size);
 

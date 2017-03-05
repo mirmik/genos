@@ -5,6 +5,8 @@ Module("genos.arch.avr.head", {
 			"src/asm/atmega/irqcall.S", 
 			"src/asm/atmega/start.S",  
 			"src/asm/atmega/end_of_programm.c", 
+			"src/asm/context.c", 
+			"src/asm/switch_context.S",
 		}
 	}
 })

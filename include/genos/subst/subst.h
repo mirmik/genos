@@ -11,7 +11,7 @@ struct context;
 __BEGIN_DECLS
 
 void context_switch (struct context* prev, struct context* next);
-void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param);
+void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param, uint8_t irqen);
 
 __END_DECLS
 

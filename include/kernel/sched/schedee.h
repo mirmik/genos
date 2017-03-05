@@ -13,12 +13,20 @@ class schedee;
 schedee* current_schedee();
 void current_schedee(schedee* sch);
 
+#define SCHEDULE_RESUME 1
+#define SCHEDULE_REPEAT 0
+
+static constexpr uint8_t SCHEDEE_STATE_INIT = 0x00;
 static constexpr uint8_t SCHEDEE_STATE_RUN = 0x01;
 static constexpr uint8_t SCHEDEE_STATE_WAIT = 0x02;
-static constexpr uint8_t SCHEDEE_STATE_FINAL = 0x04;
-static constexpr uint8_t SCHEDEE_STATE_ZOMBIE = 0x08;
-static constexpr uint8_t SCHEDEE_STATE_MASK =
-	SCHEDEE_STATE_RUN | SCHEDEE_STATE_WAIT | SCHEDEE_STATE_FINAL | SCHEDEE_STATE_ZOMBIE;
+static constexpr uint8_t SCHEDEE_BLOCKED_SEND = 0x03;
+static constexpr uint8_t SCHEDEE_BLOCKED_RECEIVE = 0x04;
+static constexpr uint8_t SCHEDEE_STATE_FINAL = 0x05;
+static constexpr uint8_t SCHEDEE_STATE_ZOMBIE = 0x06;
+static constexpr uint8_t SCHEDEE_BLOCKED_STOP = 0x07;
+
+static constexpr uint8_t SCHEDEE_STATE_MASK = 0x0F;
+
 
 static constexpr uint8_t SCHEDEE_FINAL_DEALLOCATE = 0x80;
 static constexpr uint8_t SCHEDEE_FINAL_RELEASE = 0x40;
@@ -43,8 +51,8 @@ public:
 
  	virtual ~schedee() { }
 
-	schedee& Result(void* res);
-	void* Result();
+	//schedee& Result(void* res);
+	//void* Result();
 	
 	schedee& Run();
 	schedee& Stop();
@@ -66,29 +74,10 @@ public:
 	bool Completed();
 	bool operator==(const schedee& other) { return this == &other; }
 
-	virtual void execute() = 0;
-	virtual void invalidate() = 0;
+	virtual uint8_t execute() = 0;
+	//virtual void invalidate() = 0;
 	void final();
 };
-
-
-
-class delegate_schedee : public schedee {
-public:
-	delegate_schedee(delegate<void> dlg) : m_dlg(dlg) {  }
-	~delegate_schedee() { }
-
-private:
-	virtual void execute() override {
-		m_dlg();
-	}
-
-	delegate<void> m_dlg;
-
-protected:
-	virtual void invalidate() override {}
-};
-
 
 //static void resume_parent_schedee(schedee* sch) {
 //	((schedee*)sch->argument) -> Run();

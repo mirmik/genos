@@ -40,8 +40,10 @@ void context_print(struct context* ctx)
 	debug_print("sreg:\t\t");debug_printhex_uint8(ctx->control);dln();
 };
 
-void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param)
+void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param, uint8_t irqen)
 {
+	ctx->regs[1] = 0;
+	ctx->control = irqen ? 0x80 : 0;
 	ctx->sp = stck;
 	ctx->pc = (uintptr_t)func;
 	*(void**)&ctx->regs[24] = param;
