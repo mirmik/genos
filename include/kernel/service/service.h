@@ -6,8 +6,11 @@
 #include <kernel/sysalloc.h>
 #include <compiler.h>
 
-#include <gxx/DList.h>
-#include <gxx/HashTable.h>
+//#include <gxx/DList.h>
+//#include <gxx/HashTable.h>
+
+#include <datastruct/hlist_head.h>
+
 #include <kernel/ipcstack/ipcstack.h>
 #include <kernel/service/query.h>
 #include <kernel/id/id.h>
@@ -30,14 +33,17 @@ struct service_operations {
 	int(*receive_answer)(struct service* ths, struct query *q);
 };
 
-class service {
-public:
-	hlist_node hlnk;
-	gxx::DList<query, &query::lnk> queries;
+struct service {
+//public:
+	struct hlist_node hlnk;
+	//gxx::DList<query, &query::lnk> queries;
+	struct dlist_head qlist;
 
 	const struct service_operations* hops;
 	qid_t qid;
 
+
+__if_cplusplus(
 	//hashtable routine
 	qid_t getkey() const {
 		return qid;
@@ -46,11 +52,13 @@ public:
 	size_t hash(size_t seed) const {
 		return qid ^ seed;
 	}
+)
 
-	~service () { hlist_del(&hlnk); }
 };
 
 __BEGIN_DECLS
+
+void service_init(struct service*);
 
 struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender);
 void release_query(struct query *q);
@@ -64,7 +72,7 @@ int kernel_reply_query(qid_t receiver);
 int kernel_transport_query(struct query *q);
 int kernel_transport_answer(struct query *q);
 
-query* kernel_service_find_query(struct service *s, qid_t qid);
+struct query* kernel_service_find_query(struct service *s, qid_t qid);
 void kernel_service_unlink_query(struct service* s, struct query* q);
 
 __END_DECLS

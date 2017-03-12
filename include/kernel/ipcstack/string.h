@@ -20,9 +20,9 @@ struct string_item {
 
 __BEGIN_DECLS
 
-string_item* construct_string_item(const char* data, size_t size);
-string_item* construct_local_string_item(const char* data, size_t size);
-string_item* construct_empty_string_item(size_t size);
+struct string_item* construct_string_item(const char* data, size_t size);
+struct string_item* construct_local_string_item(const char* data, size_t size);
+struct string_item* construct_empty_string_item(size_t size);
 void release_string_item(struct string_item* str);
 
 __END_DECLS

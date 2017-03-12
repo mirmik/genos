@@ -3,6 +3,6 @@
 
 #include <inttypes.h>
 
-using qid_t = int32_t;
+typedef int32_t qid_t;
 
 #endif

@@ -1,8 +1,0 @@
-regmodule
-{
-	name = "vfs",
-	sources = 
-	{
-		cc = {"filesystem.c"},
-	},
-}

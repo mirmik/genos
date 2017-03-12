@@ -3,22 +3,25 @@
 
 #include <kernel/sched/schedee.h>
 #include <genos/subst/subst.h>
+#include <genos/sigslot/delegate.h>
 
 class subst_schedee : public schedee {
 public:
 	context cntxt;
 	
-	gstack** 	ppstack;
-	qid_t* 		retqid;
+	union {
+		struct { 
+			gstack** 	ppstack;
+			qid_t* 		retqid;
+		};
+		struct { 
+			void* startarg;
+		};
+	};
+	delegate<void, void*> startpoint;
+	void* stackptr;
 
-	subst_schedee(void(*func)(void*), void* arg);
-	~subst_schedee() override;
-
-private:
-	virtual uint8_t execute() override;
-
-protected:
-	//virtual void invalidate() override {}
+	subst_schedee(delegate<void, void*> dlg, void* arg);
 };
 
 #endif

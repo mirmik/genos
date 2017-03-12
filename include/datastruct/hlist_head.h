@@ -11,8 +11,9 @@ struct hlist_node {
 
 struct hlist_head {
 	struct hlist_node* first;
-
+__if_cplusplus(
 	hlist_head() : first(nullptr) {};
+	)
 };
 
 __BEGIN_DECLS

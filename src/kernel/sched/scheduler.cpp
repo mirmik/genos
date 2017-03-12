@@ -6,14 +6,15 @@
 #include <utilxx/setget.h>
 #include <kernel/tasks/tasklet.h>
 
-gxx::DList<schedee, &schedee::lnk> runlist[PRIORITY_TOTAL];
-gxx::DList<schedee, &schedee::lnk> waitlist;
-gxx::DList<schedee, &schedee::lnk> finallist;
-
 stub_schedee __stubschedee;
+
 schedee* __current_schedee = &__stubschedee;
 schedee* current_schedee() { return __current_schedee; }
 void current_schedee(schedee* sch) { __current_schedee = sch; }
+
+gxx::DList<schedee, &schedee::lnk> runlist[PRIORITY_TOTAL];
+gxx::DList<schedee, &schedee::lnk> waitlist;
+gxx::DList<schedee, &schedee::lnk> finallist;
 
 static bool __noschedule = false;
 
@@ -126,6 +127,7 @@ void __schedule__() {
 	runschedee:
 	schedee& sch = *runlist[priolvl].begin();
 	
+	//if (current_schedee() != &sch) current_schedee()->displace(); 	
 	current_schedee(&sch);
 
 	//Перемещаем в конец списка.
@@ -135,4 +137,8 @@ void __schedule__() {
 	//SCHEDULE_REPEAT (0) ведет к следующей итерации.
 	if (sch.execute()) return;
 	goto __schedule_loop;
+}
+
+void __displace__() {
+	__schedule__();
 }

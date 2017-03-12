@@ -1,6 +1,6 @@
 #ifndef GENOS_UART_RING_DRIVER_H
 #define GENOS_UART_RING_DRIVER_H
-
+/*
 #include <drivers/serial/SerialDriver.h>
 #include <utilxx/classes/ByteRing.h>
 
@@ -36,5 +36,5 @@ public:
 	bool waitwrite(WaiterBasic* waiter);
 	bool waitread(WaiterBasic* waiter);
 };
-
+*/
 #endif

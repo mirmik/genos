@@ -13,6 +13,12 @@ __BEGIN_DECLS
 void context_switch (struct context* prev, struct context* next);
 void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param, uint8_t irqen);
 
+//EXPERIMENTAL
+void context_load(struct context* next);
+void context_save_and_invoke_schedule(struct context* cntxt);
+
+void context_print (struct context* cntxt);
+
 __END_DECLS
 
 #endif

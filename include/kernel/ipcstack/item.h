@@ -10,15 +10,15 @@ struct dictionary_item;
 
 enum ItemType {
 	//BasicTypes
-	Int32 = 0,
-	Float = 1,
-	Nil = 2,
-	Bool = 3,
-	String = 4,
+	ItemType_Int32 = 0,
+	ItemType_Float = 1,
+	ItemType_Nil = 2,
+	ItemType_Bool = 3,
+	ItemType_String = 4,
 	
 	//Collection
-	Vector = 5,
-	Dictionary = 6,
+	ItemType_Vector = 5,
+	ItemType_Dictionary = 6,
 };
 
 struct stack_item {
@@ -26,9 +26,9 @@ struct stack_item {
 	union {
 		int32_t 			i32;
 		float 				flt;
-		string_item* 		str;
-		vector_item* 		vec;
-		dictionary_item* 	dct;
+		struct string_item* 		str;
+		struct vector_item* 		vec;
+		struct dictionary_item* 	dct;
 	};	
 };
 

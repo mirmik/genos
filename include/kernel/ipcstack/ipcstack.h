@@ -11,14 +11,15 @@
 #include <compiler.h>
 
 struct ipcstack {
-public:
+//public:
 	//data
-	stack_item* buffer;
-	size_t 		size;
-	int total = 0;
-	int errstat = 0;
-
+	struct stack_item* buffer;
+	size_t size;
+	int total;
+	int errstat;
+__if_cplusplus(
 	ipcstack(gxx::slice<stack_item> slc) : buffer(slc.data()), size(slc.size()) {} 
+)
 };
 #define gstack ipcstack
 
@@ -38,12 +39,12 @@ void stack_push_vector(struct ipcstack* stack);
 
 struct stack_item* stack_get_item(struct ipcstack* stack, int index);
 
-int32_t stack_get_bool(struct ipcstack* stack, int index, int* isbool = NULL);
-int32_t stack_get_int32(struct ipcstack* stack, int index, int* isi32 = NULL);
-int32_t stack_get_string_size(struct ipcstack* stack, int index, int* isstr = NULL);
-int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t bufsize,  int* isstr = NULL);
+int32_t stack_get_bool(struct ipcstack* stack, int index, int* isbool);
+int32_t stack_get_int32(struct ipcstack* stack, int index, int* isi32);
+int32_t stack_get_string_size(struct ipcstack* stack, int index, int* isstr);
+int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t bufsize, int* isstr);
 
-void stack_item_addref(stack_item* it);
+void stack_item_addref(struct stack_item* it);
 
 int32_t stack_vector_append(struct ipcstack* stack, int32_t vecindex, int32_t itemindex);
 

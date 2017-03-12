@@ -83,12 +83,14 @@ static inline void dlist_move_next(struct dlist_head* lst, struct dlist_head* he
 	__dlist_del(lst);
 	dlist_add_next(lst, head);
 };
+#define dlist_move_back(a,b) dlist_move_prev(a,b)
 
 static inline void dlist_move_prev(struct dlist_head* lst, struct dlist_head* head)
 {
 	__dlist_del(lst);
 	dlist_add_prev(lst, head);
 };
+#define dlist_move_back(a,b) dlist_move_prev(a,b)
 
 __END_DECLS
 

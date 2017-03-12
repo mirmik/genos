@@ -1,6 +1,13 @@
-Module("genos.kernel.scheduler", {
+Implementation("genos.kernel.scheduler", "standart", {
 	sources = {
-		cxx = "scheduler.cpp schedee.cpp schedee_ptr.cpp stubsch.cpp"
+		cxx = "scheduler.cpp schedee.cpp stubsch.cpp"
+	},
+	depends = "genos.kernel.tasklets"
+})
+
+Implementation("genos.kernel.scheduler", "displace", {
+	sources = {
+		cc = "scheddisp.c schedee.c stubsch.c"
 	},
 	depends = "genos.kernel.tasklets"
 })

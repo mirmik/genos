@@ -1,18 +1,15 @@
-#ifndef GENOS_AVR_USART_DEVICE_H
-#define GENOS_AVR_USART_DEVICE_H
-
 #include "util/bits.h"
-#include <drivers/serial/avr/UsartDevice.h>
+#include <drivers/serial/avr/UsartStream.h>
 
-void interruptHandler_UsartRX(UsartDevice* usart);
-void interruptHandler_UsartTX(UsartDevice* usart);
-void interruptHandler_UsartTC(UsartDevice* usart);
+void interruptHandler_UsartRX(UsartStream* usart);
+void interruptHandler_UsartTX(UsartStream* usart);
+void interruptHandler_UsartTC(UsartStream* usart);
 
-UsartDevice::UsartDevice(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf)
+UsartStream::UsartStream(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf)
  : UsartDriver(udata.regs, udata.irqbase), m_txring(txbuf), m_rxring(rxbuf) {}
 
 
-int UsartDevice::begin(int32_t baud, 
+int UsartStream::begin(int32_t baud, 
 		Uart::Parity parity, 
 		Uart::StopBits stopBits, 
 		Uart::DataBits dataBits) {
@@ -32,7 +29,7 @@ int UsartDevice::begin(int32_t baud,
 	irqEnableRX(true);
 }
 
-int UsartDevice::write(const char* data, size_t size) {
+int UsartStream::write(const char* data, size_t size) {
 	if (size == 0) return 0;
 
 	int ret = 0;
@@ -50,34 +47,34 @@ int UsartDevice::write(const char* data, size_t size) {
 	return ret;
 }
 
-int UsartDevice::read(char* data, size_t size) {
+int UsartStream::read(char* data, size_t size) {
 	return m_rxring.read(data, size);
 }
 
-int UsartDevice::getc() {
+int UsartStream::getc() {
 	return m_rxring.getc();
 }
 
 
-int UsartDevice::flush() {
+int UsartStream::flush() {
 	while(!m_txring.empty());
 }
 
-int UsartDevice::avail() {
+int UsartStream::avail() {
 	return m_rxring.avail();
 }
 
-int UsartDevice::room() {
+int UsartStream::room() {
 	return m_txring.avail();
 }
 
 
-void interruptHandler_UsartRX(UsartDevice* usart) {
+void interruptHandler_UsartRX(UsartStream* usart) {
 	if (usart->m_rxring.putc(usart->recvbyte()) == 0) panic("USART OVERPUT");
 	usart->rxevent.emit_one(usart);
 }
 
-void interruptHandler_UsartTX(UsartDevice* usart) {
+void interruptHandler_UsartTX(UsartStream* usart) {
 	if (usart->m_txring.empty()) {
 		usart->irqEnableTX(false);
 		return;
@@ -86,8 +83,6 @@ void interruptHandler_UsartTX(UsartDevice* usart) {
 	usart->sendbyte(usart->m_txring.getc());
 }
 
-void interruptHandler_UsartTC(UsartDevice* usart) {
+void interruptHandler_UsartTC(UsartStream* usart) {
 	panic("tcHandler");
 }
-
-#endif

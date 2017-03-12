@@ -1,6 +1,6 @@
 #include <kernel/ipcstack/string.h>
 
-string_item* construct_string_item(const char* data, size_t size) {
+struct string_item* construct_string_item(const char* data, size_t size) {
 	struct string_item* str = (struct string_item*) malloc(sizeof(struct string_item)); 
 	str->data = (char*) malloc(size);
 	str->size = size;
@@ -10,7 +10,7 @@ string_item* construct_string_item(const char* data, size_t size) {
 	return str;
 }
 
-string_item* construct_local_string_item(const char* data, size_t size) {
+struct string_item* construct_local_string_item(const char* data, size_t size) {
 	struct string_item* str = (struct string_item*) malloc(sizeof(struct string_item)); 
 	str->data = (char*) data;
 	str->size = size;
@@ -19,7 +19,7 @@ string_item* construct_local_string_item(const char* data, size_t size) {
 	return str;
 }
 
-string_item* construct_empty_string_item(size_t size) {
+struct string_item* construct_empty_string_item(size_t size) {
 	struct string_item* str = (struct string_item*) malloc(sizeof(struct string_item)); 
 	str->data = (char*) malloc(size);
 	str->size = size;

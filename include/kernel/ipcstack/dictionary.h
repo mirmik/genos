@@ -9,7 +9,7 @@ struct dictionary_item {
 
 __BEGIN_DECLS
 
-dictionary_item* construct_dictionary_item();
+struct dictionary_item* construct_dictionary_item();
 
 void release_dictionary_item(struct dictionary_item* dct);
 

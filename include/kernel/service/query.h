@@ -2,12 +2,13 @@
 #define GENOS_KERNEL_QUERY_H
 
 #include <kernel/id/id.h>
+#include <datastruct/dlist_head.h>
 
 struct query {
-public:
-	dlist_head lnk;
+//public:
+	struct dlist_head lnk;
 	
-	ipcstack *stack;
+	struct ipcstack *stack;
 	int16_t errstat;
 
 	qid_t sender;

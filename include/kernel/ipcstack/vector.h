@@ -1,7 +1,7 @@
 #ifndef GENOS_KERNEL_ITEM_VECTOR_H
 #define GENOS_KERNEL_ITEM_VECTOR_H
 
-#include <gxx/Vector.h>
+//#include <gxx/Vector.h>
 #include <kernel/ipcstack/item.h>
 
 void debug_stack_item_dump(struct stack_item* it);
@@ -9,12 +9,12 @@ void stack_release_item(struct stack_item* it);
 
 struct vector_item {
 	uint8_t ref;
-	gxx::Vector<stack_item> vec;
+	//gxx::Vector<stack_item> vec;
 };
 
 __BEGIN_DECLS
 
-vector_item* construct_vector_item();
+struct vector_item* construct_vector_item();
 
 void release_vector_item(struct vector_item* vec);
 

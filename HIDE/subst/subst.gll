@@ -1,8 +1,0 @@
-regmetamodule
-{
-	name = "subst",
-	implementations = 
-	{
-		{name = "avr"}
-	}
-}

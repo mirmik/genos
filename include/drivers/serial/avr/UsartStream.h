@@ -1,5 +1,5 @@
-#ifndef AVR_USART_DEVICE_H
-#define AVR_USART_DEVICE_H
+#ifndef AVR_USART_STREAM_H
+#define AVR_USART_STREAM_H
 
 #include <drivers/serial/Uart.h>
 #include <drivers/serial/avr/UsartDriver.h>
@@ -8,11 +8,11 @@
 #include <utilxx/classes/ByteRing.h>
 #include <gxx/array.h>
 
-class UsartDevice : public CharDevFile, public UsartDriver {
+class UsartStream : public CharDevFile, public UsartDriver {
 
 private:
-	usart_regs* m_regs;
-	uint8_t m_irqbase;
+//	usart_regs* m_regs;
+//	uint8_t m_irqbase;
 
 	ByteRing m_txring;
 	ByteRing m_rxring;
@@ -35,11 +35,11 @@ public:
 	
 	int end();
 
-	UsartDevice(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf);
+	UsartStream(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf);
 
-	friend void interruptHandler_UsartRX(UsartDevice* usart);
-	friend void interruptHandler_UsartTX(UsartDevice* usart);
-	friend void interruptHandler_UsartTC(UsartDevice* usart);
+	friend void interruptHandler_UsartRX(UsartStream* usart);
+	friend void interruptHandler_UsartTX(UsartStream* usart);
+	friend void interruptHandler_UsartTC(UsartStream* usart);
 };
 
 #endif

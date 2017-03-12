@@ -9,16 +9,11 @@
 class autom_schedee : public schedee {
 protected:
 	autom_schedee();
-	~autom_schedee() override { }
 public:
 	gstack** 	ppstack;
 	qid_t* 		retqid;
 	
-protected:
-	virtual uint8_t execute() override {
-		Routine();
-		return SCHEDULE_REPEAT;
-	}
+public:
 
 	//virtual void invalidate() override {}
 	virtual void Routine() = 0;
@@ -27,7 +22,7 @@ protected:
 static int autom_schedee_send_query(struct service* s, struct gstack *stack, qid_t rqid) {
 	dprln("autom_schedee_send_query");
 	struct autom_schedee *asch = (autom_schedee*) s;
-	struct query* q = construct_query(stack, rqid, asch->qid);
+	struct query* q = construct_query(stack, rqid, asch->srvs.qid);
 
 	assert(schedee_state_is(asch, SCHEDEE_STATE_RUN));
 	
@@ -47,7 +42,7 @@ static int autom_schedee_add_query(struct service* s, struct query *q) {
 	dprln("autom_schedee_add_query");
 	struct autom_schedee *asch = (autom_schedee*) s;
 
-	asch->queries.move_back(*q);
+	dlist_move_back(&q->lnk, &asch->srvs.qlist);
 	if (schedee_state_is(asch, SCHEDEE_BLOCKED_RECEIVE) 
 		&& (*asch->retqid == 0 || *asch->retqid == q->sender)) 
 	{
@@ -88,7 +83,7 @@ static int autom_schedee_receive_answer(struct service* s, struct query *q) {
 	dprln("autom_schedee_receive_answer");
 	struct autom_schedee *asch = (autom_schedee*) s;
 
-	if (!schedee_state_is(asch, SCHEDEE_BLOCKED_SEND) || q->sender != asch->qid) 
+	if (!schedee_state_is(asch, SCHEDEE_BLOCKED_SEND) || q->sender != asch->srvs.qid) 
 		panic("REPLY TO UNSEND QUERY");
 
 	schedee_set_state_run(asch);
@@ -103,8 +98,34 @@ static const struct service_operations autom_schedee_service_operations = {
 	.receive_answer = autom_schedee_receive_answer,
 };
 
+
+
+uint8_t autom_schedee_execute(struct schedee* sch) {
+	struct autom_schedee * asch = (struct autom_schedee *) sch;
+	asch->Routine();
+	return SCHEDULE_RESUME;
+}
+
+uint8_t autom_schedee_engage(struct schedee* sch) {
+	struct autom_schedee * asch = (struct autom_schedee *) sch;
+	asch->Routine();
+}
+
+uint8_t autom_schedee_displace(struct schedee* sch) {}
+uint8_t autom_schedee_lastexit(struct schedee* sch) {}
+uint8_t autom_schedee_destructor(struct schedee* sch) {}
+
+const struct schedee_operations autom_schedee_schedee_operations = {
+	.execute = autom_schedee_execute,
+	.engage = autom_schedee_engage,
+	.displace = autom_schedee_displace,
+	.lastexit = autom_schedee_lastexit,
+	.destructor = autom_schedee_destructor,
+};
+
 autom_schedee::autom_schedee() { 
-	hops = &autom_schedee_service_operations;
+	srvs.hops = &autom_schedee_service_operations;
+	schops = &autom_schedee_schedee_operations;
 }
 
 #endif

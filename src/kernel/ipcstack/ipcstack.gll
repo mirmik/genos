@@ -1,5 +1,6 @@
 Module ("genos.kernel.ipcstack", {
 	sources = {
-		cxx = "item.cpp ipcstack.cpp string.cpp vector.cpp dictionary.cpp"
+		cxx = "vector.cpp dictionary.cpp",
+		cc = "item.c ipcstack.c string.c"
 	},
 }) 

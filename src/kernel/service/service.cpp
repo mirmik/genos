@@ -3,10 +3,16 @@
 #include <kernel/sched/schedee.h>
 #include <kernel/panic.h>
 
+#include <debug/dprint.h>
+
 qid_t __cur_qid;
 qid_t __max_qid;
 
 gxx::HashTable<service, &service::hlnk> service_hashtable;
+
+void service_init(struct service* srvs) {
+	dlist_init(&srvs->qlist);
+};
 
 struct service* kernel_get_service(qid_t qid) {
 	service* s;
@@ -30,6 +36,7 @@ qid_t kernel_registry_service(service* s) {
 }
 
 struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender) {
+	//debug_print("construct_query\r\n");
 	struct query* q = (struct query*) sysalloc(sizeof(query));
 	dlist_init(&q->lnk);
 	q->stack = stack;
@@ -39,6 +46,7 @@ struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sen
 }
 
 void release_query(struct query *q) {
+	//debug_print("release_query\r\n");
 	sysfree(q);
 }
 
@@ -86,12 +94,16 @@ qid_t kernel_get_new_qid() {
 }
 
 struct query * kernel_service_find_query(struct service * s, qid_t qid) {
-	if (s->queries.empty()) return NULL;
-	if (0 == qid) return &*s->queries.begin();
-	auto q = gxx::find_if(s->queries.begin(), s->queries.end(), [qid](const query& q) -> bool{
-		return q.sender == qid;
-	});
-	return q == s->queries.end() ? NULL : &*q;
+	if (dlist_empty(&s->qlist)) return NULL;
+	if (0 == qid) return dlist_first_entry(&s->qlist, struct query, lnk);
+	//auto q = gxx::find_if(s->queries.begin(), s->queries.end(), [qid](const query& q) -> bool{
+	//	return q.sender == qid;
+	//});
+	struct query* it;
+	dlist_for_each_entry(it, &s->qlist, lnk) {
+		if (it->sender == qid) return it;
+	}
+	return NULL;
 }
 
 
@@ -101,17 +113,17 @@ void kernel_service_unlink_query(struct service* s, struct query* q) {
 
 ////////SCHEDEE_API///////////
 int kernel_send_query(qid_t receiver, struct gstack *stack) {
-	return __kernel_send_query(stack, receiver, current_schedee());
+	return __kernel_send_query(stack, receiver, &current_schedee()->srvs);
 }
 
 int kernel_receive_query(qid_t sender, struct gstack **ppstack, qid_t * rqid) {
-	service* s = current_schedee();
+	service* s = &current_schedee()->srvs;
 	return s->hops->receive_query(s, sender, ppstack, rqid);
 }
 
 int kernel_reply_query(qid_t receiver) {
 	//dprln("kernel_reply_query");
-	service* s = current_schedee();
+	service* s = &current_schedee()->srvs;
 	query* q = kernel_service_find_query(s, receiver);
 	if (q) {
 		return s->hops->reply_answer(s, q);
