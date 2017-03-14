@@ -37,7 +37,21 @@ static inline void hlist_del(struct hlist_node* list) {
 
 __END_DECLS
 
+#define hlist_entry(ptr, type, member) \
+container_of(ptr, type, member)
+
+#define hlist_next_entry(pos, member) \
+hlist_entry((pos)->member.next, decltypeof(*(pos)), member)
+
+#define hlist_first_entry(head, type, member) \
+hlist_entry((head)->first, type, member)
+
 #define hlist_for_each(pos, head) \
 for (pos = (head)->first; pos != 0; pos = pos->next)
+
+#define hlist_for_each_entry(pos, head, member) \
+for (pos = hlist_first_entry(head, decltypeof(*pos), member);	\
+&pos->member != 0;											\
+pos = hlist_next_entry(pos, member))
 
 #endif
