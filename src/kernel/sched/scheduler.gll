@@ -1,7 +1,8 @@
 Implementation("genos.kernel.scheduler", "standart", {
 	sources = {
-		cxx = "scheduler.cpp schedee.cpp stubsch.cpp"
+		cc = "schedbase.c schedee.c stubsch.c scheduler.c",
 	},
+	includePaths = ".",
 	depends = "genos.kernel.tasklets"
 })
 
@@ -9,6 +10,7 @@ Implementation("genos.kernel.scheduler", "displace", {
 	sources = {
 		cc = "scheddisp.c schedee.c stubsch.c"
 	},
+	includePaths = ".",
 	depends = "genos.kernel.tasklets"
 })
 

@@ -1,16 +1,10 @@
 #ifndef GENOS_SERVICE_H
 #define GENOS_SERVICE_H
 
-#include <kernel/service/errno.h>
-
-#include <kernel/sysalloc.h>
 #include <compiler.h>
-
-//#include <gxx/DList.h>
-//#include <gxx/HashTable.h>
-
 #include <datastruct/hlist_head.h>
-
+#include <kernel/sysalloc.h>
+#include <kernel/service/errno.h>
 #include <kernel/ipcstack/ipcstack.h>
 #include <kernel/service/query.h>
 #include <kernel/id/id.h>
@@ -34,26 +28,11 @@ struct service_operations {
 };
 
 struct service {
-//public:
 	struct hlist_node hlnk;
-	//gxx::DList<query, &query::lnk> queries;
 	struct dlist_head qlist;
 
 	const struct service_operations* hops;
 	qid_t qid;
-
-
-__if_cplusplus(
-	//hashtable routine
-	qid_t getkey() const {
-		return qid;
-	}
-
-	size_t hash(size_t seed) const {
-		return qid ^ seed;
-	}
-)
-
 };
 
 __BEGIN_DECLS
@@ -62,8 +41,6 @@ void service_init(struct service*);
 
 struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender);
 void release_query(struct query *q);
-
-int __kernel_send_query(struct gstack *stack, qid_t rqid, qid_t sqid) ;
 
 int kernel_send_query(qid_t receiver, struct gstack *stack);
 int kernel_receive_query(qid_t sender, struct ipcstack **ppstack, qid_t * retqid);

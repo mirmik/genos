@@ -43,9 +43,4 @@ void scheduler_init();
 
 __END_DECLS
 
-//#define set_state_run(sch) schedee_state_set(sch, SCHEDEE_STATE_RUN)
-//#define set_state_wait(sch) schedee_state_set(sch, SCHEDEE_STATE_WAIT)
-//#define set_state_final(sch) schedee_state_set(sch, SCHEDEE_STATE_FINAL)
-//#define set_state_zombie(sch) schedee_state_set(sch, SCHEDEE_STATE_ZOMBIE)
-
 #endif

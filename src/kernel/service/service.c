@@ -5,39 +5,13 @@
 
 #include <debug/dprint.h>
 
-qid_t __cur_qid;
-qid_t __max_qid;
-
-gxx::HashTable<service, &service::hlnk> service_hashtable;
-
 void service_init(struct service* srvs) {
 	dlist_init(&srvs->qlist);
 };
 
-struct service* kernel_get_service(qid_t qid) {
-	service* s;
-	bool res = service_hashtable.get(qid, s);
-	return res ? s : NULL;
-}
-
-void kernel_service_table_init() {
-	service_hashtable.setStrategy(gxx::hash_memstrat70);
-}
-
-void kernel_registry_stable_service(service* s, qid_t qid) {
-	s->qid = qid;
-	service_hashtable.put(*s);
-}
-
-qid_t kernel_registry_service(service* s) {
-	s->qid = kernel_get_new_qid();
-	service_hashtable.put(*s);
-	return s->qid;
-}
-
 struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender) {
 	//debug_print("construct_query\r\n");
-	struct query* q = (struct query*) sysalloc(sizeof(query));
+	struct query* q = (struct query*) sysalloc(sizeof(struct query));
 	dlist_init(&q->lnk);
 	q->stack = stack;
 	q->sender = sender;
@@ -86,13 +60,6 @@ int kernel_transport_answer(struct query* q) {
 	return s->hops->receive_answer(s, q);	
 }
 
-qid_t kernel_get_new_qid() {
-	service* __;
-	while (service_hashtable.get(++__cur_qid, __))
-		if (__cur_qid > __max_qid) __cur_qid = 0; 
-	return __cur_qid;
-}
-
 struct query * kernel_service_find_query(struct service * s, qid_t qid) {
 	if (dlist_empty(&s->qlist)) return NULL;
 	if (0 == qid) return dlist_first_entry(&s->qlist, struct query, lnk);
@@ -117,14 +84,14 @@ int kernel_send_query(qid_t receiver, struct gstack *stack) {
 }
 
 int kernel_receive_query(qid_t sender, struct gstack **ppstack, qid_t * rqid) {
-	service* s = &current_schedee()->srvs;
+	struct service* s = &current_schedee()->srvs;
 	return s->hops->receive_query(s, sender, ppstack, rqid);
 }
 
 int kernel_reply_query(qid_t receiver) {
 	//dprln("kernel_reply_query");
-	service* s = &current_schedee()->srvs;
-	query* q = kernel_service_find_query(s, receiver);
+	struct service* s = &current_schedee()->srvs;
+	struct query* q = kernel_service_find_query(s, receiver);
 	if (q) {
 		return s->hops->reply_answer(s, q);
 	} else {

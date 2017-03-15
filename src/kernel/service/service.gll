@@ -1,5 +1,6 @@
 Module("genos.kernel.service", {
 	sources = {
-		cxx = "service.cpp"
-	}
+		cc = "service.c table.c"
+	},
+	optdict = "hashtable_size"
 })
