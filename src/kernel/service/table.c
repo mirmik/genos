@@ -3,11 +3,15 @@
 
 #include <utilxx/goptions.h>
 #include <stdbool.h>
+#include <assert.h>
+
+static_assert(OPTION(hashtable_size) > 0, "Wrong service hashtable size");
+#define SERVICE_HASHTABLE_SIZE OPTION(hashtable_size)
 
 static qid_t __cur_qid;
 static qid_t __max_qid;
 
-static struct hlist_head __servs_ht_arr[OPTION(hashtable_size)]; 
+static struct hlist_head __servs_ht_arr[SERVICE_HASHTABLE_SIZE]; 
 static struct hashtable __service_hashtable; 
 
 int sh_equal (void* lkey, void* rkey) { return *(int32_t*)lkey == *(int32_t*)rkey; }
@@ -24,7 +28,7 @@ qid_t kernel_get_new_qid() {
 }
 
 void kernel_service_table_init() {
-	hashtable_init(&__service_hashtable, __servs_ht_arr, OPTION(hashtable_size),
+	hashtable_init(&__service_hashtable, __servs_ht_arr, SERVICE_HASHTABLE_SIZE,
 		sh_getkey, sh_hash,sh_equal);
 }
 

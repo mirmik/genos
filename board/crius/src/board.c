@@ -1,6 +1,11 @@
-#include "crius_aiop_pro.h"
+#include "board.h"
 #include <drivers/gpio.h>
 #include <hal/arch.h>
+#include <hal/irq.h>
+#include <debug/delay.h>
+
+void emergency_stop() __attribute__((weak));
+void emergency_stop() {};
 
 void board_init() {
 	arch_init();

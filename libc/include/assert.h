@@ -1,6 +1,7 @@
 #ifndef ASSERT_H_
 #define ASSERT_H_
 
+#include <compiler.h>
 #include "debug/dprint.h"
 #include "util/location.h"
 #include "kernel/panic.h"
@@ -12,9 +13,6 @@
 #define assertf(condition, ...) \
 	  ({__assert(condition, #condition, __VA_ARGS__);})
 
-#define static_assert(cond) \
-	typedef int __assertation_helper[(cond) ? 1 : -1]
-
 #define __assert(cond,strcond,message)				\
 	do { if ((cond) == 0) {							\
 		global_irq_disable();						\
@@ -25,5 +23,9 @@
 		board_shutdown(ARCH_SHUTDOWN_MODE_ABORT);	\
 		}											\
 	} while(0)				
+
+#ifndef __cplusplus
+#	define static_assert(a,b) _Static_assert(a,b)
+#endif
 
 #endif /* ASSERT_H_ */
