@@ -9,8 +9,9 @@ void __schedule__() {
 
 	__schedule_loop:
 
-	tasklet_schedule();
+	//tasklet_schedule();
 
+	//debug_print("Here\r\n");
 	while (!dlist_empty(&finallist)) {
 		struct schedee* fsch = dlist_first_entry(&finallist, struct schedee, lnk);
 
@@ -30,17 +31,20 @@ void __schedule__() {
 	//panic("nobody to run");
 
 	runschedee:
+	//debug_print("Here\r\n");
 	sch = dlist_first_entry(&runlist[priolvl], struct schedee, lnk);
 	
 	//if (current_schedee() != &sch) current_schedee()->displace(); 	
-	current_schedee(&sch);
+	set_current_schedee(sch);
 
 	//Перемещаем в конец списка.
 	dlist_move_back(&sch->lnk, &runlist[priolvl]);
 	
 	//Если execute вернет SCHEDULE_RESUME (1), цикл завершается. 
 	//SCHEDULE_REPEAT (0) ведет к следующей итерации.
-	if (sch->schops->execute(sch)) return;
+	if (sch->schops->execute(sch)) {
+		return;
+	}
 	goto __schedule_loop;
 }
 

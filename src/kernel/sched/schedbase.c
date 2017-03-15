@@ -35,6 +35,8 @@ void kernel_stub_schedee_init() {
 }
 
 bool schedee_state_is(struct schedee *sch, uint8_t state) {
+	//debug_printdec_int32(sch->flags);dln();
+	//debug_printdec_int32(state);dln();
 	return bits_mask(sch->flags, SCHEDEE_STATE_MASK) == state;
 }
 
@@ -42,6 +44,10 @@ void schedee_set_state_run(struct schedee *sch) {
 	assert((sch->flags & SCHEDEE_STATE_MASK) != SCHEDEE_STATE_ZOMBIE);
 	bits_mask_assign(sch->flags, SCHEDEE_STATE_MASK, SCHEDEE_STATE_RUN);
 	dlist_move_back(&sch->lnk, &runlist[sch->prio]);
+	//debug_print("HERE\r\n");
+	//debug_printhex_ptr(sch);dln();
+	//debug_printhex_ptr(&sch->lnk);dln();
+	//debug_printhex_ptr(&runlist[sch->prio]);dln();
 }
 
 void schedee_set_state_wait(struct schedee *sch, uint8_t state) {

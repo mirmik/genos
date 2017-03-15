@@ -42,10 +42,14 @@ struct schedee {
 
 __BEGIN_DECLS
 
-void schedee_init(struct schedee* sch);
+void schedee_init(struct schedee* sch, 
+	const struct schedee_operations* schops, 
+	const struct service_operations* srvsops);
+
 void schedee_run(struct schedee* sch);
 void schedee_stop(struct schedee* sch);
-void schedee_exit(struct schedee* sch);
+
+void schedee_exit();
 
 struct schedee* current_schedee();
 void set_current_schedee(struct schedee* sch);

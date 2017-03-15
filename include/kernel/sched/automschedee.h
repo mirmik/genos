@@ -6,31 +6,31 @@
 #include <kernel/sched/scheduler.h>
 #include <kernel/panic.h>
 
-class autom_schedee : public schedee {
-protected:
-	autom_schedee();
-public:
-	gstack** 	ppstack;
-	qid_t* 		retqid;
-	
-public:
+typedef void(*aschfunc_t)(void*);
 
-	//virtual void invalidate() override {}
-	virtual void Routine() = 0;
+struct autom_schedee {
+	struct schedee sch;
+
+	struct gstack** 	ppstack;
+	qid_t* 				retqid;
+	
+	void (*routine)(void*);
+	void* localstorage;
 };
 
 static int autom_schedee_send_query(struct service* s, struct gstack *stack, qid_t rqid) {
-	dprln("autom_schedee_send_query");
-	struct autom_schedee *asch = (autom_schedee*) s;
-	struct query* q = construct_query(stack, rqid, asch->srvs.qid);
+	debug_print("autom_schedee_send_query");dln();
+	struct autom_schedee * asch = container_of((struct schedee*)s,struct autom_schedee,sch);
+	struct query* q = construct_query(stack, rqid, asch->sch.srvs.qid);
 
-	assert(schedee_state_is(asch, SCHEDEE_STATE_RUN));
+	debug_printhex_ptr(asch);dln();
+	assert(schedee_state_is(&asch->sch, SCHEDEE_STATE_RUN));
 	
 	int ret = kernel_transport_query(q);
 	switch (ret) {
 		//schedee переходит в состояние ожидания ответа.
 		//функция release_query будет вызвана receive_answer
-		case WAIT_ANSWER : schedee_set_state_wait(asch, SCHEDEE_BLOCKED_SEND); break;
+		case WAIT_ANSWER : schedee_set_state_wait(&asch->sch, SCHEDEE_BLOCKED_SEND); break;
 		
 		//если был возвращен FAST_ANSWER, функция release_query вызывается мгновенно
 		case FAST_ANSWER : release_query(q); break;
@@ -39,25 +39,25 @@ static int autom_schedee_send_query(struct service* s, struct gstack *stack, qid
 }
 
 static int autom_schedee_add_query(struct service* s, struct query *q) {
-	dprln("autom_schedee_add_query");
-	struct autom_schedee *asch = (autom_schedee*) s;
-
-	dlist_move_back(&q->lnk, &asch->srvs.qlist);
-	if (schedee_state_is(asch, SCHEDEE_BLOCKED_RECEIVE) 
+	debug_print("autom_schedee_add_query");dln();
+	struct autom_schedee * asch = container_of((struct schedee*)s,struct autom_schedee,sch);
+	
+	dlist_move_back(&q->lnk, &asch->sch.srvs.qlist);
+	if (schedee_state_is(&asch->sch, SCHEDEE_BLOCKED_RECEIVE) 
 		&& (*asch->retqid == 0 || *asch->retqid == q->sender)) 
 	{
 		*asch->ppstack = q->stack;
 		*asch->retqid = q->sender;
 	
-		schedee_set_state_run(asch);
+		schedee_set_state_run(&asch->sch);
 	}
 	return 0;
 }
 
-static int autom_schedee_receive_query(struct service* s, qid_t sqid, gstack** ppstack, qid_t * retqid) {
-	dprln("autom_schedee_receive_query");
-	struct autom_schedee *asch = (autom_schedee*) s;
-	query* q = kernel_service_find_query(s,sqid);
+static int autom_schedee_receive_query(struct service* s, qid_t sqid, struct gstack** ppstack, qid_t * retqid) {
+	debug_print("autom_schedee_receive_query");dln();
+	struct autom_schedee * asch = container_of((struct schedee*)s,struct autom_schedee,sch);
+	struct query* q = kernel_service_find_query(s,sqid);
 
 	if (q)  {
 		*ppstack = q->stack;
@@ -68,25 +68,25 @@ static int autom_schedee_receive_query(struct service* s, qid_t sqid, gstack** p
 		asch->ppstack = ppstack;
 		asch->retqid = retqid;
 		*asch->retqid = sqid;
-		schedee_set_state_wait(asch, SCHEDEE_BLOCKED_RECEIVE);
+		schedee_set_state_wait(&asch->sch, SCHEDEE_BLOCKED_RECEIVE);
 		return WAIT_RECEIVE;
 	}
 }
 
 static int autom_schedee_reply_answer(struct service* s, struct query *q) {
-	dprln("autom_schedee_reply_answer");
+	debug_print("autom_schedee_reply_answer");dln();
 	kernel_service_unlink_query(s, q);
 	kernel_transport_answer(q);
 }
 
 static int autom_schedee_receive_answer(struct service* s, struct query *q) {
-	dprln("autom_schedee_receive_answer");
-	struct autom_schedee *asch = (autom_schedee*) s;
-
-	if (!schedee_state_is(asch, SCHEDEE_BLOCKED_SEND) || q->sender != asch->srvs.qid) 
+	debug_print("autom_schedee_receive_answer");dln();
+	struct autom_schedee * asch = container_of((struct schedee*)s,struct autom_schedee,sch);
+	
+	if (!schedee_state_is(&asch->sch, SCHEDEE_BLOCKED_SEND) || q->sender != asch->sch.srvs.qid) 
 		panic("REPLY TO UNSEND QUERY");
 
-	schedee_set_state_run(asch);
+	schedee_set_state_run(&asch->sch);
 	release_query(q);
 }
 
@@ -101,14 +101,14 @@ static const struct service_operations autom_schedee_service_operations = {
 
 
 uint8_t autom_schedee_execute(struct schedee* sch) {
-	struct autom_schedee * asch = (struct autom_schedee *) sch;
-	asch->Routine();
-	return SCHEDULE_RESUME;
+	struct autom_schedee * asch = container_of(sch,struct autom_schedee,sch);
+	asch->routine(asch->localstorage);
+	return SCHEDULE_REPEAT;
 }
 
 uint8_t autom_schedee_engage(struct schedee* sch) {
-	struct autom_schedee * asch = (struct autom_schedee *) sch;
-	asch->Routine();
+	struct autom_schedee * asch = container_of(sch,struct autom_schedee,sch);
+	asch->routine(asch->localstorage);
 }
 
 uint8_t autom_schedee_displace(struct schedee* sch) {}
@@ -123,9 +123,21 @@ const struct schedee_operations autom_schedee_schedee_operations = {
 	.destructor = autom_schedee_destructor,
 };
 
-autom_schedee::autom_schedee() { 
-	srvs.hops = &autom_schedee_service_operations;
-	schops = &autom_schedee_schedee_operations;
+struct schedee* construct_autom_schedee(void(*routine)(void*), void* localstorage) { 
+	struct autom_schedee* asch = (struct autom_schedee*) sysalloc(sizeof(struct autom_schedee));
+	
+	asch->routine = routine;
+	asch->localstorage = localstorage;
+
+	schedee_init(&asch->sch, &autom_schedee_schedee_operations, &autom_schedee_service_operations);
+	return &asch->sch;
 }
+
+#if defined __cplusplus
+#include <genos/sigslot/delegate.h>
+struct schedee* construct_autom_schedee(const fastdelegate<void>& dlg) {
+	return construct_autom_schedee(dlg.extfunction, dlg.object);
+}
+#endif
 
 #endif

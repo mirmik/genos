@@ -26,7 +26,7 @@ void release_query(struct query *q) {
 
 int __kernel_send_query(struct gstack *stack, qid_t rqid, struct service * s) {
 	//struct query *q = construct_query(stack, rqid, s->qid);
-	
+
 	if (!(s && s->hops && s->hops->send_query)) panic("incorrect sender schedee");
 	
 	int ret = s->hops->send_query(s, stack, rqid);
@@ -37,7 +37,7 @@ int __kernel_send_query(struct gstack *stack, qid_t rqid, struct service * s) {
 //В случае, если receiver не может быть обнаружен, возвращается 
 //Должна вызываться из sender->send_query.
 int kernel_transport_query(struct query* q) {
-	struct service *r = kernel_get_service(q->receiver);
+	struct service *r = get_service(q->receiver);
 	if (!(r && r->hops)) {
 		stack_pop_all(q->stack);
 		stack_set_error(q->stack, ERROR_WRONG_RECEIVER, ERROR_WRONG_RECEIVER_MSG);
@@ -49,7 +49,7 @@ int kernel_transport_query(struct query* q) {
 //Функция занимается транспортировкой ответа вызывающему сервису.
 //Должна вызываться из receiver->reply_answer.
 int kernel_transport_answer(struct query* q) {
-	struct service *s = kernel_get_service(q->sender);
+	struct service *s = get_service(q->sender);
 	
 	//В случае, если за время обработки sender умер, или по каким-то другим
 	//причинам не может быть найден, запрос будет уничтожен здесь.
@@ -61,12 +61,11 @@ int kernel_transport_answer(struct query* q) {
 }
 
 struct query * kernel_service_find_query(struct service * s, qid_t qid) {
+	struct query* it;
+
 	if (dlist_empty(&s->qlist)) return NULL;
 	if (0 == qid) return dlist_first_entry(&s->qlist, struct query, lnk);
-	//auto q = gxx::find_if(s->queries.begin(), s->queries.end(), [qid](const query& q) -> bool{
-	//	return q.sender == qid;
-	//});
-	struct query* it;
+
 	dlist_for_each_entry(it, &s->qlist, lnk) {
 		if (it->sender == qid) return it;
 	}
