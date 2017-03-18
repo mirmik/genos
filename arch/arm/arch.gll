@@ -13,15 +13,36 @@ Module("genos.arch.stm32", {
 	}
 })
 
-Module("genos.arch.stm32f407", {
-	--modules = {name = "genos.arch.stm32"},
-	depends = "genos.arch.stm32",
-	sources = {}
+
+-------------------STM32F407---------------------
+Module("genos.arch.stm32f407", { 
+	modules = { 
+		{ name = "genos.arch.stm32" }
+	} 
 })
 
 Module("genos.include.arch.stm32f407", {
-	includePaths = {"include", "stm32/include", "stm32/stm32f407/include"},
-	ldscripts = "stm32/stm32f407/ldscript.ld",
+	includePaths = {"include", "stm32/include", "stm32/stm32f4XX/include"},
+	ldscripts = "stm32/stm32f4XX/ldscripts/stm32f4XX.ld",
 	
-	depends = "genos.arch.stm32",
+	modules = {	
+		{name = "genos.arch.stm32f407"}, 
+	},
+})
+
+
+-------------------STM32F401---------------------
+Module("genos.arch.stm32f401", { 
+	modules = { 
+		{ name = "genos.arch.stm32" }
+	} 
+})
+
+Module("genos.include.arch.stm32f401", {
+	includePaths = {"include", "stm32/include", "stm32/stm32f4XX/include"},
+	ldscripts = "stm32/stm32f4XX/ldscripts/stm32f4XX.ld",
+	
+	modules = {	
+		{name = "genos.arch.stm32f401"}, 
+	},
 })

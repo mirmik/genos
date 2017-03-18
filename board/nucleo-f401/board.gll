@@ -1,0 +1,18 @@
+Module("genos.board.nucleo-f401", {
+	sources = {
+		directory = "src",
+		cc = "board.c",
+	},
+
+	depends = {
+		"genos.arch.stm32f401"
+	}
+})
+
+Module("genos.include.board.nucleo-f401", {
+	includePaths = "include",
+
+	modules = {	
+		{name = "genos.board.nucleo-f401"}, 
+	},
+})

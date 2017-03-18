@@ -30,7 +30,7 @@ int gpio_settings(struct gpio_regs* g, gpio_mask_t mask, int32_t mode) {
 		return 0;
 	};
 }
-
+/*
 void pin_mode(int pin, int32_t mode) {
 	gpio_settings(gpio_table[pin].regs, 
 		(1<<gpio_table[pin].offset), mode);
@@ -50,3 +50,4 @@ void pin_tgl_level(int pin) {
 	gpio_tgl_level(gpio_table[pin].regs, 
 		(1<<gpio_table[pin].offset));
 }
+*/

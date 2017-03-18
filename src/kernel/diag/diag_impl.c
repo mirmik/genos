@@ -9,7 +9,7 @@ struct diag_ops diag_stub = {
 	(diag_getc_t) do_nothing,
 	//(diag_available_t) do_nothing,
 	//(diag_flush_t) do_nothing,
-	(diag_init_t) do_nothing
+//	(diag_init_t) do_nothing
 };
 
 struct diag_ops* current_diag = &diag_stub;;
@@ -50,10 +50,10 @@ int diag_read(char* buf, int len){
 //	return current_diag->flush();
 //};
 
-int diag_init(){
-	assert(current_diag->init != (diag_init_t) do_nothing);
-	return current_diag->init();
-};
+//int diag_init(){
+//	assert(current_diag->init != (diag_init_t) do_nothing);
+//	return current_diag->init();
+//};
 
 int diag_write_stub(const char* buf, int len)
 {
