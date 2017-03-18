@@ -4,11 +4,15 @@ Module("genos.board.crius", {
 		cc = "board.c",
 	},
 
-	depends = {
-		"genos.arch.atmega2560"
+	modules = {
+		{ name = "genos.arch.atmega2560" }
 	}
 })
 
 Module("genos.include.board.crius", {
-	includePaths = "include"
+	includePaths = "include",
+
+	modules = {
+		{ name = "genos.board.crius" }
+	}
 })

@@ -13,7 +13,7 @@ void board_shutdown(arch_shutdown_mode_t mode) __attribute__((noreturn));
 
 void emergency_stop();
 
-static const struct gpio_pin_s __user_led = {GPIOA, 1<<5};
+static const struct gpio_pin_s __user_led = {GPIOA, 5};
 
 __END_DECLS
 

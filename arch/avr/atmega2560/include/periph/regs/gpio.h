@@ -2,6 +2,7 @@
 #define AVR2560_GPIO_H
 
 #include "inttypes.h"
+#include "drivers/gpio.h"
 
 struct gpio_regs {
 	volatile uint8_t pin;
@@ -35,10 +36,7 @@ typedef unsigned char gpio_mask_t;
 #define GPIOK ((struct gpio_regs *)(GPIO_PORT_BASE_K))
 #define GPIOL ((struct gpio_regs *)(GPIO_PORT_BASE_L))
 
-struct gpio_pin_s {
-	struct gpio_regs* regs;
-	uint8_t offset;
-};
+__BEGIN_DECLS
 
 static const struct gpio_pin_s gpio_table[] =
 {
@@ -97,5 +95,7 @@ static const struct gpio_pin_s gpio_table[] =
 	{GPIOB, 1}, //52
 	{GPIOB, 0}, //53
 };
+
+__END_DECLS
 
 #endif

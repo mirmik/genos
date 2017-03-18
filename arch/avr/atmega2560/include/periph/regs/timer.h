@@ -1,31 +1,31 @@
 #ifndef AVR2560_TIMER_REGS
 #define AVR2560_TIMER_REGS
 
-#include <hal/reg.h>
+#include <inttypes.h>
 
 struct timsk_array {
-	reg_t timsk[5];
+	volatile uint8_t timsk[5];
 }; 
 
 struct timer_8bit_regs {
-	reg_t tccr_a;
-	reg_t tccr_b;
-	reg_t tcnt;
-	reg_t ocr_a;
-	reg_t ocr_b;
+	volatile uint8_t tccr_a;
+	volatile uint8_t tccr_b;
+	volatile uint8_t tcnt;
+	volatile uint8_t ocr_a;
+	volatile uint8_t ocr_b;
 } __attribute__((packed));
 
 
 struct timer_16bit_regs {
-	 reg_t tccr_a;
-	 reg_t tccr_b;	
-	 reg_t tccr_c;
-	 reg_t reserved;
-	 reg2_t tcnt; 
-	 reg2_t icr;
-	 reg2_t ocr_a;
-	 reg2_t ocr_b;
-	 reg2_t ocr_c;
+	 volatile uint8_t tccr_a;
+	 volatile uint8_t tccr_b;	
+	 volatile uint8_t tccr_c;
+	 volatile uint8_t reserved;
+	 volatile uint16_t tcnt; 
+	 volatile uint16_t icr;
+	 volatile uint16_t ocr_a;
+	 volatile uint16_t ocr_b;
+	 volatile uint16_t ocr_c;
 } __attribute__((packed));
 
 #define TIMER_DIVIDER_1 1
