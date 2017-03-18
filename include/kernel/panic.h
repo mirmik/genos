@@ -4,7 +4,7 @@
 #include "debug/dprint.h"
 
 //#include <hal/arch.h>
-#include <board.h>
+#include <hal/board.h>
 #include <hal/irq.h>
 
 #include "util/location.h"

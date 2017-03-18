@@ -13,6 +13,12 @@ Module("genos.arch.stm32", {
 	}
 })
 
+Module("genos.arch.stm32f407", {
+	--modules = {name = "genos.arch.stm32"},
+	depends = "genos.arch.stm32",
+	sources = {}
+})
+
 Module("genos.include.arch.stm32f407", {
 	includePaths = {"include", "stm32/include", "stm32/stm32f407/include"},
 	ldscripts = "stm32/stm32f407/ldscript.ld",

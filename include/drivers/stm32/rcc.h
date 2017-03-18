@@ -6,7 +6,7 @@
 
 __BEGIN_DECLS
 
-//void rcc_enable(uint32_t arg);
+void rcc_enable_gpio(struct gpio_regs* gpio);
 
 __END_DECLS
 

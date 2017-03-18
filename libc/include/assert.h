@@ -5,7 +5,7 @@
 #include "debug/dprint.h"
 #include "util/location.h"
 #include "kernel/panic.h"
-#include "board.h"
+#include "hal/board.h"
 
 #define assert(condition) \
 	  ({__assert(condition, #condition, "");})

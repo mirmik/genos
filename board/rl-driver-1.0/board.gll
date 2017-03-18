@@ -1,0 +1,14 @@
+Module("genos.board.rl-driver-1.0", {
+	sources = {
+		directory = "src",
+		cc = "board.c",
+	},
+
+	depends = {
+		"genos.arch.stm32f407"
+	}
+})
+
+Module("genos.include.board.rl-driver-1.0", {
+	includePaths = "include"
+})

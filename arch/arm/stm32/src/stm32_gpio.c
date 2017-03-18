@@ -8,11 +8,12 @@ void gpio_set_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) 
 	else g->ODR &= ~mask;	
 }
 
-gpio_mask_t gpio_get_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {
+gpio_mask_t gpio_get_level(struct gpio_regs* g, gpio_mask_t mask) {
 	return g->ODR & mask;
 }
 
 void gpio_tgl_level(struct gpio_regs* g, gpio_mask_t mask) {
+	g->ODR ^= mask;	
 }
 
 int gpio_settings(struct gpio_regs * gpio, gpio_mask_t mask, int mode) {

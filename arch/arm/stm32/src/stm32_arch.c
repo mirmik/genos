@@ -17,21 +17,6 @@ int stm32_diag_putchar(char c);
 
 void stm32_systime_init();
 
-void arch_init() {
-	volatile int i;
-
-	rcc_reset();
-
-	RCC->AHB1RSTR = 0xFFFFFFFF;
-	RCC->APB1RSTR = 0xFFFFFFFF; 
-	RCC->APB2RSTR = 0xFFFFFFFF;
-	i = 1000; while(--i);
-	
-	RCC->AHB1RSTR = 0;
-	RCC->APB1RSTR = 0; 
-	RCC->APB2RSTR = 0;
-	i = 1000; while(--i);
-}
 
 void arch_diag_init() {
 	diag_operations.init = stm32_diag_init;
@@ -72,6 +57,24 @@ void arch_external_generator_init() {
 	RCC->CFGR &= ~(RCC_CFGR_SW);
 	RCC->CFGR |= (RCC_CFGR_SW_PLL);
 	while((RCC->CFGR & RCC_CFGR_SWS_PLL) != RCC_CFGR_SWS_PLL);
+}
+
+void arch_init() {
+	volatile int i;
+
+	rcc_reset();
+
+	RCC->AHB1RSTR = 0xFFFFFFFF;
+	RCC->APB1RSTR = 0xFFFFFFFF; 
+	RCC->APB2RSTR = 0xFFFFFFFF;
+	i = 1000; while(--i);
+	
+	RCC->AHB1RSTR = 0;
+	RCC->APB1RSTR = 0; 
+	RCC->APB2RSTR = 0;
+	i = 1000; while(--i);
+
+	arch_diag_init();
 }
 
 void arch_shutdown(arch_shutdown_mode_t mode) {
