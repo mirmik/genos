@@ -1,5 +1,5 @@
-#ifndef GENOS_FUNCTION_SERVICE_H
-#define GENOS_FUNCTION_SERVICE_H
+#ifndef GENOS_HANDLER_SERVICE_H
+#define GENOS_HANDLER_SERVICE_H
 
 #include <kernel/service/service.h>
 

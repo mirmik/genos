@@ -1,7 +1,7 @@
-#include "board.h"
-#include <drivers/gpio.h>
-#include <hal/arch.h>
+#include <hal/board.h>
 #include <hal/irq.h>
+
+#include <drivers/gpiotbl.h>
 #include <debug/delay.h>
 #include <debug/dprint.h>
 
@@ -10,7 +10,7 @@ void board_init() {
 
 	gpio_settings(GPIOB, (1<<7), GPIO_MODE_OUTPUT);
 
-	pin_set_level(RED_LED,1);
+	pinnum_set_level(RED_LED,1);
 }
 
 void board_shutdown(arch_shutdown_mode_t mode) {
@@ -26,7 +26,7 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 			gpio_settings(GPIOB, (1<<7), GPIO_MODE_OUTPUT);
 			debug_print("arch_shutdown"); dln();
 			while(1) {
-				pin_tgl_level(RED_LED);
+				pinnum_tgl_level(RED_LED);
 				debug_delay(100);
 			}
 		break;

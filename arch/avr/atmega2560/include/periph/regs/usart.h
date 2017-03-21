@@ -1,7 +1,6 @@
 #ifndef AVR2560_USART_H
 #define AVR2560_USART_H
 
-#include <hal/reg.h>
 #include <kernel/irq.h>
 
 struct usart_regs {

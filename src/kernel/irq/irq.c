@@ -1,16 +1,16 @@
 #include <kernel/irq.h>
 #include <util/stub.h>
 
-struct IRQTableRecord IRQTable[NR_IRQS];
+struct irq_record irqs_table[NR_IRQS];
 
 void irqtable_init() {
 	for (int i = 0; i < NR_IRQS; ++i) {
-		IRQTable[i].handler = irq_stub;
-		IRQTable[i].argument = (void*)i;
+		irqs_table[i].handler = irq_stub;
+		irqs_table[i].argument = (void*)i;
 	}
 }
 
-void setIRQHandler(int irqno, IRQHandler handler, void* arg) {
-	IRQTable[irqno].handler = handler;
-	IRQTable[irqno].argument = arg;
+void set_irq_handler(int irqno, irq_handler_t handler, void* arg) {
+	irqs_table[irqno].handler = handler;
+	irqs_table[irqno].argument = arg;
 }

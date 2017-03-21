@@ -87,12 +87,16 @@ int kernel_receive_query(qid_t sender, struct gstack **ppstack, qid_t * rqid) {
 	return s->hops->receive_query(s, sender, ppstack, rqid);
 }
 
+int __kernel_reply_query(struct query* q) {
+	dlist_del_init(&q->lnk);
+	kernel_transport_answer(q);
+}
+
 int kernel_reply_query(qid_t receiver) {
-	//dprln("kernel_reply_query");
 	struct service* s = &current_schedee()->srvs;
 	struct query* q = kernel_service_find_query(s, receiver);
 	if (q) {
-		return s->hops->reply_answer(s, q);
+		__kernel_reply_answer(s, q);
 	} else {
 		//Такого запроса не существует!!!
 		return ERROR_REPLY;

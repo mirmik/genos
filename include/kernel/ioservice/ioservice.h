@@ -2,7 +2,7 @@
 #define IO_SERVICE_STREAM_H
 
 #include <kernel/sched/automschedee.h>
-#include <kernel/file/file.h>
+#include <compiler.h>
 
 struct ioservice;
 
@@ -11,12 +11,15 @@ struct ioservice_operations {
 	int(*io_read)(struct ioservice*, const char* data, size_t sz);
 };
 
-struct ioservice : public autom_schedee {
+struct ioservice {
 	ioservice_operations ioops;
-	
-	void Routine() override {
-
-	}
+	void * privdata;	
 };
+
+__BEGIN_DECLS
+
+static void construct_ioservice() {}
+
+__END_DECLS
 
 #endif

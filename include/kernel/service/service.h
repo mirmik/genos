@@ -23,7 +23,7 @@ struct service_operations {
 	int(*send_query)(struct service* ths, struct gstack* stack, qid_t rqid);
 	int(*add_query)(struct service* ths, struct query *q);
 	int (*receive_query)(struct service* ths, qid_t q, struct gstack** ppstack, qid_t *retqid);
-	int(*reply_answer)(struct service* ths, struct query *q);
+	//int(*reply_answer)(struct service* ths, struct query *q);
 	int(*receive_answer)(struct service* ths, struct query *q);
 };
 

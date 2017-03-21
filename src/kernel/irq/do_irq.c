@@ -5,8 +5,8 @@ unsigned char __interrupt_context = 0;
 
 void do_irq(uint8_t irq) {
 	__interrupt_context++;
-	IRQTable[irq].count++;
-	IRQTable[irq].handler(IRQTable[irq].argument);
+	irqs_table[irq].count++;
+	irqs_table[irq].handler(irqs_table[irq].argument);
 	__interrupt_context--;
 }
 

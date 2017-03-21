@@ -73,11 +73,11 @@ static int autom_schedee_receive_query(struct service* s, qid_t sqid, struct gst
 	}
 }
 
-static int autom_schedee_reply_answer(struct service* s, struct query *q) {
+/*static int autom_schedee_reply_answer(struct service* s, struct query *q) {
 	debug_print("autom_schedee_reply_answer");dln();
-	kernel_service_unlink_query(s, q);
+	dlist_del_init(&q->lnk);
 	kernel_transport_answer(q);
-}
+}*/
 
 static int autom_schedee_receive_answer(struct service* s, struct query *q) {
 	debug_print("autom_schedee_receive_answer");dln();
@@ -94,7 +94,7 @@ static const struct service_operations autom_schedee_service_operations = {
 	.send_query = autom_schedee_send_query,
 	.add_query = autom_schedee_add_query,
 	.receive_query = autom_schedee_receive_query,
-	.reply_answer = autom_schedee_reply_answer,
+	//.reply_answer = autom_schedee_reply_answer,
 	.receive_answer = autom_schedee_receive_answer,
 };
 

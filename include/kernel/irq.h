@@ -8,22 +8,24 @@
 #include <periph/irqdefs.h>
 
 typedef void(*IRQHandler)(void*);
+typedef void(*irq_handler_t)(void*);
 
-struct IRQTableRecord {
-	IRQHandler 	handler;
+struct irq_record {
+	irq_handler_t 	handler;
 	void* 		argument;
 	volatile uint16_t count;
 };
 
 __BEGIN_DECLS
 
-extern struct IRQTableRecord IRQTable[NR_IRQS];
+extern struct irq_record irqs_table[NR_IRQS];
 
 void do_irq(uint8_t irq) __attribute__((section(".handlers")));
 unsigned char is_interrupt_context();
 
 void irqtable_init();
-void setIRQHandler(int irqno, IRQHandler handler, void* arg);
+void setIRQHandler(int irqno, irq_handler_t handler, void* arg);
+#define set_irq_handler(a,b,c) setIRQHandler(a,b,c)
 
 void irq_stub(void* irqno);
 
