@@ -5,10 +5,18 @@
 #include <kernel/sched/stubschedee.h>
 #include <kernel/tasks/tasklet.h>
 
-extern struct dlist_head runlist[PRIORITY_TOTAL];
-extern struct dlist_head waitlist;
-extern struct dlist_head finallist;
+#include <gxx/dlist.h>
 
-extern void kernel_schedule_empty();
+namespace genos {
+
+	using schlist_t = gxx::dlist<genos::schedee, &genos::schedee::schlnk>;
+
+	extern schlist_t runlist[PRIORITY_TOTAL];
+	extern schlist_t waitlist;
+	extern schlist_t finallist;
+
+	extern void kernel_schedule_empty();
+
+}
 
 #endif

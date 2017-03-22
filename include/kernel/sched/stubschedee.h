@@ -6,7 +6,7 @@
 #include <compiler.h>
 
 #include <mem/sysalloc.h>
-
+/*
 struct stub_schedee  {
 	struct schedee sch;
 };
@@ -15,6 +15,6 @@ __BEGIN_DECLS
 
 struct stub_schedee * construct_stub_schedee();
 
-__END_DECLS
+__END_DECLS*/
 
 #endif

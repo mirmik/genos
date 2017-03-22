@@ -1,5 +1,5 @@
-#ifndef GENOS_DLIST_H
-#define GENOS_DLIST_H
+#ifndef GENOS_dlist_H
+#define GENOS_dlist_H
 
 #include <stdlib.h>
 #include "datastruct/dlist_head.h"
@@ -9,15 +9,15 @@
 namespace gxx {
 
 	template<typename type, dlist_head type::* member>
-	class DList {
+	class dlist {
 	public:
 		dlist_head list;
 	
-		DList()	{
+		dlist()	{
 			dlist_init_list(&list);
 		}
 	
-		~DList() {
+		~dlist() {
 			dlist_del(&list);
 		}
 	
@@ -164,9 +164,9 @@ namespace gxx {
 	};
 	
 	template<typename type, dlist_head type::* member>
-	DList<type, member>* dlist_head_to_class(dlist_head* head)
+	dlist<type, member>* dlist_head_to_class(dlist_head* head)
 	{
-		using dlist_t = DList<type, member>;
+		using dlist_t = dlist<type, member>;
 		return reinterpret_cast<dlist_t*>(reinterpret_cast<char*>(head) - member_offset<dlist_t, dlist_head, &dlist_t::list>());
 	};
 	

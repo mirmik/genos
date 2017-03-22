@@ -4,13 +4,13 @@
 #include <periph/usart.h>
 #include <drivers/serial/Uart.h>
 
-class UsartDriver {
+class AVRUsartDriver {
 public:
 	usart_regs* m_regs;
 	uint8_t m_irqbase;
 
 public:
-	UsartDriver(usart_regs* regs, int irqbase);
+	AVRUsartDriver(usart_regs* regs, int irqbase);
 
 	int sendbyte(char c);
 	int recvbyte();

@@ -8,6 +8,7 @@ struct ioservice;
 
 struct ioservice_operations {
 	int(*io_write)(struct ioservice*, const char* data, size_t sz);
+	int(*io_write)(struct ioservice*, const char* data, size_t sz);
 	int(*io_read)(struct ioservice*, const char* data, size_t sz);
 };
 

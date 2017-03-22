@@ -8,12 +8,12 @@
 #include <datastruct/ring_head.h>
 
 struct usart_drvbh {
-	const struct usart_data * udata;
+	const struct usart_data udata;
 	
 	char* tx_buffer;
 	struct ring_head tx_ring;
 
-	void(*rx_headler)(char c);
+	void(*rx_headler)(struct stream_servicechar c);
 	void(*tx_empty_headler)();
 };
 
@@ -34,5 +34,16 @@ static int usart_drvbh_write(usart_drvbh_t * udrv, const char* data, size_t size
 }
 
 __END_DECLS
+
+struct strmdevice;
+
+struct strmdevice_operations {
+	int(*io_write)(struct strmdevice*, const char* data, size_t sz);
+	int(*io_read)(struct strmdevice*, const char* data, size_t sz);
+};
+
+struct strmdevice {
+
+};
 
 #endif

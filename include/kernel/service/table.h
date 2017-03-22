@@ -3,15 +3,18 @@
 
 #include <kernel/service/service.h>
 
-__BEGIN_DECLS
+//__BEGIN_DECLS
 
-void service_table_init();
-qid_t register_service(struct service* s);
-void register_stable_service(struct service* s, qid_t qid);
+namespace genos {
 
-struct service* get_service(qid_t qid);
+	void service_table_init();
+	qid_t register_service(genos::service* s);
+	void register_stable_service(genos::service* s, qid_t qid);
 
+	genos::service* get_service(qid_t qid);
 
-__END_DECLS
+}
+
+//__END_DECLS
 
 #endif

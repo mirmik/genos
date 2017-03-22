@@ -6,7 +6,7 @@
 #include <debug/dprint.h>
 
 void service_init(struct service* srvs) {
-	dlist_init(&srvs->qlist);
+	//dlist_init(&srvs->qlist);
 };
 
 struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender) {
@@ -59,7 +59,7 @@ int kernel_transport_answer(struct query* q) {
 	}	
 	return s->hops->receive_answer(s, q);	
 }
-
+/*
 struct query * kernel_service_find_query(struct service * s, qid_t qid) {
 	struct query* it;
 
@@ -70,12 +70,12 @@ struct query * kernel_service_find_query(struct service * s, qid_t qid) {
 		if (it->sender == qid) return it;
 	}
 	return NULL;
-}
+}*/
 
-
+/*
 void kernel_service_unlink_query(struct service* s, struct query* q) {
 	dlist_del_init(&q->lnk);
-}
+}*/
 
 ////////SCHEDEE_API///////////
 int kernel_send_query(qid_t receiver, struct gstack *stack) {
@@ -96,7 +96,7 @@ int kernel_reply_query(qid_t receiver) {
 	struct service* s = &current_schedee()->srvs;
 	struct query* q = kernel_service_find_query(s, receiver);
 	if (q) {
-		__kernel_reply_answer(s, q);
+		__kernel_reply_query(q);
 	} else {
 		//Такого запроса не существует!!!
 		return ERROR_REPLY;

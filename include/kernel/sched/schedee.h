@@ -20,17 +20,15 @@ static const uint8_t SCHEDEE_STATE_MASK = 0x0F;
 static const uint8_t SCHEDEE_FINAL_DEALLOCATE = 0x80;
 static const uint8_t SCHEDEE_FINAL_RELEASE = 0x40;
 
-struct schedee;
-
-struct schedee_operations {
+/*struct schedee_operations {
 	uint8_t (*execute)	(struct schedee*);
 	uint8_t (*engage)	(struct schedee*);
 	uint8_t (*displace)	(struct schedee*);
 	uint8_t (*lastexit)	(struct schedee*);
 	uint8_t (*destructor)(struct schedee*);
-};
+};*/
 
-struct schedee {
+/*struct schedee {
 	struct service srvs;
 
 	struct dlist_head lnk;
@@ -38,9 +36,48 @@ struct schedee {
 	uint8_t flags;
 
 	const struct schedee_operations* schops;
-};
+};*/
 
-__BEGIN_DECLS
+namespace genos {
+	class schedee : public service {
+	public:
+		struct dlist_head schlnk;
+		uint8_t prio;
+		uint8_t flags;
+
+	public:
+		schedee();
+
+		void run();
+		void stop();
+		void exit();
+
+		void set_state_wait(uint8_t state);
+		void set_state_run();
+		void set_state_final();
+		void set_state_zombie();
+		
+		bool state_is(uint8_t state);
+		
+		void set_final_deallocate(bool en);
+		void set_final_release(bool en);
+		
+		bool is_running();
+		bool is_waiting();
+		bool is_zombie();
+		bool is_final_deallocated();
+		bool is_final_release();
+	};
+
+	void schedee_exit();
+
+	struct schedee* current_schedee();
+	void set_current_schedee(struct schedee* sch);
+
+	void finalize_schedee(struct schedee* sch);
+}
+
+/*__BEGIN_DECLS
 
 void schedee_init(struct schedee* sch, 
 	const struct schedee_operations* schops, 
@@ -54,6 +91,6 @@ void schedee_exit();
 struct schedee* current_schedee();
 void set_current_schedee(struct schedee* sch);
 
-__END_DECLS
+__END_DECLS*/
 
 #endif

@@ -11,9 +11,10 @@ Implementation("genos.arch.atmega2560.drivers.usart", "cc", {
 Implementation("genos.arch.atmega2560.drivers.usart", "cxx", {
 	sources = {
 		cxx = {
-			"serial/avr/UsartStream.cpp",
+			--"serial/avr/UsartStream.cpp",
+			"serial/avr/UsartBottomHalf.cpp",
 			"serial/avr/UsartDriver.cpp",
 		}
 	},
-	depends = "genos.fs.chardev",
+	--depends = "genos.fs.chardev",
 })
