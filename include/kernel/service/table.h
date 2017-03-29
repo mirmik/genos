@@ -5,13 +5,14 @@
 
 //__BEGIN_DECLS
 
-namespace genos {
+namespace Genos {
 
-	void service_table_init();
-	qid_t register_service(genos::service* s);
-	void register_stable_service(genos::service* s, qid_t qid);
+	void serviceTableInit();
+	
+	qid_t register_service(Service* s);
+	void register_stable_service(Service* s, qid_t qid);
 
-	genos::service* get_service(qid_t qid);
+	Service* get_service(qid_t qid);
 
 }
 

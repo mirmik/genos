@@ -1,4 +1,5 @@
 #include <kernel/service/table.h>
+#include <kernel/service/service.h>
 #include <datastruct/hashtable.h>
 
 #include <utilxx/member.h>
@@ -9,7 +10,7 @@
 static_assert(OPTION(hashtable_size) > 0, "Wrong service hashtable size");
 #define SERVICE_HASHTABLE_SIZE OPTION(hashtable_size)
 
-namespace genos {
+namespace Genos {
 
 	static qid_t __cur_qid;
 	static qid_t __max_qid = 1000;
@@ -21,7 +22,7 @@ namespace genos {
 	size_t sh_hash (void* key) { return *(int32_t*)key ^ 0xABCDEFAB; }
 	void* sh_getkey (struct hlist_node* lnk) { 
 		return & member_container<
-		genos::service,	hlist_node, &genos::service::hlnk>
+		Service, hlist_node, &Service::hlnk>
 		(lnk)->qid; 
 	}
 	
@@ -34,24 +35,24 @@ namespace genos {
 		return __cur_qid;
 	}
 	
-	void service_table_init() {
+	void serviceTableInit() {
 		hashtable_init(&__service_hashtable, __servs_ht_arr, SERVICE_HASHTABLE_SIZE,
 			sh_getkey, sh_hash,sh_equal);
 	}
 	
-	void register_stable_service(struct service* s, qid_t qid) {
+	void register_stable_service(Service* s, qid_t qid) {
 		s->qid = qid;
 		hashtable_put(&__service_hashtable, &s->hlnk);
 	}
 	
-	qid_t register_service(struct service* s) {
+	qid_t register_service(Service* s) {
 		s->qid = get_new_qid();
 		hashtable_put(&__service_hashtable, &s->hlnk);
 		return s->qid;
 	}
 	
-	struct service* get_service(qid_t qid) {
-		return hashtable_get_entry(&__service_hashtable, &qid, struct service, hlnk);
+	Service* get_service(qid_t qid) {
+		return hashtable_get_entry(&__service_hashtable, &qid, Service, hlnk);
 	}
 
 }

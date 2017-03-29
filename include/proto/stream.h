@@ -15,6 +15,9 @@ public:
 		return c;	
 	}
 
+	virtual int avail();
+	virtual int room();
+
 };
 
 #endif

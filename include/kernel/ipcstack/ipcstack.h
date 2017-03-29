@@ -18,7 +18,7 @@ struct ipcstack {
 	int total;
 	int errstat;
 __if_cplusplus(
-	ipcstack(gxx::slice<stack_item> slc) : buffer(slc.data()), size(slc.size()) {} 
+	ipcstack(gxx::slice<stack_item> slc) : buffer(slc.data()), size(slc.size()), total(0) {} 
 )
 };
 #define gstack ipcstack

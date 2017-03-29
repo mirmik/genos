@@ -1,13 +1,13 @@
 #include <kernel/service/service.h>
 #include <kernel/service/table.h>
-#include <kernel/sched/schedee.h>
+//#include <kernel/sched/schedee.h>
 #include <kernel/panic.h>
 
 #include <debug/dprint.h>
 
-namespace genos {
+//namespace genos {
 
-	struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender) {
+/*	struct query * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender) {
 		//debug_print("construct_query\r\n");
 		struct query* q = (struct query*) sysalloc(sizeof(struct query));
 		dlist_init(&q->lnk);
@@ -76,7 +76,7 @@ namespace genos {
 	}*/
 	
 	////////SCHEDEE_API///////////
-	int kernel_send_query(qid_t receiver, struct gstack *stack) {
+/*	int kernel_send_query(qid_t receiver, struct gstack *stack) {
 		return __kernel_send_query(stack, receiver, current_schedee());
 	}
 	
@@ -99,6 +99,6 @@ namespace genos {
 			//Такого запроса не существует!!!
 			return ERROR_REPLY;
 		}*/
-	}
+//	}
 
-}
+//}
