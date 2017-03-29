@@ -3,7 +3,7 @@
 
 #include <periph/usart.h>
 #include <util/bits.h>
-#include <drivers/serial/Uart.h>
+#include <drivers/serial/uart_params.h>
 
 static int usart_sendbyte(struct usart_regs* regs, char c) {
 	regs->udr = c;
@@ -44,7 +44,13 @@ static int usart_enable_irq_tc(struct usart_regs* regs, bool en) {
 	bits_lvl(regs->ucsr_b, (1 << TXCIE0), en);
 }
 
-int usart_setup(struct usart_regs* regs, int32_t baud, Uart::Parity parity, Uart::StopBits stopBits, Uart::DataBits dataBits) {
+static int usart_setup(
+	struct usart_regs* regs, 
+	int32_t baud, 
+	genos::Uart::Parity parity, 
+	genos::Uart::StopBits stopBits, 
+	genos::Uart::DataBits dataBits) 
+{	
 	regs->ucsr_a |= 1 << U2X0;
 	uint16_t baud_setting = (F_CPU / 4 / baud - 1) / 2;
   
@@ -62,7 +68,7 @@ int usart_setup(struct usart_regs* regs, int32_t baud, Uart::Parity parity, Uart
 //	bits_mask_assign(regs->ucsr_b, mode, 0b100);
 }
 
-void usart_irq_handlers(int irqbase,
+static void usart_irq_handlers(int irqbase,
 	irq_handler_t irqhrx, void* argrx,
 	irq_handler_t irqhtx, void* argtx,
 	irq_handler_t irqhtc, void* argtc

@@ -1,7 +1,9 @@
 #ifndef GENOS_SCHEDEE_H
 #define GENOS_SCHEDEE_H
 
-#include <kernel/service/service.h>
+//#include <kernel/service/service.h>
+#include <stdint.h>
+#include <datastruct/dlist_head.h>
 
 #define SCHEDULE_RESUME 1
 #define SCHEDULE_REPEAT 0
@@ -20,17 +22,18 @@ static const uint8_t SCHEDEE_STATE_MASK = 0x0F;
 static const uint8_t SCHEDEE_FINAL_DEALLOCATE = 0x80;
 static const uint8_t SCHEDEE_FINAL_RELEASE = 0x40;
 
-/*struct schedee_operations {
+/*struct schedee;
+
+struct schedee_operations {
 	uint8_t (*execute)	(struct schedee*);
 	uint8_t (*engage)	(struct schedee*);
 	uint8_t (*displace)	(struct schedee*);
 	uint8_t (*lastexit)	(struct schedee*);
 	uint8_t (*destructor)(struct schedee*);
-};*/
+};
 
-/*struct schedee {
-	struct service srvs;
-
+struct schedee {
+	//struct service srvs;
 	struct dlist_head lnk;
 	uint8_t prio;
 	uint8_t flags;
@@ -39,18 +42,19 @@ static const uint8_t SCHEDEE_FINAL_RELEASE = 0x40;
 };*/
 
 namespace genos {
-	class schedee : public service {
+
+	class schedee {
 	public:
 		struct dlist_head schlnk;
 		uint8_t prio;
 		uint8_t flags;
 
 	public:
-		schedee();
+		schedee(uint8_t prio) : prio(prio), flags(SCHEDEE_STATE_INIT) {};
 
 		void run();
 		void stop();
-		void exit();
+		//void exit();
 
 		void set_state_wait(uint8_t state);
 		void set_state_run();
@@ -67,11 +71,18 @@ namespace genos {
 		bool is_zombie();
 		bool is_final_deallocated();
 		bool is_final_release();
+
+		virtual uint8_t execute() {panic("not suported operation");};
+		virtual uint8_t engage() {panic("not suported operation");};
+		virtual uint8_t displace() {panic("not suported operation");};
+		virtual uint8_t lastexit() {panic("not suported operation");};
+		virtual uint8_t destructor() {panic("not suported operation");};
+
 	};
 
 	void schedee_exit();
 
-	struct schedee* current_schedee();
+	schedee* current_schedee();
 	void set_current_schedee(struct schedee* sch);
 
 	void finalize_schedee(struct schedee* sch);
@@ -89,8 +100,25 @@ void schedee_stop(struct schedee* sch);
 void schedee_exit();
 
 struct schedee* current_schedee();
-void set_current_schedee(struct schedee* sch);
+void set_current_schedee(struct schedee* sch);*/
+/*
+void set_state_wait(uint8_t state);
+void set_state_run();
+void set_state_final();
+void set_state_zombie();
 
-__END_DECLS*/
+bool state_is(uint8_t state);
+
+void set_final_deallocate(bool en);
+void set_final_release(bool en);
+
+bool is_running();
+bool is_waiting();
+bool is_zombie();
+bool is_final_deallocated();
+bool is_final_release();
+*/	
+
+//__END_DECLS
 
 #endif

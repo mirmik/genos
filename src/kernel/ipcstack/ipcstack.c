@@ -129,6 +129,19 @@ int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t
 	}	
 }
 
+void stack_get_string_slice(struct ipcstack* stack, int index, const char** buffer, size_t* bufsize, int* isstr) {
+	struct stack_item* it = stack_get_item(stack, index);
+	uint8_t sts = 0;
+
+	if (it->type == ItemType_String) {
+		*bufsize = it->str->size;
+		*buffer = it->str->data;
+		sts = 1; 
+	}
+
+	if (isstr) *isstr = sts; 	
+}
+
 void stack_item_addref(struct stack_item* it) {
 	switch (it->type) {
 		case ItemType_String: 		it->str->ref++;  break;

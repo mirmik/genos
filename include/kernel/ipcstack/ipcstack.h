@@ -43,6 +43,11 @@ int32_t stack_get_bool(struct ipcstack* stack, int index, int* isbool);
 int32_t stack_get_int32(struct ipcstack* stack, int index, int* isi32);
 int32_t stack_get_string_size(struct ipcstack* stack, int index, int* isstr);
 int32_t stack_get_string(struct ipcstack* stack, int index, char* buffer, size_t bufsize, int* isstr);
+void stack_get_string_slice(struct ipcstack* stack, int index, const char** buffer, size_t* bufsize, int* isstr);
+
+int8_t stack_is_bool(struct ipcstack* stack, int index);
+int8_t stack_is_int32(struct ipcstack* stack, int index);
+int8_t stack_is_string(struct ipcstack* stack, int index);
 
 void stack_item_addref(struct stack_item* it);
 

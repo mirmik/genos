@@ -2,20 +2,20 @@
 #define LOCAL_SCHEDULER_H
 
 #include <kernel/sched/scheduler.h>
-#include <kernel/sched/stubschedee.h>
-#include <kernel/tasks/tasklet.h>
+//#include <kernel/sched/stubschedee.h>
+//#include <kernel/tasks/tasklet.h>
 
 #include <gxx/dlist.h>
 
 namespace genos {
 
-	using schlist_t = gxx::dlist<genos::schedee, &genos::schedee::schlnk>;
+using schlst_t = gxx::dlist<schedee, &schedee::schlnk>;
 
-	extern schlist_t runlist[PRIORITY_TOTAL];
-	extern schlist_t waitlist;
-	extern schlist_t finallist;
+extern schlst_t runlist[PRIORITY_TOTAL];
+extern schlst_t waitlist;
+extern schlst_t finallist;
 
-	extern void kernel_schedule_empty();
+extern void kernel_schedule_empty();
 
 }
 

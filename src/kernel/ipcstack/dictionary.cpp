@@ -3,13 +3,13 @@
 //TODO
 
 dictionary_item* construct_dictionary_item() {
-	struct dictionary_item* dct = new dictionary_item; 
-	dct->ref = 1;
-	return dct;
+	//struct dictionary_item* dct = new dictionary_item; 
+	//dct->ref = 1;
+	//return dct;
 }
 
 void release_dictionary_item(struct dictionary_item* dct) {
-	if( ! --dct->ref ) {
-		delete dct;
-	}
+	//if( ! --dct->ref ) {
+		//delete dct;
+	//}
 }

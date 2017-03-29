@@ -33,9 +33,9 @@ public:
 		Uart::DataBits dataBits = Uart::DataBitsEight);
 
 	void setIRQHandlers(
-	IRQHandler irqHandlerRX, void* argRX,
-	IRQHandler irqHandlerTX, void* argTX, 
-	IRQHandler irqHandlerTC, void* argTC
+		IRQHandler irqHandlerRX, void* argRX,
+		IRQHandler irqHandlerTX, void* argTX, 
+		IRQHandler irqHandlerTC, void* argTC
 	);
 };
 

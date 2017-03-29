@@ -1,4 +1,5 @@
 #include <kernel/sched/scheduler.h>
+#include <kernel/sched/schedee.h>
 #include <kernel/sched/stubschedee.h>
 
 #include <loc_scheduler.h>

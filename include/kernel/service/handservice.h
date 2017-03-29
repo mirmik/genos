@@ -3,8 +3,12 @@
 
 #include <kernel/service/service.h>
 
-struct function_service {
+typedef
+
+struct reactive_service {
 	struct service;
+
+
 };
 
 int function_service_receive_query(struct service* s, struct query *q) {
