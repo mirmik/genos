@@ -22,7 +22,7 @@ struct hashtable {
 
 __BEGIN_DECLS
 
-void hashtable_init(struct hashtable * ht, void* buffer, size_t sz, ht_getkey_t getkey, ht_hash_t hash, ht_equal_t equal) {
+static inline void hashtable_init(struct hashtable * ht, void* buffer, size_t sz, ht_getkey_t getkey, ht_hash_t hash, ht_equal_t equal) {
 	ht->table = (struct hlist_head *)buffer;
 	ht->tblsize = sz;
 	ht->equal = equal;

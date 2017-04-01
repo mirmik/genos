@@ -38,7 +38,7 @@ static inline void hlist_del(struct hlist_node* list) {
 __END_DECLS
 
 #define hlist_entry(ptr, type, member) \
-container_of(ptr, type, member)
+mcast_out(ptr, type, member)
 
 #define hlist_next_entry(pos, member) \
 hlist_entry((pos)->member.next, decltypeof(*(pos)), member)

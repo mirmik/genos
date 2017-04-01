@@ -95,7 +95,7 @@ static inline void dlist_move_prev(struct dlist_head* lst, struct dlist_head* he
 __END_DECLS
 
 #define dlist_entry(ptr, type, member) \
-container_of(ptr, type, member)
+gxx_container_of(ptr, type, member)
 
 #define dlist_next_entry(pos, member) \
 dlist_entry((pos)->member.next, decltypeof(*(pos)), member)

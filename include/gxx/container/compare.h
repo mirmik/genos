@@ -12,6 +12,14 @@ namespace gxx {
 		return !strcmp(a,b);
 	}
 
+
+	template<typename T>
+	inline bool equal(const T& a, const T& b) { return a == b; }
+
+	inline bool equal(const char* a, const char* b) {
+		return !strcmp(a,b);
+	}
+
 }
 
 #endif

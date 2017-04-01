@@ -3,6 +3,15 @@
 
 #include <stddef.h>
 
+#ifndef __cplusplus
+#	define mcast_offsetof(type, member) \
+		offsetof(type, member)
+#else
+#include <utilxx/member.h>
+#	define mcast_offsetof(type, member) \
+		member_offset(&type::member)
+#endif
+
 /** typeof(foo.bar);  @a type is (an expr of) a struct or a union */
 #define member_typeof(type, member_nm) \
 	typeof(((typeof(type) *) 0x0)->member_nm)
@@ -27,18 +36,18 @@
 
 /** &foo.bar --> &foo;  @a member_ptr must not be null */
 #define mcast_out(member_ptr, type, member) \
-	((type *) ((char *) (member_ptr) - offsetof(type, member)))
+	((type *) ((char *) (member_ptr) - mcast_offsetof(type, member)))
 
 /** &foo.bar --> &foo; NULL --> NULL; */
 #define mcast_out_or_null(member_ptr, type, member) 			\
 	({                                                          \
 		char *__member_expr__ = (char *) (member_ptr);          \
 		(type *) (__member_expr__ ?                             \
-			__member_expr__ - offsetof(type, member) : NULL); 	\
+			__member_expr__ - mcast_offsetof(type, member) : NULL); 	\
 	})
 
 //SYNONIM
-#define container_of(member_ptr, type, member) \
-	mcast_out(member_ptr, type, member)
+//#define container_of(member_ptr, type, member) \
+//	mcast_out(member_ptr, type, member)
 
 #endif /* UTIL_MEMBER_H_ */

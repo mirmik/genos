@@ -1,7 +1,7 @@
 #ifndef GENOS_SERVICE_H
 #define GENOS_SERVICE_H
 
-#include <kernel/service/msgtag.h>
+#include <kernel/service/MsgTag.h>
 #include <datastruct/hlist_head.h>
 #include <kernel/id/id.h>
 
@@ -17,8 +17,10 @@ namespace Genos {
 		qid_t qid;
 	public:
 		virtual int8_t receiveMessage(MsgTag& msg) = 0;
+	
+		//hashtable support
+		static qid_t& getkey(Service& srvs) { return srvs.qid; }
 	};
-
 
 }
 /*

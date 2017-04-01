@@ -3,24 +3,15 @@
 
 #include "inttypes.h"
 
-template<typename Type, typename MemberType, MemberType Type::*member>
-inline uintptr_t member_offset()
-{
-	constexpr uintptr_t ret = (uintptr_t)&(((Type*)0)->*member);
-	return ret;
+template<typename Type, typename MemberType>
+static inline uintptr_t member_offset(MemberType Type::*member) {
+	return (uintptr_t)&(((Type*)0)->*member);
 };
 
-template<typename Type, typename MemberType, MemberType Type::*member>
-struct member_helper
-{
-	constexpr static uintptr_t offset = (uintptr_t)&(((Type*)0)->*member);
-};
-
-template<typename Type, typename MemberType, MemberType Type::*member>
-inline Type* member_container(MemberType* ptr)
-{
-	Type* ret = (Type*)((char*)ptr - member_helper<Type,MemberType,member>::offset);
+template<typename Type, typename MemberType>
+static inline Type* member_container(MemberType* ptr, MemberType Type::*member) {
+	Type* ret = (Type*)(char*)ptr - member_offset(member);
 	return ret;
-};
+}
 
 #endif

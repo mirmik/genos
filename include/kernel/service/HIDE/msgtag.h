@@ -3,7 +3,7 @@
 
 #include <kernel/ipcstack/ipcstack.h>
 #include <kernel/id/id.h>
-#include <datastruct/dlist_head.h>
+#include <gxx/dlist.h>
 
 #define MSGTAG_ANSWER 0x01
 #define MSGTAG_KERNEL_STACK 0x02
@@ -22,6 +22,8 @@ namespace Genos {
 		//MsgTag(size_t stcksize) {}
 	}; 
 	
+	using MessageList = gxx::dlist<MsgTag, &MsgTag::lnk>;
+
 	static MsgTag* msgtag_allocate() {
 		return new MsgTag;
 	}

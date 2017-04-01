@@ -95,8 +95,8 @@ namespace gxx {
 			bool operator!= (const iterator& b) {return current != b.current;}
 			bool operator== (const iterator& b) {return current == b.current;}
 					
-			type& operator*() {return *member_container<type, dlist_head, member>(current);}
-			type* operator->() {return member_container<type, dlist_head, member>(current);}
+			type& operator*() {return *member_container(current,member);}
+			type* operator->() {return member_container(current,member);}
 		};
 	
 		class reverse_iterator {
@@ -112,8 +112,8 @@ namespace gxx {
 			bool operator!= (const reverse_iterator& b) {return current != b.current;}
 			bool operator== (const reverse_iterator& b) {return current == b.current;}
 					
-			type& operator*() {return *member_container<type, dlist_head, member>(current);}
-			type* operator->() {return member_container<type, dlist_head, member>(current);}
+			type& operator*() {return *member_container(current,member);}
+			type* operator->() {return member_container(current,member);}
 		};
 	
 		iterator begin() {return iterator(list.next);}
@@ -163,12 +163,12 @@ namespace gxx {
 	*/
 	};
 	
-	template<typename type, dlist_head type::* member>
-	dlist<type, member>* dlist_head_to_class(dlist_head* head)
-	{
-		using dlist_t = dlist<type, member>;
-		return reinterpret_cast<dlist_t*>(reinterpret_cast<char*>(head) - member_offset<dlist_t, dlist_head, &dlist_t::list>());
-	};
+	//template<typename type, dlist_head type::* member>
+	//dlist<type, member>* dlist_head_to_class(dlist_head* head)
+	//{
+	//	using dlist_t = dlist<type, member>;
+	//	return reinterpret_cast<dlist_t*>(reinterpret_cast<char*>(head) - member_offset<dlist_t, dlist_head, &dlist_t::list>());
+	//};
 	
 };
 
