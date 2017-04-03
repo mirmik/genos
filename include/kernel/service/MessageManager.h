@@ -10,9 +10,11 @@
 #include <gxx/dlist.h>
 #include <gxx/array.h>
 
+#include <kernel/sched/AutomSchedee.h>
+
 namespace Genos {
 	
-	class MessageManager {
+	class MessageManagerSchedee : public AutomFunctorSchedee {
 		ServiceTable* serviceTable;
 
 		MessageList queries;
@@ -23,22 +25,24 @@ namespace Genos {
 
 	public:
 
-		MessageManager(ServiceTable* table) : serviceTable(table) {};
+		MessageManagerSchedee(ServiceTable* table) : serviceTable(table), 
+			AutomFunctorSchedee(0) {};
 
 		void toSend(MsgTag& msgtag) {
 			critical_section_enter();
 			queries.move_back(msgtag);
+			run();
 			critical_section_leave();
 		}
 
 		void toReply(MsgTag& msgtag) {
 			critical_section_enter();
 			replies.move_back(msgtag);
+			run();
 			critical_section_leave();
 		}
 
-		void execute() {
-			//dprln("MessageManager::execute");
+		void routine() override {
 			while (!queries.empty()) {
 				MsgTag & msg = *queries.begin();
 				dlist_del_init(&msg.lnk);
@@ -49,7 +53,9 @@ namespace Genos {
 				MsgTag & msg = *replies.begin();
 				dlist_del_init(&msg.lnk);
 				reply(msg);
-			}			
+			}
+
+			stop();			
 		}
 
 		MsgTag* getAnonimMsgTag() {

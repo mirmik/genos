@@ -50,8 +50,8 @@ public:
 		iterator& operator= (const iterator& b) { current = b.current; return *this; }
 		iterator next() { return iterator(current->next); };
 				
-		type& operator*() {return *member_container<type, hlist_node, member>(current);};
-		type* operator->() {return member_container<type, hlist_node, member>(current);};
+		type& operator*() {return *member_container(current, member);};
+		type* operator->() {return member_container(current, member);};
 	};
 
 	iterator begin() {return iterator(first);};

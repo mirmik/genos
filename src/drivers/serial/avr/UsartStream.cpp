@@ -69,7 +69,9 @@ int AvrUsartStream::room() {
 }
 
 void AvrUsartStream::waitReceivedData(Tasklet& tasklet) {
+	auto save = global_irq_save();
 	haveDataFlag.wait(tasklet);
+	global_irq_restore(save);
 }
 
 void interruptHandler_UsartRX(AvrUsartStream* usart) {

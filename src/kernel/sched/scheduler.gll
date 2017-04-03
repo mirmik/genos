@@ -1,18 +1,13 @@
 Implementation("genos.kernel.scheduler", "standart", {
 	sources = {
-		--cc = "schedbase.c schedee.c scheduler.c",
-		cxx = "schedbase.cpp schedee.cpp scheduler.cpp" --stubsch
+		cxx = "StandartScheduler.cpp Scheduler.cpp"
 	},
-	includePaths = ".",
-	depends = "genos.kernel.tasklets"
 })
 
 Implementation("genos.kernel.scheduler", "displace", {
 	sources = {
-		cc = "scheddisp.c schedee.c stubsch.c"
+		cxx = "DisplaceScheduler.cpp Scheduler.cpp"
 	},
-	includePaths = ".",
-	depends = "genos.kernel.tasklets"
 })
 
 Module("genos.kernel.subst_schedee", {

@@ -97,7 +97,7 @@ __do_clear_bss:
 
 	/* Call global ctors */
 
-	.global __do_global_constructors
+.global __do_global_constructors
 __do_global_constructors:
 	ldi		r30, lo8(_ctors_start)
 	ldi		r31, hi8(_ctors_start)
@@ -135,7 +135,7 @@ __do_global_constructors:
 
 	/* Start application */
 
-	rcall	main
+	call	main
 
 	/* If programm is complete, stub system */		
 	

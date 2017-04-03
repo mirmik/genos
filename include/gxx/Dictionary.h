@@ -21,7 +21,7 @@ namespace gxx {
 
 		//DictNode(const K& _key) : kv(_key, V()) {};
 
-		size_t hash(uint32_t seed) const {
+		size_t hash(uint32_t seed = GXX_DEFAULT_SEED) const {
 			return gxx::hash(key, seed);
 		}
 

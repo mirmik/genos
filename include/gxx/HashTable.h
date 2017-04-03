@@ -21,7 +21,7 @@ namespace gxx {
 
 	private:
 		void put_to_cell(hlist_head* h, size_t sz, T& obj) {
-			size_t cellnum = obj.hash(gxx::defaultSeed) % sz;
+			size_t cellnum = obj.hash() % sz;
 			hlist& cell = *(hlist*)(h + cellnum);
 			cell.push_front(obj);						
 		}
@@ -49,7 +49,7 @@ namespace gxx {
 
 		bool get(const K& key, T*& ptr) const {
 			if (!is_valid()) return false;
-			size_t cellnum = gxx::hash(key, gxx::defaultSeed) % m_htable.size();
+			size_t cellnum = gxx::hash(key) % m_htable.size();
 			hlist& cell = *(hlist*)(m_htable.data() + cellnum);
 			auto it = gxx::find_if(cell.begin(), cell.end(), [key](const T& ref) -> bool {
 				return gxx::compare(ref.getkey(), key);

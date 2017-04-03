@@ -1,10 +1,10 @@
 #ifndef GENOS_BANNER_H
 #define GENOS_BANNER_H
 
-#include <kernel/file/file.h>
+//#include <kernel/file/file.h>
 #include <gxx/ByteArray.h> 
 
-#define GENOS_VERSION "0.8.1"	
+#define GENOS_VERSION "0.9.1"	
 
 static void print_banner(Stream& f) {
 	f.println();
