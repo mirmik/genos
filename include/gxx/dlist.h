@@ -47,6 +47,10 @@ namespace gxx {
 			assert(is_linked(obj));
 			dlist_del(&(obj.*member));
 		};
+
+		void del_init(type& obj) {
+			dlist_del_init(&(obj.*member));
+		};
 	
 		void pop_if_linked(type& obj) {
 			if (!is_linked(obj)) return;

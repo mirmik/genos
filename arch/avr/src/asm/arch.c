@@ -44,6 +44,7 @@ void arch_init() {
 	usart0_diag.putc = usart0_diag_putchar;
 	usart0_diag.write = diag_write_stub;
 	current_diag = &usart0_diag;
+	usart0_diag_init();
 
 	setIRQHandler(timer0.irqs.ovf, system_tick, 0);
 	tc_8bit_interruptOverflowEnable(&timer0, 1);

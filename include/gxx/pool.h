@@ -9,12 +9,15 @@
 
 namespace gxx {
 
+	template <size_t PageSize>
 	class page_pool {
-	private:
 		//gxx::vector<void*> pages;
 		
 	public:
-		void* allocate_page(size_t pageSize) {
+		constexpr static size_t pageSize = PageSize; 
+
+		void* allocate_page() {
+			dprln("page_pool::allocate_page");
 			void* ret = sysalloc(pageSize);
 			//pages.emplace_back(ret);
 			return ret;
@@ -27,38 +30,44 @@ namespace gxx {
 		}	
 	};
 
-	class block_pool : public page_pool {
+	template<typename T, size_t TotalOnPage>
+	class block_pool : public page_pool<sizeof(T) * TotalOnPage> {
 	private:
+		using Parent = page_pool<sizeof(T) * TotalOnPage>;
 		slist_head head;
-		size_t objsize;
-		size_t totalOnPage;
 
 	public: 
-		block_pool(size_t objsize, size_t total) : 
-			objsize(objsize), totalOnPage(total) {
-				slist_init(&head);
-			};
+		block_pool() {
+			slist_init(&head);
+		};
 
-		void* allocate() {
+		T* allocate() {
 			if (head.next == nullptr) formatNewPage();
-			void* ret = static_cast<void*>(head.next);
+			T* ret = reinterpret_cast<T*>(head.next);
 			slist_del(head.next, &head);
 			return ret;
 		}
 
-		void release(void* ptr) {
+		template<typename ... Args>
+		T* emplace(Args ... args) {
+			T* ptr = allocate();
+			gxx::constructor(ptr, gxx::forward<Args>(args) ...);
+			return ptr;
+		}
+
+		void release(T* ptr) {
 
 		}
 
 	private:
 		void formatNewPage() {
 			assert(head.next == nullptr);
-			size_t pageSize = objsize * totalOnPage;
+			//size_t pageSize = sizeof(T) * TotalOnPage;
 
-			void* page = allocate_page(pageSize);
+			void* page = Parent::allocate_page();
 			
-			char * end = (char*)page + pageSize;
-			for(char* pos = (char*)page; pos != end; pos += objsize) {
+			char * end = (char*)page + Parent::pageSize;
+			for(char* pos = (char*)page; pos != end; pos += sizeof(T)) {
 				slist_add_next(reinterpret_cast<slist_head*>(pos), &head);
 			}
 		}

@@ -5,7 +5,7 @@ void * operator new(size_t, void *ptr) noexcept {
 	return ptr;
 };
 
-void * operator new(size_t sz) {
+void * operator new(size_t sz) noexcept {
 	return sysalloc(sz);
 };
 

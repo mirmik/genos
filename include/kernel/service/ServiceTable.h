@@ -7,7 +7,7 @@
 #define SERVICE_HASHTABLE_SIZE 20
 #define MAX_QID 1000
 
-int& __service_getkey (Genos::Service& srvs) { return srvs.qid; }
+//int& __service_getkey (Genos::Service& srvs) { return srvs.qid; }
 
 namespace Genos {
 
@@ -33,14 +33,11 @@ namespace Genos {
 
 	private: 
 		qid_t get_new_qid() {
-		//	++qid_counter;
-		//	while (hashtable_get(&table, &qid_counter))
-		//	if (qid_counter > MAX_QID) qid_counter = 0; 
-		//	return qid_counter;
+			while (table.get(++qid_counter))
+				if (qid_counter > MAX_QID) qid_counter = 0; 
+			return qid_counter;
 		}
-	
 	};
-
 }
 
 #endif

@@ -9,13 +9,11 @@ namespace Genos {
 	class DebugService : public Service {
 	public:
 		int8_t receiveMessage(MsgTag& msg) {
+			dprln("DebugService::receiveMessage");
 			debug_ipcstack_dump(msg.stack);
-			
-			replyMessage(msg);
+			ReplyMessage(msg);
 		}
-
 	};
-
 }
 
 #endif

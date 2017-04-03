@@ -5,48 +5,50 @@
 #include <debug/dprint.h>
 #include <drivers/serial/avr/UsartDriver.h>
 
-AVRUsartDriver::AVRUsartDriver(usart_regs* regs, int irqbase) : m_regs(regs), m_irqbase(irqbase) {}
+namespace Genos {
 
-int AVRUsartDriver::sendbyte(char c) {
+AvrUsartDriver::AvrUsartDriver(usart_regs* regs, int irqbase) : m_regs(regs), m_irqbase(irqbase) {}
+
+int AvrUsartDriver::sendbyte(char c) {
 	m_regs->udr = c;
 	return 1;
 }
 
-int AVRUsartDriver::recvbyte() {
+int AvrUsartDriver::recvbyte() {
 	return m_regs->udr;
 }
 
-int AVRUsartDriver::canrecv() {
+int AvrUsartDriver::canrecv() {
 	return bits_mask(m_regs->ucsr_a, (1 << RXC0));
 }
 
-int AVRUsartDriver::cansend() {
+int AvrUsartDriver::cansend() {
 	return bits_mask(m_regs->ucsr_a, (1 << UDRE0));
 }
 
-int AVRUsartDriver::enable(bool en) {}
+int AvrUsartDriver::enable(bool en) {}
 
-int AVRUsartDriver::enableRX(bool en) {
+int AvrUsartDriver::enableRX(bool en) {
 	bits_lvl(m_regs->ucsr_b, (1 << RXEN0), en);
 }
 
-int AVRUsartDriver::enableTX(bool en) {
+int AvrUsartDriver::enableTX(bool en) {
 	bits_lvl(m_regs->ucsr_b, (1 << TXEN0), en);
 }
 
-int AVRUsartDriver::irqEnableRX(bool en) {
+int AvrUsartDriver::irqEnableRX(bool en) {
 	bits_lvl(m_regs->ucsr_b, (1 << RXCIE0), en);
 }
 
-int AVRUsartDriver::irqEnableTX(bool en) {
+int AvrUsartDriver::irqEnableTX(bool en) {
 	bits_lvl(m_regs->ucsr_b, (1 << UDRIE0), en);
 }
 
-int AVRUsartDriver::irqEnableTC(bool en) {
+int AvrUsartDriver::irqEnableTC(bool en) {
 	bits_lvl(m_regs->ucsr_b, (1 << TXCIE0), en);
 }
 	
-int AVRUsartDriver::setup(int32_t baud, Uart::Parity parity, Uart::StopBits stopBits, Uart::DataBits dataBits) {
+int AvrUsartDriver::setup(int32_t baud, Uart::Parity parity, Uart::StopBits stopBits, Uart::DataBits dataBits) {
 	m_regs->ucsr_a |= 1 << U2X0;
 	uint16_t baud_setting = (F_CPU / 4 / baud - 1) / 2;
   
@@ -64,7 +66,7 @@ int AVRUsartDriver::setup(int32_t baud, Uart::Parity parity, Uart::StopBits stop
 //	bits_mask_assign(m_regs->ucsr_b, mode, 0b100);
 }
 
-void AVRUsartDriver::setIRQHandlers(
+void AvrUsartDriver::setIrqHandlers(
 	IRQHandler irqHandlerRX, void* argRX,
 	IRQHandler irqHandlerTX, void* argTX, 
 	IRQHandler irqHandlerTC, void* argTC
@@ -72,6 +74,8 @@ void AVRUsartDriver::setIRQHandlers(
 	setIRQHandler(m_irqbase + 0, irqHandlerRX, argRX);
 	setIRQHandler(m_irqbase + 1, irqHandlerTX, argTX);
 	setIRQHandler(m_irqbase + 2, irqHandlerTC, argTC);
+}
+
 }
 
 #endif

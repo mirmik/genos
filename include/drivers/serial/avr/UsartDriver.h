@@ -2,15 +2,17 @@
 #define AVR_UART_DRIVER_H
 
 #include <periph/usart.h>
-#include <drivers/serial/Uart.h>
+#include <drivers/serial/UartParams.h>
 
-class AVRUsartDriver {
+namespace Genos {
+
+class AvrUsartDriver {
 public:
 	usart_regs* m_regs;
 	uint8_t m_irqbase;
 
 public:
-	AVRUsartDriver(usart_regs* regs, int irqbase);
+	AvrUsartDriver(usart_regs* regs, int irqbase);
 
 	int sendbyte(char c);
 	int recvbyte();
@@ -32,11 +34,13 @@ public:
 		Uart::StopBits stopBits = Uart::StopBitsOne, 
 		Uart::DataBits dataBits = Uart::DataBitsEight);
 
-	void setIRQHandlers(
+	void setIrqHandlers(
 		IRQHandler irqHandlerRX, void* argRX,
 		IRQHandler irqHandlerTX, void* argTX, 
 		IRQHandler irqHandlerTC, void* argTC
 	);
 };
+
+}
 
 #endif

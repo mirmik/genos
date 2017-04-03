@@ -20,29 +20,21 @@ namespace Genos {
 		qid_t sender;
 		qid_t receiver;
 
-		MsgTag(ipcstack * stack) : stack(stack) {
+		MsgTag() {
 			dlist_init(&lnk);
+		}
+
+		void bind(ipcstack* stack) {
+			this->stack = stack;
 		}
 	}; 
 	
 	using MessageList = gxx::dlist<MsgTag, &MsgTag::lnk>;
 
-	//static MsgTag* msgtag_allocate() {
-	//	return new MsgTag;
-	//}
-	
-	static MsgTag* msgtag_release(MsgTag* msg) {
-		//if (msg->stat & MSGTAG_KERNEL_STACK) release_ipcstack();
-		// /delete msg;
+	namespace Glue {
+		void replyMessage(MsgTag& msgtag);
 	}
-	
-	static void ReplyMessage(MsgTag& msg) {
-		if (msg.stat & MSGTAG_ANSWER) {
-	
-		} else {
-			msgtag_release(&msg);
-		}
-	}
+	void ReplyMessage(MsgTag& msgtag) { Glue::replyMessage(msgtag); }
 
 }
 

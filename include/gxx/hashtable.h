@@ -21,7 +21,7 @@ namespace gxx {
 
 		void put(T* item) {
 			hlist_node* node = &(item->*lnk);
-			K& key = GetKey(*member_container(node, lnk));
+			K& key = GetKey(*item);
 			size_t hash = gxx::hash(key);
 			__hashtable_put_to_cell(table, node, hash % TableSize);
 		}

@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-namespace genos {
+namespace Genos {
 	
 	namespace Uart {
 		
