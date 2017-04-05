@@ -2,7 +2,7 @@
 #define GENOS_DEBUG_SERVICE_H
 
 #include <kernel/service/Service.h>
-#include <kernel/service/MsgApi.h>
+//#include <kernel/service/MsgApi.h>
 
 namespace Genos {
 

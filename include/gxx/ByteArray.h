@@ -2,7 +2,7 @@
 #define GENOS_BYTEARRAY_H
 
 #include <inttypes.h>
-#include <gxx/Allocator.h>
+#include <gxx/allocator.h>
 #include <gxx/container/hash.h>
 
 #include <gxx/buffer.h>
@@ -10,11 +10,14 @@
 
 namespace gxx {
 
-	class ByteArray : public BasicAllocated {
+	template <class Allocator = gxx::allocator<char>>
+	class ByteArray {
 	
 		char* m_data;
 		size_t m_capacity;
 		size_t m_size;
+
+		Allocator m_alloc;
 	
 	public:
 		CONSTREF_GETTER(data, m_data);
@@ -124,7 +127,7 @@ namespace gxx {
 		}
 	};
 	
-	using string = ByteArray;
+	using string = ByteArray<>;
 	
 };
 

@@ -1,7 +1,7 @@
 #ifndef GENOS_SYSALLOC_H
 #define GENOS_SYSALLOC_H
 
-#include <mem/allocator.h>
+#include <stdlib.h>
 
 #ifdef GENOS_CONFIGURE
 #	include "genos_configure.h"

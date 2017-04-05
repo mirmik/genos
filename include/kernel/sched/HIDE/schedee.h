@@ -1,47 +1,126 @@
 #ifndef GENOS_SCHEDEE_H
 #define GENOS_SCHEDEE_H
 
-#include "inttypes.h"
-#include "gxx/DList.h"
-#include "util/bits.h"
+#error "OLD_SCHEDEE"
 
-#include "kernel/signals.h"
+//#include <kernel/service/service.h>
+#include <stdint.h>
+#include <datastruct/dlist_head.h>
 
-#define SCHEDEE_READY 			0x0001
-#define SCHEDEE_HELD			0x0002
-#define SCHEDEE_WAIT 			0x0004
-#define SCHEDEE_ZOMBIE			0x0020
+#define SCHEDULE_RESUME 1
+#define SCHEDULE_REPEAT 0
 
-#define SCHEDEE_STATE_MASK		0x0027
-//#define SCHEDEE_STATE_WAIT_MASK	0x001E
+static const uint8_t SCHEDEE_STATE_INIT = 0x00;
+static const uint8_t SCHEDEE_STATE_RUN = 0x01;
+static const uint8_t SCHEDEE_STATE_WAIT = 0x02;
+static const uint8_t SCHEDEE_BLOCKED_SEND = 0x03;
+static const uint8_t SCHEDEE_BLOCKED_RECEIVE = 0x04;
+static const uint8_t SCHEDEE_STATE_FINAL = 0x05;
+static const uint8_t SCHEDEE_STATE_ZOMBIE = 0x06;
+static const uint8_t SCHEDEE_BLOCKED_STOP = 0x07;
 
-//Флаг указывает, что передачу управления диспетчеру при
-//вызове блокирующих операций процесс берёт на себя.
-//Кроме того, он не может вытесняться.
-#define SCHEDEE_NONPREEMPTIBLE	0x1000
+static const uint8_t SCHEDEE_STATE_MASK = 0x0F;
 
-namespace Kernel {	
-	
+static const uint8_t SCHEDEE_FINAL_DEALLOCATE = 0x80;
+static const uint8_t SCHEDEE_FINAL_RELEASE = 0x40;
+
+/*struct schedee;
+
+struct schedee_operations {
+	uint8_t (*execute)	(struct schedee*);
+	uint8_t (*engage)	(struct schedee*);
+	uint8_t (*displace)	(struct schedee*);
+	uint8_t (*lastexit)	(struct schedee*);
+	uint8_t (*destructor)(struct schedee*);
+};
+
+struct schedee {
+	//struct service srvs;
+	struct dlist_head lnk;
+	uint8_t prio;
+	uint8_t flags;
+
+	const struct schedee_operations* schops;
+};*/
+
+namespace genos {
+
 	class schedee {
 	public:
-		dlist_head statelnk;
-		
-		sig_t signals;
-		sig_t signals_mask;
+		struct dlist_head schlnk;
+		uint8_t prio;
+		uint8_t flags;
 
-		uint16_t flags;
-		int8_t dyn_prio;
-		int8_t sta_prio;
+	public:
+		schedee(uint8_t prio) : prio(prio), flags(SCHEDEE_STATE_INIT) {};
 
-		inline bool is_ready() {
-			return bits_mask(flags, SCHEDEE_READY);
-		}
-
-		void start();
+		void run();
 		void stop();
+		//void exit();
 
-		virtual void execute() = 0;
+		void set_state_wait(uint8_t state);
+		void set_state_run();
+		void set_state_final();
+		void set_state_zombie();
+		
+		bool state_is(uint8_t state);
+		
+		void set_final_deallocate(bool en);
+		void set_final_release(bool en);
+		
+		bool is_running();
+		bool is_waiting();
+		bool is_zombie();
+		bool is_final_deallocated();
+		bool is_final_release();
+
+		virtual uint8_t execute() {panic("not suported operation");};
+		virtual uint8_t engage() {panic("not suported operation");};
+		virtual uint8_t displace() {panic("not suported operation");};
+		virtual uint8_t lastexit() {panic("not suported operation");};
+		virtual uint8_t destructor() {panic("not suported operation");};
+
 	};
+
+	void schedee_exit();
+
+	schedee* current_schedee();
+	void set_current_schedee(struct schedee* sch);
+
+	void finalize_schedee(struct schedee* sch);
 }
+
+/*__BEGIN_DECLS
+
+void schedee_init(struct schedee* sch, 
+	const struct schedee_operations* schops, 
+	const struct service_operations* srvsops);
+
+void schedee_run(struct schedee* sch);
+void schedee_stop(struct schedee* sch);
+
+void schedee_exit();
+
+struct schedee* current_schedee();
+void set_current_schedee(struct schedee* sch);*/
+/*
+void set_state_wait(uint8_t state);
+void set_state_run();
+void set_state_final();
+void set_state_zombie();
+
+bool state_is(uint8_t state);
+
+void set_final_deallocate(bool en);
+void set_final_release(bool en);
+
+bool is_running();
+bool is_waiting();
+bool is_zombie();
+bool is_final_deallocated();
+bool is_final_release();
+*/	
+
+//__END_DECLS
 
 #endif
