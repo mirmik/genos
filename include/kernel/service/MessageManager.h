@@ -14,9 +14,7 @@
 
 namespace Genos {
 	
-	class MessageManagerSchedee : public AutomFunctorSchedee {
-		ServiceTable* serviceTable;
-
+	class MessageManagerBasic {
 		MessageList queries;
 		MessageList replies;
 
@@ -25,38 +23,7 @@ namespace Genos {
 
 	public:
 
-		MessageManagerSchedee(ServiceTable* table) : serviceTable(table), 
-			AutomFunctorSchedee(0) {};
-
-		void toSend(MsgTag& msgtag) {
-			critical_section_enter();
-			queries.move_back(msgtag);
-			run();
-			critical_section_leave();
-		}
-
-		void toReply(MsgTag& msgtag) {
-			critical_section_enter();
-			replies.move_back(msgtag);
-			run();
-			critical_section_leave();
-		}
-
-		void routine() override {
-			while (!queries.empty()) {
-				MsgTag & msg = *queries.begin();
-				dlist_del_init(&msg.lnk);
-				send(msg);
-			}
-
-			while (!replies.empty()) {
-				MsgTag & msg = *replies.begin();
-				dlist_del_init(&msg.lnk);
-				reply(msg);
-			}
-
-			stop();			
-		}
+		MessageManagerBasic() {};
 
 		MsgTag* getAnonimMsgTag() {
 			//auto stack = ipcStackPool.emplace((new gxx::array<stack_item, 5>)->slice());
@@ -73,7 +40,7 @@ namespace Genos {
 		void send(MsgTag& msgtag) {
 			dprln("MessageManager::send");
 			
-			Service* receiver = serviceTable->getService(msgtag.receiver);
+			Service* receiver = Glue::getService(msgtag.receiver);
 			assert(receiver);
 			
 			receiver->receiveMessage(msgtag);
@@ -83,6 +50,37 @@ namespace Genos {
 			dprln("MessageManager::reply");
 		}
 	};
+
+	class MessageManager : public MessageManagerBasic {
+	public:
+
+		void toSend(MsgTag& msgtag) {
+			critical_section_enter();
+			queries.move_back(msgtag);
+			critical_section_leave();
+		}
+
+		void toReply(MsgTag& msgtag) {
+			critical_section_enter();
+			replies.move_back(msgtag);
+			critical_section_leave();
+		}
+
+		void routine() override {
+			while (!queries.empty()) {
+				MsgTag & msg = *queries.begin();
+				dlist_del_init(&msg.lnk);
+				send(msg);
+			}
+
+			while (!replies.empty()) {
+				MsgTag & msg = *replies.begin();
+				dlist_del_init(&msg.lnk);
+				reply(msg);
+			}			
+		}
+
+	}
 }
 
 #endif

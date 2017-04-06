@@ -6,7 +6,7 @@
 
 #define GENOS_VERSION "0.9.1"	
 
-static void print_banner(Stream& f) {
+static void print_banner(Genos::Stream& f) {
 	f.println();
 	f.println("  __             __   __ ");
 	f.println(" /              /  | /   ");
@@ -15,7 +15,7 @@ static void print_banner(Stream& f) {
 	f.println("|__/ |__  |  / |__/  __/ ");
 };
 
-static void print_about(Stream& f) {
+static void print_about(Genos::Stream& f) {
 	f.print("Operation System GenOS. version: ");
 	f.println(GENOS_VERSION);
 };

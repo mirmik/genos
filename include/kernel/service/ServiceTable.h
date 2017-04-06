@@ -38,6 +38,10 @@ namespace Genos {
 			return qid_counter;
 		}
 	};
+
+	namespace Glue {
+		Service* getService(qid_t qid);
+	}
 }
 
 #endif

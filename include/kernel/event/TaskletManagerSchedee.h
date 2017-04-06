@@ -1,7 +1,8 @@
-#ifndef GENOS_TASKLET_MANAGER_H
-#define GENOS_TASKLET_MANAGER_H
+#ifndef GENOS_TASKLET_MANAGER_SCHEDEE_H
+#define GENOS_TASKLET_MANAGER_SCHEDEE_H
 
 #include <kernel/event/Tasklet.h>
+#include <kernel/sched/AutomSchedee.h>
 #include <kernel/csection.h>
 
 namespace Genos {
@@ -15,6 +16,7 @@ namespace Genos {
 		void addToExecute(Tasklet& slot) {
 			critical_section_enter();
 			queue.move_back(slot);
+			run();
 			critical_section_leave();
 		};
 
@@ -26,6 +28,7 @@ namespace Genos {
 				critical_section_leave();
 				object.routine();
 			}
+			stop();
 		}
 	};
 }

@@ -4,19 +4,17 @@
 #include <gxx/buffer.h>
 #include <drivers/serial/avr/UsartDriver.h>
 #include <utilxx/classes/ByteRing.h>
-#include <proto/stream.h>
+#include <kernel/devices/serial/Stream.h>
 
 #include <kernel/event/Tasklet.h>
 
 namespace Genos {
 
-class AvrUsartStream : public AvrUsartDriver, public Stream {
+class AvrUsartStream : public AvrUsartDriver, public FlagedStream {
 
 private:
 	ByteRing m_rxring;
 	ByteRing m_txring;
-
-	StateFlag haveDataFlag;
 
 public:
 	int write(const char* data, size_t size);
