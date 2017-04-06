@@ -4,6 +4,7 @@
 #include <kernel/sched/AbstractSchedeeManager.h>
 #include <kernel/sched/Schedee.h>
 #include <kernel/csection.h>
+#include <kernel/panic.h>
 
 namespace Genos {
 	class SchedeeManager : public AbstractSchedeeManager {
@@ -26,11 +27,15 @@ namespace Genos {
 		}
 
 		void waitSchedee(Schedee& sch, uint8_t type) override {
-			panic("TODO");
+			assert(sch.state == SCHEDEE_STATE_RUN);
+			sch.state = type;
+			waitlist.move_back(sch);
 		}
 
 		void unwaitSchedee(Schedee& sch, uint8_t type) override {
-			panic("TODO");
+			assert(sch.state == type);
+			sch.state = SCHEDEE_STATE_RUN;
+			runlist[sch.prio].move_back(sch);
 		}
 
 		void execute() override {

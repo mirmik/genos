@@ -38,8 +38,12 @@ namespace Genos {
 		};
 
 	public:
-		Schedee() : prio(PRIORITY_TOTAL - 1), state(SCHEDEE_STATE_INIT) {};
-		Schedee(uint8_t prio) : prio(prio), state(SCHEDEE_STATE_INIT) {};
+		Schedee() : prio(PRIORITY_TOTAL - 1), state(SCHEDEE_STATE_INIT) {
+			dlist_init(&schlnk);
+		};
+		Schedee(uint8_t prio) : prio(prio), state(SCHEDEE_STATE_INIT) {
+			dlist_init(&schlnk);
+		};
 
 		void run() {
 			Glue::systemSchedeeManager().runSchedee(*this);
@@ -47,6 +51,15 @@ namespace Genos {
 
 		void stop() {
 			Glue::systemSchedeeManager().stopSchedee(*this);
+		}
+
+		void wait() {
+			Glue::systemSchedeeManager().waitSchedee(*this, SCHEDEE_STATE_WAIT);
+		}
+
+		void unwait() {
+			Glue::systemSchedeeManager()
+				.unwaitSchedee(*this, SCHEDEE_STATE_WAIT);
 		}
 
 		void setPrio(uint8_t prio) {

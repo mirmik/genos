@@ -1,7 +1,7 @@
 #ifndef GENOS_EVENT_H
 #define GENOS_EVENT_H
 
-#include <gxx/dlist.h>
+#include <kernel/event/Waiter.h>
 #include <genos/sigslot/delegate.h>
 
 namespace Genos {
@@ -11,17 +11,11 @@ namespace Genos {
 		void taskletToExecute(Tasklet&);
 	}
 
-	class Tasklet {
+	class Tasklet : public Waiter {
 	public:
-		dlist_head lnk;
 		bool fast = false;;
 		
-		Tasklet() {
-			dlist_init(&lnk);
-		}
-
-		void invoke() {
-			//dprln("Tasklet::invoke");
+		void invoke() override {
 			if (fast) routine();
 			else Genos::Glue::taskletToExecute(*this);
 		}
@@ -29,30 +23,21 @@ namespace Genos {
 		virtual void routine() = 0;
 	};
 
-	using TaskletList = gxx::dlist<Tasklet, &Tasklet::lnk>;
-
-	class DebugTasklet : public Tasklet {
-		void routine() {
-			dprln("DebugTasklet");
-		}
-	};
-
-	class StateFlag {
+	class StateFlag : public WaiterHead {
 		bool flag = false;
-		TaskletList list;
+		WaiterList list;
 
 	public:
-		void wait(Tasklet& tasklet) {
-			if (flag) tasklet.invoke();
-			else list.move_back(tasklet);
+		void wait(Waiter& waiter) override {
+			if (flag) waiter.invoke();
+			else list.move_back(waiter);
 		}
 
 		void set() {
 			flag = true;
 			while(!list.empty()) {
-				Tasklet& tasklet = *list.begin();
-				list.del_init(tasklet);
-				tasklet.invoke();
+				Waiter& waiter = *list.begin();
+				waiter.unbind_and_invoke();
 			}
 		}
 
@@ -73,6 +58,11 @@ namespace Genos {
 		delegate<void> m_delegate;
 	};
 
+	class DebugTasklet : public Tasklet {
+		void routine() {
+			dprln("DebugTasklet");
+		}
+	};
 }
 
 #endif

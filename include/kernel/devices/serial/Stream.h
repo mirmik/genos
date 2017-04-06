@@ -24,11 +24,32 @@ namespace Genos {
 	};
 	
 	class FlagedStream : public Stream {
-	protected:
+	public:
 		StateFlag haveDataFlag;
 	
+	//public:
+		//void waitReceivedData(Waiter& waiter) {
+		//	haveDataFlag.wait(waiter);
+		//}
+	};
+
+	class DebugStream : public Stream {
 	public:
-		void waitReceivedData(Tasklet& tasklet);
+		int write(const char* data, size_t size) {
+			debug_write(data, size);
+		}
+
+		int read(char* data, size_t size) {
+			//debug_read(data, size);
+		}
+
+		int avail() {
+			return 0;
+		}
+
+		int room() {
+			return 0xFFFF;
+		}
 	};
 
 }

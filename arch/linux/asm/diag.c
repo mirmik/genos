@@ -5,7 +5,9 @@
 
 int terminal_diag_putc(int c)
 {
-	return putchar(c);
+	putchar(c);
+	fflush(stdout);
+	return 1;
 };
 
 int terminal_diag_init()

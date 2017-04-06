@@ -10,7 +10,8 @@ Module("genos.include.arch.linux64", {
 
 Module("genos.arch.linux", {
 	sources = {
-		cc = "asm/arch.c asm/diag.c"
+		cc = "asm/arch.c asm/diag.c",
+		--cxx = "asm/atomic.cpp"
 	},
 	flags = { 
 		cc = "-Wno-incompatible-pointer-types", 

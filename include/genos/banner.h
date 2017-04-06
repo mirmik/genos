@@ -16,7 +16,7 @@ static void print_banner(Genos::Stream& f) {
 };
 
 static void print_about(Genos::Stream& f) {
-	f.print("Operation System GenOS. version: ");
+	f.print("GenOS control system. version: ");
 	f.println(GENOS_VERSION);
 };
 
