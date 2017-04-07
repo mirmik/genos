@@ -26,11 +26,6 @@ namespace Genos {
 	class FlagedStream : public Stream {
 	public:
 		StateFlag haveDataFlag;
-	
-	//public:
-		//void waitReceivedData(Waiter& waiter) {
-		//	haveDataFlag.wait(waiter);
-		//}
 	};
 
 	class DebugStream : public Stream {
@@ -41,6 +36,7 @@ namespace Genos {
 
 		int read(char* data, size_t size) {
 			//debug_read(data, size);
+			return 0;
 		}
 
 		int avail() {

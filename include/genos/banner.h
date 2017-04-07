@@ -1,8 +1,7 @@
 #ifndef GENOS_BANNER_H
 #define GENOS_BANNER_H
 
-//#include <kernel/file/file.h>
-#include <gxx/ByteArray.h> 
+#include <kernel/devices/serial/Stream.h>
 
 #define GENOS_VERSION "0.9.1"	
 

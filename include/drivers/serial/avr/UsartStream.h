@@ -32,8 +32,6 @@ public:
 	
 	int end();
 
-	void waitReceivedData(Tasklet& tasklet);
-
 	AvrUsartStream(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf);
 
 	friend void interruptHandler_UsartRX(AvrUsartStream* usart);

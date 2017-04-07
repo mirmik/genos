@@ -1,12 +1,12 @@
---[[regmodule {
-	name = "genos_kernel",
-	sources = {
-		cxx = {"kernel.cpp", "irq/csection.cpp"}
-	}
-}]]
-
 Module("genos.csection", {
 	sources = {
 		cc  = "csection.c"
 	}
 })
+
+Module("genos.kernel.standart_glue", {
+	sources = {
+		cxx  = "KernelGlue.cpp"
+	},
+	depends = "genos.csection genos.kernel.scheduler"
+}) 

@@ -7,11 +7,11 @@
 
 namespace Genos {
 
-	class TaskletManager {
-		gxx::dlist<Tasklet, &Tasklet::lnk> queue;
+	class TaskletManagerSchedee : public AutomFunctorSchedee {
+		WaiterList queue;
 
 	public:
-		TaskletManager() {}
+		TaskletManagerSchedee() {}
 
 		void addToExecute(Tasklet& slot) {
 			critical_section_enter();
@@ -20,10 +20,10 @@ namespace Genos {
 			critical_section_leave();
 		};
 
-		void execute() {
+		void routine() override {
 			while(!queue.empty()) {
 				critical_section_enter();
-				Tasklet& object = *queue.begin();
+				Tasklet& object = reinterpret_cast<Tasklet&>(*queue.begin());
 				queue.del_init(object);
 				critical_section_leave();
 				object.routine();

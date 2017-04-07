@@ -7,7 +7,7 @@
 namespace Genos {
 
 	class TaskletManager {
-		gxx::dlist<Tasklet, &Tasklet::lnk> queue;
+		gxx::dlist<Waiter, &Waiter::lnk> queue;
 
 	public:
 		TaskletManager() {}
@@ -21,7 +21,7 @@ namespace Genos {
 		void execute() {
 			while(!queue.empty()) {
 				critical_section_enter();
-				Tasklet& object = *queue.begin();
+				Tasklet& object = reinterpret_cast<Tasklet&>(*queue.begin());
 				queue.del_init(object);
 				critical_section_leave();
 				object.routine();

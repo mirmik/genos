@@ -5,7 +5,7 @@
 
 namespace Genos {
 	
-	class MessageManager : public MessageManagerBasic {
+	class MessageManagerSchedee : public MessageManagerBasic, public AutomFunctorSchedee {
 	public:
 
 		void toSend(MsgTag& msgtag) {
@@ -38,7 +38,7 @@ namespace Genos {
 			stop();			
 		}
 
-	}
+	};
 }
 
 #endif

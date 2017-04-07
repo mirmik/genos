@@ -5,6 +5,8 @@
 #include <kernel/sched/AutomSchedee.h>
 #include <kernel/event/WakeUpWaiter.h>
 
+#include <console/Executor.h>
+
 #include <gxx/readline.h>
 
 namespace Genos {
@@ -16,14 +18,23 @@ namespace Genos {
 		
 		gxx::readline rl;
 
+		Executor* executor;
+
 		int state = 0;
+
+		bool m_echo = true;
 	public:
-		Terminal(FlagedStream* strm, Stream* echo, gxx::buffer buf) 
-			: istrm(strm), ostrm(echo), dataWait(this), rl(buf) {}
+		Terminal(FlagedStream* strm, Stream* echo, Executor* executor, gxx::buffer buf) 
+			: istrm(strm), ostrm(echo), dataWait(this), rl(buf), executor(executor) {}
 
 		void lineHandler() {
-			ostrm->println("LineReceived");
+			executor->execute(rl.line());
 			rl.reset();
+		}
+
+		Terminal& echo(bool en) {
+			m_echo = en;
+			return *this;
 		}
 
 		void routine() override {
@@ -40,16 +51,17 @@ namespace Genos {
 				case 2: 
 					while (istrm->avail()) {
 						char c = istrm->getc();
-						rl.putc(c);
-
+						
+						if (c == '\r') { return; }
 						if (c == '\n') {
 							state = 1;
-							ostrm->putc('\n');
+							if (m_echo) ostrm->putc('\n');
 							lineHandler();
-							break;
+							return;
 						}
 
-						ostrm->putc(c);
+						rl.putc(c);
+						if (m_echo) ostrm->putc(c);
 					}
 					Genos::wait(istrm->haveDataFlag, dataWait);
 				break;

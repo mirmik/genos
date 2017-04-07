@@ -9,6 +9,8 @@
 
 #include <debug/dprint.h>
 
+#include <console/Executor.h>
+
 namespace Genos {
 
 	class SimpleShellRecord {
@@ -22,7 +24,7 @@ namespace Genos {
 		static const char*& getkey(SimpleShellRecord& rec) { return rec.name; }
 	};
 
-	class SimpleShell {
+	class SimpleShell : public Executor {
 		gxx::static_hashtable<10, SimpleShellRecord, const char*, &SimpleShellRecord::hlnk> table;
 	
 	public:
@@ -39,7 +41,7 @@ namespace Genos {
 			table.put(node);
 		};
 	
-		int execute(char* str) {
+		int __execute_nosafe(char* str) {
 			argvc_t argvc;
 			
 			char* v[10];
@@ -52,10 +54,9 @@ namespace Genos {
 			delegate<int,int,char**> ref;
 	
 			if (!strcmp(argvc.v[0], "help")) {
-				dprln("HELP: TODO");
-				//for (auto rec : dict) {
-	
-				//}
+				table.foreach([](SimpleShellRecord& rec) {
+					dprln(rec.name);
+				});
 	
 				return RetCodeOK;
 			}
@@ -66,31 +67,31 @@ namespace Genos {
 			return ret->dlg(argvc.c, argvc.v);
 		}
 	
-		int execute_safe(const char* _str) {	
+		int __execute(const char* _str) {	
 			char str[128];
 			strcpy(str,_str);
-			return execute(str);
+			return __execute_nosafe(str);
 		}
 	
-		void execute_info(char* str) {
-			auto ret = execute(str);
-			if (ret) dprln(strerr(ret).c_str());
+		void execute(const char* str) {
+			auto ret = __execute(str);
+			if (ret) dprln(strerr(ret));
 		}
 	
-		static gxx::string strerr(int retcode) {
+		static const char* strerr(int retcode) {
 			switch (retcode) {
 				case RetCodeOK: 
-					return gxx::string("RetCodeOK");
+					return "RetCodeOK";
 				case EmptyString: 
-					return gxx::string("EmptyString");
+					return "EmptyString";
 				case FunctionNotExist: 
-					return gxx::string("FunctionNotExist");
+					return "FunctionNotExist";
 				case WrongArgsTotal: 
-					return gxx::string("WrongArgsTotal");
+					return "WrongArgsTotal";
 				case WrongArgsData: 
-					return gxx::string("WrongArgsData");
+					return "WrongArgsData";
 				default: 
-					return gxx::string("UnregistredRetCode ") += retcode;
+					return "UnregistredRetCode";
 			};
 		};
 	};

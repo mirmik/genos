@@ -15,6 +15,7 @@
 namespace Genos {
 	
 	class MessageManagerBasic {
+	protected:
 		MessageList queries;
 		MessageList replies;
 
@@ -36,7 +37,7 @@ namespace Genos {
 			return stack;
 		}
 
-	private:
+	protected:
 		void send(MsgTag& msgtag) {
 			dprln("MessageManager::send");
 			
@@ -66,7 +67,7 @@ namespace Genos {
 			critical_section_leave();
 		}
 
-		void routine() override {
+		void execute() {
 			while (!queries.empty()) {
 				MsgTag & msg = *queries.begin();
 				dlist_del_init(&msg.lnk);
@@ -80,7 +81,7 @@ namespace Genos {
 			}			
 		}
 
-	}
+	};
 }
 
 #endif

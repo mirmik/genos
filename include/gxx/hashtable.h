@@ -1,6 +1,7 @@
 #ifndef GENOS_HASHTABLE_H
 #define GENOS_HASHTABLE_H
 
+#include <datastruct/hlist_head.h>
 #include <datastruct/array.h>
 #include <gxx/container/hash.h>
 #include <gxx/container/compare.h>
@@ -46,6 +47,15 @@ namespace gxx {
 				}
 				debug_printdec_int32(n); 
 				debug_print(" ");
+			}
+		}
+
+		void foreach(void(*func)(T&)) {
+			array_for_each(hl, &table[0], TableSize) {
+				struct hlist_node * pos;
+				hlist_for_each(pos, (hl)) {
+					func(*member_container(pos, lnk));
+				}
 			}
 		}
 
