@@ -9,4 +9,4 @@ Genos является операционной системой специал�
 
 Under Constructed.
 
-GitPage: [mirmik.github.io/genos](mirmik.github.io/genos)
+GitPage: [https://mirmik.github.io/genos](https://mirmik.github.io/genos)
