@@ -75,7 +75,7 @@ namespace Genos {
 	
 		void execute(const char* str) {
 			auto ret = __execute(str);
-			if (ret) dprln(strerr(ret));
+			if (ret && ret != EmptyString) dprln(strerr(ret));
 		}
 	
 		static const char* strerr(int retcode) {

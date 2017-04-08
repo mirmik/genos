@@ -23,6 +23,12 @@ namespace Genos {
 		int state = 0;
 
 		bool m_echo = true;
+
+		char c;
+
+	public:
+		bool debug_mode = false;
+	
 	public:
 		Terminal(FlagedStream* strm, Stream* echo, Executor* executor, gxx::buffer buf) 
 			: istrm(strm), ostrm(echo), dataWait(this), rl(buf), executor(executor) {}
@@ -50,12 +56,19 @@ namespace Genos {
 				break; 
 				case 2: 
 					while (istrm->avail()) {
-						char c = istrm->getc();
+						char lastsymb = c;
+						c = istrm->getc();
 						
-						if (c == '\r') { return; }
-						if (c == '\n') {
+						if (debug_mode) {
+							ostrm->printhexln(c);
+							return;
+						}
+
+						if (c == '\r' && lastsymb == '\n') return;
+
+						if (c == '\n' || c == '\r') {
 							state = 1;
-							if (m_echo) ostrm->putc('\n');
+							if (m_echo) ostrm->println();
 							lineHandler();
 							return;
 						}
@@ -66,6 +79,7 @@ namespace Genos {
 					Genos::wait(istrm->haveDataFlag, dataWait);
 				break;
 			}
+
 			//dprln("Terminal");
 		}
 	};

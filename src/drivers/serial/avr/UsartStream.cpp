@@ -68,11 +68,11 @@ int AvrUsartStream::room() {
 	return m_txring.avail();
 }
 
-void AvrUsartStream::waitReceivedData(Tasklet& tasklet) {
+/*void AvrUsartStream::waitReceivedData(Tasklet& tasklet) {
 	auto save = global_irq_save();
 	haveDataFlag.wait(tasklet);
 	global_irq_restore(save);
-}
+}*/
 
 void interruptHandler_UsartRX(AvrUsartStream* usart) {
 	if (usart->m_rxring.putc(usart->recvbyte()) == 0) panic("USART OVERPUT");
