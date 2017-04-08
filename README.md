@@ -9,5 +9,4 @@ Genos является операционной системой специал�
 
 Under Constructed.
 
-Сборка выполняется системой glinkLua. 
-https://github.com/Mirmik/glinkLua.
+GitPage: [mirmik.github.io/genos](mirmik.github.io/genos)
