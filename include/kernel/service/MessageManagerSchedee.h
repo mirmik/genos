@@ -8,29 +8,33 @@ namespace Genos {
 	class MessageManagerSchedee : public MessageManagerBasic, public AutomFunctorSchedee {
 	public:
 
-		void toSend(MsgTag& msgtag) {
+		void toSend(MessageHeader& msgtag) {
 			critical_section_enter();
 			queries.move_back(msgtag);
 			run();
 			critical_section_leave();
 		}
 
-		void toReply(MsgTag& msgtag) {
+		void toReply(MessageHeader& msgtag) {
 			critical_section_enter();
 			replies.move_back(msgtag);
 			run();
 			critical_section_leave();
 		}
 
+		void toReplyMsgTag(MsgTag& tag) {
+			toReply(*tag.header);
+		}
+
 		void routine() override {
 			while (!queries.empty()) {
-				MsgTag & msg = *queries.begin();
+				MessageHeader & msg = *queries.begin();
 				dlist_del_init(&msg.lnk);
 				send(msg);
 			}
 
 			while (!replies.empty()) {
-				MsgTag & msg = *replies.begin();
+				MessageHeader & msg = *replies.begin();
 				dlist_del_init(&msg.lnk);
 				reply(msg);
 			}

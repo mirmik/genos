@@ -1,5 +1,11 @@
 Module("placenew", {
 	sources = {
+		cxx = {"placenew.cpp"}
+	}
+})
+
+Module("newdel", {
+	sources = {
 		cxx = {"new.cpp"}
 	}
 })

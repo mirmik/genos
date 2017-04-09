@@ -56,7 +56,7 @@ namespace gxx {
 		}
 
 		void release(T* ptr) {
-
+			dprln("pool release TODO");
 		}
 
 	private:

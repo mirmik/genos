@@ -4,6 +4,7 @@
 #include <kernel/service/MsgTag.h>
 #include <datastruct/hlist_head.h>
 #include <kernel/id/id.h>
+#include <kernel/csection.h>
 
 #define WAIT_REPLY 0
 #define FAST_REPLY 1
@@ -16,13 +17,28 @@ namespace Genos {
 		struct hlist_node hlnk;
 		qid_t qid;
 	public:
-		virtual int8_t receiveMessage(MsgTag& msg) = 0;
+		virtual int8_t receiveMessageHandler(MessageHeader& msg) = 0;
 	
 		//hashtable support
 		static qid_t& getkey(Service& srvs) { return srvs.qid; }
 	};
 
+	class PostBoxService : public Service {
+		MessageList queries;
+
+	public:
+		int8_t receiveMessageHandler(MessageHeader& msg) {
+			critical_section_enter();
+			queries.move_back(msg);
+			critical_section_leave();
+		}
+
+		//virtual MsgTag* receiveMessage();
+	};
 }
+
+
+
 /*
 msgtag_t * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender);
 void release_query(msgtag_t *q);

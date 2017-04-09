@@ -26,6 +26,7 @@ namespace Genos {
 
 	public:
 		LinuxTerminal() : rx(arr.slice()), readThread(&LinuxTerminal::readFunc, this) {}
+		~LinuxTerminal() { readThread.detach(); }
 
 		int write(const char* data, size_t size) {
 			auto ret = ::write(1, data, size);

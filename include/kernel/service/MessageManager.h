@@ -19,35 +19,32 @@ namespace Genos {
 		MessageList queries;
 		MessageList replies;
 
-		gxx::block_pool<MsgTag, 10> msgTagPool;
-		gxx::block_pool<ipcstack, 10> ipcStackPool;
-
 	public:
 
 		MessageManagerBasic() {};
 
-		MsgTag* getAnonimMsgTag() {
+		//MessageHeader* getAnonimMessageHeader() {
 			//auto stack = ipcStackPool.emplace((new gxx::array<stack_item, 5>)->slice());
-			auto msgtag = msgTagPool.emplace();
-			return msgtag;
-		}
+		//	auto msgtag = msgTagPool.emplace();
+		//	return msgtag;
+		//}
 
-		ipcstack* getIpcStack() {
-			auto stack = ipcStackPool.emplace((new gxx::array<stack_item, 5>)->slice());
-			return stack;
-		}
+		//ipcstack* getIpcStack() {
+		//	auto stack = ipcStackPool.emplace((new gxx::array<stack_item, 5>)->slice());
+		//	return stack;
+		//}
 
 	protected:
-		void send(MsgTag& msgtag) {
+		void send(MessageHeader& msgtag) {
 			dprln("MessageManager::send");
 			
 			Service* receiver = Glue::getService(msgtag.receiver);
 			assert(receiver);
 			
-			receiver->receiveMessage(msgtag);
+			receiver->receiveMessageHandler(msgtag);
 		}
 
-		void reply(MsgTag& msgtag) {
+		void reply(MessageHeader& msgtag) {
 			dprln("MessageManager::reply");
 		}
 	};
@@ -55,27 +52,31 @@ namespace Genos {
 	class MessageManager : public MessageManagerBasic {
 	public:
 
-		void toSend(MsgTag& msgtag) {
+		void toSend(MessageHeader& msgtag) {
 			critical_section_enter();
 			queries.move_back(msgtag);
 			critical_section_leave();
 		}
 
-		void toReply(MsgTag& msgtag) {
+		void toReply(MessageHeader& msgtag) {
 			critical_section_enter();
 			replies.move_back(msgtag);
 			critical_section_leave();
 		}
 
+		void toReplyMsgTag(MsgTag& tag) {
+			toReply(*tag.header);
+		}
+
 		void execute() {
 			while (!queries.empty()) {
-				MsgTag & msg = *queries.begin();
+				MessageHeader & msg = *queries.begin();
 				dlist_del_init(&msg.lnk);
 				send(msg);
 			}
 
 			while (!replies.empty()) {
-				MsgTag & msg = *replies.begin();
+				MessageHeader & msg = *replies.begin();
 				dlist_del_init(&msg.lnk);
 				reply(msg);
 			}			
