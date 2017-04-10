@@ -4,3 +4,9 @@ Module("genos.kernel.service", {
 	},
 	optdict = "hashtable_size"
 })
+
+Module("genos.kernel.message", {
+	sources = {
+		cxx = "MsgApi.cpp"
+	},
+})

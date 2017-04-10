@@ -22,19 +22,35 @@ namespace gxx {
 		}
 
 		~ref_ptr() { 
+			if (!ptr) return;
 			//dprln("~ref_ptr()");
 			ptr->ref--; 
 			if (ptr->ref == 0) Deleter::deleter(ptr); 
 		}
 
 		T* operator-> () {
-			assert(ptr != nullptr);
+			assert(ptr);
 			return ptr;
 		}
 
 		T& operator* () {
-			assert(ptr != nullptr);
+			assert(ptr);
 			return *ptr;
+		}
+
+		T* get() {
+			assert(ptr);
+			return ptr;
+		}
+
+		void reset(T* other_ptr) {
+			if (ptr) {
+				ptr->ref--; 
+				if (ptr->ref == 0) Deleter::deleter(ptr); 
+			}
+
+			ptr = other_ptr;
+			if (ptr) ptr->ref++; 
 		}
 
 		void reset(const ref_ptr& other) {
@@ -44,7 +60,7 @@ namespace gxx {
 			}
 
 			ptr = other.ptr;
-			ptr->ref++; 
+			if (ptr) ptr->ref++; 
 		}
 	};
 }

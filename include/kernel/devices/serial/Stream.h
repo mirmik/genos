@@ -48,6 +48,9 @@ namespace Genos {
 		}
 	};
 
+	namespace Glue {
+		Stream& debugStream(); 
+	}
 }
 
 #endif

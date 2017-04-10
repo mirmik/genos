@@ -19,8 +19,10 @@ namespace Genos {
 		void readFunc() {
 			while(1) {
 				char c = getchar();
+				atomic_section_enter();
 				rx.putc(c);
 				haveDataFlag.set();
+				atomic_section_leave();
 			}
 		}
 
@@ -35,8 +37,10 @@ namespace Genos {
 		}
 		
 		int read(char* data, size_t size) {
+			atomic_section_enter();
 			auto ret = rx.read(data, size);
 			if (rx.avail() == 0) haveDataFlag.reset();
+			atomic_section_leave();
 			return ret;
 		}
 	

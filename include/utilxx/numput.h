@@ -6,10 +6,16 @@
 
 template <typename Integer>
 char* __backward_numput_positive_simple(char* ptr, Integer num, uint8_t base) {
+	if (num == 0) {
+		*ptr-- = '0';
+		return ptr;
+	}
+
 	for (; num != 0; num /= base) {
 		uint8_t mod = num % base;
 		*ptr-- = (mod < 10) ? (mod + '0') : (mod - 10 + 'A');
-	};
+	}
+
 	return ptr;
 };
 

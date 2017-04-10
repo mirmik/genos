@@ -35,13 +35,13 @@ namespace Genos {
 		//}
 
 	protected:
-		void send(MessageHeader& msgtag) {
+		void send(MessageHeader& header) {
 			dprln("MessageManager::send");
 			
-			Service* receiver = Glue::getService(msgtag.receiver);
+			Service* receiver = Glue::getService(header.receiver);
 			assert(receiver);
 			
-			receiver->receiveMessageHandler(msgtag);
+			receiver->receiveMessageHandler(Genos::MsgTag(&header));
 		}
 
 		void reply(MessageHeader& msgtag) {
@@ -53,15 +53,15 @@ namespace Genos {
 	public:
 
 		void toSend(MessageHeader& msgtag) {
-			critical_section_enter();
+			atomic_section_enter();
 			queries.move_back(msgtag);
-			critical_section_leave();
+			atomic_section_leave();
 		}
 
 		void toReply(MessageHeader& msgtag) {
-			critical_section_enter();
+			atomic_section_enter();
 			replies.move_back(msgtag);
-			critical_section_leave();
+			atomic_section_leave();
 		}
 
 		void toReplyMsgTag(MsgTag& tag) {

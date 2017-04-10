@@ -4,8 +4,8 @@
 #include <kernel/service/ServiceTable.h>
 #include <kernel/sched/Scheduler.h>
 #include <kernel/service/Service.h>
-
 #include <kernel/service/MsgTag.h>
+#include <kernel/service/MsgApi.h>
 
 Genos::SchedeeManager 			schedeeManager;
 Genos::TaskletManagerSchedee 	taskletManager;
@@ -49,4 +49,12 @@ Genos::MessageStack* Genos::Glue::allocateMessageStack() {
 void Genos::Glue::releaseMessageStack(Genos::MessageStack* ptr) {
 	//dprln("released");	
 	msgStackPool.release(ptr);
+}
+
+qid_t Genos::Glue::registerService(Service* srvs) {
+	return serviceTable.registerService(*srvs);
+}
+
+void Genos::Glue::messageHeaderToSend(MessageHeader& header) {
+	messageManager.toSend(header);
 }

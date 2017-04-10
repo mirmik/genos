@@ -17,7 +17,7 @@ namespace Genos {
 		struct hlist_node hlnk;
 		qid_t qid;
 	public:
-		virtual int8_t receiveMessageHandler(MessageHeader& msg) = 0;
+		virtual int8_t receiveMessageHandler(MsgTag&& tag) = 0;
 	
 		//hashtable support
 		static qid_t& getkey(Service& srvs) { return srvs.qid; }
@@ -27,14 +27,18 @@ namespace Genos {
 		MessageList queries;
 
 	public:
-		int8_t receiveMessageHandler(MessageHeader& msg) {
-			critical_section_enter();
-			queries.move_back(msg);
-			critical_section_leave();
+		int8_t receiveMessageHandler(MsgTag&& tag) {
+			//critical_section_enter();
+			//queries.move_back(msg);
+			//critical_section_leave();
 		}
 
 		//virtual MsgTag* receiveMessage();
 	};
+
+	namespace Glue {
+		qid_t registerService(Service* srvs);
+	}
 }
 
 

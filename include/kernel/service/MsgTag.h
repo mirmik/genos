@@ -7,10 +7,11 @@
 #include <gxx/dlist.h>
 #include <gxx/ref_ptr.h>
 
-#define MSGTAG_ANSWER 0x01
-#define MSGTAG_KERNEL_STACK 0x02
-
 namespace Genos {
+
+	struct MessageHeaderState {
+		uint8_t noanswer : 1;
+	};
 
 	namespace Glue {
 		MessageStack* allocateMessageStack(); 
@@ -30,6 +31,7 @@ namespace Genos {
 		uint8_t ref = 0;
 
 		gxx::ref_ptr<MessageStack, &MessageStack::ref, MessageStackDeleter> stack;
+		MessageHeaderState state;
 
 		qid_t sender;
 		qid_t receiver;
@@ -61,20 +63,42 @@ namespace Genos {
 	public:
 		gxx::ref_ptr<MessageStack, &MessageStack::ref, MessageStackDeleter> stack;
 
-		MsgBody() : stack(Glue::allocateMessageStack()) {} 
+		MsgBody(){}
+		MsgBody(MessageStack* stack) : stack(stack) {};
+		MsgBody(const MsgBody& other) : stack(other.stack) {};
+
+		MessageStack* operator->() {
+			return stack.get();
+		}
+
+		void detach() {
+			stack.reset(nullptr);			
+		}
 	};
 
 	class MsgTag {
 	public:
 		gxx::ref_ptr<MessageHeader, &MessageHeader::ref, MessageHeaderDeleter> header;
 
-		MsgTag() : header(Glue::allocateMessageHeader()) {}
+		MsgTag(){}
 		MsgTag(MessageHeader* head) : header(head) {}
 
 		MsgTag(const MsgTag& other) : header(other.header) {}
 
 		void bind(MsgBody& body) {
 			header->stack.reset(body.stack);
+		}
+
+		MsgBody get() {
+			return MsgBody(header->stack.get());
+		}
+
+		void detach() {
+			header.reset(nullptr);			
+		}
+
+		MessageHeader* operator->() {
+			return header.get();
 		}
 	};
 

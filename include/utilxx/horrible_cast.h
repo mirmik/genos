@@ -1,22 +1,7 @@
-//åàëèçàöèß òðèêñà horrible_cast. ‘ïàñèáî Don Clugston è êîìïàíèè. 
-//—åñòíî ñïÞðòî â 2015-îì ãîäó.
-
-#ifndef GENOS_HORIBLE_CAST_H
-#define GENOS_HORIBLE_CAST_H
+#ifndef UTILXX_HORIBLE_CAST_H
+#define UTILXX_HORIBLE_CAST_H
 		
-//		implicit_cast< >
-// I believe this was originally going to be in the C++ standard but 
-// was left out by accident. It's even milder than static_cast.
-// I use it instead of static_cast<> to emphasize that I'm not doing
-// anything nasty. 
-// Usage is identical to static_cast<>
-template <class OutputClass, class InputClass>
-inline OutputClass implicit_cast(InputClass input){
-	return input;
-}
-
-
-//		horrible_cast< >
+// horrible_cast< >
 // This is truly evil. It completely subverts C++'s type system, allowing you 
 // to cast from any class to any other class. Technically, using a union 
 // to perform the cast is undefined behaviour (even in C). But we can see if

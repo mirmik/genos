@@ -17,7 +17,7 @@ namespace gxx {
 		constexpr static size_t pageSize = PageSize; 
 
 		void* allocate_page() {
-			dprln("page_pool::allocate_page");
+			//dprln("page_pool::allocate_page");
 			void* ret = sysalloc(pageSize);
 			//pages.emplace_back(ret);
 			return ret;
@@ -56,14 +56,13 @@ namespace gxx {
 		}
 
 		void release(T* ptr) {
-			dprln("pool release TODO");
+			slist_head* node = reinterpret_cast<slist_head*>(ptr);
+			slist_add_next(node, &head);
 		}
 
 	private:
 		void formatNewPage() {
 			assert(head.next == nullptr);
-			//size_t pageSize = sizeof(T) * TotalOnPage;
-
 			void* page = Parent::allocate_page();
 			
 			char * end = (char*)page + Parent::pageSize;
