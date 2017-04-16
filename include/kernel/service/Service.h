@@ -2,9 +2,11 @@
 #define GENOS_SERVICE_H
 
 #include <kernel/service/MsgTag.h>
+#include <kernel/service/MessageManager.h>
 #include <datastruct/hlist_head.h>
 #include <kernel/id/id.h>
 #include <kernel/csection.h>
+#include <kernel/panic.h>
 
 #define WAIT_REPLY 0
 #define FAST_REPLY 1
@@ -16,25 +18,21 @@ namespace Genos {
 	public:
 		struct hlist_node hlnk;
 		qid_t qid;
+		uint8_t prio;
+		
 	public:
-		virtual int8_t receiveMessageHandler(MsgTag&& tag) = 0;
+		virtual int8_t receiveQuery(MessageHeader *tag) = 0;
+		virtual int8_t receiveAnswer(MessageHeader *tag) {
+			panic("this service can't receive answer");
+		}
 	
 		//hashtable support
 		static qid_t& getkey(Service& srvs) { return srvs.qid; }
 	};
 
-	class PostBoxService : public Service {
-		MessageList queries;
+	
 
-	public:
-		int8_t receiveMessageHandler(MsgTag&& tag) {
-			//critical_section_enter();
-			//queries.move_back(msg);
-			//critical_section_leave();
-		}
-
-		//virtual MsgTag* receiveMessage();
-	};
+	
 
 	namespace Glue {
 		qid_t registerService(Service* srvs);

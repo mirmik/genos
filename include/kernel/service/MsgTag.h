@@ -9,7 +9,48 @@
 
 namespace Genos {
 
-	struct MessageHeaderState {
+	/*class MessageStackDeleter {
+	public:
+		void deleter(MessageStack* ptr){
+			Glue::releaseMessageStack(ptr);
+		}
+	};*/
+
+	class MessageHeader {
+	public:
+		enum Status {
+			Near = 0,
+			Away = 1,
+		};
+
+		struct State {
+			bool noanswer : 1;
+			Status status : 2;
+			State() : noanswer(0), status(Status::Near) {}
+		};
+
+		struct dlist_head lnk;
+		//uint8_t ref = 0;
+
+		//gxx::ref_ptr<MessageStack, &MessageStack::ref, MessageStackDeleter> stack;
+		MessageStack* stack;
+		State state;
+
+		qid_t sender = 0;
+		qid_t receiver = 0;
+
+		MessageHeader() {
+			dlist_init(&lnk);
+		}
+
+		//void bind(ipcstack* stack) {
+		//	this->stack = stack;
+		//}
+	};
+
+	using MessageList = gxx::dlist<MessageHeader, &MessageHeader::lnk>;
+
+	/*struct MessageHeaderState {
 		uint8_t noanswer : 1;
 	};
 
@@ -44,14 +85,13 @@ namespace Genos {
 		//	this->stack = stack;
 		//}
 	};
-
+*/
 	namespace Glue {
 		MessageHeader* allocateMessageHeader(); 
 		void releaseMessageHeader(MessageHeader*);
 	}
 
-	using MessageList = gxx::dlist<MessageHeader, &MessageHeader::lnk>;
-
+/*
 	class MessageHeaderDeleter {
 	public:
 		void deleter(MessageHeader* ptr){
@@ -104,7 +144,15 @@ namespace Genos {
 
 	namespace Glue {
 		void replyMessage(MsgTag& msgtag);
-	}
+	}*/
+}
+
+static void dump(const Genos::MessageHeader& header) {
+	dprln("MessageHeader:");
+	dpr("\tsender: "); dprln(header.sender);
+	dpr("\treceiver: "); dprln(header.receiver);
+	dpr("\tnoanswer: "); dprln(header.state.noanswer);
+	dpr("\tstatus: "); dprln((int)header.state.status);
 }
 
 #endif

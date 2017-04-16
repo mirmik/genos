@@ -41,6 +41,7 @@ namespace Genos {
 		Schedee() : prio(PRIORITY_TOTAL - 1), state(SCHEDEE_STATE_INIT) {
 			dlist_init(&schlnk);
 		};
+
 		Schedee(uint8_t prio) : prio(prio), state(SCHEDEE_STATE_INIT) {
 			dlist_init(&schlnk);
 		};
@@ -58,8 +59,7 @@ namespace Genos {
 		}
 
 		void unwait() {
-			Glue::systemSchedeeManager()
-				.unwaitSchedee(*this, SCHEDEE_STATE_WAIT);
+			Glue::systemSchedeeManager().unwaitSchedee(*this, SCHEDEE_STATE_WAIT);
 		}
 
 		void setPrio(uint8_t prio) {
@@ -70,7 +70,6 @@ namespace Genos {
 		virtual void execute() = 0;
 		virtual void displace() = 0;
 		virtual void finalize() = 0;
-
 	};
 
 	using SchedeeList = gxx::dlist<Schedee, &Schedee::schlnk>;

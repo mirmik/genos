@@ -5,9 +5,9 @@
 #include <kernel/service/Service.h>
 
 namespace Genos {
-	class AutomFunctorService : public AutomFunctorSchedee, public PostBoxService {
+	//class AutomFunctorService : public AutomFunctorSchedee, public PostBoxService {
 		
-	};
+	//};
 }
 
 #endif

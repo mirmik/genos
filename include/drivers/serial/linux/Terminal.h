@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include <kernel/devices/serial/Stream.h>
+#include <kernel/csection.h>
 
 #include <thread>
 

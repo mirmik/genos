@@ -16,3 +16,9 @@ Module("genos.kernel.subst_schedee", {
 	},
 	depends = "genos.kernel.scheduler"
 })
+
+Module("genos.kernel.sched_message", {
+	sources = {
+		cxx = "Message.cpp"
+	},
+})

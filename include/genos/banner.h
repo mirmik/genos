@@ -6,12 +6,13 @@
 #define GENOS_VERSION "0.9.1"	
 
 static void print_banner(Genos::Stream& f) {
-	f.println();
-	f.println("  __             __   __ ");
-	f.println(" /              /  | /   ");
-	f.println("( __  ___  ___ (   |(___ ");
-	f.println("|   )|___)|   )|   )    )");
-	f.println("|__/ |__  |  / |__/  __/ ");
+	f.print(
+				"  __             __   __ \r\n"
+				" /              /  | /   \r\n"
+				"( __  ___  ___ (   |(___ \r\n"
+				"|   )|___)|   )|   )    )\r\n"
+				"|__/ |__  |  / |__/  __/ \r\n"
+											);
 };
 
 static void print_about(Genos::Stream& f) {

@@ -9,10 +9,10 @@ namespace Genos {
 	void currentService(Service* service);
 	Service* currentService();
 
-	void noReplySend(MsgTag& tag);
+	//void noReplySend(MsgTag& tag);
 
 	namespace Glue {
-		void messageHeaderToSend(MessageHeader& header);
+		//void messageHeaderToSend(MessageHeader& header);
 	}
 
 }
