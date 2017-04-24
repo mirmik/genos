@@ -14,6 +14,12 @@ namespace Genos {
 		SchedeeList finallist;
 
 	public:
+		void finalSchedee(Schedee& sch) override {
+			assert(sch.state != SCHEDEE_STATE_FINAL);
+			sch.state = SCHEDEE_STATE_FINAL;
+			finallist.move_back(sch);
+		}
+
 		void runSchedee(Schedee& sch) override {
 			assert(sch.state != SCHEDEE_STATE_WAIT);
 			sch.state = SCHEDEE_STATE_RUN;

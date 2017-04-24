@@ -9,13 +9,13 @@ namespace Genos {
 
 	class DebugService : public Service {
 	public:
-		int8_t receiveMessageHandler(MsgTag&& tag) override {
+		int8_t receiveQuery(MessageHeader* tag) override {
 			//MsgTag tag = &header;
 			
 			dprln("DebugService::receiveMessage");
-			MsgBody stack = tag.get();
+			//MsgBody stack = tag.get();
 
-			stack->dump(Genos::Glue::debugStream());
+			//stack->dump(Genos::Glue::debugStream());
 
 			//debug_ipcstack_dump(msg.stack);
 			//ReplyMessage(msg);

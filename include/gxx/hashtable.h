@@ -20,10 +20,11 @@ namespace gxx {
 			}
 		}	
 
-		void put(T* item) {
-			hlist_node* node = &(item->*lnk);
-			K& key = GetKey(*item);
+		void put(T& item) {
+			hlist_node* node = &(item.*lnk);
+			K& key = GetKey(item);
 			size_t hash = gxx::hash(key);
+			//dprln(hash);
 			__hashtable_put_to_cell(table, node, hash % TableSize);
 		}
 		
@@ -31,6 +32,8 @@ namespace gxx {
 			size_t hash = gxx::hash(key);	
 			struct hlist_node* pos;
 		
+			dprln(hash);
+
 			hlist_for_each(pos, table + hash % TableSize) {
 				if (gxx::equal(GetKey(*member_container(pos, lnk)), key)) 
 					return member_container(pos, lnk);
@@ -50,7 +53,8 @@ namespace gxx {
 			}
 		}
 
-		void foreach(void(*func)(T&)) {
+		template <typename Function>
+		void foreach(Function func) {
 			array_for_each(hl, &table[0], TableSize) {
 				struct hlist_node * pos;
 				hlist_for_each(pos, (hl)) {

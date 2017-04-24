@@ -23,7 +23,7 @@ namespace Genos {
 	public:
 		qid_t registerService(Service& srvs) {
 			srvs.qid = get_new_qid();
-			table.put(&srvs);
+			table.put(srvs);
 			return srvs.qid;
 		}
 

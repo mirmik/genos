@@ -7,6 +7,8 @@
 #include <gxx/dlist.h>
 #include <gxx/ref_ptr.h>
 
+#include <kernel/ReleasedObject.h>
+
 namespace Genos {
 
 	/*class MessageStackDeleter {
@@ -16,7 +18,19 @@ namespace Genos {
 		}
 	};*/
 
-	class MessageHeader {
+	namespace Glue {
+		MessageStack* allocateMessageStack(); 
+		void releaseMessageStack(MessageStack*);
+	}
+
+	class MessageHeader;
+
+	namespace Glue {
+		MessageHeader* allocateMessageHeader(); 
+		void releaseMessageHeader(MessageHeader*);
+	}
+
+	class MessageHeader : public ReleasedObject {
 	public:
 		enum Status {
 			Near = 0,
@@ -46,6 +60,11 @@ namespace Genos {
 		//void bind(ipcstack* stack) {
 		//	this->stack = stack;
 		//}
+
+		//ReleasedObject support
+		void release() override {
+			Genos::Glue::releaseMessageHeader(this);
+		}
 	};
 
 	using MessageList = gxx::dlist<MessageHeader, &MessageHeader::lnk>;
@@ -53,11 +72,6 @@ namespace Genos {
 	/*struct MessageHeaderState {
 		uint8_t noanswer : 1;
 	};
-
-	namespace Glue {
-		MessageStack* allocateMessageStack(); 
-		void releaseMessageStack(MessageStack*);
-	}
 
 	class MessageStackDeleter {
 	public:
@@ -86,11 +100,6 @@ namespace Genos {
 		//}
 	};
 */
-	namespace Glue {
-		MessageHeader* allocateMessageHeader(); 
-		void releaseMessageHeader(MessageHeader*);
-	}
-
 /*
 	class MessageHeaderDeleter {
 	public:

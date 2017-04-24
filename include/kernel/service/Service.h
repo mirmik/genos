@@ -22,38 +22,14 @@ namespace Genos {
 		
 	public:
 		virtual int8_t receiveQuery(MessageHeader *tag) = 0;
-		virtual int8_t receiveAnswer(MessageHeader *tag) {
-			panic("this service can't receive answer");
-		}
-	
+		
 		//hashtable support
 		static qid_t& getkey(Service& srvs) { return srvs.qid; }
-	};
-
-	
-
-	
+	};	
 
 	namespace Glue {
 		qid_t registerService(Service* srvs);
 	}
 }
-
-
-
-/*
-msgtag_t * construct_query(struct ipcstack *stack, qid_t receiver, qid_t sender);
-void release_query(msgtag_t *q);
-
-static int service_unlink_query(service_t* srvs, msgtag_t* q) {
-	dlist_del_init(&q->lnk);
-}
-
-int kernel_send_query(qid_t receiver, struct gstack *stack);
-int kernel_receive_query(qid_t sender, struct ipcstack **ppstack, qid_t * retqid);
-int kernel_reply_query(qid_t receiver);
-	
-int kernel_transport_query(msgtag_t *q);
-int kernel_transport_answer(msgtag_t *q);*/
 
 #endif

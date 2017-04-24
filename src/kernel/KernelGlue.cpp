@@ -1,16 +1,21 @@
 #include <kernel/sched/SchedeeManager.h>
-#include <kernel/event/TaskletManagerSchedee.h>
+//#include <kernel/event/TaskletManagerSchedee.h>
 #include <kernel/service/MessageManager.h>
-#include <kernel/sched/SchedeeService.h>
+//#include <kernel/sched/SchedeeService.h>
 #include <kernel/service/ServiceTable.h>
+#include <kernel/sched/SchedeeTable.h>
 #include <kernel/sched/Scheduler.h>
 #include <kernel/service/MsgTag.h>
 #include <kernel/service/MsgApi.h>
 
+#include <gxx/pool.h>
+
 Genos::SchedeeManager 			schedeeManager;
-Genos::TaskletManagerSchedee 	taskletManager;
+//Genos::TaskletManagerSchedee 	taskletManager;
 //Genos::MessageManager 		 	messageManager;
 Genos::ServiceTable			 	serviceTable;
+Genos::SchedeeTable			 	schedeeTable;
+
 
 Genos::AbstractSchedeeManager& Genos::Glue::systemSchedeeManager() {
 	return schedeeManager;
@@ -22,6 +27,14 @@ void Genos::Glue::schedule() {
 
 Genos::Service* Genos::Glue::getService(qid_t qid) {
 	return serviceTable.getService(qid);
+}
+
+Genos::Schedee* Genos::Glue::getSchedee(pid_t pid) {
+	return schedeeTable.get(pid);
+}
+
+Genos::SchedeeTable& Genos::Glue::systemSchedeeTable() {
+	return schedeeTable;
 }
 
 //void Genos::Glue::replyMessage(Genos::MessageHeader& tag) {
@@ -51,8 +64,12 @@ void Genos::Glue::releaseMessageHeader(Genos::MessageHeader* ptr) {
 //	msgStackPool.release(ptr);
 //}
 
-qid_t Genos::Glue::registerService(Service* srvs) {
+Genos::qid_t Genos::Glue::registerService(Service* srvs) {
 	return serviceTable.registerService(*srvs);
+}
+
+Genos::pid_t Genos::Glue::registerSchedee(Schedee* sch) {
+	return schedeeTable.registry(*sch);
 }
 
 int8_t Genos::transportQuery(MessageHeader* header) {
@@ -68,7 +85,7 @@ int8_t Genos::transportQuery(MessageHeader* header) {
 	return 0;  
 }
 
-void Genos::transportAnswer(MessageHeader* header) {
+/*void Genos::transportAnswer(MessageHeader* header) {
 	__label__ release;
 	Service* sender;
 	
@@ -84,4 +101,4 @@ void Genos::transportAnswer(MessageHeader* header) {
 	release:
 	Glue::releaseMessageHeader(header);
 	return;
-}
+}*/

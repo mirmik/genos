@@ -38,7 +38,7 @@ namespace Genos {
 	
 		void add(const char* name, delegate<int, int, char**> dlg) {
 			auto node = new SimpleShellRecord(name, dlg);
-			table.put(node);
+			table.put(*node);
 		};
 	
 		int __execute_nosafe(char* str) {
