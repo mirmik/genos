@@ -28,11 +28,12 @@ namespace Genos {
 		gxx::static_hashtable<10, SimpleShellRecord, const char*, &SimpleShellRecord::hlnk> table;
 	
 	public:
-		static constexpr uint8_t RetCodeOK = 0;
+		static constexpr uint8_t OK = 0;
 		static constexpr uint8_t FunctionNotExist = -1;
 		static constexpr uint8_t EmptyString = -2;
 		static constexpr uint8_t WrongArgsTotal = -3;
 		static constexpr uint8_t WrongArgsData = -4;
+		static constexpr uint8_t InternalError = -5;
 	
 		//SimpleShell() {};
 	
@@ -52,13 +53,12 @@ namespace Genos {
 			argvc.internal_split(str);
 	
 			delegate<int,int,char**> ref;
-	
+			
 			if (!strcmp(argvc.v[0], "help")) {
 				table.foreach([](SimpleShellRecord& rec) {
 					dprln(rec.name);
 				});
-	
-				return RetCodeOK;
+				return OK;
 			}
 	
 			auto ret = table.get(argvc.v[0]);
@@ -80,7 +80,7 @@ namespace Genos {
 	
 		static const char* strerr(int retcode) {
 			switch (retcode) {
-				case RetCodeOK: 
+				case OK: 
 					return "RetCodeOK";
 				case EmptyString: 
 					return "EmptyString";
@@ -90,6 +90,8 @@ namespace Genos {
 					return "WrongArgsTotal";
 				case WrongArgsData: 
 					return "WrongArgsData";
+				case InternalError: 
+					return "InternalError";
 				default: 
 					return "UnregistredRetCode";
 			};

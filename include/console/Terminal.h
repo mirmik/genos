@@ -34,7 +34,8 @@ namespace Genos {
 			: istrm(strm), ostrm(echo), dataWait(this), rl(buf), executor(executor) {}
 
 		void lineHandler() {
-			executor->execute(rl.line());
+			auto str = rl.line();
+			executor->execute(str);
 			rl.reset();
 		}
 

@@ -47,6 +47,7 @@ namespace Genos {
 		void execute() override {
 			while (!finallist.empty()) {
 				Schedee* fsch = &*finallist.begin();
+				//dprln("finalize");
 				fsch->finalize();
 				delete fsch;
 			}

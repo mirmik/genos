@@ -32,7 +32,7 @@ namespace gxx {
 			size_t hash = gxx::hash(key);	
 			struct hlist_node* pos;
 		
-			dprln(hash);
+			//dprln(hash);
 
 			hlist_for_each(pos, table + hash % TableSize) {
 				if (gxx::equal(GetKey(*member_container(pos, lnk)), key)) 

@@ -61,14 +61,11 @@ namespace Genos {
 	public:
 		Schedee() : prio(PRIORITY_TOTAL - 1), state(SCHEDEE_STATE_INIT) {
 			dlist_init(&schlnk);
-			//dprln("Schedee()");
-			//pid = Genos::Glue::registry(this);
+			hlist_node_init(&hlnk);
 		};
 
 		Schedee(uint8_t prio) : prio(prio), state(SCHEDEE_STATE_INIT) {
 			dlist_init(&schlnk);
-			//dprln("Schedee(uint8_t prio)");
-			//pid = Genos::Glue::registry(this);
 		};
 
 		void run() {
@@ -95,6 +92,10 @@ namespace Genos {
 			Glue::systemSchedeeManager().unwaitSchedee(*this, state);
 		}
 
+		void final() {
+			Glue::systemSchedeeManager().finalSchedee(*this);
+		}
+
 		void setPrio(uint8_t prio) {
 			assert(prio < PRIORITY_TOTAL);
 			this->prio = prio;
@@ -108,6 +109,15 @@ namespace Genos {
 			}
 		}
 
+		void finalizeSchedee() {
+			finalizeResources();
+			//dprln("unlink");
+			dlist_del(&schlnk);
+			//dprln("after dlist unlink");
+			hlist_del(&hlnk);
+			//dprln("after hlist unlink");
+		}
+
 		virtual void execute() = 0;
 		virtual void displace() = 0;
 		virtual void finalize() = 0;
@@ -117,9 +127,14 @@ namespace Genos {
 			m_name = name;
 		}
 
+		Schedee& name(const char* str) {
+			m_name = str;
+			return *this;
+		}
+
 		//ManagedObject support
 		void release() {
-			Glue::systemSchedeeManager().finalSchedee(*this);
+			final();
 		}
 
 		static pid_t& getkey(Schedee& sch) { return sch.pid; }
@@ -131,6 +146,12 @@ namespace Genos {
 	void currentSchedee(Schedee* sch);
 
 	void finalizeSchedee(Schedee* sch);
+
+	int8_t run(pid_t pid);
+	int8_t stop(pid_t pid);
+	int8_t final(pid_t pid);
+
+	Genos::Schedee* raw(pid_t pid);
 }
 
 #endif

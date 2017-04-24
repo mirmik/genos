@@ -23,6 +23,11 @@ static inline struct hlist_head* hlist_head_init(struct hlist_head* list) {
 	return list;
 }
 
+static inline struct hlist_node* hlist_node_init(struct hlist_node* node) {
+	node->pprev = 0; 
+	return node;
+}
+
 static inline void hlist_add_next(struct hlist_node* list, struct hlist_node** hnext) {
 	list->pprev = hnext;
 	list->next = *hnext;
@@ -31,7 +36,8 @@ static inline void hlist_add_next(struct hlist_node* list, struct hlist_node** h
 }
 
 static inline void hlist_del(struct hlist_node* list) {
-	list->next->pprev = list->pprev;	
+	if (list->pprev == 0) return;
+	if (list->next) list->next->pprev = list->pprev;	
 	*list->pprev = list->next;
 }
 

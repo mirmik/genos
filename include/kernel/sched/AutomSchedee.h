@@ -26,6 +26,7 @@ namespace Genos {
 
 		void finalize() {
 			destruct(local);
+			finalizeSchedee();
 		}
 	};
 
@@ -35,6 +36,7 @@ namespace Genos {
 		AutomFunctorSchedee() {}
 
 		virtual void routine() = 0;
+		virtual void destruct() {}
 
 	private:	
 		void execute() {
@@ -45,8 +47,18 @@ namespace Genos {
 			Genos::Glue::displace(Genos::Glue::AutomateSchedeeType); 
 		}
 		
-		void finalize() {}
+		void finalize() {
+			destruct();
+			finalizeSchedee();
+		}
 	};
+
+	template<typename AutomFunctor, typename ... Args>
+	pid_t automFunctorCreate(Args ... args) {
+		Schedee* sch = new AutomFunctor(gxx::forward<Args>(args) ...);
+		auto pid = Genos::Glue::registerSchedee(sch);
+		return pid;
+	}
 }
 
 #endif
