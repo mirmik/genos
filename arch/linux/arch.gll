@@ -11,7 +11,7 @@ Module("genos.include.arch.linux64", {
 Module("genos.arch.linux", {
 	sources = {
 		cc = "asm/arch.c asm/diag.c",
-		--cxx = "asm/atomic.cpp"
+		cxx = "asm/irq.cpp"
 	},
 	flags = { 
 		cc = "-Wno-incompatible-pointer-types", 

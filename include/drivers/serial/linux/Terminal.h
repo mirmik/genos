@@ -20,9 +20,13 @@ namespace Genos {
 		void readFunc() {
 			while(1) {
 				char c = getchar();
+				//dprln("new char\r\n");
+				//dprln("enter");
 				atomic_section_enter();
 				rx.putc(c);
+				//dprln(haveDataFlag.status());
 				haveDataFlag.set();
+				//dprln("leave");
 				atomic_section_leave();
 			}
 		}
@@ -46,7 +50,7 @@ namespace Genos {
 		}
 	
 		int avail() { 
-			return 0xFFFF; 
+			return rx.avail(); 
 		}
 		
 		int room() { 

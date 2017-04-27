@@ -25,6 +25,6 @@ Module("genos.kernel.sched_message", {
 
 Module("genos.kernel.schedee", {
 	sources = {
-		cxx = "Schedee.cpp"
+		cxx = "Schedee.cpp SchedeeResource.cpp"
 	},
 })

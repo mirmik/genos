@@ -63,6 +63,18 @@ namespace gxx {
 			}
 		}
 
+		template <typename Function>
+		T* find(Function func) {
+			array_for_each(hl, &table[0], TableSize) {
+				struct hlist_node * pos;
+				hlist_for_each(pos, (hl)) {
+					T& el = *member_container(pos, lnk);
+					if (func(el)) return &el;
+				}
+			}
+			return nullptr;
+		}
+
 	private:
 
 		void __hashtable_put_to_cell(struct hlist_head* tbl, struct hlist_node* node, size_t cell) {

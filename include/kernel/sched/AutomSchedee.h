@@ -32,7 +32,9 @@ namespace Genos {
 
 	class AutomFunctorSchedee : public Schedee {
 	public:
-		AutomFunctorSchedee(int prio) : Schedee(prio) {}
+		AutomFunctorSchedee(int prio) : 
+			Schedee(prio) {}
+
 		AutomFunctorSchedee() {}
 
 		virtual void routine() = 0;
@@ -56,6 +58,9 @@ namespace Genos {
 	template<typename AutomFunctor, typename ... Args>
 	pid_t automFunctorCreate(Args ... args) {
 		Schedee* sch = new AutomFunctor(gxx::forward<Args>(args) ...);
+		Schedee* cur = Genos::currentSchedee();
+		sch->setParent(cur);
+		
 		auto pid = Genos::Glue::registerSchedee(sch);
 		return pid;
 	}

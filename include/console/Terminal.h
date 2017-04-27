@@ -26,15 +26,25 @@ namespace Genos {
 
 		char c;
 
+	protected:
+		void destruct() override {
+			dataWait.unbind();
+		}
+
 	public:
 		bool debug_mode = false;
 	
+		void destroy() override {
+			delete this;
+		}
+
 	public:
 		Terminal(FlagedStream* strm, Stream* echo, Executor* executor, gxx::buffer buf) 
 			: istrm(strm), ostrm(echo), dataWait(this), rl(buf), executor(executor) {}
 
 		void lineHandler() {
 			auto str = rl.line();
+			//dprln(strlen(str));
 			executor->execute(str);
 			rl.reset();
 		}
@@ -45,6 +55,7 @@ namespace Genos {
 		}
 
 		void routine() override {
+			//dprln("TERMINAL");
 			switch(state) {
 				case 0:
 					state++; 
@@ -74,6 +85,7 @@ namespace Genos {
 							return;
 						}
 
+						//dprln(c);
 						rl.putc(c);
 						if (m_echo) ostrm->putc(c);
 					}

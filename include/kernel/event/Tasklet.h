@@ -35,7 +35,13 @@ namespace Genos {
 
 		void set() {
 			flag = true;
+
+			//if (list.empty()) {
+			//	dprln("EMPTY");
+			//}
+
 			while(!list.empty()) {
+			//	dprln("NOEMPTY");
 				Waiter& waiter = *list.begin();
 				waiter.unbind_and_invoke();
 			}
@@ -43,6 +49,10 @@ namespace Genos {
 
 		void reset() {
 			flag = false;
+		}
+
+		int status() {
+			return list.size();
 		}
 	};
 

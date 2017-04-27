@@ -36,6 +36,14 @@ namespace Genos {
 			table.foreach(func);
 		}
 
+		template<typename Function>
+		Schedee* find(Function func) {
+			return table.find(func);
+		}
+
+		Schedee* find() {
+
+		}
 
 	private: 
 		pid_t get_new_pid() {

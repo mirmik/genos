@@ -8,8 +8,12 @@
 
 #include <kernel/id/id.h>
 #include <kernel/resources/ManagedObject.h>
+#include <kernel/resources/SchedeeResource.h>
 #include <gxx/vector.h>
 //#include <gxx/ByteArray.h>
+
+#include <kernel/csection.h>
+#include <kernel/event/Waiter.h>
 
 #include <utilxx/setget.h>
 
@@ -27,6 +31,7 @@ static const uint8_t SCHEDEE_STATE_STOP = 0x07;
 static const uint8_t SCHEDEE_STATE_WAIT = 0x02;
 static const uint8_t SCHEDEE_BLOCKED_SEND = 0x03;
 static const uint8_t SCHEDEE_BLOCKED_RECEIVE = 0x04;
+
 static const uint8_t SCHEDEE_STATE_FINAL = 0x05;
 static const uint8_t SCHEDEE_STATE_ZOMBIE = 0x06;
 
@@ -43,7 +48,7 @@ namespace Genos {
 		pid_t registerSchedee(Schedee*);
 	}
 
-	class Schedee : public ManagedObject {
+	class Schedee : public SchedeeResource {
 	public:
 		struct dlist_head schlnk;	//линк к спискам планировщика
 		struct hlist_node hlnk;		//линк в хештаблицу процессов
@@ -55,18 +60,33 @@ namespace Genos {
 			uint8_t state : 4;
 		};
 
-		gxx::vector<ManagedObject*> resources;
+		SchedeeResourceList resources;
+		//gxx::vector<Schedee*> childs;
 
-		
+		OnceEvent finalWaiterHead;
+
 	public:
-		Schedee() : prio(PRIORITY_TOTAL - 1), state(SCHEDEE_STATE_INIT) {
+		Schedee() : 
+			prio(PRIORITY_TOTAL - 1), 
+			state(SCHEDEE_STATE_INIT)
+			//SchedeeResource(parent) 
+		{
 			dlist_init(&schlnk);
 			hlist_node_init(&hlnk);
+			//setParent(Genos::currentSchedee());
 		};
 
-		Schedee(uint8_t prio) : prio(prio), state(SCHEDEE_STATE_INIT) {
+		Schedee(uint8_t prio) : 
+			prio(prio), 
+			state(SCHEDEE_STATE_INIT)
+//			SchedeeResource(parent) 
+		{
 			dlist_init(&schlnk);
+			hlist_node_init(&hlnk);
+			//setParent(Genos::currentSchedee());
 		};
+
+		Schedee(const Schedee&) = delete;
 
 		void run() {
 			Glue::systemSchedeeManager().runSchedee(*this);
@@ -82,6 +102,13 @@ namespace Genos {
 
 		void wait(uint8_t state) {
 			Glue::systemSchedeeManager().waitSchedee(*this, state);
+		}
+
+		void zombie() {
+			//dpr(m_name); dprln("::zombie");
+			Glue::systemSchedeeManager().zombieSchedee(*this);
+			if (resources.empty()) schedee_destroy();
+			//dprln("HERE");
 		}
 
 		void unwait() {
@@ -102,42 +129,62 @@ namespace Genos {
 		}
 
 		void finalizeResources() {
+			//dpr(m_name); dpr("::"); dprln("finalizeResources");
 			auto beg = resources.begin();
 			auto end = resources.end();
 			for(auto it = beg; it != end; it++) {
-				if (*it != nullptr)	(*it)->release();
+				it->releaseResource();
 			}
+
+			//dpr(m_name); dpr("::");dprln("finalWaiterHead.invoke()");
+			finalWaiterHead.invoke();
+
+			//dpr(m_name); dpr("::");dprln("unbindFromParent");
+			unbindFromParent();
 		}
 
 		void finalizeSchedee() {
+			atomic_section_enter();
 			finalizeResources();
-			//dprln("unlink");
-			dlist_del(&schlnk);
-			//dprln("after dlist unlink");
-			hlist_del(&hlnk);
-			//dprln("after hlist unlink");
+			zombie();
+			atomic_section_leave();
 		}
 
 		virtual void execute() = 0;
 		virtual void displace() = 0;
 		virtual void finalize() = 0;
 	
-		const char* m_name = nullptr;
-		void assignName(const char* name) {
-			m_name = name;
+		void addResource(SchedeeResource* res) {
+			resources.move_back(*res);
+			res->parent = this;
 		}
 
-		Schedee& name(const char* str) {
-			m_name = str;
-			return *this;
+		void unbindResource(SchedeeResource* res) {
+			//dpr(m_name); dpr("::");dprln("unbindResource");
+			dlist_del_init(&res->reslnk);
+			res->parent = nullptr;
+			if (state == SCHEDEE_STATE_ZOMBIE && resources.empty()) {
+				schedee_destroy();
+			}
 		}
 
-		//ManagedObject support
-		void release() {
+		void releaseResource() override {
 			final();
 		}
 
+		void schedee_destroy() {
+			hlist_del(&hlnk);
+			dlist_del(&schlnk);
+			dlist_del(&reslnk);
+			destroy();
+		}
+
+		virtual void destroy() = 0;
+
 		static pid_t& getkey(Schedee& sch) { return sch.pid; }
+	
+		const char* m_name;
+		ACCESSOR(name, m_name);
 	};
 
 	using SchedeeList = gxx::dlist<Schedee, &Schedee::schlnk>;
@@ -145,11 +192,12 @@ namespace Genos {
 	Schedee* currentSchedee();
 	void currentSchedee(Schedee* sch);
 
-	void finalizeSchedee(Schedee* sch);
+//	void finalizeSchedee(Schedee* sch);
 
 	int8_t run(pid_t pid);
 	int8_t stop(pid_t pid);
 	int8_t final(pid_t pid);
+	int8_t assign_name(pid_t pid, const char* name);
 
 	Genos::Schedee* raw(pid_t pid);
 }

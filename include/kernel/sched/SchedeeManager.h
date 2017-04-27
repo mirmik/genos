@@ -12,12 +12,19 @@ namespace Genos {
 		SchedeeList runlist[PRIORITY_TOTAL];
 		SchedeeList waitlist;
 		SchedeeList finallist;
+		SchedeeList zombielist;
 
 	public:
 		void finalSchedee(Schedee& sch) override {
 			assert(sch.state != SCHEDEE_STATE_FINAL);
 			sch.state = SCHEDEE_STATE_FINAL;
 			finallist.move_back(sch);
+		}
+
+		void zombieSchedee(Schedee& sch) override {
+			assert(sch.state == SCHEDEE_STATE_FINAL);
+			sch.state = SCHEDEE_STATE_ZOMBIE;
+			zombielist.move_back(sch);
 		}
 
 		void runSchedee(Schedee& sch) override {
@@ -39,6 +46,8 @@ namespace Genos {
 		}
 
 		void unwaitSchedee(Schedee& sch, uint8_t type) override {
+			if (sch.state == SCHEDEE_STATE_FINAL ||
+				sch.state == SCHEDEE_STATE_ZOMBIE) return;
 			assert(sch.state == type);
 			sch.state = SCHEDEE_STATE_RUN;
 			runlist[sch.prio].move_back(sch);
@@ -47,9 +56,12 @@ namespace Genos {
 		void execute() override {
 			while (!finallist.empty()) {
 				Schedee* fsch = &*finallist.begin();
-				//dprln("finalize");
+				
+				//данная функция инициализирует процедуру удаления
+				//процесса из системы. Удаление может быть достаточно
+				//длительным, но в любом случае это не проблемы планировщика.
+				//процесс так же должен исключить себя из списка финализации.
 				fsch->finalize();
-				delete fsch;
 			}
 		
 			critical_section_enter();

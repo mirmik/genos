@@ -41,6 +41,10 @@ namespace Genos {
 			auto node = new SimpleShellRecord(name, dlg);
 			table.put(*node);
 		};
+
+		void add(const char* name, delegate<int> dlg) {
+			add(name, *reinterpret_cast<delegate<int, int, char**>*>(&dlg));
+		};
 	
 		int __execute_nosafe(char* str) {
 			argvc_t argvc;

@@ -1,6 +1,12 @@
-Module("genos.csection", {
+Implementation("genos.atomic_section", "disable_irqs", {
 	sources = {
-		cc  = "csection.c"
+		cc  = "atomic_section_irqs.c"
+	}
+})
+
+Implementation("genos.atomic_section", "std::mutex", {
+	sources = {
+		cxx  = "atomic_section_mutex.cpp"
 	}
 })
 
@@ -8,5 +14,11 @@ Module("genos.kernel.standart_glue", {
 	sources = {
 		cxx  = "KernelGlue.cpp"
 	},
-	depends = "genos.csection genos.kernel.scheduler"
+	depends = "genos.atomic_section genos.kernel.scheduler"
+}) 
+
+Module("genos.kernel.pool", {
+	sources = {
+		cxx  = "pool/Pool.cpp"
+	},
 }) 
