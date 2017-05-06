@@ -7,37 +7,52 @@
 
 namespace Genos {
 
-	class WakeUpWaiter : public Waiter {
+	class WakeUpWaiter : public Waiter, public SchedeeResource {
 		Schedee* waitedSchedee;
 
 	public:
 		WakeUpWaiter(Schedee* waitedSchedee) : 
-			waitedSchedee(waitedSchedee) {}
+			waitedSchedee(waitedSchedee) {
+
+				//dprptrln(this);
+			}
 
 		void invoke() override {
-			//dprln("WAKE UP WAITER INVOKE"); 
+			//dprln("invoke");
+			atomic_section_enter();
+			//dprln("enter");
 			waitedSchedee->unwait();
+			//dprln("unwait");
+			waitedSchedee->unbindResource(this);
+			//dprln("leave");
+			atomic_section_leave();
+			//dprln("after_leave");
 		}
 
 		Schedee* schedee() {
 			return waitedSchedee;
 		}
+
+		void releaseResource() {
+			Waiter::unbind();
+			SchedeeResource::unbindFromParent();
+		}
 	};
 
-	void wait(WaiterHead& head, WakeUpWaiter& wakeup) {
-		//dprln("enter");
+	void wakeup_wait(WaiterHead& head, WakeUpWaiter& wakeup) {
 		atomic_section_enter();
-		//while(1);
+		wakeup.schedee()->addResource(wakeup);
 		wakeup.schedee()->wait();
 		head.wait(wakeup);
-		//dprln("leave");
 		atomic_section_leave();
 	}
 
-	int8_t wait(pid_t pid, WakeUpWaiter& wakeup) {
+	int8_t wakeup_wait(pid_t pid, WakeUpWaiter& wakeup) {
+		atomic_section_enter();
 		auto sch = Genos::raw(pid);
 		if (!sch) return -1;
-		wait(sch->finalWaiterHead, wakeup);
+		wakeup_wait(sch->finalWaiterHead, wakeup);
+		atomic_section_leave();
 	}
 }
 

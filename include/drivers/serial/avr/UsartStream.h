@@ -4,13 +4,11 @@
 #include <gxx/buffer.h>
 #include <drivers/serial/avr/UsartDriver.h>
 #include <utilxx/classes/ByteRing.h>
-#include <kernel/devices/serial/Stream.h>
-
-#include <kernel/event/Tasklet.h>
+#include <kernel/devices/serial/SyncStream.h>
 
 namespace Genos {
 
-class AvrUsartStream : public AvrUsartDriver, public FlagedStream {
+class AvrUsartStream : public AvrUsartDriver, public SyncStream {
 
 private:
 	ByteRing m_rxring;

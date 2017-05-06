@@ -31,7 +31,7 @@ int AvrUsartStream::begin(int32_t baud,
 	irqEnableRX(true);
 }
 
-int AvrUsartStream::write(const char* data, size_t size) {
+int AvrUsartStream::io_write(const char* data, size_t size) {
 	if (size == 0) return 0;
 
 	int ret = 0;
@@ -39,6 +39,7 @@ int AvrUsartStream::write(const char* data, size_t size) {
 
 	if (cansend() && m_txring.empty()) {
 		ret += sendbyte(*data++);
+		txBufferEmpty.reset();
 		irqEnableTX(true);
 	};
 	ret += m_txring.write(data, size - ret);
@@ -82,6 +83,7 @@ void interruptHandler_UsartRX(AvrUsartStream* usart) {
 void interruptHandler_UsartTX(AvrUsartStream* usart) {
 	if (usart->m_txring.empty()) {
 		usart->irqEnableTX(false);
+		usart->txBufferEmpty.set();
 		return;
 	}
 

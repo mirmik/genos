@@ -63,7 +63,8 @@ namespace Genos {
 				
 				case 1:
 					ostrm->print("input:");
-					Genos::wait(istrm->haveDataFlag, dataWait);
+					Genos::wakeup_wait(istrm->haveDataFlag, dataWait);
+					//dprln("HERE");
 					state++;
 				break; 
 				case 2: 
@@ -73,10 +74,10 @@ namespace Genos {
 						
 						if (debug_mode) {
 							ostrm->printhexln(c);
-							return;
+							continue;
 						}
 
-						if (c == '\r' && lastsymb == '\n') return;
+						if (c == '\r' && lastsymb == '\n') continue;
 
 						if (c == '\n' || c == '\r') {
 							state = 1;
@@ -89,7 +90,7 @@ namespace Genos {
 						rl.putc(c);
 						if (m_echo) ostrm->putc(c);
 					}
-					Genos::wait(istrm->haveDataFlag, dataWait);
+					Genos::wakeup_wait(istrm->haveDataFlag, dataWait);
 				break;
 			}
 

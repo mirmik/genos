@@ -2,27 +2,31 @@
 #define GENOS_PIPE_STREAM_H
 
 #include <utilxx/classes/ByteRing.h>
-#include <kernel/devices/serial/Stream.h>
+#include <kernel/devices/serial/SyncStream.h>
 #include <gxx/buffer.h>
 
 namespace Genos {
 
-	class PipeStream : public FlagedStream {
+	class PipeStream : public SyncStream {
 		
 		ByteRing ring;
 
 	public:
 		PipeStream(gxx::buffer buf) : ring(buf) {}
 
-		int write(const char* data, size_t size) override {
+		int io_write(const char* data, size_t size) override {
 			auto ret = ring.write(data, size);
 			haveDataFlag.set();
+			txEmptyBuffer.reset();
 			return ret;
 		}
 
 		int read(char* str, size_t len) override {
 			auto ret = ring.read(str, len);
-			if (ring.avail() == 0) haveDataFlag.reset(); 
+			if (ring.avail() == 0) { 
+				haveDataFlag.reset();
+				txEmptyBuffer.set();
+			} 
 			return ret;
 		}
 

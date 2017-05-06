@@ -13,7 +13,7 @@
 //#include <gxx/ByteArray.h>
 
 #include <kernel/csection.h>
-#include <kernel/event/Waiter.h>
+#include <kernel/event/OnceEvent.h>
 
 #include <utilxx/setget.h>
 
@@ -58,6 +58,7 @@ namespace Genos {
 		
 		struct {
 			uint8_t state : 4;
+			uint8_t subst : 1;
 		};
 
 		SchedeeResourceList resources;
@@ -68,9 +69,11 @@ namespace Genos {
 	public:
 		Schedee() : 
 			prio(PRIORITY_TOTAL - 1), 
-			state(SCHEDEE_STATE_INIT)
+			state(SCHEDEE_STATE_INIT),
+			subst(0)
 			//SchedeeResource(parent) 
 		{
+			//dprptrln(this);
 			dlist_init(&schlnk);
 			hlist_node_init(&hlnk);
 			//setParent(Genos::currentSchedee());
@@ -78,15 +81,21 @@ namespace Genos {
 
 		Schedee(uint8_t prio) : 
 			prio(prio), 
-			state(SCHEDEE_STATE_INIT)
+			state(SCHEDEE_STATE_INIT),
+			subst(0)
 //			SchedeeResource(parent) 
 		{
+			//dprptrln(this);
 			dlist_init(&schlnk);
 			hlist_node_init(&hlnk);
 			//setParent(Genos::currentSchedee());
 		};
 
 		Schedee(const Schedee&) = delete;
+
+		bool is_subst() {
+			return subst;
+		}
 
 		void run() {
 			Glue::systemSchedeeManager().runSchedee(*this);
@@ -105,7 +114,7 @@ namespace Genos {
 		}
 
 		void zombie() {
-			//dpr(m_name); dprln("::zombie");
+			////dpr(m_name); dprln("::zombie");
 			Glue::systemSchedeeManager().zombieSchedee(*this);
 			if (resources.empty()) schedee_destroy();
 			//dprln("HERE");
@@ -130,11 +139,13 @@ namespace Genos {
 
 		void finalizeResources() {
 			//dpr(m_name); dpr("::"); dprln("finalizeResources");
-			auto beg = resources.begin();
-			auto end = resources.end();
-			for(auto it = beg; it != end; it++) {
-				it->releaseResource();
-			}
+			//auto beg = resources.begin();
+			//auto end = resources.end();
+			gxx::for_each_safe(resources.begin(), resources.end(), [](SchedeeResource& res){
+				//dprln("it->releaseResource()");
+				//dprptrln(&res);
+				res.releaseResource();
+			});
 
 			//dpr(m_name); dpr("::");dprln("finalWaiterHead.invoke()");
 			finalWaiterHead.invoke();
@@ -144,6 +155,7 @@ namespace Genos {
 		}
 
 		void finalizeSchedee() {
+			//dpr(m_name); dpr("::");dprln("finalizeSchedee");
 			atomic_section_enter();
 			finalizeResources();
 			zombie();
@@ -154,9 +166,10 @@ namespace Genos {
 		virtual void displace() = 0;
 		virtual void finalize() = 0;
 	
-		void addResource(SchedeeResource* res) {
-			resources.move_back(*res);
-			res->parent = this;
+		void addResource(SchedeeResource& res) {
+			//dpr(m_name); dpr("::");dpr("addResource:");dprptr(&res);dprln();
+			resources.move_back(res);
+			res.parent = this;
 		}
 
 		void unbindResource(SchedeeResource* res) {
@@ -166,9 +179,11 @@ namespace Genos {
 			if (state == SCHEDEE_STATE_ZOMBIE && resources.empty()) {
 				schedee_destroy();
 			}
+			//dprln("HERE");
 		}
 
 		void releaseResource() override {
+			//dpr(m_name); dpr("::");dprln("releaseResource");
 			final();
 		}
 

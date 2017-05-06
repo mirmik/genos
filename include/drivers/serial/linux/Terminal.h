@@ -9,6 +9,9 @@
 
 #include <thread>
 
+#include <gxx/array.h>
+#include <utilxx/classes/ByteRing.h>
+
 namespace Genos { 
 
 	class LinuxTerminal : public FlagedStream {
@@ -20,24 +23,24 @@ namespace Genos {
 		void readFunc() {
 			while(1) {
 				char c = getchar();
-				//dprln("new char\r\n");
-				//dprln("enter");
+				//dprln("newchar");
 				atomic_section_enter();
 				rx.putc(c);
-				//dprln(haveDataFlag.status());
 				haveDataFlag.set();
-				//dprln("leave");
 				atomic_section_leave();
 			}
 		}
 
 	public:
 		LinuxTerminal() : rx(arr.slice()), readThread(&LinuxTerminal::readFunc, this) {}
+
 		~LinuxTerminal() { readThread.detach(); }
 
 		int write(const char* data, size_t size) {
+			//atomic_section_enter();
 			auto ret = ::write(1, data, size);
 			fflush(stdout);
+			//atomic_section_leave();
 			return ret;
 		}
 		

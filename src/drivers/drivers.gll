@@ -5,7 +5,7 @@ Implementation("genos.arch.atmega2560.drivers.usart", "cc", {
 			"serial/uartring.c"
 		}
 	},
-	depends = "genos.fs.chardev"
+--	depends = "genos.fs.chardev"
 })
 
 Implementation("genos.arch.atmega2560.drivers.usart", "cxx", {

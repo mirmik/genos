@@ -28,6 +28,10 @@ namespace Genos {
 		WaiterList list;
 
 	public:
+		bool isset() {
+			return flag;
+		}
+
 		void wait(Waiter& waiter) override {
 			if (flag) waiter.invoke();
 			else list.move_back(waiter);

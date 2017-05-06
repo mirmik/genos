@@ -2,7 +2,7 @@
 #include <kernel/sched/Schedee.h>
 
 void Genos::SchedeeResource::setParent(Schedee* parent) {
-	if (parent) parent->addResource(this);
+	if (parent) parent->addResource(*this);
 	else this->parent = nullptr; 
 }
 

@@ -31,34 +31,7 @@ namespace Genos {
 		virtual void wait(Waiter& waiter) = 0;
 	};
 
-	class DelegateWaiter : public Waiter {
-		delegate<void> dlg;
-	public:
-		DelegateWaiter(delegate<void> dlg) : dlg(dlg) {}
-
-		void invoke() override {
-			dlg();
-		}
-	};
-
 	using WaiterList = gxx::dlist<Waiter, &Waiter::lnk>;
-
-	class OnceEvent : public WaiterHead {
-		WaiterList list;
-
-	public:
-		void wait(Waiter& waiter) override {
-			list.move_back(waiter);
-		}
-
-		void invoke() {
-			while(!list.empty()) {
-				Waiter& waiter = *list.begin();
-				waiter.unbind_and_invoke();
-			}
-		}
-	};
-
 }
 
 #endif
