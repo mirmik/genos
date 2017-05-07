@@ -7,7 +7,7 @@
 #include <kernel/sched/AbstractSchedeeManager.h>
 
 #include <kernel/id/id.h>
-#include <kernel/resources/ManagedObject.h>
+//#include <kernel/resources/ManagedObject.h>
 #include <kernel/resources/SchedeeResource.h>
 #include <gxx/vector.h>
 //#include <gxx/ByteArray.h>
