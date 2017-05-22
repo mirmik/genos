@@ -5,6 +5,8 @@
 #include <kernel/sched/Scheduler.h>
 #include <kernel/sched/Schedee.h>
 
+#include <kernel/stdstream.h>
+
 namespace Genos {
 	class AutomSchedee : public Schedee {
 	private:
@@ -28,10 +30,43 @@ namespace Genos {
 			destruct(local);
 			finalizeSchedee();
 		}
+
+		void destroy() override { delete this; }
+	};
+
+	class AutomShellSchedee : public Schedee {
+	private:
+		delegate<void, int, char**> routine;
+		str_argvc_t argvc;
+
+	public:
+		AutomShellSchedee(delegate<void, int, char**> routine, str_argvc_t& argvc) :
+			routine(routine), argvc(argvc) {}
+	private:	
+		void execute() {
+			routine(argvc.argc(), argvc.argv());
+		}
+
+		void destruct() {
+			free(argvc.str);
+		}
+
+		void displace() { 
+			Genos::Glue::displace(Genos::Glue::AutomateSchedeeType); 
+		}
+
+		void finalize() {
+			destruct();
+			finalizeSchedee();
+		}
+
+		void destroy() override { delete this; }
 	};
 
 	class AutomFunctorSchedee : public Schedee {
 	public:
+		StdStreamStruct strm;
+
 		AutomFunctorSchedee(int prio) : 
 			Schedee(prio) {}
 
@@ -42,6 +77,7 @@ namespace Genos {
 
 	private:	
 		void execute() {
+			currentStdStream(&strm);
 			routine();
 		}
 
@@ -57,9 +93,42 @@ namespace Genos {
 
 	template<typename AutomFunctor, typename ... Args>
 	pid_t automFunctorCreate(Args ... args) {
-		Schedee* sch = new AutomFunctor(gxx::forward<Args>(args) ...);
+		auto sch = new AutomFunctor(gxx::forward<Args>(args) ...);
+
 		Schedee* cur = Genos::currentSchedee();
-		sch->setParent(cur);
+		sch->initFromParent(cur, CLONE_DESCRIPTORS | LINK_AS_RESOURCE);
+
+		sch->strm = *currentStdStream();
+		
+		auto pid = Genos::Glue::registerSchedee(sch);
+		return pid;
+	}
+
+	//template<typename AutomFunctor, typename ... Args>
+	pid_t automSchedeeCreate(
+		delegate<void, void*> 	routine, 
+		void* 					local, 
+		delegate<void, void*> 	destruct = do_nothing) 
+	{
+		auto sch = new AutomSchedee(routine, local,	destruct);
+
+		Schedee* cur = Genos::currentSchedee();
+		sch->initFromParent(cur, CLONE_DESCRIPTORS | LINK_AS_RESOURCE);
+
+		//sch->strm = *currentStdStream();
+		
+		auto pid = Genos::Glue::registerSchedee(sch);
+		return pid;
+	}
+
+	pid_t automShellSchedeeCreate(delegate<void, int, char**> routine, str_argvc_t& argvc) 
+	{
+		auto sch = new AutomShellSchedee(routine, argvc);
+
+		Schedee* cur = Genos::currentSchedee();
+		sch->initFromParent(cur, CLONE_DESCRIPTORS | LINK_AS_RESOURCE);
+
+		//sch->strm = *currentStdStream();
 		
 		auto pid = Genos::Glue::registerSchedee(sch);
 		return pid;

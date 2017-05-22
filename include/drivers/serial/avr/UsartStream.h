@@ -15,7 +15,7 @@ private:
 	ByteRing m_txring;
 
 public:
-	int write(const char* data, size_t size);
+	int io_write(const char* data, size_t size);
 	
 	int read(char* data, size_t size);
 	int getc();

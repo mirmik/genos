@@ -1,0 +1,5 @@
+Module("genos.kernel.utility", {
+	sources = {
+		cxx = "utility.cpp"
+	}
+})

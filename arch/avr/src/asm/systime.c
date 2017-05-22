@@ -34,10 +34,10 @@ void system_tick() {
 
 uint32_t millis() {
 	uint32_t m;
-	irqstate_t save = global_irq_save();
+	irqstate_t save = global_irqs_save();
 
 	m = __millis;
-	global_irq_restore(save);
+	global_irqs_restore(save);
 
 	return m;
 }
@@ -46,7 +46,7 @@ uint32_t micros()
 {
 	uint32_t m;
 	uint8_t t;
-	irqstate_t save = global_irq_save();
+	irqstate_t save = global_irqs_save();
 
 	m = jiffies;
 #if defined(TCNT0)
@@ -65,7 +65,7 @@ uint32_t micros()
 		m++;
 #endif
 
-	global_irq_restore(save);
+	global_irqs_restore(save);
 	
 	return ((m << 8) + t) * (64 / clockCyclesPerMicrosecond());
 }

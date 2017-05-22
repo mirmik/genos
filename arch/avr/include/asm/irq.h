@@ -6,22 +6,22 @@
 
 typedef unsigned char irqstate_t;
 
-static inline void global_irq_enable(void) {
+static inline void global_irqs_enable(void) {
 	sei();
 }
 
-static inline irqstate_t global_irq_save(void) {
+static inline irqstate_t global_irqs_save(void) {
 	irqstate_t save = SREG;
 	cli();
 	return save;
 }
 
-static inline void global_irq_restore(irqstate_t state) {
+static inline void global_irqs_restore(irqstate_t state) {
 	SREG = state;
 }
 
-static inline void global_irq_disable(void) {
-	(void) global_irq_save();
+static inline void global_irqs_disable(void) {
+	(void) global_irqs_save();
 }
 
 #endif

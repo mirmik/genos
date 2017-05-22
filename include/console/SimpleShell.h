@@ -2,25 +2,31 @@
 #define GENOS_SIMPLE_SHELL_H
 
 #include <genos/sigslot/delegate.h>
-#include <genos/datastruct/argvc.h>
-//#include <gxx/Dictionary.h>
-//#include <gxx/ByteArray.h>
+#include <datastruct/argvc.h>
 #include <gxx/hashtable.h>
-
-#include <debug/dprint.h>
+//#include <debug/dprint.h>
+#include <kernel/stdstream.h>
 
 #include <console/Executor.h>
 
 namespace Genos {
 
+	enum class SimpleShellRecordType {
+		Command,
+		AutomDelegateSchedee,
+		SubstDelegateSchedee,
+	};
+
 	class SimpleShellRecord {
 	public:
+		SimpleShellRecordType type;
+
 		hlist_node hlnk;
 		const char* name;
 		delegate<int, int, char**> dlg;
 
-		SimpleShellRecord(const char* name, delegate<int, int, char**> dlg) :
-			name(name), dlg(dlg) { }
+		SimpleShellRecord(const char* name, delegate<int, int, char**> dlg, SimpleShellRecordType type) :
+			name(name), dlg(dlg), type(type) { }
 		static const char*& getkey(SimpleShellRecord& rec) { return rec.name; }
 	};
 
@@ -37,49 +43,54 @@ namespace Genos {
 	
 		//SimpleShell() {};
 	
-		void add(const char* name, delegate<int, int, char**> dlg) {
-			auto node = new SimpleShellRecord(name, dlg);
+		void addCommand(const char* name, delegate<int, int, char**> dlg) {
+			auto node = new SimpleShellRecord(name, dlg, SimpleShellRecordType::Command);
 			table.put(*node);
 		};
 
-		void add(const char* name, delegate<int> dlg) {
-			add(name, *reinterpret_cast<delegate<int, int, char**>*>(&dlg));
+		void addAutom(const char* name, delegate<int, int, char**> dlg) {
+			auto node = new SimpleShellRecord(name, dlg, SimpleShellRecordType::AutomDelegateSchedee);
+			table.put(*node);
 		};
+
+		/*void addCommand(const char* name, delegate<int> dlg) {
+			addCommand(name, *reinterpret_cast<delegate<int, int, char**>*>(&dlg));
+		};*/
 	
 		int __execute_nosafe(char* str) {
-			argvc_t argvc;
+			str_argvc_t str_argvc(str);
 			
-			char* v[10];
-	
+			auto argc = str_argvc.argc();
+			auto argv = str_argvc.argv();
+
 			if (strlen(str) == 0) return EmptyString;
-	
-			argvc.v = v;
-			argvc.internal_split(str);
-	
 			delegate<int,int,char**> ref;
 			
-			if (!strcmp(argvc.v[0], "help")) {
+			if (!strcmp(argv[0], "help")) {
 				table.foreach([](SimpleShellRecord& rec) {
-					dprln(rec.name);
+					outStream().println(rec.name);
 				});
 				return OK;
 			}
 	
-			auto ret = table.get(argvc.v[0]);
-			if (ret == nullptr) return FunctionNotExist;
-			
-			return ret->dlg(argvc.c, argvc.v);
+			auto ret = table.get(argv[0]);
+			if (ret == nullptr) {
+				outStream().println("FunctionNotExist");
+				return -1;
+			}
+
+			if (ret->type == SimpleShellRecordType::Command)
+				return ret->dlg(argc, argv);
+
+			if (ret->type == SimpleShellRecordType::AutomDelegateSchedee) {
+
+			}
 		}
 	
-		int __execute(const char* _str) {	
+		int execute(const char* _str) {	
 			char str[128];
 			strcpy(str,_str);
 			return __execute_nosafe(str);
-		}
-	
-		void execute(const char* str) {
-			auto ret = __execute(str);
-			if (ret && ret != EmptyString) dprln(strerr(ret));
 		}
 	
 		static const char* strerr(int retcode) {

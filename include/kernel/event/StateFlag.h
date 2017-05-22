@@ -3,6 +3,7 @@
 
 #include <kernel/event/Waiter.h>
 #include <genos/sigslot/delegate.h>
+#include <kernel/csection.h>
 
 namespace Genos {
 	class StateFlag : public WaiterHead {

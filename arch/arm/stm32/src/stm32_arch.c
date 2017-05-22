@@ -100,6 +100,6 @@ void arch_shutdown(arch_shutdown_mode_t mode) {
 		case ARCH_SHUTDOWN_MODE_ABORT:
 		break;
 	};
-	global_irq_disable();
+	global_irqs_disable();
 	while(1);
 }

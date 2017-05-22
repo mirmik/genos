@@ -46,7 +46,7 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 		case ARCH_SHUTDOWN_MODE_REBOOT:
 		break;
 		case ARCH_SHUTDOWN_MODE_ABORT:
-			global_irq_disable();
+			global_irqs_disable();
 			pin_settings(USER_LED, GPIO_MODE_OUTPUT);
 			debug_print("arch_shutdown"); dln();
 			while(1) {

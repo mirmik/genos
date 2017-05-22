@@ -32,7 +32,7 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 		case ARCH_SHUTDOWN_MODE_REBOOT:
 		break;
 		case ARCH_SHUTDOWN_MODE_ABORT:
-			global_irq_disable();
+			global_irqs_disable();
 			gpio_settings(GPIOB, (1<<7), GPIO_MODE_OUTPUT);
 			while(1) {
 				pinnum_tgl_level(RED_LED);

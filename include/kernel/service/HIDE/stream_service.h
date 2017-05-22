@@ -41,7 +41,7 @@ namespace Genos {
 
 			debug_ipcstack_dump(stack);
 
-			auto save = global_irq_save();
+			auto save = global_irqs_save();
 
 			switch (type) {
 				case WriteTag: 
@@ -102,7 +102,7 @@ namespace Genos {
 			ReplyMessage(msg);
 
 			__exit__:
-			global_irq_restore(save);
+			global_irqs_restore(save);
 		}
 
 	public:

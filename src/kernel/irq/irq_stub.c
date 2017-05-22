@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 void irq_stub(void* irqno) {
-	global_irq_disable();
+	global_irqs_disable();
 	debug_print("IRQ_STUB_");
 	debug_printhex_ptr(irqno);
 	dln();

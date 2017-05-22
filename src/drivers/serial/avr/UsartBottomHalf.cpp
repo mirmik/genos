@@ -33,14 +33,14 @@ int AVRUsartBottomHalf::write(const char* data, size_t size) {
 	if (size == 0) return 0;
 
 	int ret = 0;
-	auto save = global_irq_save();
+	auto save = global_irqs_save();
 
 	if (cansend() && m_txring.empty()) {
 		ret += sendbyte(*data++);
 		irqEnableTX(true);
 	};
 	ret += m_txring.write(data, size - ret);
-	global_irq_restore(save);
+	global_irqs_restore(save);
 
 	return ret;
 }

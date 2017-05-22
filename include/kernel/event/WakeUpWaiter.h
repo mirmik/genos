@@ -39,21 +39,21 @@ namespace Genos {
 		}
 	};
 
-	void wakeup_wait(WaiterHead& head, WakeUpWaiter& wakeup) {
+	void wakeup_wait(WaiterHead& head, WakeUpWaiter& wakeup);/* {
 		atomic_section_enter();
 		wakeup.schedee()->addResource(wakeup);
 		wakeup.schedee()->wait();
 		head.wait(wakeup);
 		atomic_section_leave();
-	}
+	}*/
 
-	int8_t wakeup_wait(pid_t pid, WakeUpWaiter& wakeup) {
+	int8_t wakeup_wait(pid_t pid, WakeUpWaiter& wakeup);/* {
 		atomic_section_enter();
 		auto sch = Genos::raw(pid);
 		if (!sch) return -1;
 		wakeup_wait(sch->finalWaiterHead, wakeup);
 		atomic_section_leave();
-	}
+	}*/
 }
 
 #endif

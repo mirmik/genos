@@ -35,16 +35,16 @@ int AvrUsartStream::io_write(const char* data, size_t size) {
 	if (size == 0) return 0;
 
 	int ret = 0;
-	auto save = global_irq_save();
+	auto save = global_irqs_save();
 
 	if (cansend() && m_txring.empty()) {
 		ret += sendbyte(*data++);
-		txBufferEmpty.reset();
+		txEmptyBuffer.reset();
 		irqEnableTX(true);
 	};
 	ret += m_txring.write(data, size - ret);
 
-	global_irq_restore(save);
+	global_irqs_restore(save);
 
 	return ret;
 }
@@ -70,9 +70,9 @@ int AvrUsartStream::room() {
 }
 
 /*void AvrUsartStream::waitReceivedData(Tasklet& tasklet) {
-	auto save = global_irq_save();
+	auto save = global_irqs_save();
 	haveDataFlag.wait(tasklet);
-	global_irq_restore(save);
+	global_irqs_restore(save);
 }*/
 
 void interruptHandler_UsartRX(AvrUsartStream* usart) {
@@ -83,7 +83,7 @@ void interruptHandler_UsartRX(AvrUsartStream* usart) {
 void interruptHandler_UsartTX(AvrUsartStream* usart) {
 	if (usart->m_txring.empty()) {
 		usart->irqEnableTX(false);
-		usart->txBufferEmpty.set();
+		usart->txEmptyBuffer.set();
 		return;
 	}
 

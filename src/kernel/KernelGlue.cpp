@@ -102,3 +102,25 @@ Genos::pid_t Genos::Glue::registerSchedee(Schedee* sch) {
 	Glue::releaseMessageHeader(header);
 	return;
 }*/
+
+
+//TODO: replace section
+#include <kernel/event/WakeUpWaiter.h>
+#include <kernel/event/Waiter.h>
+#include <kernel/csection.h>
+
+void Genos::wakeup_wait(WaiterHead& head, WakeUpWaiter& wakeup) {
+	atomic_section_enter();
+	wakeup.schedee()->addResource(wakeup);
+	wakeup.schedee()->wait();
+	head.wait(wakeup);
+	atomic_section_leave();
+}
+
+int8_t Genos::wakeup_wait(pid_t pid, WakeUpWaiter& wakeup) {
+	atomic_section_enter();
+	auto sch = Genos::raw(pid);
+	if (!sch) return -1;
+	wakeup_wait(sch->finalWaiterHead, wakeup);
+	atomic_section_leave();
+}

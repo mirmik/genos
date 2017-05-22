@@ -2,6 +2,6 @@
 
 void end_of_programm() {
 	/*programm end stub*/
-	global_irq_disable();
+	global_irqs_disable();
 	for( ; ; );
 }

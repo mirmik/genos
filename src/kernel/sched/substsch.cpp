@@ -106,9 +106,9 @@ uint8_t subst_schedee_execute(struct schedee* sch) {
 	context* really_current = __current_context;
 	__current_context = &ssch->cntxt;
 
-	auto save = global_irq_save();
+	auto save = global_irqs_save();
 	context_switch(really_current, &ssch->cntxt);
-	global_irq_restore(save);
+	global_irqs_restore(save);
 
 	return SCHEDULE_RESUME;
 }
@@ -116,23 +116,23 @@ uint8_t subst_schedee_execute(struct schedee* sch) {
 uint8_t subst_schedee_engage(struct schedee* sch) {
 	struct subst_schedee * ssch = (struct subst_schedee *) sch;
 	__current_context = &ssch->cntxt;
-	global_irq_disable();
+	global_irqs_disable();
 	context_load(&ssch->cntxt);
 }
 
 uint8_t subst_schedee_displace(struct schedee* sch) {
 	struct subst_schedee * ssch = (struct subst_schedee *) sch;
-	auto save = global_irq_save();
+	auto save = global_irqs_save();
 
 	__schedee_plan__();
 	if (planned_schedee() == sch) {
 		set_planned_schedee(nullptr);
-		global_irq_restore(save);
+		global_irqs_restore(save);
 		return 3;		
 	}
 
 	context_save_and_invoke_schedule(&ssch->cntxt);
-	global_irq_restore(save);
+	global_irqs_restore(save);
 }
 
 uint8_t subst_schedee_lastexit(struct schedee* sch) {

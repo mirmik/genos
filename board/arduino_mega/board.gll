@@ -2,6 +2,7 @@ Module("genos.board.arduino_mega", {
 	sources = {
 		directory = "src",
 		cc = "board.c",
+		cxx = "utility.cpp",
 	},
 
 	depends = {

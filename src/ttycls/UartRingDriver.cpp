@@ -11,7 +11,7 @@ int UartRingDriver::write(const char* data, size_t size) {
 	int ret = 0;
 	if (size == 0) return 0;
 
-	global_irq_disable();
+	global_irqs_disable();
 
 	if (m_uart->room() && txring.empty()) {
 		ret += m_uart->putc(*data++);
@@ -23,7 +23,7 @@ int UartRingDriver::write(const char* data, size_t size) {
 	//if (!txwq.empty() && txring.room() > txring.size() / 2)
 	//	txwq.wakeUp();
 
-	global_irq_enable();
+	global_irqs_enable();
 
 	return ret;
 }

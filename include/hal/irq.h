@@ -11,10 +11,10 @@ void irq_disable(int irqno);
 
 /*define as static function in asm/irq.h*/
 
-//void global_irq_enable(void);
-//irqstate_t global_irq_save(void);
-//void global_irq_restore(irqstate_t state);
-//void global_irq_disable(void);
+//void global_irqs_enable(void);
+//irqstate_t global_irqs_save(void);
+//void global_irqs_restore(irqstate_t state);
+//void global_irqs_disable(void);
 
 __END_DECLS
 

@@ -45,7 +45,7 @@ void stream_service_write_query(mf_service_t* s, query_t* q) {
 
 	RETYPE(stream_service*, ss, s);
 
-	irqstate_t save = global_irq_save();
+	irqstate_t save = global_irqs_save();
 	
 	dlist_move_back(&q->lnk, &ss->wq);
 	
@@ -55,7 +55,7 @@ void stream_service_write_query(mf_service_t* s, query_t* q) {
 //		stream_service_invoke_write_query(s);
 //	} 
 
-	global_irq_restore(save);
+	global_irqs_restore(save);
 }
 
 void stream_service_read_query(mf_service_t* s, query_t* q) {

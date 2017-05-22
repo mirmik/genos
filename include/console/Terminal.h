@@ -1,7 +1,7 @@
 #ifndef GENOS_TERMINAL_H
 #define GENOS_TERMINAL_H
 
-#include <kernel/devices/serial/Stream.h>
+#include <kernel/devices/serial/FlagedStream.h>
 #include <kernel/sched/AutomSchedee.h>
 #include <kernel/event/WakeUpWaiter.h>
 

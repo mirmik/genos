@@ -15,7 +15,7 @@
 
 #define __assert(cond,strcond,message)				\
 	do { if ((cond) == 0) {							\
-		global_irq_disable();						\
+		global_irqs_disable();						\
 		debug_print("ASSERTATION:"); dln();			\
 		debug_print_location(current_location()); 	\
 		debug_print("condition: ");					\

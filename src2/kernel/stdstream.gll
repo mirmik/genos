@@ -1,0 +1,5 @@
+Module("genos.kernel.stdstream", {
+	sources = {
+		cxx = "stdstream.cpp"
+	}
+})

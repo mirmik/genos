@@ -7,8 +7,9 @@
 #include <kernel/sched/AbstractSchedeeManager.h>
 
 #include <kernel/id/id.h>
-//#include <kernel/resources/ManagedObject.h>
+
 #include <kernel/resources/SchedeeResource.h>
+#include <kernel/resources/File.h>
 #include <gxx/vector.h>
 //#include <gxx/ByteArray.h>
 
@@ -40,6 +41,9 @@ static const uint8_t SCHEDEE_STATE_MASK = 0x0F;
 //static const uint8_t SCHEDEE_FINAL_DEALLOCATE = 0x80;
 //static const uint8_t SCHEDEE_FINAL_RELEASE = 0x40;
 
+#define CLONE_DESCRIPTORS 0x01
+#define LINK_AS_RESOURCE 0x01
+
 namespace Genos {
 
 	class Schedee;
@@ -62,7 +66,7 @@ namespace Genos {
 		};
 
 		SchedeeResourceList resources;
-		//gxx::vector<Schedee*> childs;
+		gxx::vector<File*> files;
 
 		OnceEvent finalWaiterHead;
 
@@ -71,24 +75,18 @@ namespace Genos {
 			prio(PRIORITY_TOTAL - 1), 
 			state(SCHEDEE_STATE_INIT),
 			subst(0)
-			//SchedeeResource(parent) 
 		{
-			//dprptrln(this);
 			dlist_init(&schlnk);
 			hlist_node_init(&hlnk);
-			//setParent(Genos::currentSchedee());
 		};
 
 		Schedee(uint8_t prio) : 
 			prio(prio), 
 			state(SCHEDEE_STATE_INIT),
 			subst(0)
-//			SchedeeResource(parent) 
 		{
-			//dprptrln(this);
 			dlist_init(&schlnk);
 			hlist_node_init(&hlnk);
-			//setParent(Genos::currentSchedee());
 		};
 
 		Schedee(const Schedee&) = delete;
@@ -114,10 +112,8 @@ namespace Genos {
 		}
 
 		void zombie() {
-			////dpr(m_name); dprln("::zombie");
 			Glue::systemSchedeeManager().zombieSchedee(*this);
 			if (resources.empty()) schedee_destroy();
-			//dprln("HERE");
 		}
 
 		void unwait() {
@@ -138,24 +134,16 @@ namespace Genos {
 		}
 
 		void finalizeResources() {
-			//dpr(m_name); dpr("::"); dprln("finalizeResources");
-			//auto beg = resources.begin();
-			//auto end = resources.end();
 			gxx::for_each_safe(resources.begin(), resources.end(), [](SchedeeResource& res){
-				//dprln("it->releaseResource()");
-				//dprptrln(&res);
 				res.releaseResource();
 			});
 
-			//dpr(m_name); dpr("::");dprln("finalWaiterHead.invoke()");
 			finalWaiterHead.invoke();
 
-			//dpr(m_name); dpr("::");dprln("unbindFromParent");
 			unbindFromParent();
 		}
 
 		void finalizeSchedee() {
-			//dpr(m_name); dpr("::");dprln("finalizeSchedee");
 			atomic_section_enter();
 			finalizeResources();
 			zombie();
@@ -167,23 +155,19 @@ namespace Genos {
 		virtual void finalize() = 0;
 	
 		void addResource(SchedeeResource& res) {
-			//dpr(m_name); dpr("::");dpr("addResource:");dprptr(&res);dprln();
 			resources.move_back(res);
 			res.parent = this;
 		}
 
 		void unbindResource(SchedeeResource* res) {
-			//dpr(m_name); dpr("::");dprln("unbindResource");
 			dlist_del_init(&res->reslnk);
 			res->parent = nullptr;
 			if (state == SCHEDEE_STATE_ZOMBIE && resources.empty()) {
 				schedee_destroy();
 			}
-			//dprln("HERE");
 		}
 
 		void releaseResource() override {
-			//dpr(m_name); dpr("::");dprln("releaseResource");
 			final();
 		}
 
@@ -192,6 +176,21 @@ namespace Genos {
 			dlist_del(&schlnk);
 			dlist_del(&reslnk);
 			destroy();
+		}
+
+		void initFromParent(Schedee* parent, uint8_t flags) {
+			if (parent == nullptr) return;
+
+			if (flags & CLONE_DESCRIPTORS) {
+				files = parent->files;
+				for (auto fptr : files) {
+					fptr->open();
+				}
+			}
+
+			if (flags & LINK_AS_RESOURCE) {
+				setParent(parent);
+			}
 		}
 
 		virtual void destroy() = 0;

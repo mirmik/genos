@@ -30,7 +30,7 @@ void cxx_invoke_fini_array(void) {
 }
 
 void __start(void) {
-	global_irq_disable();
+	global_irqs_disable();
 
 	/*data section copy*/
 	memcpy(&_data_virtual_address, &_data_load_address, (unsigned int) &_data_size);
@@ -49,6 +49,6 @@ void __start(void) {
 	cxx_invoke_fini_array();
 
 	/*programm end stub*/
-	global_irq_disable();
+	global_irqs_disable();
 	for( ; ; );
 }

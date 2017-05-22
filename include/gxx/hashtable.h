@@ -1,6 +1,7 @@
 #ifndef GENOS_HASHTABLE_H
 #define GENOS_HASHTABLE_H
 
+#include <util/member.h>
 #include <datastruct/hlist_head.h>
 #include <datastruct/array.h>
 #include <gxx/container/hash.h>
