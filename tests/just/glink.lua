@@ -32,8 +32,15 @@ Module("main", {
 	modules = {
 		{name = "gxx.dprint", impl = "diag"},
 		{name = "gxx.diag", impl = "impl"},
+		{name = "gxx.sources"},
 		{name = "genos.arch.linux32"},
 		{name = "genos.board.noboard"},
+
+		{name = "genos.kernel.scheduler", impl = "standart"},
+		{name = "genos.kernel.stdglue"},
+		{name = "genos.atomic_section", impl = "std::mutex"},
+		{name = "genos.kernel.schedee"},
+		{name = "gxx.placed_new"}
 	},
 
 	includeModules = {
@@ -41,10 +48,6 @@ Module("main", {
 		{name = "genos.include"},
 		{name = "genos.include.arch.linux32"},
 		{name = "genos.include.board.noboard"},
-
-		{name = "genos.kernel.scheduler", impl = "standart"},
-		{name = "genos.kernel.stdglue"},
-		{name = "genos.atomic_section", impl = "std::mutex"},
 	},
 })
 

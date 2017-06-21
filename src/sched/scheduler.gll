@@ -10,21 +10,9 @@ Implementation("genos.kernel.scheduler", "displace", {
 	},
 })
 
-Module("genos.kernel.subst_schedee", {
-	sources = {
-		cxx = "substsch.cpp"
-	},
-	depends = "genos.kernel.scheduler"
-})
-
-Module("genos.kernel.sched_message", {
-	sources = {
-		cxx = "Message.cpp"
-	},
-})
-
 Module("genos.kernel.schedee", {
 	sources = {
-		cxx = "Schedee.cpp SchedeeResource.cpp"
+		cxx = "../resource/descriptor.cpp ../resource/calls.cpp"
+		--Schedee.cpp SchedeeResource.cpp 
 	},
 })

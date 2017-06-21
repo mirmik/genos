@@ -2,11 +2,13 @@
 #define GENOS_SCHEDEE_H
 
 #include <stdint.h>
-#include <gxx/datastruct/dlist_head.h>
+#include <gxx/dlist.h>
+//#include <gxx/datastruct/dlist_head.h>
 #include <gxx/datastruct/hlist_head.h>
 #include <sched/AbstractSchedeeManager.h>
 
 #include <sched/id.h>
+#include <resource/descriptor.h>
 
 //#include <kernel/resources/SchedeeResource.h>
 //#include <kernel/resources/File.h>
@@ -56,6 +58,12 @@ namespace Genos {
 	public:
 		struct dlist_head schlnk;	//линк к спискам планировщика
 		struct hlist_node hlnk;		//линк в хештаблицу процессов
+
+		struct dlist_head chldlnk;	//линк к списку потомков
+		gxx::dlist<Schedee, &Schedee::chldlnk> childs;
+		gxx::vector<genos::descriptor> descriptors;
+
+		uint16_t signals = 0;
 
 		uint8_t prio;
 		Genos::pid_t pid; 
@@ -133,19 +141,18 @@ namespace Genos {
 			this->prio = prio;
 		}
 
-		/*void finalizeResources() {
-			gxx::for_each_safe(resources.begin(), resources.end(), [](SchedeeResource& res){
-				res.releaseResource();
+		void finalizeResources() {
+			gxx::for_each(descriptors.begin(), descriptors.end(), [](genos::descriptor& desc){
+				genos::close_descriptor(desc);
 			});
 
-			finalWaiterHead.invoke();
-
-			unbindFromParent();
-		}*/
+			//finalWaiterHead.invoke();
+			//unbindFromParent();
+		}
 
 		void finalizeSchedee() {
 			atomic_section_enter();
-		//	finalizeResources();
+			finalizeResources();
 			zombie();
 			atomic_section_leave();
 		}
@@ -174,7 +181,7 @@ namespace Genos {
 		void schedee_destroy() {
 			hlist_del(&hlnk);
 			dlist_del(&schlnk);
-			//dlist_del(&reslnk);
+			dlist_del(&chldlnk);
 			destroy();
 		}
 
