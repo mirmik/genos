@@ -1,0 +1,3 @@
+[submodule "gxx"]
+	path = gxx
+	url = https://github.com/Mirmik/gxx.git

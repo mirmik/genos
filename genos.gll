@@ -1,3 +1,7 @@
 Module ("genos.include", {
-	includePaths = "./include ./src2",
+	includePaths = "./src",
+})
+
+Module ("genos.kernel.stdglue", {
+	sources = { cxx = "src/KernelGlue.cpp" }
 })

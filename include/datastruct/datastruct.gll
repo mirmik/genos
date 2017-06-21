@@ -1,5 +1,0 @@
-Module("genos_datastruct.include", {
-	opts = {
-		includePaths = "."
-	}
-})

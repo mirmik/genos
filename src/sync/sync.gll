@@ -1,0 +1,11 @@
+Implementation("genos.atomic_section", "disable_irqs", {
+	sources = {
+		cc  = "atomic_section_irqs.c"
+	}
+})
+
+Implementation("genos.atomic_section", "std::mutex", {
+	sources = {
+		cxx  = "atomic_section_mutex.cpp"
+	}
+})
