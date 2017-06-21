@@ -34,6 +34,7 @@ namespace genos {
 
 	//void close(int descno);
 	descriptor* get_descriptor(int no);
+	int push_descriptor();
 	void close_descriptor(descriptor& desc);
 	int open_test_resource(test_resource& res);
 }

@@ -21,7 +21,7 @@ Genos::AbstractSchedeeManager& Genos::Glue::systemSchedeeManager() {
 	return schedeeManager;
 }
 
-void Genos::Glue::schedule() {
+void genos::sched::schedule() {
 	schedeeManager.execute();
 }
 
@@ -68,7 +68,7 @@ Genos::MessageHeader* Genos::Glue::allocateMessageHeader() {
 	return serviceTable.registerService(*srvs);
 }*/
 
-Genos::pid_t Genos::Glue::registerSchedee(Schedee* sch) {
+genos::pid_t Genos::Glue::registerSchedee(Schedee* sch) {
 	return schedeeTable.registry(*sch);
 }
 

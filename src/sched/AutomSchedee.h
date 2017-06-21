@@ -24,7 +24,7 @@ namespace Genos {
 		}
 
 		void displace() { 
-			Genos::Glue::displace(Genos::Glue::AutomateSchedeeType); 
+			genos::sched::displace(genos::sched::automtype); 
 		}
 
 		void finalize() {
@@ -83,7 +83,7 @@ namespace Genos {
 		}
 
 		void displace() { 
-			Genos::Glue::displace(Genos::Glue::AutomateSchedeeType); 
+			genos::sched::displace(genos::sched::automtype); 
 		}
 		
 		void finalize() {

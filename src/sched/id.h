@@ -3,9 +3,9 @@
 
 #include <inttypes.h>
 
-namespace Genos {
-	using qid_t = int32_t;
-	using pid_t = int32_t;
+namespace genos {
+	//using qid_t = int32_t;
+	using pid_t = int16_t;
 }
 
 #endif

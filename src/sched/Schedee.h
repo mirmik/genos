@@ -51,7 +51,7 @@ namespace Genos {
 	class Schedee;
 
 	namespace Glue {
-		pid_t registerSchedee(Schedee*);
+		genos::pid_t registerSchedee(Schedee*);
 	}
 
 	class Schedee {//: public SchedeeResource 
@@ -66,7 +66,7 @@ namespace Genos {
 		uint16_t signals = 0;
 
 		uint8_t prio;
-		Genos::pid_t pid; 
+		genos::pid_t pid; 
 		
 		struct {
 			uint8_t state : 4;
@@ -100,6 +100,10 @@ namespace Genos {
 		Schedee(const Schedee&) = delete;
 
 		bool is_subst() {
+			return subst;
+		}
+
+		bool can_subst() {
 			return subst;
 		}
 
@@ -202,7 +206,7 @@ namespace Genos {
 
 		virtual void destroy() = 0;
 
-		static pid_t& getkey(Schedee& sch) { return sch.pid; }
+		static genos::pid_t& getkey(Schedee& sch) { return sch.pid; }
 	
 		const char* m_name;
 		ACCESSOR(name, m_name);
@@ -221,6 +225,11 @@ namespace Genos {
 	int8_t assign_name(pid_t pid, const char* name);
 
 	Genos::Schedee* raw(pid_t pid);
+}
+
+namespace genos {
+	Genos::Schedee* current_schedee();
+	void current_schedee(Genos::Schedee* sch);
 }
 
 #endif

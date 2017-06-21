@@ -40,6 +40,7 @@ Module("main", {
 		{name = "genos.kernel.stdglue"},
 		{name = "genos.atomic_section", impl = "std::mutex"},
 		{name = "genos.kernel.schedee"},
+		{name = "genos.pipe", impl = "static"},
 		{name = "gxx.placed_new"}
 	},
 

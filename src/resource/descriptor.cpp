@@ -1,10 +1,11 @@
 #include <sched/Schedee.h>
 #include <resource/descriptor.h>
 #include <err/panic.h>
+#include <gxx/vector.h>
 
 namespace genos {
-	int push_descriptor(Genos::Schedee* sch) {
-		gxx::vector<descriptor> descs;
+	int push_descriptor() {
+		gxx::vector<descriptor>& descs = genos::current_schedee()->descriptors;
 		for (auto it = descs.begin(), end = descs.end(); it != end; it++) {
 			if (it->type == genos::descriptor::DescType::Nil) return it - descs.begin();
 		}
@@ -13,10 +14,8 @@ namespace genos {
 	} 
 
 	int open_test_resource(test_resource& res) {
-		Genos::Schedee* sch = Genos::currentSchedee();
-		assert(sch);
-		int no = push_descriptor(sch);
-		new (&sch->descriptors[no]) descriptor(descriptor::DescType::TestResource, 0, &res);
+		int no = push_descriptor();
+		new (&genos::current_schedee()->descriptors[no]) descriptor(descriptor::DescType::TestResource, 0, &res);
 		res.open();
 		return no;
 	}
@@ -36,7 +35,7 @@ namespace genos {
 			default: panic("unregistred descriptor type");
 		}
 	}
-
+	
 	descriptor* get_descriptor(int no) {
 		Genos::Schedee* sch = Genos::currentSchedee();
 		if (!sch 

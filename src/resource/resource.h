@@ -5,7 +5,7 @@
 #include <gxx/format.h>
 
 namespace genos {
-	class resource {
+	class test_resource {
 	public:
 		uint8_t refs;
 
@@ -28,21 +28,15 @@ namespace genos {
 			putref();
 		};
 
-		virtual void resourceOpen() = 0;
-		virtual void resourceRelease() = 0;
-		virtual void resourceClose() = 0;
-	};
-
-	class test_resource : public resource {
-		void resourceOpen() override {
+		void resourceOpen() {
 			dprf("test_resource_open {} \n", refs);
 		}
 
-		void resourceRelease() override {
+		void resourceRelease(){
 			dprf("test_resource_release\n");
 		}
 
-		void resourceClose() override {
+		void resourceClose(){
 			dprf("test_resource_close\n");
 		}
 	};

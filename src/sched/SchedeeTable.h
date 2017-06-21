@@ -13,9 +13,9 @@ namespace Genos {
 
 	class SchedeeTable {
 
-		pid_t pid_counter;
+		genos::pid_t pid_counter;
 		gxx::static_hashtable<SCHEDEE_HASHTABLE_SIZE,
-			Schedee, pid_t, &Schedee::hlnk> table;
+			Schedee, genos::pid_t, &Schedee::hlnk> table;
 
 	public:
 		SchedeeTable() {}

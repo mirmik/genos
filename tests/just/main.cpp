@@ -8,6 +8,12 @@
 #include <thread>
 #include <chrono>
 
+#include <dev/devnull.h>
+#include <dev/devzero.h>
+
+genos::devnull null;
+genos::devzero zero;
+
 genos::test_resource tres;
 
 void func(void*) {
@@ -19,6 +25,8 @@ Genos::AutomSchedee aut(func);
 void func2(void*) {
 	dprln("KEKEKEgfdasfadf");
 	int no = genos::open_test_resource(tres);
+	int no2 = genos::openptr(&null, 0);
+	dprln(no2);
 	int ret = genos::close(no);
 	if (ret) {
 		dprf("close error");
@@ -40,5 +48,5 @@ int main() {
 	aut.run();
 	aut2.run();
 
-	while(1) Genos::Glue::schedule();
+	while(1) genos::sched::schedule();
 }

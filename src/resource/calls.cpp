@@ -9,6 +9,12 @@ namespace genos {
 
 	}
 
+	int openptr(genos::file* filp, uint16_t flags) {
+		int no = push_descriptor();
+		new (&genos::current_schedee()->descriptors[no]) descriptor(descriptor::DescType::File, flags, filp);		
+		return no;
+	}
+
 	int close(int no) {
 		descriptor* desc = get_descriptor(no);
 		if (!desc) return -1;
@@ -29,6 +35,10 @@ namespace genos {
 	}
 
 	int read(int fd, char* data, size_t size) {
+
+	}
+
+	int pipe() {
 
 	}
 
