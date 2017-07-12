@@ -1,5 +1,5 @@
 #include "drivers/haldrivers/usart.h"
-#include <kernel/irq.h>
+#include <genos/irq.h>
 #include <util/stub.h>
 #include <util/retype.h>
 

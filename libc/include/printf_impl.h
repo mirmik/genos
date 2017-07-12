@@ -2,7 +2,7 @@
 #define PRINTF_IMPL_H_
 
 #include <stdarg.h>
-#include <compiler.h>
+#include <genos/compiler.h>
 
 typedef void(*printchar_t)(void* d, char c);
 

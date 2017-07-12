@@ -3,7 +3,7 @@
 
 #include <loc_scheduler.h>
 
-#include <util/bits.h>
+#include <gxx/util/bits.h>
 
 namespace genos {
 

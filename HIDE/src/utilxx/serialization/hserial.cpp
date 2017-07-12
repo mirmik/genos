@@ -3,7 +3,7 @@
 #include "string.h"
 #include "util/bits.h"
 
-#include "debug/dprint.h"
+#include <gxx/debug/dprint.h>
 
 unsigned int __hserial_half(char* buf, uint8_t* ref, uint8_t flag) {
 	if (bits_mask_eq(flag, SERDIR_MASK, SER)) 

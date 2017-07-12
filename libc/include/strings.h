@@ -10,9 +10,9 @@
 #define STRINGS_H_
 
 
-#include <defines/size_t.h>
+#include <genos/defines/size_t.h>
 
-#include <compiler.h>
+#include <genos/compiler.h>
 __BEGIN_DECLS
 
 /**

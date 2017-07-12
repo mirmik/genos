@@ -1,16 +1,16 @@
-#include "util/bits.h"
+//#include "util/bits.h"
 #include "avr/io.h"
 #include "avr/interrupt.h"
 #include "hal/arch.h"
-#include "kernel/diag.h"
-//#include "kernel/panic.h"
-#include "kernel/irq.h"
+#include <gxx/diag/diag.h>
+//#include "genos/panic.h"
+#include <genos/irq.h>
 //#include <drivers/timer_counter.h>
 //#include <periph/timer_device.h>
 
 #include <periph/timer_device.h>
 
-#include <kernel/systime.h>
+#include <genos/systime.h>
 
 int usart0_diag_init();
 int usart0_diag_putchar(char c);

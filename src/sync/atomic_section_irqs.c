@@ -1,5 +1,5 @@
 #include <kernel/csection.h>
-#include <kernel/irq.h>
+#include <genos/irq.h>
 #include <assert.h>
 
 static irqstate_t __atomic_save;

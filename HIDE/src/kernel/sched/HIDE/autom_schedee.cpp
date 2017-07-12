@@ -2,7 +2,7 @@
 #include "kernel/sched/schedee.h"
 #include "kernel/sched/sched.h"
 #include "kernel/sched/idtable.h"
-#include "kernel/panic.h"
+#include "genos/panic.h"
 #include "util/retype.h"
 #include "util/math.h"
 #include "string.h"

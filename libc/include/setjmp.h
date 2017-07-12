@@ -13,7 +13,7 @@
 #include <asm/setjmp.h>
 
 #include <sys/cdefs.h>
-#include <compiler.h>
+#include <genos/compiler.h>
 
 __BEGIN_DECLS
 

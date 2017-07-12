@@ -2,7 +2,7 @@
 #include <drivers/gpiotbl.h>
 #include <hal/arch.h>
 #include <hal/irq.h>
-#include <debug/delay.h>
+#include <gxx/debug/delay.h>
 
 #include <asm/diag.h>
 

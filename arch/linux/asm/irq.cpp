@@ -1,4 +1,4 @@
-#include <compiler.h>
+#include <genos/compiler.h>
 #include <asm/irq.h>
 
 #include <gxx/debug/dprint.h>

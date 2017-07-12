@@ -1,4 +1,4 @@
-#include <kernel/panic.h>
+#include <genos/panic.h>
 
 void __cxa_pure_virtual() {
 	while(1);

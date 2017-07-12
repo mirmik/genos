@@ -2,9 +2,9 @@
 
 #include "gxx/DList.h"
 
-#include <util/bits.h>
+#include <gxx/util/bits.h>
 
-#include <kernel/panic.h>
+#include <genos/panic.h>
 #include <kernel/sched/automschedee.h>
 
 Kernel::schedee* volatile __current_schedee;

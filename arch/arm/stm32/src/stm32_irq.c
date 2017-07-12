@@ -1,6 +1,6 @@
 #include "periph/irqdefs.h"
 #include <assert.h>
-#include <kernel/panic.h>
+#include <genos/panic.h>
 
 #include <asm/chip.h>
 #include <armv7-m/nvic.h>

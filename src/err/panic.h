@@ -8,7 +8,7 @@
 #include <hal/irq.h>
 
 #include "gxx/util/location.h"
-#include "compiler.h"
+#include <genos/compiler.h>
 
 #define panic(...) 									\
 	do { 											\

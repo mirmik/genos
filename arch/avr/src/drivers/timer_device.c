@@ -2,10 +2,10 @@
 #include <periph/regs/timer.h>
 #include <periph/timer_device.h>
 
-#include <util/bits.h>
+#include <gxx/util/bits.h>
 
 #include <assert.h>
-#include <kernel/irq.h>
+#include <genos/irq.h>
 
 #include <avr/io.h>
 

@@ -5,7 +5,7 @@
 #include <drivers/serial/uart.h>
 
 #include <datastruct/ring_head.h>
-#include <compiler.h>
+#include <genos/compiler.h>
 
 #define USART_TXBUFSIZE 128
 

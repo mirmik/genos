@@ -1,5 +1,5 @@
 #include <dev/usart.h>
-#include <kernel/panic.h>
+#include <genos/panic.h>
 
 void usart_putc(struct uart_dev* dev, char c) {
 	struct usart* usart = dev->privdata;

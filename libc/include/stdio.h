@@ -13,11 +13,11 @@
 
 /*va_list As described in <stdarg.h>. */
 #include <stdarg.h>
-#include <compiler.h>
+#include <genos/compiler.h>
 
-#include <defines/size_t.h>
-#include <defines/off_t.h>
-#include <defines/null.h>
+#include <genos/defines/size_t.h>
+#include <genos/defines/off_t.h>
+#include <genos/defines/null.h>
 
 
 #define EOF (-1)

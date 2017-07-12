@@ -1,0 +1,1 @@
+sudo avrdude -P/dev/ttyACM0 -cwiring -patmega2560 -b115200 -D -Uflash:w:./build/target

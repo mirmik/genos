@@ -1,9 +1,9 @@
 #include <kernel/service/service.h>
 #include <kernel/service/table.h>
 //#include <kernel/sched/schedee.h>
-#include <kernel/panic.h>
+#include <genos/panic.h>
 
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 
 //namespace genos {
 

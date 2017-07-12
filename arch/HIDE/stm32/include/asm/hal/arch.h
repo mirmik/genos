@@ -7,7 +7,7 @@
 #define BYTE_ORDER    __BYTE_ORDER
 #endif
 
-#include <compiler.h>
+#include <genos/compiler.h>
 
 #include <periph/regs/usart.h>
 

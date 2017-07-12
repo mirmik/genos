@@ -1,8 +1,8 @@
 #include "hal/arch.h"
 #include "hal/irq.h"
 #include "avr/io.h"
-#include "kernel/diag.h"
-#include "util/stub.h"
+#include <gxx/diag/diag.h>
+#include <gxx/util/stub.h>
 
 #include "genos_configure.h"
 

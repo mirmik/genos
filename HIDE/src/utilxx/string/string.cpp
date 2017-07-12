@@ -25,7 +25,7 @@
 //#include <stdlib.h>
 #include "string.h"
 #include <stdio.h>
-#include "debug/dprint.h"
+#include <gxx/debug/dprint.h>
 #include "mem/sysalloc.h"
 //#include <ctype.h>
 

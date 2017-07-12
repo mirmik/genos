@@ -1,7 +1,7 @@
 #ifndef ARCH_LINUX_IRQ_H_STUB
 #define ARCH_LINUX_IRQ_H_STUB
 
-#include <compiler.h>
+#include <genos/compiler.h>
 
 #define IRQS_TOTAL 0
 typedef unsigned char irqstate_t;

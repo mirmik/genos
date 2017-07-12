@@ -8,8 +8,8 @@
 #ifndef WCHAR_H_
 #define WCHAR_H_
 
-#include <defines/wchar_t.h>
-#include <defines/size_t.h>
+#include <genos/defines/wchar_t.h>
+#include <genos/defines/size_t.h>
 
 #define WEOF      ((wint_t)(-1))
 

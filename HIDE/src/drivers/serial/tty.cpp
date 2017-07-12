@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include <kernel/panic.h>
+#include <genos/panic.h>
 #include <kernel/csection.h>
 
 #include <util/math.h>

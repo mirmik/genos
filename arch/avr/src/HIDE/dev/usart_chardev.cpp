@@ -1,8 +1,8 @@
 #include <dev/usart_chardev.h>
-#include <kernel/panic.h>
+#include <genos/panic.h>
 
-#include <util/bits.h>
-#include <debug/dprint.h>
+#include <gxx/util/bits.h>
+#include <gxx/debug/dprint.h>
 
 namespace periph {
 	

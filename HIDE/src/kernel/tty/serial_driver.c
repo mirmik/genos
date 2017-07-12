@@ -3,7 +3,7 @@
 #include <drivers/serial/uart_device.h>
 
 #include <datastruct/ring_head.h>
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 
 #include <assert.h>
 #include <mem/alloc.h>

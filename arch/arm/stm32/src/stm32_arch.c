@@ -2,7 +2,7 @@
 #include <hal/irq.h>
 #include <hal/systime.h>
 #include <drivers/stm32/rcc.h>
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 
 #include <kernel/diag.h>
 

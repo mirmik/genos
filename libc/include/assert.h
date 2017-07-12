@@ -1,10 +1,10 @@
 #ifndef ASSERT_H_
 #define ASSERT_H_
 
-#include <compiler.h>
-#include "debug/dprint.h"
-#include "util/location.h"
-#include "kernel/panic.h"
+#include <genos/compiler.h>
+#include <gxx/debug/dprint.h>
+#include <gxx/util/location.h>
+#include "genos/panic.h"
 #include "hal/board.h"
 
 #define assert(condition) \

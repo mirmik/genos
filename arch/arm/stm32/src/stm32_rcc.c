@@ -1,7 +1,7 @@
 #include <periph/map.h>
 #include <periph/regs/gpio.h>
 #include <periph/regs/usart.h>
-#include <kernel/panic.h>
+#include <genos/panic.h>
 
 void rcc_reset() {
 	RCC->CR |= 		(uint32_t)0x00000001;

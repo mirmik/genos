@@ -3,7 +3,7 @@
 #include <drivers/haldrivers/usart.h>
 #include <drivers/gpio.h>
 
-#include <debug/delay.h>
+#include <gxx/debug/delay.h>
 
 int stm32_diag_init() {	
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;

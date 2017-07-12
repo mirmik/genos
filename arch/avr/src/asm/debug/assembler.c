@@ -1,4 +1,4 @@
-#include "debug/dprint.h"
+#include <gxx/debug/dprint.h>
 #include "asm/debug/assembler.h"
 
 struct __register_map debug_regmap;

@@ -1,7 +1,7 @@
 #include <drivers/serial/serial_device.h>
 #include <stdio.h>
 
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 
 int debug_serial_device_putchar(struct serial_device* dev, char c) {
 	debug_putchar(c);

@@ -9,7 +9,7 @@
 
 #else
 
-#include "compiler.h"
+#include <genos/compiler.h>
 #include "inttypes.h"
 
 __BEGIN_DECLS

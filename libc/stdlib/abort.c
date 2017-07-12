@@ -5,7 +5,7 @@
  * @author Ilia Vaprol
  */
 
-#include <kernel/panic.h>
+#include <genos/panic.h>
 
 void abort(void) {
 	panic("Aborted");

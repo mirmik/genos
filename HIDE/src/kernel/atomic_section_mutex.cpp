@@ -1,6 +1,6 @@
 #include <kernel/csection.h>
 
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 #include <mutex>
 
 static std::recursive_mutex lock;

@@ -1,5 +1,5 @@
-#include "kernel/diag.h"
-#include "util/stub.h"
+#include <gxx/diag/diag.h>
+#include <gxx/util/stub.h>
 
 struct diag_ops diag_stub = {
 	(diag_putc_t)  do_nothing,

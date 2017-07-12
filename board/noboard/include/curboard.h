@@ -1,7 +1,7 @@
 #ifndef CRIUS_BOARD_H
 #define CRIUS_BOARD_H
 
-#include <compiler.h>
+#include <genos/compiler.h>
 #include <hal/arch.h>
 
 __BEGIN_DECLS

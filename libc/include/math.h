@@ -1,8 +1,8 @@
 #ifndef _MATH_H
 #define _MATH_H
 
-#include "compiler.h"
-#include "util/math.h"
+#include <genos/compiler.h>
+//#include "util/math.h"
 
 __BEGIN_DECLS
 

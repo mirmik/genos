@@ -1,7 +1,7 @@
 #include <drivers/serial/stm32/UartDriver.h>
 #include <communication/ttycls//SerialDriver.h>
 #include <drivers/haldrivers/usart.h>
-#include <util/bits.h>
+#include <gxx/util/bits.h>
 
 #include <assert.h>
 

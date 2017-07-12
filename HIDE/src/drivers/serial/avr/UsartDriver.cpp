@@ -2,7 +2,7 @@
 #define GENOS_AVR_HARDWARE_USART_H
 
 #include "util/bits.h"
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 #include <drivers/serial/avr/UsartDriver.h>
 
 namespace Genos {

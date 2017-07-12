@@ -3,7 +3,7 @@
 #include <drivers/haldrivers/usart.h>
 #include <drivers/gpio.h>
 
-#include <debug/delay.h>
+#include <gxx/debug/delay.h>
 
 int stm32_diag_putchar(char c) {
 	while (!(USART2->SR & (1 << 7)));

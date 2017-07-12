@@ -1,8 +1,8 @@
 #include "genos_configure.h"
-#include <kernel/systime.h>
+#include <genos/systime.h>
 #include <avr/io.h>
 #include <hal/irq.h>
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 
 #define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )

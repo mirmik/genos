@@ -1,5 +1,5 @@
 #include <periph/dev/usart.h>
-#include <util/bits.h>
+#include <gxx/util/bits.h>
 
 int usart_avail(struct usart_device* usart) {
 	return bits_mask(usart->regs->ucsr_a, 1 << 6);	

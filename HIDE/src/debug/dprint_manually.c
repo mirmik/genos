@@ -1,4 +1,4 @@
-#include "debug/dprint.h"
+#include <gxx/debug/dprint.h>
 
 //debug_putchar реализуется в основной программе.
 	

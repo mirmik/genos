@@ -1,7 +1,7 @@
 #include <drivers/serial/uartring.h>
 #include <kernel/csection.h>
-#include <debug/dprint.h>
-#include <kernel/panic.h>
+#include <gxx/debug/dprint.h>
+#include <genos/panic.h>
 
 int uartring_write(chardev_t * dev, const char* data, size_t sz) {
 	uartring_t * uring = (uartring_t *) dev;

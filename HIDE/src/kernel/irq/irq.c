@@ -1,4 +1,4 @@
-#include <kernel/irq.h>
+#include <genos/irq.h>
 #include <util/stub.h>
 
 struct irq_record irqs_table[NR_IRQS];

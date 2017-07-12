@@ -4,8 +4,8 @@
 #include <hal/arch.h>
 #include <hal/irq.h>
 
-#include <debug/delay.h>
-#include <debug/dprint.h>
+#include <gxx/debug/delay.h>
+#include <gxx/debug/dprint.h>
 
 #include <asm/rcc.h>
 

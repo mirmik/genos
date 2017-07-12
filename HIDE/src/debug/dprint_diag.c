@@ -1,4 +1,4 @@
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 #include <kernel/diag.h>
 
 void debug_putchar(char c) 

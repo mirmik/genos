@@ -2,12 +2,17 @@ Module("genos.board.arduino_mega", {
 	sources = {
 		directory = "src",
 		cc = "board.c",
-		cxx = "utility.cpp",
 	},
 
 	depends = {
 		"genos.arch.atmega2560"
 	}
+})
+
+Module("genos.board.arduino_mega.utility", {
+	sources = {
+		cxx = "utility.cpp",
+	},
 })
 
 Module("genos.include.board.arduino_mega", {

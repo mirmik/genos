@@ -1,5 +1,5 @@
 #include <gxx/ByteArray.h>
-#include <debug/dprint.h>
+#include <gxx/debug/dprint.h>
 #include "util/numconvert.h"
 //#include "util/ascii_convert.h"
 #include <string.h>

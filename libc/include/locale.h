@@ -10,8 +10,8 @@
 #ifndef LOCALE_H_
 #define LOCALE_H_
 
-#include <defines/null.h>
-#include <defines/size_t.h>
+#include <genos/defines/null.h>
+#include <genos/defines/size_t.h>
 
 #include <sys/cdefs.h>
 __BEGIN_DECLS

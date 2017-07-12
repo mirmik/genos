@@ -1,4 +1,3 @@
-#include "debug/assembler.h"
 #include <avr/io.h>
 
 .global context_switch

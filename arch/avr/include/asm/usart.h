@@ -2,7 +2,7 @@
 #define AVR_USART_OPS_H
 
 #include <periph/usart.h>
-#include <util/bits.h>
+#include <gxx/util/bits.h>
 #include <drivers/serial/uart_params.h>
 
 static int usart_sendbyte(struct usart_regs* regs, char c) {

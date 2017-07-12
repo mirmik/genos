@@ -16,10 +16,10 @@
 #ifndef STRING_H_
 #define STRING_H_
 
-#include <defines/null.h>
-#include <defines/size_t.h>
+#include <genos/defines/null.h>
+#include <genos/defines/size_t.h>
 
-#include <compiler.h>
+#include <genos/compiler.h>
 __BEGIN_DECLS
 
 /**

@@ -2,8 +2,8 @@
 #include <hal/irq.h>
 
 #include <drivers/gpiotbl.h>
-#include <debug/delay.h>
-#include <debug/dprint.h>
+#include <gxx/debug/delay.h>
+#include <gxx/debug/dprint.h>
 
 void board_init() {
 	arch_init();

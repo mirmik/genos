@@ -4,7 +4,7 @@
 
 #include <loc_scheduler.h>
 
-#include <util/bits.h>
+#include <gxx/util/bits.h>
 
 struct schedee* __planned_schedee = NULL;
 struct schedee* planned_schedee() { return __planned_schedee; }

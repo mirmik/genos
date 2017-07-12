@@ -4,8 +4,8 @@
 #include "genos/datastruct/dlist_head.h"
 #include "kernel/sched/virtee.h"
 #include "kernel/sched/schedee.h"
-#include "kernel/panic.h"
-#include "debug/dprint.h"
+#include "genos/panic.h"
+#include <gxx/debug/dprint.h>
 
 /*
 void schedee_onquery(struct virtee* vee, struct query* qry) {

@@ -12,7 +12,7 @@
 
 #include <util/location.h>
 #include <linux/compiler.h>
-#include <compiler.h>
+#include <genos/compiler.h>
 
 #ifdef NDEBUG
 
