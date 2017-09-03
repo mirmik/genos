@@ -1,8 +1,9 @@
 #include <hal/board.h>
 #include <hal/irq.h>
 
+#include <genos/systime.h>
+
 #include <drivers/gpiotbl.h>
-#include <gxx/debug/delay.h>
 #include <gxx/debug/dprint.h>
 
 void board_init() {
@@ -27,7 +28,7 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 			debug_print("arch_shutdown"); dln();
 			while(1) {
 				pinnum_tgl_level(RED_LED);
-				debug_delay(100);
+				delay(100);
 			}
 		break;
 	};

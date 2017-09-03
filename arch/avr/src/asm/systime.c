@@ -1,4 +1,4 @@
-#include "genos_configure.h"
+//#include "genos_configure.h"
 #include <genos/systime.h>
 #include <avr/io.h>
 #include <hal/irq.h>

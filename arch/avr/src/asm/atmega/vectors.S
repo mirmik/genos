@@ -1,4 +1,4 @@
-#include "genos_configure.h"
+//#include "genos_configure.h"
 #include <avr/io.h>
 #include <avr/common.h>
 #include <avr/sfr_defs.h>

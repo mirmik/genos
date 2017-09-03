@@ -1,7 +1,7 @@
 #ifndef __ARCH_AVR_INCLUDE_ATMEGA_IRQ_H
 #define __ARCH_AVR_INCLUDE_ATMEGA_IRQ_H
 
-#include "genos_configure.h"
+//#include "genos_configure.h"
 
 #if defined(CHIP_ATMEGA128)
 

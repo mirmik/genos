@@ -21,7 +21,7 @@ ruller = CXXDeclarativeRuller.new{
 		cc = "",
 		cxx = "-fno-rtti",
 		ld = "-nostdinc -nostartfiles",
-		allcc = "-nostdlib -lgcc -lm -mmcu=atmega2560 -DF_CPU=16000000 -Wl,--gc-sections -fdata-sections -ffunction-sections"
+		allcc = "-DCHIP_ATMEGA2560 -nostdlib -lgcc -lm -mmcu=atmega2560 -DF_CPU=16000000 -Wl,--gc-sections -fdata-sections -ffunction-sections"
 	},
 	
 	builddir = "./build"

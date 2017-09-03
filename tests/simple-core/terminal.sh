@@ -1,0 +1,1 @@
+sudo gtkterm -p /dev/ttyACM0 -s 115200

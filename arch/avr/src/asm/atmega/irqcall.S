@@ -1,4 +1,4 @@
-#include "genos_configure.h"
+//#include "genos_configure.h"
 #include "periph/irqdefs.h"
 #include "excptmacros.h"
 
