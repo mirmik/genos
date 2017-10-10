@@ -1,4 +1,4 @@
-from glink.modules import module, submodule
+from licant.modules import module, submodule
 
 module("genos.hal.avr.common",
 	sources = [

@@ -23,4 +23,4 @@ Genos является операционной системой специал�
 
 Under Constructed.
 
-Сборка выполняется системой glinkLua. https://github.com/Mirmik/glinkLua.
+Сборка выполняется системой licantLua. https://github.com/Mirmik/licantLua.

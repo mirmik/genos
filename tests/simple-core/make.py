@@ -1,12 +1,12 @@
 #!/usr/bin/env python3.5
 #coding: utf-8
 
-import glink.cxx_modules
-from glink.modules import module, submodule
+import licant.cxx_modules
+from licant.modules import module, submodule
 
-glink.scripter.scriptq.execute("../../genos.g.py")
+licant.scripter.scriptq.execute("../../genos.g.py")
 
-avr_binutils = glink.cxx_make.binutils(
+avr_binutils = licant.cxx_make.binutils(
 	cxx = "avr-g++", 
 	cc = "avr-gcc", 
 	ld = "avr-ld", 
@@ -38,5 +38,5 @@ module("main",
 	]
 )
 
-glink.cxx_modules.make("main")
-glink.make.doit("build/genos")
+licant.cxx_modules.make("main")
+licant.make.doit("build/genos")
