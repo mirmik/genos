@@ -2,9 +2,9 @@ from licant.modules import module, submodule
 
 module("genos.hal.avr.common",
 	sources = [
-		"src/asm/arch.c",
+		"src/asm/arch.cpp",
 		"src/asm/diag.c",
-		"src/asm/systime.c",
+		"src/asm/systime.cpp",
 
 		"src/drivers/gpio.c",
 		"src/drivers/timer.c",

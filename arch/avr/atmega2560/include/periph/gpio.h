@@ -1,7 +1,7 @@
 #ifndef AVR2560_GPIO_H
 #define AVR2560_GPIO_H
 
-#include <periph/regs/gpio.h>
+/*#include <periph/regs/gpio.h>
 
 #define GPIO_PORT_BASE_A 0x20
 #define GPIO_PORT_BASE_B 0x23
@@ -87,6 +87,6 @@ static const struct gpio_pin_s gpio_table[] =
 	{GPIOB, 0}, //53
 };
 
-__END_DECLS
+__END_DECLS*/
 
 #endif 

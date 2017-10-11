@@ -4,17 +4,14 @@
 #include <inttypes.h>
 #include <asm/systime.h>
 
-__BEGIN_DECLS
+namespace systime { 
+	void system_tick();
 
-void system_tick();
-struct TimeStamp timestamp();
+	uint32_t millis();
+	uint32_t micros();	
 
-uint32_t millis();
-uint32_t micros();	
-
-void delay(uint32_t d);
-void delayMicroseconds(uint16_t d);	
-
-__END_DECLS
+	void delay(uint32_t d);
+	void delayMicroseconds(uint16_t d);	
+}
 
 #endif

@@ -3,17 +3,16 @@
 #include "avr/interrupt.h"
 #include "hal/arch.h"
 #include <gxx/diag/diag.h>
-//#include "genos/panic.h"
-#include <genos/irq.h>
-//#include <drivers/timer_counter.h>
-//#include <periph/timer_device.h>
 
+#include <genos/irq.h>
 #include <periph/timer_device.h>
 
 #include <genos/systime.h>
 
+__BEGIN_DECLS
 int usart0_diag_init();
 int usart0_diag_putchar(char c);
+__END_DECLS
 
 extern struct diag_ops usart0_diag;
 
@@ -46,7 +45,7 @@ void arch_init() {
 	current_diag = &usart0_diag;
 	usart0_diag_init();
 
-	setIRQHandler(timer0.irqs.ovf, system_tick, 0);
+	setIRQHandler(timer0.irqs.ovf, (irq_handler_t)systime::system_tick, 0);
 	tc_8bit_interruptOverflowEnable(&timer0, 1);
 	tc_8bit_divider(&timer0, 64);
 	

@@ -1,12 +1,12 @@
 #include <hal/board.h>
-#include <hal/irq.h>
-#include <gxx/debug/dprint.h>
-
-#include <drivers/gpio.h>
-#include <genos/systime.h>
 
 #include <hal/irqs.h>
 #include <hal/gpio.h>
+
+#include <genos/systime.h>
+
+//#include <gxx/debug/dprint.h>
+
 
 int main() {
 	board_init();

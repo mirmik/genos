@@ -1,7 +1,7 @@
 from licant.modules import module, submodule
 
 module("genos.board", impl = "arduino_mega", 
-	sources = ["board.c"],
+	sources = ["board.cpp"],
 	srcdir = "src",
 	include_paths = "include",
 	defines = ["F_CPU=16000000"],

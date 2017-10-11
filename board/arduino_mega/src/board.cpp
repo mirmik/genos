@@ -1,17 +1,16 @@
 #include <hal/board.h>
-#include <hal/irq.h>
+#include <hal/irqs.h>
+#include <hal/gpio.h>
 
 #include <genos/systime.h>
-
-#include <drivers/gpiotbl.h>
 #include <gxx/debug/dprint.h>
 
 void board_init() {
 	arch_init();
+	hal::gpio::pin led(GPIOB, 7);
 
-	gpio_settings(GPIOB, (1<<7), GPIO_MODE_OUTPUT);
-
-	pinnum_set_level(RED_LED,1);
+	led.mode(hal::gpio::output);
+	led.set();
 }
 
 void board_shutdown(arch_shutdown_mode_t mode) {
@@ -23,12 +22,15 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 		case ARCH_SHUTDOWN_MODE_REBOOT:
 		break;
 		case ARCH_SHUTDOWN_MODE_ABORT:
-			global_irqs_disable();
-			gpio_settings(GPIOB, (1<<7), GPIO_MODE_OUTPUT);
-			debug_print("arch_shutdown"); dln();
+			hal::irqs::disable();
+
+			hal::gpio::pin led(GPIOB, 7);
+			led.mode(hal::gpio::output);
+			
+			dprln("arch_shutdown");
 			while(1) {
-				pinnum_tgl_level(RED_LED);
-				delay(100);
+				led.tgl();
+				systime::delay(100);
 			}
 		break;
 	};

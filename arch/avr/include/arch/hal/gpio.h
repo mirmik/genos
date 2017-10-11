@@ -13,7 +13,7 @@ namespace hal {
 			uint8_t mask;
 
 		public:
-			pin(gpio_regs* regs, uint8_t mask) : regs(regs), mask(mask) {}
+			pin(gpio_regs* regs, uint8_t num) : regs(regs), mask(1<<num) {}
 
 			inline void set() {
 				regs->port |= mask;
@@ -40,8 +40,8 @@ namespace hal {
 		
 		gpio(gpio_regs* regs) : regs(regs) {}
 
-		pin operator[](int i) {
-			return pin(regs, 1 << i);
+		pin operator[](int num) {
+			return pin(regs, num);
 		} 
 
 		constexpr static uint8_t input = 0;

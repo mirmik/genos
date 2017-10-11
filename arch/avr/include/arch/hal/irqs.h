@@ -9,7 +9,7 @@ namespace hal {
 		}
 		
 		static inline uint8_t save(void) {
-			irqstate_t save = SREG;
+			uint8_t save = SREG;
 			cli();
 			return save;
 		}
