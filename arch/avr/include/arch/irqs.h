@@ -1,8 +1,10 @@
-#include <hal/irqs.h>
+#ifndef ARCH_IRQS_H
+#define ARCH_IRQS_H
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-namespace hal {
+namespace arch {
 	namespace irqs {
 		static inline void enable(void) {
 			sei();
@@ -23,3 +25,5 @@ namespace hal {
 		}
 	}
 }
+
+#endif

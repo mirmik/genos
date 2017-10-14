@@ -1,16 +1,16 @@
 #ifndef KERNEL_PANIC_H
 #define KERNEL_PANIC_H
 
-#include <gxx/debug/dprint.h>
+/*#include <gxx/debug/dprint.h>
 
 //#include <hal/arch.h>
 #include <hal/board.h>
 #include <hal/irq.h>
 
 #include <gxx/util/location.h>
-#include <genos/compiler.h>
+#include <genos/compiler.h>*/
 
-#define panic(...) 									\
+/*#define panic(...) 									\
 	do { 											\
 		global_irqs_disable();						\
 		debug_print("KERNEL PANIC:"); dln();		\
@@ -19,6 +19,6 @@
 		debug_print(__VA_ARGS__);					\
 		dln();										\
 		board_shutdown(ARCH_SHUTDOWN_MODE_ABORT);	\
-	} while (0)
+	} while (0)*/
 
 #endif

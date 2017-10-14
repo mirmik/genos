@@ -1,5 +1,6 @@
 #include <genos/irq.h>
 #include <gxx/debug/dprint.h>
+#include <inttypes.h>
 
 unsigned char __interrupt_context = 0;
 

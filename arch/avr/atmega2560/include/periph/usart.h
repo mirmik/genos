@@ -2,6 +2,7 @@
 #define AVR2560_USART_CLASS_H
 
 #include <periph/regs/usart.h>
+#include <periph/irqdefs.h>
 
 #define USART_BASE_0 0xC0
 #define USART_BASE_1 0xC8

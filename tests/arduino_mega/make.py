@@ -30,6 +30,8 @@ application("main",
 		submodule("gxx.include"),
 		submodule("gxx.dprint", "stub"),
 		submodule("gxx.diag", "stub"),
+
+		submodule("gxx.std"),
 	]
 )
 

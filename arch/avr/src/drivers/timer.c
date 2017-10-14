@@ -1,6 +1,7 @@
 //#include <drivers/timer_counter.h>
 #include <periph/regs/timer.h>
 #include <periph/timer_device.h>
+#include <periph/irqdefs.h>
 
 #include <gxx/util/bits.h>
 
@@ -23,7 +24,7 @@ uint8_t tc_divider_code(uint16_t divider) {
 		case 8 : return 2;
 		case 64 : return 3;
 		case 256 : return 4;
-		default: panic("wrong_divider");
+		//default: panic("wrong_divider");
 	}
 	return -1;
 }

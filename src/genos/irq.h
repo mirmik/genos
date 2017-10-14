@@ -1,6 +1,6 @@
 #ifndef GENOS_IRQ_H
 #define GENOS_IRQ_H
-
+/*
 #include <genos/compiler.h>
 #include <genos/panic.h>
 #include <inttypes.h>
@@ -31,6 +31,6 @@ void irq_stub(void* irqno);
 
 void debug_print_irq_table_info();
 
-__END_DECLS
+__END_DECLS*/
 
 #endif

@@ -1,14 +1,15 @@
 #ifndef GXX_ARCH_HAL_GPIO_H
 #define GXX_ARCH_HAL_GPIO_H
 
+#include <hal/gpio.h>
 #include <periph/regs/gpio.h>
 
-namespace hal {
-	class gpio {
+namespace arch {
+	class gpio : public hal::gpio {
 		gpio_regs* regs;
 
 	public:
-		class pin {
+		class pin : public hal::gpio::pin {
 			gpio_regs* regs;
 			uint8_t mask;
 
@@ -43,9 +44,6 @@ namespace hal {
 		pin operator[](int num) {
 			return pin(regs, num);
 		} 
-
-		constexpr static uint8_t input = 0;
-		constexpr static uint8_t output = 1;
 	};
 }
 

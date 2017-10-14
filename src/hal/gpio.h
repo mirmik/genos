@@ -1,15 +1,20 @@
 #ifndef GXX_HAL_GPIO_H
 #define GXX_HAL_GPIO_H
 
-//Должен содержать:
-//класс hal::gpio
-//pin
-//
-//класс hal::gpio::pin
-//set
-//clr
-//tgl
 
-#include <arch/hal/gpio.h>
+namespace hal {
+	class gpio {
+	public:
+		class pin {
+			virtual void set();
+			virtual void clr();
+			virtual void tgl();
+			virtual void mode(int32_t settings); 
+		};
+
+		constexpr static uint8_t input = 0;
+		constexpr static uint8_t output = 1;
+	};
+}
 
 #endif

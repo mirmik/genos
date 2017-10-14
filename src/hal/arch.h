@@ -2,7 +2,7 @@
 #define HAL_ARCH_H_
 
 #include <genos/compiler.h>
-#include <asm/arch.h>
+#include <arch/arch.h>
 
 typedef enum {
 	ARCH_SHUTDOWN_MODE_HALT,

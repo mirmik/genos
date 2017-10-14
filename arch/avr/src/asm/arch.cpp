@@ -1,7 +1,10 @@
-//#include "util/bits.h"
-#include "avr/io.h"
-#include "avr/interrupt.h"
-#include "hal/arch.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+#include <hal/arch.h>
+#include <hal/irqtbl.h>
+#include <hal/irqs.h>
+
 #include <gxx/diag/diag.h>
 
 #include <genos/irq.h>
@@ -38,14 +41,14 @@ int usart0_diag_init() {
 
 
 void arch_init() {	
-	irqtable_init();
+	hal::irqtbl::init();
 
 	usart0_diag.putc = usart0_diag_putchar;
 	usart0_diag.write = diag_write_stub;
 	current_diag = &usart0_diag;
 	usart0_diag_init();
 
-	setIRQHandler(timer0.irqs.ovf, (irq_handler_t)systime::system_tick, 0);
+	hal::irqtbl::set_handler(timer0.irqs.ovf, gxx::make_action(systime::system_tick));
 	tc_8bit_interruptOverflowEnable(&timer0, 1);
 	tc_8bit_divider(&timer0, 64);
 	
@@ -67,6 +70,6 @@ void arch_shutdown(arch_shutdown_mode_t mode) {
 		case ARCH_SHUTDOWN_MODE_ABORT:
 		break;
 	};
-	global_irqs_disable();
+	arch::irqs::disable();
 	while(1);
 }
