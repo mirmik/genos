@@ -68,7 +68,7 @@ static int usart_setup(
 //	bits_mask_assign(regs->ucsr_b, mode, 0b100);
 }
 
-static void usart_irq_handlers(int irqbase,
+/*static void usart_irq_handlers(int irqbase,
 	irq_handler_t irqhrx, void* argrx,
 	irq_handler_t irqhtx, void* argtx,
 	irq_handler_t irqhtc, void* argtc
@@ -76,6 +76,6 @@ static void usart_irq_handlers(int irqbase,
 	set_irq_handler(irqbase + 0, irqhrx, argrx);
 	set_irq_handler(irqbase + 1, irqhtx, argtx);
 	set_irq_handler(irqbase + 2, irqhtc, argtc);
-}
+}*/
 
 #endif

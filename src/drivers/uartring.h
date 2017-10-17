@@ -1,110 +1,83 @@
 #ifndef GENOS_DRIVER_UARTRING_H
 #define GENOS_DRIVER_UARTRING_H
 
-#include <gxx/io/iobuffer.h>
-
+#include <gxx/event/once_delegate.h>
+#include <gxx/io/iostorage.h>
+#include <gxx/bytering.h>
 #include <hal/uart.h>
 
 namespace drivers {
 
-	//void interruptHandler_UsartRX(AvrUsartStream* usart);
-	//void interruptHandler_UsartTX(AvrUsartStream* usart);
-	//void interruptHandler_UsartTC(AvrUsartStream* usart);
-	
-	//AvrUsartStream::AvrUsartStream(const usart_data& udata, gxx::buffer txbuf, gxx::buffer rxbuf)
-	// : AvrUsartDriver(udata.regs, udata.irqbase), m_txring(txbuf), m_rxring(rxbuf) {}
-	
-	class uartring {
+	/*class uartring {
 		hal::uart* uart;
 		gxx::buffer buf;
 	public:
 		uartring(hal::uart* uart, gxx::buffer buf) : uart(uart), buf(buf) {}
+	};*/
+
+	class uartring_ostream : public gxx::io::ostream {
+		hal::uart* uart;
+		gxx::bytering ring;
+
+	public:
+		uartring_ostream(hal::uart* uart, gxx::buffer buf) : uart(uart), ring(buf) {}
+
+		void init() {
+			uart->set_tx_irq_handler(gxx::action(&uartring_ostream::tx_handler, this));
+		}
+
+	protected:
+		int writeData(const char* dat, size_t sz) {
+			if (uart->avail() && ring.empty()) {
+				uart->sendbyte(*dat++);
+				--sz;
+			}
+
+			while(sz) {
+				int ret = ring.push(dat, sz);
+				sz -= ret;
+				dat += ret;
+			}
+
+			uart->enable_tx_irq(true);
+		}
+
+		void tx_handler() {
+			uart->sendbyte(ring.pop());
+			if (ring.empty()) uart->enable_tx_irq(false);
+		}
 	};
 
-	//
-	//
-	//int AvrUsartStream::begin(int32_t baud, 
-	//		Uart::Parity parity, 
-	//		Uart::StopBits stopBits, 
-	//		Uart::DataBits dataBits) {
-	//	enable(true);	
-	//	
-	//	setup(baud, parity, stopBits, dataBits);
-	//
-	//	setIrqHandlers(
-	//		(IRQHandler) interruptHandler_UsartRX, this,
-	//		(IRQHandler) interruptHandler_UsartTX, this,
-	//		(IRQHandler) interruptHandler_UsartTC, this
-	//	);
-	//
-	//	enableRX(true);
-	//	enableTX(true);
-	//	
-	//	irqEnableRX(true);
-	//}
-	//
-	//int AvrUsartStream::io_write(const char* data, size_t size) {
-	//	if (size == 0) return 0;
-	//
-	//	int ret = 0;
-	//	auto save = global_irqs_save();
-	//
-	//	if (cansend() && m_txring.empty()) {
-	//		ret += sendbyte(*data++);
-	//		txEmptyBuffer.reset();
-	//		irqEnableTX(true);
-	//	};
-	//	ret += m_txring.write(data, size - ret);
-	//
-	//	global_irqs_restore(save);
-	//
-	//	return ret;
-	//}
-	//
-	//int AvrUsartStream::read(char* data, size_t size) {
-	//	auto ret = m_rxring.read(data, size);
-	//	if (m_rxring.avail() == 0) haveDataFlag.reset();
-	//	return ret;
-	//}
-	//
-	//int AvrUsartStream::getc() {
-	//	auto ret = m_rxring.getc();
-	//	if (m_rxring.avail() == 0) haveDataFlag.reset();
-	//	return ret;
-	//}
-	//
-	//int AvrUsartStream::avail() {
-	//	return m_rxring.avail();
-	//}
-	//
-	//int AvrUsartStream::room() {
-	//	return m_txring.avail();
-	//}
-	//
-	///*void AvrUsartStream::waitReceivedData(Tasklet& tasklet) {
-	//	auto save = global_irqs_save();
-	//	haveDataFlag.wait(tasklet);
-	//	global_irqs_restore(save);
-	//}*/
-	//
-	//void interruptHandler_UsartRX(AvrUsartStream* usart) {
-	//	if (usart->m_rxring.putc(usart->recvbyte()) == 0) panic("USART OVERPUT");
-	//	usart->haveDataFlag.set();
-	//}
-	//
-	//void interruptHandler_UsartTX(AvrUsartStream* usart) {
-	//	if (usart->m_txring.empty()) {
-	//		usart->irqEnableTX(false);
-	//		usart->txEmptyBuffer.set();
-	//		return;
-	//	}
-	//
-	//	usart->sendbyte(usart->m_txring.getc());
-	//}
-	//
-	//void interruptHandler_UsartTC(AvrUsartStream* usart) {
-	//	panic("tcHandler");
-	//}
+
+	class uartring_istorage : public gxx::io::istorage {
+		hal::uart* uart;
+		gxx::bytering ring;
+		gxx::once_delegate_flag flag;
+
+	public:
+		uartring_istorage(hal::uart* uart, gxx::buffer buf) : uart(uart), ring(buf) {}
+
+		void init() {
+			uart->set_rx_irq_handler(gxx::action(&uartring_istorage::rx_handler, this));
+		}
+
+		int avail() { return ring.avail(); }
+		void set_avail_callback(gxx::delegate<void> dlg) { flag.event(dlg); }
+	protected:
+		int readData(char* dat, size_t sz) {
+			int ret = ring.popn(dat, sz);
+			if (ring.empty()) flag.clr();
+			return ret;
+		}
+
+		void rx_handler() {
+			int c = uart->recvbyte();
+			dprln(c);
+			ring.push(c);
+			flag.set();
+			//if (ring.empty()) uart->enable_tx_irq(false);
+		}
+	};
 
 }
 

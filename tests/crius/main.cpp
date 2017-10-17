@@ -1,42 +1,49 @@
 #include <hal/board.h>
-#include <hal/irq.h>
-#include <drivers/gpio.h>
 
-//#include <drivers/serial/avr/UsartDevice.h>
-#include <gxx/debug/dprint.h>
-#include <gxx/debug/delay.h>
+#include <arch/irqs.h>
+#include <arch/gpio.h>
+#include <arch/uart.h>
 
-//gxx::array<char, 128> txbuf, rxbuf;
-//UsartDevice usart0(usart0_data, txbuf, rxbuf);
+#include <genos/systime.h>
 
-#include <vector>
-#include <string>
+#include <drivers/uartring.h>
 
-std::vector<int> vec;
-std::string str;
 
-void setup();
-void loop();
+//#include <gxx/debug/dprint.h>
+
+char buf[48];
+char ibuf[8];
+arch::usart u0(usart0_data);
+drivers::uartring_ostream serial(&u0, buf);
+drivers::uartring_istorage iserial(&u0, ibuf); 
+
+void func() {
+	dprln("func");
+}
 
 int main() {
 	board_init();
-
-	setup();
-	global_irqs_enable();
-	while(1) loop();
-}
-
-void setup() {
-	gpio_settings(GPIOB, (1<<7), GPIO_MODE_OUTPUT);
-	gpio_set_level(GPIOB, (1<<7), 1);
 	
-	vec.push_back(3);
+	auto led = arch::gpio(GPIOB)[7];
+	led.mode(hal::gpio::output);
 
-//	usart0.begin(115200);
-}
+	u0.setup(115200); 
+	u0.enable_tx();
+	u0.enable_rx();
 
-void loop() {
-	debug_delay(1000);
-	debug_print("HelloWorld\r\n");
-	gpio_tgl_level(GPIOB, (1<<7));
+	//iserial.set_avail_callback(gxx::make_delegate(func));
+
+	serial.init();
+	iserial.init();
+
+	arch::irqs::enable();
+
+	while(1) {
+		systime::delay(1000);
+		serial.println("HelloWorld");
+		led.tgl();
+	}
+	
+	while(1);
+	//hal::gpio::pin(GPIOB, (1<<7)) led;
 }

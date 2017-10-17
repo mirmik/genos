@@ -44,15 +44,15 @@ namespace arch {
 			enable_tx(en);
 		}
 
-		void enable_irq_rx(bool en) {
+		void enable_rx_irq(bool en) override {
 			bits_lvl(regs->ucsr_b, (1 << RXCIE0), en);
 		}
 
-		void enable_irq_tx(bool en) {
+		void enable_tx_irq(bool en) override {
 			bits_lvl(regs->ucsr_b, (1 << UDRIE0), en);
 		}
 
-		void enable_irq_tc(bool en) {
+		void enable_tc_irq(bool en) override {
 			bits_lvl(regs->ucsr_b, (1 << TXCIE0), en);
 		}
 
@@ -82,15 +82,15 @@ namespace arch {
 
 		usart(struct usart_data data) : regs(data.regs), irqbase(data.irqbase) {}
 	
-		void set_rx_handler(gxx::action handler) {
+		void set_rx_irq_handler(gxx::action handler) override {
 			hal::irqtbl::set_handler(irqbase + 0, handler);
 		}
 
-		void set_tx_handler(gxx::action handler) {
+		void set_tx_irq_handler(gxx::action handler) override {
 			hal::irqtbl::set_handler(irqbase + 1, handler);
 		}
 
-		void set_tc_handler(gxx::action handler) {
+		void set_tc_irq_handler(gxx::action handler) override {
 			hal::irqtbl::set_handler(irqbase + 2, handler);
 		}
 	};

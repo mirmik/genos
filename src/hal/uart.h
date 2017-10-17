@@ -1,6 +1,8 @@
 #ifndef HAL_UART_H
 #define HAL_UART_H
 
+#include <gxx/event/delegate.h>
+
 namespace hal {
 	class uart {
 	public:
@@ -9,6 +11,15 @@ namespace hal {
 
 		virtual bool avail() = 0;
 		virtual bool room() = 0;
+
+		virtual void set_tx_irq_handler(gxx::action act) = 0;
+		virtual void set_tc_irq_handler(gxx::action act) = 0;
+		virtual void set_rx_irq_handler(gxx::action act) = 0;
+
+		virtual void enable_tx_irq(bool en) = 0;
+		virtual void enable_tc_irq(bool en) = 0;
+		virtual void enable_rx_irq(bool en) = 0;
+
 
 		enum class parity {
 			none,

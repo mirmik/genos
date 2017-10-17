@@ -19,16 +19,16 @@ int main() {
 	auto led = arch::gpio(GPIOB)[7];
 	led.mode(hal::gpio::output);
 
-	arch::usart u0(usart0_data);
+	//arch::usart u0(usart0_data);
 
-	u0.setup(115200); 
-	u0.enable_tx();
+	//u0.setup(115200); 
+	//u0.enable_tx();
 
-	drivers::uartring serial(&u0, gxx::allocate_buffer(48));
+	//drivers::uartring serial(&u0, gxx::allocate_buffer(48));
 
 	while(1) {
 		systime::delay(500);
-		u0.sendbyte('a');
+		//u0.sendbyte('a');
 		led.tgl();
 	}
 	
