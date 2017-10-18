@@ -59,6 +59,7 @@ namespace drivers {
 
 		void init() {
 			uart->set_rx_irq_handler(gxx::action(&uartring_istorage::rx_handler, this));
+			uart->enable_rx_irq(true);
 		}
 
 		int avail() { return ring.avail(); }
@@ -75,7 +76,6 @@ namespace drivers {
 			dprln(c);
 			ring.push(c);
 			flag.set();
-			//if (ring.empty()) uart->enable_tx_irq(false);
 		}
 	};
 
