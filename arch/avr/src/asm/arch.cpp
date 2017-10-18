@@ -35,8 +35,8 @@ int usart0_diag_init() {
 	#endif
 	UCSR0C = config;
 	
-	UCSR0B|= _BV(RXEN0);
-	UCSR0B|= _BV(TXEN0);
+	//UCSR0B|= _BV(RXEN0);
+	//UCSR0B|= _BV(TXEN0);
 };
 
 

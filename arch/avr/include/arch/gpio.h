@@ -33,7 +33,7 @@ namespace arch {
 				regs->pin = mask;
 			}
 
-			inline void mode(bool output) {
+			inline void mode(int32_t output) {
 				if (output) regs->ddr |= mask;
 				else regs->ddr &= ~mask;
 			}
@@ -41,7 +41,7 @@ namespace arch {
 		
 		gpio(gpio_regs* regs) : regs(regs) {}
 
-		pin operator[](int num) {
+		arch::gpio::pin operator[](int num) {
 			return pin(regs, num);
 		} 
 	};

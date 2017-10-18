@@ -73,7 +73,6 @@ namespace drivers {
 
 		void rx_handler() {
 			int c = uart->recvbyte();
-			dprln(c);
 			ring.push(c);
 			flag.set();
 		}

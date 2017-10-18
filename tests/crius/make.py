@@ -20,8 +20,8 @@ application("main",
 	sources = ["main.cpp"],
 	target = "firmware.bin",
 
-	cxx_flags = "-Og",
-	cc_flags = "-Og",
+	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto",
+	cc_flags = "-Os -flto",
 
 	include_modules = [
 		submodule("genos.include"),
@@ -34,6 +34,9 @@ application("main",
 		submodule("gxx.diag", "impl"),
 
 		submodule("gxx.std"),
+
+		submodule("gxx.panic", "abort"),
+		submodule("gxx.format"),
 	]
 )
 

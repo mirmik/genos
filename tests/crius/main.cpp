@@ -7,9 +7,8 @@
 #include <genos/systime.h>
 
 #include <drivers/uartring.h>
-
+//
 #include <genos/tasklet.h>
-
 //#include <gxx/debug/dprint.h>
 
 char buf[48];
@@ -18,40 +17,43 @@ arch::usart u0(usart0_data);
 drivers::uartring_ostream serial(&u0, buf);
 drivers::uartring_istorage iserial(&u0, ibuf); 
 
-void func() {
-	dprln("func");
-}
+void func();
 
 genos::tasklet tasklet { func };
-genos::tasklet_manager tmanager;
+
+namespace genos {
+	tasklet_manager_singleton tasklet_manager;
+}
+
+ void func() {
+	arch::gpio::pin led = arch::gpio(GPIOB)[7];
+	//led.clr();
+ 	serial.println("func");
+ 	while(iserial.avail()) iserial.getchar();
+	iserial.set_avail_callback(gxx::make_delegate(&genos::tasklet::plan, &tasklet));
+}
 
 int main() {
 	board_init();
 	
-	auto led = arch::gpio(GPIOB)[7];
+	arch::gpio::pin led = arch::gpio(GPIOB)[7];
 	led.mode(hal::gpio::output);
 
-	u0.setup(115200); 
-	u0.enable_tx();
-	u0.enable_rx();
-
-	//iserial.set_avail_callback(gxx::make_delegate(func));
+	//u0.setup(115200); 
 
 	serial.init();
-	iserial.init();
+	//iserial.init();
 
-	tmanager.plan(tasklet);
+	//iserial.set_avail_callback(gxx::make_delegate(&genos::tasklet::plan, &tasklet));
 
 	arch::irqs::enable();
+	//u0.enable();
 
 	while(1) {
-		tmanager.execute();
+		genos::tasklet_manager.execute();
 
 		systime::delay(1000);
-		serial.println("HelloWorld");
+		serial.println("HelloWorld {}");
 		led.tgl();
 	}
-	
-	while(1);
-	//hal::gpio::pin(GPIOB, (1<<7)) led;
 }

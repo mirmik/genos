@@ -9,10 +9,11 @@ namespace genos {
 		dlist_head lnk;
 		gxx::delegate<void> dlg;
 		
+		void plan();
 		tasklet(gxx::delegate<void> dlg) : dlg(dlg) {}
 	};
 
-	class tasklet_manager {
+	class tasklet_manager_singleton {
 		gxx::dlist<tasklet, &tasklet::lnk> planed_list;
 
 	public:
@@ -28,6 +29,12 @@ namespace genos {
 			}
 		}
 	};
+
+	extern genos::tasklet_manager_singleton tasklet_manager;
+}
+
+inline void genos::tasklet::plan() {
+	genos::tasklet_manager.plan(*this);
 }
 
 #endif
