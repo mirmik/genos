@@ -8,6 +8,7 @@
 
 #include <drivers/uartring.h>
 
+#include <genos/tasklet.h>
 
 //#include <gxx/debug/dprint.h>
 
@@ -20,6 +21,9 @@ drivers::uartring_istorage iserial(&u0, ibuf);
 void func() {
 	dprln("func");
 }
+
+genos::tasklet tasklet { func };
+genos::tasklet_manager tmanager;
 
 int main() {
 	board_init();
@@ -36,9 +40,13 @@ int main() {
 	serial.init();
 	iserial.init();
 
+	tmanager.plan(tasklet);
+
 	arch::irqs::enable();
 
 	while(1) {
+		tmanager.execute();
+
 		systime::delay(1000);
 		serial.println("HelloWorld");
 		led.tgl();
