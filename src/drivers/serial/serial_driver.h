@@ -2,7 +2,7 @@
 #define GENOS_SERIAL_DRIVER_H
 
 #include <drivers/serial/uart_params.h>
-#include <genos/irq.h>
+
 
 namespace genos {
 

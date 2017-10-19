@@ -1,7 +1,7 @@
 #ifndef KERNEL_TESTSCHEDEE_H
 #define KERNEL_TESTSCHEDEE_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "kernel/sched/schedee.h"
 
 struct testschedee {

@@ -2,7 +2,7 @@
 #define GENOS_GPIO_TABLE_H
 
 #include "inttypes.h"
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "drivers/gpio.h"
 
 __BEGIN_DECLS

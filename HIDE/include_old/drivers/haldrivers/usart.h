@@ -1,7 +1,7 @@
 #ifndef GENOS_DRIVERS_USART_H
 #define GENOS_DRIVERS_USART_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "inttypes.h"
 #include "periph/regs/usart.h"
 

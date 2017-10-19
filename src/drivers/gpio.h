@@ -2,7 +2,7 @@
 #define GENOS_GPIO_H
 
 #include "inttypes.h"
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 struct gpio_pin_s {
 	struct gpio_regs* regs;

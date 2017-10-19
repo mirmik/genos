@@ -3,7 +3,7 @@
 
 #define RED_LED 13
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <hal/arch.h>
 
 __BEGIN_DECLS

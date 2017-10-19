@@ -3,7 +3,7 @@
 #ifndef GENOS_SUBST_H
 #define GENOS_SUBST_H
 	
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "asm/context.h"
 
 struct context;

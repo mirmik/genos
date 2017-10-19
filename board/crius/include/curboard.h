@@ -5,7 +5,7 @@
 #define GREEN_LED 30
 #define YELLOW_LED 31
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <hal/arch.h>
 
 __BEGIN_DECLS

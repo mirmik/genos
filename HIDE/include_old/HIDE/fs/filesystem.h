@@ -1,7 +1,7 @@
 #ifndef GENOS_FILESYSTEM_H
 #define GENOS_FILESYSTEM_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "fs/struct/file_system.h"
 
 __BEGIN_DECLS

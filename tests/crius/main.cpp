@@ -9,6 +9,10 @@
 //
 #include <genos/tasklet.h>
 #include <genos/timer.h>
+#include <genos/schedule.h>
+#include <genos/sched/schedee.h>
+
+#include <genos/banner.h>
 
 char serbuf[48], iserbuf[8];
 arch::usart u0(usart0_data);
@@ -27,6 +31,8 @@ arch::gpio::pin yled(GPIOC, 6);
 genos::timer gblink_timer ( gxx::make_delegate(&arch::gpio::pin::tgl, &gled), 1000, 0 );
 genos::timer yblink_timer ( gxx::make_delegate(&arch::gpio::pin::tgl, &yled), 500, 0 );
 genos::timer rblink_timer ( gxx::make_delegate(&arch::gpio::pin::tgl, &rled), 250, 0 );
+
+//genos::tasklet_terminal term;
 
 int main() {
 	board_init();
@@ -47,12 +53,20 @@ int main() {
 	u0.enable();
 	arch::irqs::enable();
 
+	genos::print_banner(serial);
+	genos::print_about(serial);
+
 	rblink_timer.autorepeat(true).plan();
 	gblink_timer.autorepeat(true).plan();
 	yblink_timer.autorepeat(true).plan();
 
 	while(1) {
+		genos::schedule();
+	}
+}
+
+void genos::schedule() {
 		genos::tasklet_manager.execute();
 		genos::timer_manager.execute();
-	}
+		genos::schedee_manager.execute();
 }

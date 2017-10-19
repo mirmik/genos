@@ -2,8 +2,8 @@
 #define GENOS_AVR_TIMER_DEVICE_H
 
 #include <periph/regs/timer.h>
-#include <genos/irq.h>
-#include <genos/compiler.h>
+
+#include <sys/cdefs.h>
 #include <inttypes.h>
 
 struct timer_irqs {

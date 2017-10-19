@@ -26,18 +26,18 @@ application("main",
 	include_modules = [
 		submodule("genos.include"),
 		submodule("genos.board", "arduino_mega"),
-
 		submodule("genos.irqtbl"),
 		submodule("genos.tasklet"),
 		submodule("genos.timer"),
+		submodule("genos.schedee"),
+		submodule("genos.atomic", "irqs"),
 		
 		submodule("gxx.libc"),
+		submodule("gxx.std"),
 		submodule("gxx.include"),
+		
 		submodule("gxx.dprint", "diag"),
 		submodule("gxx.diag", "impl"),
-
-		submodule("gxx.std"),
-
 		submodule("gxx.panic", "abort"),
 		submodule("gxx.format"),
 	]

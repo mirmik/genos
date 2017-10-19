@@ -1,7 +1,7 @@
 #ifndef AVR_DIAG_H
 #define AVR_DIAG_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 

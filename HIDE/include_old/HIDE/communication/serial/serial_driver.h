@@ -1,7 +1,7 @@
 #ifndef SERIAL_DRIVER_H
 #define SERIAL_DRIVER_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 #include <communication/serial/tty.h>
 #include <drivers/serial/serial_device.h>

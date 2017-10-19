@@ -1,7 +1,7 @@
 #ifndef HAL_IPL_H_
 #define HAL_IPL_H_
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <asm/irq.h>
 
 __BEGIN_DECLS

@@ -1,12 +1,9 @@
 #ifndef KERNELL_ERRNO
 #define KERNELL_ERRNO
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
-
-extern int* __errno_location();
-
 __END_DECLS
 
 #endif

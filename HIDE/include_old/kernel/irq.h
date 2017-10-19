@@ -1,7 +1,7 @@
 #ifndef GENOS_IRQ_H
 #define GENOS_IRQ_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <genos/panic.h>
 #include <inttypes.h>
 

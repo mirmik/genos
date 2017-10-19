@@ -1,7 +1,7 @@
 #ifndef GENOS_QUERY_H
 #define GENOS_QUERY_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "defines/size_t.h"
 #include "genos/datastruct/dlist_head.h"
 #include "defines/id_t.h"

@@ -2,7 +2,7 @@
 # error "Do not include this file directly!"
 #endif /* HAL_ARCH_H_ */
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <asm/chip.h>
 
 __BEGIN_DECLS

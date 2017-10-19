@@ -2,7 +2,7 @@
 #define GENOS_BOARD_H
 
 #include <curboard.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 

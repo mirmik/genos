@@ -3,7 +3,7 @@
 
 #include "inttypes.h"
 #include <mem/allocator.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 #include "genos/datastruct/dynbuf.h"
 #include "genos/datastruct/ring_head.h"

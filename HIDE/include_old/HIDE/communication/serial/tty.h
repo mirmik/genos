@@ -1,7 +1,7 @@
 #ifndef GENOS_KERNEL_TTY_H
 #define GENOS_KERNEL_TTY_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <stdlib.h>
 
 struct tty_drv_ops;

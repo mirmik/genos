@@ -1,4 +1,4 @@
-#include <genos/irq.h>
+
 #include <genos/panic.h>
 
 #include <stdint.h>

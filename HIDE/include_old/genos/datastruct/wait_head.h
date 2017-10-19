@@ -4,7 +4,7 @@
 #include "inttypes.h"
 #include "genos/datastruct/dlist_head.h"
 #include "util/bits.h"
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 #define WAITQUEUE_EXCLUSIVE 0x01
 #define WAITQUEUE_AUTOREMOVE 0x02

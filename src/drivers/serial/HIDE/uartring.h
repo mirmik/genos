@@ -1,7 +1,7 @@
 #ifndef AVR_UART_DEV
 #define AVR_UART_DEV
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <drivers/serial/uartdev.h>
 #include <datastruct/ring_head.h>
 

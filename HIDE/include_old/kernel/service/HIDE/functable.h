@@ -1,7 +1,7 @@
 #ifndef GENOS_SERVICE_FUNCTION_TABLE_H
 #define GENOS_SERVICE_FUNCTION_TABLE_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 typedef int(*srvfnc_t)(ipcstack_t* stck);
 

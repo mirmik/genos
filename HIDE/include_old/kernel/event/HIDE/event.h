@@ -2,7 +2,7 @@
 #define GENOS_KERNEL_EVENT_H
 
 #include <datastruct/dlist_head.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 struct event_slot_s;
 typedef void(*event_action_t)(struct event_slot_s*, void*);

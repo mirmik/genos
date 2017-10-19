@@ -3,7 +3,7 @@
 
 #include <kernel/sched/schedee.h>
 #include <genos/panic.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 #include <mem/sysalloc.h>
 /*

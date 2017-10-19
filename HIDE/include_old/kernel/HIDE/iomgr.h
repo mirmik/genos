@@ -1,7 +1,7 @@
 #ifndef KERNEL_IOMANAGER_H
 #define KERNEL_IOMANAGER_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <kernel/query.h>
 
 struct iomgr_data_s {

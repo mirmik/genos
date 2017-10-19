@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 #define LOCAL_STRING_ITEM 0x01
 

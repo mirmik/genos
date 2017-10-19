@@ -2,7 +2,7 @@
 #define KERNEL_FS_FILE_H
 
 #include <inttypes.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 struct file_s;
 typedef struct file_s file_t;

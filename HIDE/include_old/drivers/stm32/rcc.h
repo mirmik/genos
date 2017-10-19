@@ -1,7 +1,7 @@
 #ifndef DRIVERS_STM32_RCC
 #define DRIVERS_STM32_RCC
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <periph/map.h>
 
 __BEGIN_DECLS

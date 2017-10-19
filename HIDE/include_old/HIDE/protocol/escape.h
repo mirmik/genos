@@ -4,7 +4,7 @@
 #include "inttypes.h"
 #include "util/ascii.h"
 #include "util/ascii_convert.h"
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "ctype.h"
 
 #define KEYCODE_STREAM 0

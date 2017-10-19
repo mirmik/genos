@@ -1,7 +1,7 @@
 #ifndef UTIL_XTOX_H
 #define UTIL_XTOX_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 /**
  * Convert integer to string.

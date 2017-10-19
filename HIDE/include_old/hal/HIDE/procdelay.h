@@ -2,7 +2,7 @@
 #define GENOS_PROC_DELAY_H
 
 #include <inttypes.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 

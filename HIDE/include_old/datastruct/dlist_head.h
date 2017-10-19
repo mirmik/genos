@@ -5,7 +5,7 @@
 #include "assert.h"
 #include "defines/decltypeof.h"
 #include "util/member.h"
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 struct dlist_head
 {

@@ -1,7 +1,7 @@
 #ifndef CRIUS_BOARD_H
 #define CRIUS_BOARD_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <hal/arch.h>
 
 #include <drivers/gpio.h>

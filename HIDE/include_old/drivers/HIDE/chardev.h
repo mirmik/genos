@@ -1,7 +1,7 @@
 #ifndef GENOS_CHARDEV_H
 #define GENOS_CHARDEV_H
 
-#include <genos/irq.h>
+
 
 class UartDeviceDriver {
 public:

@@ -1,7 +1,7 @@
 #ifndef GENOS_AVR_USART_SERVICE_H
 #define GENOS_AVR_USART_SERVICE_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <kernel/ioservice/ioservice.h>
 
 struct avr_usart_ioservice {

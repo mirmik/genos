@@ -1,5 +1,5 @@
 #include <genos/sync/atomic.h>
-#include <genos/irq.h>
+
 #include <assert.h>
 
 static irqstate_t __atomic_save;

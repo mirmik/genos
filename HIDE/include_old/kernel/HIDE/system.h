@@ -1,7 +1,7 @@
 #ifndef GENOS_KERNEL_SYSTEM_H
 #define GENOS_KERNEL_SYSTEM_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 

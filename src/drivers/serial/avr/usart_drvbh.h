@@ -1,7 +1,7 @@
 #ifndef GENOS_USART_DRIVER_H
 #define GENOS_USART_DRIVER_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 #include <asm/usart.h>
 #include <drivers/serial/uart_drvbh.h>

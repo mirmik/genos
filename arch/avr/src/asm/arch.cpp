@@ -7,7 +7,7 @@
 
 #include <gxx/diag/diag.h>
 
-#include <genos/irq.h>
+
 #include <periph/timer_device.h>
 
 #include <genos/systime.h>

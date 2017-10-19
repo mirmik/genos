@@ -6,7 +6,7 @@
 #include <gxx/util/bits.h>
 
 #include <assert.h>
-#include <genos/irq.h>
+
 
 #include <avr/io.h>
 

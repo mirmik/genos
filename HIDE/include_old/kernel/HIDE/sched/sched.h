@@ -1,7 +1,7 @@
 #ifndef GENOS_SCHEDULER_H
 #define GENOS_SCHEDULER_H
 
-//#include <genos/compiler.h>
+//#include <sys/cdefs.h>
 #include "kernel/sched/schedee.h"
 
 #define PRIORITY_TOTAL 5

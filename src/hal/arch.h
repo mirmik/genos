@@ -1,7 +1,8 @@
 #ifndef HAL_ARCH_H_
 #define HAL_ARCH_H_
 
-#include <genos/compiler.h>
+#include <gxx/util/compiler.h>
+#include <sys/cdefs.h>
 #include <arch/arch.h>
 
 typedef enum {
@@ -14,8 +15,8 @@ __BEGIN_DECLS
 
 void arch_init();
 
-void _NORETURN arch_halt(void);
-void _NORETURN arch_shutdown(arch_shutdown_mode_t mode);
+void __NORETURN arch_halt(void);
+void __NORETURN arch_shutdown(arch_shutdown_mode_t mode);
 
 void emergency_stop();
 

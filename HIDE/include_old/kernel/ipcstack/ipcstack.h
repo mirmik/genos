@@ -8,7 +8,7 @@
 #include <kernel/ipcstack/item.h>
 
 #include <assert.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 struct ipcstack {
 //public:

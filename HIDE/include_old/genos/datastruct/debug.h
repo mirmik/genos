@@ -1,7 +1,7 @@
 #ifndef DEBUG_DATASTRUCT_H
 #define DEBUG_DATASTRUCT_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <gxx/debug/dprint.h>
 #include "genos/datastruct/cvector.h"
 #include "genos/datastruct/ring_head.h"

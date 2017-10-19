@@ -1,7 +1,7 @@
 #ifndef GENOS_READLINE_H
 #define GENOS_READLINE_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "assert.h"
 
 struct readline;

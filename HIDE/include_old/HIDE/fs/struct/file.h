@@ -2,7 +2,7 @@
 #define GENOS_FILE_H
 
 #include "inttypes.h"
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 struct inode;
 struct path;

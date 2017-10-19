@@ -1,7 +1,7 @@
 #ifndef GENOS_AUTOM_SCHEDEE_H
 #define GENOS_AUTOM_SCHEDEE_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include "kernel/sched/schedee.h"
 #include "kernel/sched/query.h"
 #include "genos/sigslot/delegate.h"

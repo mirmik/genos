@@ -1,7 +1,7 @@
 #ifndef HAL_ARCH_H_
 #define HAL_ARCH_H_
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 #include <asm/arch.h>
 
 typedef enum {

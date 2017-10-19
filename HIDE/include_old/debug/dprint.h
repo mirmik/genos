@@ -2,7 +2,7 @@
 #define GENOS_DEBUG_PRINT
 	
 #include <inttypes.h> 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 #ifdef __cplusplus
 #include "gxx/buffer.h"

@@ -2,9 +2,9 @@
 #define GENOS_TIMER_COUNTER_H
 
 #include <inttypes.h>
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
-#include <genos/irq.h>
+
 
 template <typename UInt>
 class TimerDevice {

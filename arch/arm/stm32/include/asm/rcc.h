@@ -1,7 +1,7 @@
 #ifndef STM32_RCC_FUNCTONS_H
 #define STM32_RCC_FUNCTONS_H
 
-#include <genos/compiler.h>
+#include <sys/cdefs.h>
 
 struct gpio_regs;
 struct usart_regs;
