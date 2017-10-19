@@ -2,39 +2,30 @@
 #define GXX_TASKLET_MANAGER_H
 
 #include <gxx/dlist.h>
+#include <gxx/event/delegate.h>
 
 namespace genos {
 	class tasklet {
 	public:
 		dlist_head lnk;
 		gxx::delegate<void> dlg;
+
+		tasklet(gxx::delegate<void> dlg) : dlg(dlg) {}
 		
 		void plan();
-		tasklet(gxx::delegate<void> dlg) : dlg(dlg) {}
+		gxx::delegate<void> make_plan_delegate() { return gxx::delegate<void>(&tasklet::plan, this); }
 	};
 
-	class tasklet_manager_singleton {
+	class tasklet_manager_class {
 		gxx::dlist<tasklet, &tasklet::lnk> planed_list;
 
 	public:
-		void plan(tasklet& tsklt) {
-			planed_list.move_back(tsklt);
-		}
-
-		void execute() {
-			while(!planed_list.empty()) {
-				tasklet& tsklt = *planed_list.begin();
-				planed_list.pop(tsklt);
-				tsklt.dlg();
-			}
-		}
+		void plan(tasklet& tsklt);
+		void execute();
 	};
 
-	extern genos::tasklet_manager_singleton tasklet_manager;
+	extern genos::tasklet_manager_class tasklet_manager;
 }
 
-inline void genos::tasklet::plan() {
-	genos::tasklet_manager.plan(*this);
-}
 
 #endif
