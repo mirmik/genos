@@ -15,12 +15,13 @@
 #include <gxx/history.h>
 
 #include <genos/banner.h>
+#include <genos/apps/history_terminal.h>
 
 char serbuf[48], iserbuf[8];
 arch::usart u0(usart0_data);
 drivers::uartring serial(&u0, serbuf, iserbuf);
 
-//genos::history_terminal term(serial, gxx::history(10));
+genos::history_terminal term(serial, gxx::history(10));
 
 void reader_func(); genos::tasklet reader_tasklet { reader_func };
 void reader_func() {
