@@ -72,8 +72,6 @@ namespace drivers {
 	};
 
 
-
-
 	class uartring : public gxx::io::ostream, public gxx::io::istorage {
 		hal::uart* uart;
 		gxx::bytering rxring;
@@ -81,6 +79,7 @@ namespace drivers {
 		gxx::once_delegate_flag flag;
 	public:
 		uartring(hal::uart* uart, gxx::buffer buf, gxx::buffer ibuf) : uart(uart), txring(buf), rxring(ibuf) {}
+		uartring(hal::uart* uart, int len, int ilen) : uart(uart), txring(gxx::allocate_buffer(len)), rxring(gxx::allocate_buffer(ilen)) {}
 
 		void init() {
 			uart->set_tx_irq_handler(gxx::action(&uartring::tx_handler, this));

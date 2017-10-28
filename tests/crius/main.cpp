@@ -16,11 +16,11 @@
 
 #include <genos/banner.h>
 
-char serbuf[48], iserbuf[8];
+char serbuf[256], iserbuf[8];
 arch::usart u0(usart0_data);
 drivers::uartring serial(&u0, serbuf, iserbuf);
 
-//genos::history_terminal term(serial, gxx::history(10));
+//gxx::terminal term(serial, gxx::history(10));
 
 void reader_func(); genos::tasklet reader_tasklet { reader_func };
 void reader_func() {
@@ -57,6 +57,7 @@ int main() {
 
 	u0.enable();
 	arch::irqs::enable();
+	u0.sendbyte('a');
 
 	genos::print_banner(serial);
 	genos::print_about(serial);
@@ -71,7 +72,7 @@ int main() {
 }
 
 void genos::schedule() {
-		genos::tasklet_manager.execute();
-		genos::timer_manager.execute();
-		genos::schedee_manager.execute();
+	genos::tasklet_manager.execute();
+	genos::timer_manager.execute();
+	genos::schedee_manager.execute();
 }
