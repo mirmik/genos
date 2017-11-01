@@ -42,6 +42,8 @@ genos::timer rblink_timer ( gxx::make_delegate(&arch::gpio::pin::tgl, &rled), 25
 
 int main() {
 	board_init();
+
+	void* ptr = malloc(33);
 	
 	rled.mode(hal::gpio::output);
 	gled.mode(hal::gpio::output);

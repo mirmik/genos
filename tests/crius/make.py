@@ -31,6 +31,7 @@ application("main",
 		submodule("genos.timer"),
 		submodule("genos.schedee"),
 		submodule("genos.atomic", "irqs"),
+		submodule("genos.malloc", "lin"),
 		
 		submodule("gxx.libc"),
 		submodule("gxx.std"),
