@@ -2,7 +2,7 @@
 #define GENOS_KERNEL_SYSTIME_H
 
 #include <inttypes.h>
-#include <asm/systime.h>
+//#include <asm/systime.h>
 
 namespace systime { 
 	void system_tick();
