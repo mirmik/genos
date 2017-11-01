@@ -1,1 +1,1 @@
-sudo gtkterm -p /dev/ttyUSB0 -s 115200
+sudo gtkterm -p /dev/ttyUSB0 -s 9600

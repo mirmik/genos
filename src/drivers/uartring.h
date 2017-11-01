@@ -1,6 +1,7 @@
 #ifndef GENOS_DRIVER_UARTRING_H
 #define GENOS_DRIVER_UARTRING_H
 
+#include <genos/atomic.h>
 #include <gxx/event/once_delegate.h>
 #include <gxx/io/iostorage.h>
 #include <gxx/bytering.h>
@@ -91,12 +92,16 @@ namespace drivers {
 		void set_avail_callback(gxx::delegate<void> dlg) { flag.event(dlg); }
 	protected:
 		int readData(char* dat, size_t sz) {
+			//dprln(rxring.avail());
+			atomic_section_enter();
 			int ret = rxring.popn(dat, sz);
 			if (rxring.empty()) flag.clr();
+			atomic_section_leave();
 			return ret;
 		}
 
 		int writeData(const char* dat, size_t sz) {
+			atomic_section_enter();
 			if (uart->avail() && txring.empty()) {
 				uart->sendbyte(*dat++);
 				--sz;
@@ -109,6 +114,7 @@ namespace drivers {
 			}
 
 			uart->enable_tx_irq(true);
+			atomic_section_leave();
 		}
 
 		void rx_handler() {

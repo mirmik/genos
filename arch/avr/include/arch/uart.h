@@ -68,16 +68,19 @@ namespace arch {
 			 
 			regs->ubrr_h = baud_setting >> 8;
 			regs->ubrr_l = baud_setting;
-			
+
 			// PARITY
-			//	bits_mask_assign_bias(regs->ucsr_c, mode, 0b11, 4);
+			uint8_t sparity = 0;
+			bits_mask_assign_bias(regs->ucsr_c, sparity, 0b11, 4);
 			
 			// STOP BITS
-			//	bits_mask_assign_bias(regs->ucsr_c, mode, 0b1, 3);
+			uint8_t sstopbits = stopbits == hal::uart::stopbits::one ? 0 : 1;
+			bits_mask_assign_bias(regs->ucsr_c, sstopbits, 0b1, 3);
 			
 			// DATA BITS
-			//	bits_mask_assign_bias(regs->ucsr_c, mode, 0b011, 1);
-			//	bits_mask_assign(regs->ucsr_b, mode, 0b100);
+			//uint8_t sbits = stopbits == hal::uart::stopbits::one ? 0 : 1;
+			//bits_mask_assign_bias(regs->ucsr_c, mode, 0b011, 1);
+			//bits_mask_assign(regs->ucsr_b, mode, 0b100);
 		}
 
 		usart(struct usart_data data) : regs(data.regs), irqbase(data.irqbase) {}
