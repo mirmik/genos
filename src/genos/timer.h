@@ -26,6 +26,7 @@ namespace genos {
 		timer(gxx::delegate<void> dlg, uint32_t interval) : dlg(dlg), start(systime::millis()), interval(interval) {}
 
 		void plan();
+		void unbind();
 		gxx::delegate<void> make_plan_delegate() { return gxx::delegate<void>(&timer::plan, this); }
 
 		FLOW_ACCESSOR(autorepeat, m_autorepeat);
@@ -36,6 +37,7 @@ namespace genos {
 
 	public:
 		void plan(timer& tsklt);
+		void unbind(timer& tsklt);
 		void execute();
 	};
 

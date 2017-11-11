@@ -3,7 +3,7 @@
 
 #include <gxx/io/ostream.h>
 
-#define GENOS_VERSION "0.9.1"	
+#define GENOS_VERSION "0.9.2"	
 
 namespace genos {
 
