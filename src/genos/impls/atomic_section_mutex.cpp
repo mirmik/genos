@@ -1,4 +1,4 @@
-#include <sync/csection.h>
+#include <genos/atomic.h>
 #include <gxx/debug/dprint.h>
 #include <mutex>
 

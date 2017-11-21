@@ -11,3 +11,6 @@ module ("genos.timer", 		sources = [ "src/genos/timer.cpp" ] )
 module ("genos.schedee",	sources = [ "src/genos/sched/schedee.cpp" ] )
 
 module ("genos.atomic", impl = "irqs", sources = [ "src/genos/impls/atomic_section_irqs.cpp" ] )
+module ("genos.atomic", impl = "mutex", sources = [ "src/genos/impls/atomic_section_mutex.cpp" ] )
+
+module("genos.malloc", "lin", sources = ["src/mem/lin_malloc.c", "src/mem/lin_realloc.c"] )

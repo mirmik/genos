@@ -13,37 +13,27 @@ print(licant.util.green("Licant"))
 
 include("genos")
 include("gxx")
-binutils = make_gcc_binutils("avr")
 
 application("main", 
-	binutils = binutils,
 	sources = ["main.cpp"],
-	target = "firmware.bin",
 
 	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto",
 	cc_flags = "-Os -flto",
 
 	include_modules = [
 		submodule("genos.include"),
-		submodule("genos.board", "arduino_mega"),
-		submodule("genos.irqtbl"),
+		submodule("genos.board", "native"),
 		submodule("genos.tasklet"),
 		submodule("genos.timer"),
 		submodule("genos.schedee"),
-		submodule("genos.atomic", "irqs"),
-		submodule("genos.malloc", "lin"),
+		submodule("genos.atomic", "mutex"),
 		
-		submodule("gxx.libc"),
-		submodule("gxx.std"),
 		submodule("gxx.include"),
 		
-		submodule("gxx.dprint", "diag"),
-		submodule("gxx.diag", "impl"),
+		submodule("gxx.dprint", "stdout"),
 		submodule("gxx.panic", "abort"),
 		submodule("gxx.format"),
 	]
 )
-
-licant.routine.add_routine("install", lambda x: os.system("./install.sh"))
 
 doit("main")

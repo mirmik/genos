@@ -35,6 +35,18 @@ namespace genos {
 		schedee* current_schedee = nullptr;
 
 	public:
+		schedee& current() {
+			return* current_schedee;
+		}
+
+		size_t total_runned() {
+			size_t total = 0;
+			for (auto& r: runlist) {
+				total += r.size();
+			}
+			return total;
+		}
+
 		void final(schedee& sch) {
 			assert(sch.state != SCHEDEE_STATE_FINAL);
 			sch.state = SCHEDEE_STATE_FINAL;

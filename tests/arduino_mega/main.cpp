@@ -27,7 +27,7 @@ int main() {
 	//drivers::uartring serial(&u0, gxx::allocate_buffer(48));
 
 	while(1) {
-		systime::delay(500);
+		systime::delay(100);
 		//u0.sendbyte('a');
 		led.tgl();
 	}

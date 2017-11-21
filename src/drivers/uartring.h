@@ -1,6 +1,7 @@
 #ifndef GENOS_DRIVER_UARTRING_H
 #define GENOS_DRIVER_UARTRING_H
 
+#include <genos/atomic.h>
 #include <gxx/event/once_delegate.h>
 #include <gxx/io/iostorage.h>
 #include <gxx/bytering.h>
@@ -72,8 +73,6 @@ namespace drivers {
 	};
 
 
-
-
 	class uartring : public gxx::io::ostream, public gxx::io::istorage {
 		hal::uart* uart;
 		gxx::bytering rxring;
@@ -81,6 +80,7 @@ namespace drivers {
 		gxx::once_delegate_flag flag;
 	public:
 		uartring(hal::uart* uart, gxx::buffer buf, gxx::buffer ibuf) : uart(uart), txring(buf), rxring(ibuf) {}
+		uartring(hal::uart* uart, int len, int ilen) : uart(uart), txring(gxx::allocate_buffer(len)), rxring(gxx::allocate_buffer(ilen)) {}
 
 		void init() {
 			uart->set_tx_irq_handler(gxx::action(&uartring::tx_handler, this));
@@ -92,12 +92,16 @@ namespace drivers {
 		void set_avail_callback(gxx::delegate<void> dlg) override { flag.event(dlg); }
 	protected:
 		int readData(char* dat, size_t sz) {
+			//dprln(rxring.avail());
+			atomic_section_enter();
 			int ret = rxring.popn(dat, sz);
 			if (rxring.empty()) flag.clr();
+			atomic_section_leave();
 			return ret;
 		}
 
 		int writeData(const char* dat, size_t sz) {
+			atomic_section_enter();
 			if (uart->avail() && txring.empty()) {
 				uart->sendbyte(*dat++);
 				--sz;
@@ -110,6 +114,7 @@ namespace drivers {
 			}
 
 			uart->enable_tx_irq(true);
+			atomic_section_leave();
 		}
 
 		void rx_handler() {

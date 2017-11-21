@@ -8,6 +8,10 @@ void genos::timer::plan() {
 	genos::timer_manager.plan(*this);
 }
 
+void genos::timer::unbind() {
+	genos::timer_manager.unbind(*this);
+}
+
 void genos::timer_manager_class::plan(genos::timer& tim) {
 	auto it = planed_list.begin();
 	auto end = planed_list.end();
@@ -19,6 +23,10 @@ void genos::timer_manager_class::plan(genos::timer& tim) {
 	}
 	
 	planed_list.move_prev(tim, it);
+}
+
+void genos::timer_manager_class::unbind(genos::timer& tim) {
+	planed_list.pop(tim);
 }
 
 void genos::timer_manager_class::execute() {
