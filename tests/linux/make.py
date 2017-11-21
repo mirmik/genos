@@ -32,7 +32,6 @@ application("main",
 		
 		submodule("gxx.dprint", "stdout"),
 		submodule("gxx.panic", "abort"),
-		submodule("gxx.format"),
 	]
 )
 
