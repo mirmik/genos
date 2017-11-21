@@ -89,7 +89,7 @@ namespace drivers {
 		}
 
 		int avail() { return rxring.avail(); }
-		void set_avail_callback(gxx::delegate<void> dlg) { flag.event(dlg); }
+		void set_avail_callback(gxx::delegate<void> dlg) override { flag.event(dlg); }
 	protected:
 		int readData(char* dat, size_t sz) {
 			int ret = rxring.popn(dat, sz);
