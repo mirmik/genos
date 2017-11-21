@@ -12,8 +12,9 @@
 #include <genos/schedule.h>
 #include <genos/sched/schedee.h>
 #include <gxx/terminal/terminal.h>
-#include <gxx/packager/packager.h>
+//#include <gxx/packager/packager.h>
 
+#include <gxx/gstuff/automate.h>
 #include <genos/banner.h>
 
 char serbuf[512], iserbuf[32];
@@ -29,7 +30,7 @@ genos::timer yblink_timer ( gxx::make_delegate(&arch::gpio::pin::tgl, &yled), 50
 genos::timer rblink_timer ( gxx::make_delegate(&arch::gpio::pin::tgl, &rled), 250, 0 );
 
 char termbuf[100];
-gxx::packager pack(termbuf);
+gxx::gstuff::automate pack(termbuf);
 
 //gxx::terminal_core term {serial, termbuf};
 

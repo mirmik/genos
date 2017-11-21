@@ -40,7 +40,7 @@ application("main",
 		submodule("gxx.dprint", "diag"),
 		submodule("gxx.diag", "impl"),
 		submodule("gxx.panic", "abort"),
-		submodule("gxx.format"),
+		#submodule("gxx.format"),
 	]
 )
 
