@@ -29,10 +29,10 @@ void hal::irqtbl::irq_stub(void* irqno) {
 
 void hal::irqtbl::init() {
 	for (int i = 0; i < NR_IRQS; ++i) {
-		irqs_table[i].handler = gxx::action(irq_stub, (void*)i);
+		irqs_table[i].handler = gxx::fastaction(irq_stub, (void*)i);
 	}
 }
 
-void hal::irqtbl::set_handler(int irqno, gxx::action handler) {
+void hal::irqtbl::set_handler(int irqno, gxx::fastaction handler) {
 	irqs_table[irqno].handler = handler;
 }

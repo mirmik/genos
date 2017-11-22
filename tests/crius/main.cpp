@@ -41,13 +41,15 @@ void terminal_func() {
 }*/
 
 void terminal_func(); genos::tasklet terminal_tasklet { terminal_func };
+gxx::event::action_flag terminal_flag(terminal_tasklet.make_plan_delegate(), true);
 void terminal_func() {
 	while(serial.avail()) { 
 		char c = serial.getchar();
 		pack.newchar(c);  
 		//dprln("term:", c, (int)c);
 	}
-	serial.set_avail_callback(terminal_tasklet.make_plan_delegate());
+	//serial.set_avail_callback(terminal_tasklet.make_plan_delegate());
+	terminal_flag.wait();
 }
 
 #include <gxx/serialize/serialize.h>
@@ -119,7 +121,7 @@ int main() {
 	u0.setup(115200); 
 
 	serial.init();
-	serial.set_avail_callback(terminal_tasklet.make_plan_delegate());
+	serial.set_avail_flag(terminal_flag);
 
 	u0.enable();
 

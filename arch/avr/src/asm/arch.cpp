@@ -48,7 +48,7 @@ void arch_init() {
 	current_diag = &usart0_diag;
 	usart0_diag_init();
 
-	hal::irqtbl::set_handler(timer0.irqs.ovf, gxx::make_action(systime::system_tick));
+	hal::irqtbl::set_handler(timer0.irqs.ovf, gxx::make_fastaction(systime::system_tick));
 	tc_8bit_interruptOverflowEnable(&timer0, 1);
 	tc_8bit_divider(&timer0, 64);
 	

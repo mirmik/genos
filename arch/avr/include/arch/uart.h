@@ -85,15 +85,15 @@ namespace arch {
 
 		usart(struct usart_data data) : regs(data.regs), irqbase(data.irqbase) {}
 	
-		void set_rx_irq_handler(gxx::action handler) override {
+		void set_rx_irq_handler(gxx::fastaction handler) override {
 			hal::irqtbl::set_handler(irqbase + 0, handler);
 		}
 
-		void set_tx_irq_handler(gxx::action handler) override {
+		void set_tx_irq_handler(gxx::fastaction handler) override {
 			hal::irqtbl::set_handler(irqbase + 1, handler);
 		}
 
-		void set_tc_irq_handler(gxx::action handler) override {
+		void set_tc_irq_handler(gxx::fastaction handler) override {
 			hal::irqtbl::set_handler(irqbase + 2, handler);
 		}
 	};

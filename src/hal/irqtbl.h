@@ -6,13 +6,13 @@
 namespace hal {
 	namespace irqtbl {
 		struct irq_record {
-			gxx::action handler;
+			gxx::fastaction handler;
 			volatile uint16_t count;
 		};
 
 		unsigned char is_interrupt_context();
 		void init();
-		void set_handler(int irqno, gxx::action handler);
+		void set_handler(int irqno, gxx::fastaction handler);
 
 		void irq_stub(void* irqno);
 	}

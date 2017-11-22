@@ -2,14 +2,14 @@
 #define GENOS_DRIVER_UARTRING_H
 
 #include <genos/atomic.h>
-#include <gxx/event/once_delegate.h>
+#include <gxx/event/flag.h>
 #include <gxx/io/iostorage.h>
 #include <gxx/bytering.h>
 #include <hal/uart.h>
 
 namespace drivers {
 
-	class uartring_ostream : public gxx::io::ostream {
+	/*class uartring_ostream : public gxx::io::ostream {
 		hal::uart* uart;
 		gxx::bytering ring;
 
@@ -17,7 +17,7 @@ namespace drivers {
 		uartring_ostream(hal::uart* uart, gxx::buffer buf) : uart(uart), ring(buf) {}
 
 		void init() {
-			uart->set_tx_irq_handler(gxx::action(&uartring_ostream::tx_handler, this));
+			uart->set_tx_irq_handler(gxx::fastaction(&uartring_ostream::tx_handler, this));
 		}
 
 	protected:
@@ -52,7 +52,7 @@ namespace drivers {
 		uartring_istorage(hal::uart* uart, gxx::buffer buf) : uart(uart), ring(buf) {}
 
 		void init() {
-			uart->set_rx_irq_handler(gxx::action(&uartring_istorage::rx_handler, this));
+			uart->set_rx_irq_handler(gxx::fastaction(&uartring_istorage::rx_handler, this));
 			uart->enable_rx_irq(true);
 		}
 
@@ -70,32 +70,32 @@ namespace drivers {
 			ring.push(c);
 			flag.set();
 		}
-	};
+	};*/
 
 
 	class uartring : public gxx::io::ostream, public gxx::io::istorage {
 		hal::uart* uart;
 		gxx::bytering rxring;
 		gxx::bytering txring;
-		gxx::once_delegate_flag flag;
+		gxx::event::flag* flag;
 	public:
 		uartring(hal::uart* uart, gxx::buffer buf, gxx::buffer ibuf) : uart(uart), txring(buf), rxring(ibuf) {}
 		uartring(hal::uart* uart, int len, int ilen) : uart(uart), txring(gxx::allocate_buffer(len)), rxring(gxx::allocate_buffer(ilen)) {}
 
 		void init() {
-			uart->set_tx_irq_handler(gxx::action(&uartring::tx_handler, this));
-			uart->set_rx_irq_handler(gxx::action(&uartring::rx_handler, this));
+			uart->set_tx_irq_handler(gxx::fastaction(&uartring::tx_handler, this));
+			uart->set_rx_irq_handler(gxx::fastaction(&uartring::rx_handler, this));
 			uart->enable_rx_irq(true);
 		}
 
 		int avail() { return rxring.avail(); }
-		void set_avail_callback(gxx::delegate<void> dlg) override { flag.event(dlg); }
+		void set_avail_flag(gxx::event::flag& flg) { flag = &flg; }
 	protected:
 		int readData(char* dat, size_t sz) {
 			//dprln(rxring.avail());
 			atomic_section_enter();
 			int ret = rxring.popn(dat, sz);
-			if (rxring.empty()) flag.clr();
+			if (flag && rxring.empty()) flag->clr();
 			atomic_section_leave();
 			return ret;
 		}
@@ -120,7 +120,7 @@ namespace drivers {
 		void rx_handler() {
 			int c = uart->recvbyte();
 			rxring.push(c);
-			flag.set();
+			if (flag) flag->set();
 		}
 
 		void tx_handler() {

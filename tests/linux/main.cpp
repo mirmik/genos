@@ -6,7 +6,7 @@
 
 #include <genos/schedule.h>
 
-void hello() {
+/*void hello() {
 	gxx::println("HelloWorld");
 }
 genos::autom_schedee asch(hello);
@@ -19,14 +19,14 @@ void hello2() {
 	}
 }
 genos::autom_schedee asch2(hello2);
-
+*/
 int main() {
 	gxx::debug_ostream dout;
 	genos::print_banner(dout);
 	genos::print_about(dout);
 
-	genos::schedee_manager.run(asch);
-	genos::schedee_manager.run(asch2);
+//	genos::schedee_manager.run(asch);
+//	genos::schedee_manager.run(asch2);
 
 	while(true) {
 		genos::schedule();
@@ -35,6 +35,6 @@ int main() {
 
 void genos::schedule() {
 	genos::tasklet_manager.execute();
-	genos::schedee_manager.execute();
-	if (genos::schedee_manager.total_runned() == 0) exit(0);
+//	genos::schedee_manager.execute();
+//	if (genos::schedee_manager.total_runned() == 0) exit(0);
 }

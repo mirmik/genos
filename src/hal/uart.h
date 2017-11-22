@@ -12,9 +12,9 @@ namespace hal {
 		virtual bool avail() = 0;
 		virtual bool room() = 0;
 
-		virtual void set_tx_irq_handler(gxx::action act) = 0;
-		virtual void set_tc_irq_handler(gxx::action act) = 0;
-		virtual void set_rx_irq_handler(gxx::action act) = 0;
+		virtual void set_tx_irq_handler(gxx::fastaction act) = 0;
+		virtual void set_tc_irq_handler(gxx::fastaction act) = 0;
+		virtual void set_rx_irq_handler(gxx::fastaction act) = 0;
 
 		virtual void enable_tx_irq(bool en) = 0;
 		virtual void enable_tc_irq(bool en) = 0;
