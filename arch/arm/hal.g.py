@@ -4,8 +4,8 @@ module("genos.hal.arm.common",
 	include_paths = ["include"],
 	sources = ["src/regops.S", "src/start.c"],
 
-	cxx_flags = "-nostdlib -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
-	cc_flags = "-nostdlib -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	cxx_flags = "-nostdlib  -nostdinc -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
+	cc_flags = "-nostdlib -nostdinc -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections",
 	ld_flags = "-nostdlib -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections",
 
 )
