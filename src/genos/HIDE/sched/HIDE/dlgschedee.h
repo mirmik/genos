@@ -5,7 +5,7 @@
 
 class delegate_schedee : public autom_schedee {
 public:
-	delegate_schedee(delegate<void> dlg) : m_dlg(dlg) {  }
+	delegate_schedee(action dlg) : m_dlg(dlg) {  }
 	~delegate_schedee() { }
 
 private:
@@ -13,7 +13,7 @@ private:
 		m_dlg();
 	}
 
-	delegate<void> m_dlg;
+	action m_dlg;
 
 protected:
 	//virtual void invalidate() override {}

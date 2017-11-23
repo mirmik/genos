@@ -5,10 +5,10 @@
 
 namespace genos {
 	class autom_schedee : public schedee {
-		gxx::delegate<void> dlg;
+		gxx::action dlg;
 
 	public:
-		autom_schedee(gxx::delegate<void> act) : dlg(act) {}
+		autom_schedee(gxx::action act) : dlg(act) {}
 
 		void execute() override {
 			dlg();

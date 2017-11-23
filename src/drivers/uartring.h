@@ -57,7 +57,7 @@ namespace drivers {
 		}
 
 		int avail() { return ring.avail(); }
-		void set_avail_callback(gxx::delegate<void> dlg) { flag.event(dlg); }
+		void set_avail_callback(gxx::action dlg) { flag.event(dlg); }
 	protected:
 		int readData(char* dat, size_t sz) {
 			int ret = ring.popn(dat, sz);

@@ -10,7 +10,7 @@ namespace genos {
 	class timer {
 	public:
 		dlist_head lnk;
-		gxx::delegate<void> dlg;
+		gxx::action dlg;
 
 		uint32_t start;
 		uint32_t interval;
@@ -22,12 +22,12 @@ namespace genos {
 		uint32_t final() { return start + interval; }
 		void swift() { start += interval; }
 
-		timer(gxx::delegate<void> dlg, uint32_t interval, uint32_t start) : dlg(dlg), start(start), interval(interval) {}
-		timer(gxx::delegate<void> dlg, uint32_t interval) : dlg(dlg), start(systime::millis()), interval(interval) {}
+		timer(gxx::action dlg, uint32_t interval, uint32_t start) : dlg(dlg), start(start), interval(interval) {}
+		timer(gxx::action dlg, uint32_t interval) : dlg(dlg), start(systime::millis()), interval(interval) {}
 
 		void plan();
 		void unbind();
-		gxx::delegate<void> make_plan_delegate() { return gxx::delegate<void>(&timer::plan, this); }
+		gxx::action make_plan_delegate() { return gxx::action(&timer::plan, this); }
 
 		FLOW_ACCESSOR(autorepeat, m_autorepeat);
 	};

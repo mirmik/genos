@@ -6,7 +6,7 @@
 
 namespace process {
 
-	id_t create_autom(delegate<void>, int prio);
+	id_t create_autom(action, int prio);
 	schedee* getsch(id_t id);
 
 };

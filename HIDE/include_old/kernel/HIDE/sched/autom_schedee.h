@@ -8,14 +8,14 @@
 
 struct autom_schedee : public schedee {
 	query qry;
-	delegate<void> dlg;
+	action dlg;
 
 	//schedee methods
 	void execute();
 	void systick_handler();
 	void signal_handler();
 
-	autom_schedee(delegate<void> dlg, int prio);
+	autom_schedee(action dlg, int prio);
 };
 
 #endif

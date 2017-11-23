@@ -135,7 +135,7 @@ struct schedee* construct_autom_schedee(void(*routine)(void*), void* localstorag
 
 #if defined __cplusplus
 #include <genos/sigslot/delegate.h>
-struct schedee* construct_autom_schedee(const fastdelegate<void>& dlg) {
+struct schedee* construct_autom_schedee(const fastaction& dlg) {
 	return construct_autom_schedee(dlg.extfunction, dlg.object);
 }
 #endif

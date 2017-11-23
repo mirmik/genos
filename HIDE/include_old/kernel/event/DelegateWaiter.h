@@ -6,9 +6,9 @@
 
 namespace Genos {
 	class DelegateWaiter : public Waiter {
-		delegate<void> dlg;
+		action dlg;
 	public:
-		DelegateWaiter(delegate<void> dlg) : dlg(dlg) {}
+		DelegateWaiter(action dlg) : dlg(dlg) {}
 
 		void invoke() override {
 			dlg();

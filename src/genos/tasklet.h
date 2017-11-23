@@ -8,12 +8,12 @@ namespace genos {
 	class tasklet {
 	public:
 		dlist_head lnk;
-		gxx::delegate<void> dlg;
+		gxx::action dlg;
 
-		tasklet(gxx::delegate<void> dlg) : dlg(dlg) {}
+		tasklet(gxx::action dlg) : dlg(dlg) {}
 		
 		void plan();
-		gxx::delegate<void> make_plan_delegate() { return gxx::delegate<void>(&tasklet::plan, this); }
+		gxx::action make_plan_delegate() { return gxx::action(&tasklet::plan, this); }
 	};
 
 	class tasklet_manager_class {

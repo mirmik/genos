@@ -6,7 +6,7 @@
 
 idtable<virtee, &schedee::hnode, &schedee::pid, 20> process_table;
 
-id_t process::create_autom(delegate<void> dlg, int prio) {
+id_t process::create_autom(action dlg, int prio) {
 	RETYPE(autom_schedee*, asch, malloc(sizeof(autom_schedee)));
 	new (asch) autom_schedee(dlg, prio);
 	

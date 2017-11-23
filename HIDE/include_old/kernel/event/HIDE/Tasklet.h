@@ -62,14 +62,14 @@ namespace Genos {
 
 	class DelegateTasklet : public Tasklet {
 	public:
-		DelegateTasklet(delegate<void> dlg) : m_delegate(dlg) {}
+		DelegateTasklet(action dlg) : m_delegate(dlg) {}
 
 		void routine() {
 			m_delegate();
 		} 
 
 	private:
-		delegate<void> m_delegate;
+		action m_delegate;
 	};
 
 	class DebugTasklet : public Tasklet {

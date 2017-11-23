@@ -7,7 +7,7 @@
 #include "util/math.h"
 #include "string.h"
 
-autom_schedee::autom_schedee(delegate<void> _dlg, int prio) : schedee()
+autom_schedee::autom_schedee(action _dlg, int prio) : schedee()
 {
 	dlg = _dlg;
 	sta_prio = prio;

@@ -10,7 +10,7 @@ public:
 	dlist_head lnk;
 	
 	ipcstack* stack;
-	fastdelegate<void> callback; 
+	fastaction callback; 
 	
 	id_t sender;	//info
 	id_t receiver;	//info
