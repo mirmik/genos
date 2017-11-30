@@ -18,7 +18,7 @@ binutils = make_gcc_binutils("arm-none-eabi")
 application("main", 
 	binutils = binutils,
 	sources = ["main.cpp"],
-	target = "firmware.bin",
+	target = "firmware.elf",
 
 #	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto",
 #	cc_flags = "-Os -flto",
@@ -42,6 +42,8 @@ application("main",
 #		submodule("gxx.diag", "impl"),
 #		submodule("gxx.panic", "abort"),
 		#submodule("gxx.format"),
+
+		submodule("gxx.cxx_support"),
 	]
 )
 

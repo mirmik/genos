@@ -1,16 +1,20 @@
 #include <hal/board.h>
 #include <arch/irqs.h>
-#include <arch/gpio.h>
 
 #include <genos/systime.h>
 #include <gxx/debug/dprint.h>
 
+namespace board {
+	arch::gpio::pin led(GPIOB, 7);
+	arch::usart usart0(usart0_data);
+	arch::i2c i2c;
+}
+
 void board_init() {
 	arch_init();
-	arch::gpio::pin led(GPIOB, 7);
 
-	led.mode(hal::gpio::output);
-	led.set();
+	board::led.mode(hal::gpio::output);
+	board::led.set();
 }
 
 void board_shutdown(arch_shutdown_mode_t mode) {
@@ -23,13 +27,11 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 		break;
 		case ARCH_SHUTDOWN_MODE_ABORT:
 			arch::irqs::disable();
-
-			arch::gpio::pin led(GPIOB, 7);
-			led.mode(hal::gpio::output);
+			board::led.mode(hal::gpio::output);
 			
 			dprln("arch_shutdown");
 			while(1) {
-				led.tgl();
+				board::led.tgl();
 				systime::delay(100);
 			}
 		break;

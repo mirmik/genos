@@ -1,6 +1,8 @@
 #ifndef GENOS_AVR_UART_H
 #define GENOS_AVR_UART_H
 
+#include <avr/io.h>
+
 #include <periph/usart.h>
 #include <hal/uart.h>
 #include <hal/irqtbl.h>

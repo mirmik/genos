@@ -21,8 +21,8 @@ module("genos.hal", impl = "atmega2560",
 	ldscripts = ["atmega2560/ldscripts/flash.ld"],
 
 	defines = ["CHIP_ATMEGA2560"],
-	cxx_flags = "-nostdlib -nostdinc -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti -mmcu=atmega2560",
-	cc_flags = "-nostdlib -nostdinc -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -mmcu=atmega2560",
+	cxx_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti -mmcu=atmega2560",
+	cc_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -mmcu=atmega2560",
 	ld_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
 )
 
