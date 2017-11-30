@@ -4,7 +4,17 @@
 #define RED_LED 13
 
 #include <sys/cdefs.h>
-#include <hal/arch.h>
+#include <hal/gpio.h>
+
+#include <arch/gpio.h>
+#include <arch/uart.h>
+#include <arch/i2c.h>
+
+namespace board {
+	extern arch::gpio::pin led; //GPIOB, 7
+	extern arch::usart usart0;
+	extern arch::i2c i2c;
+}
 
 __BEGIN_DECLS
 

@@ -28,8 +28,8 @@ application("main",
 		
 		submodule("gxx.libc"),
 		submodule("gxx.include"),
-		submodule("gxx.dprint", "stub"),
-		submodule("gxx.diag", "stub"),
+		submodule("gxx.dprint", "diag"),
+		submodule("gxx.diag", "impl"),
 
 		submodule("gxx.std"),
 	]

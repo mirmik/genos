@@ -3,5 +3,6 @@
 
 #include <periph/usart.h>
 #include <periph/gpio.h>
+#include <periph/twi.h>
 
 #endif

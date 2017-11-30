@@ -4,13 +4,9 @@
 #include <periph/regs/usart.h>
 #include <periph/irqdefs.h>
 
-#define USART_BASE_0 0xC0
-#define USART_BASE_1 0xC8
-#define USART_BASE_2 0xD0
-
-#define USART0 ((struct usart_regs *)(USART_BASE_0))
-#define USART1 ((struct usart_regs *)(USART_BASE_1))
-#define USART2 ((struct usart_regs *)(USART_BASE_2))
+#define USART0 ((struct usart_regs *)(0xC0))
+#define USART1 ((struct usart_regs *)(0xC8))
+#define USART2 ((struct usart_regs *)(0xD0))
 
 struct usart_data {
 	struct usart_regs* regs;

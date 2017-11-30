@@ -1,21 +1,16 @@
-/*
-	LDScript для STM32:
-	256K Flash
-	64K RAM
-*/
+/*OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
+OUTPUT_ARCH(arm)*/
+ENTRY(__start)
 
-_estack = 0x2000FFFF;    /* end of 64K RAM */
-_eheap = _estack;
-
+/* Memory Spaces Definitions */
 MEMORY
 {
-	FLASH 		(rx)  : ORIGIN = 0x08000000, LENGTH = 256K
-	RAM 		(xrw) : ORIGIN = 0x20000000, LENGTH = 64K
-	memory_b1 	(rx)  : ORIGIN = 0x60000000, LENGTH = 0K
-	ccmram	 	(rw)  : ORIGIN = 0x10000000, LENGTH = 0K
+  	FLASH (rx) : ORIGIN = 0x00000000+0x4000, LENGTH = 0x00040000-0x4000
+  	RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
 }
 
-ENTRY(__start)
+_estack = 0x20007FFF;    /* end of 64K RAM */
+/*_eheap = _estack;*/
 
 SECTIONS
 {
@@ -50,7 +45,7 @@ SECTIONS
     	*(.rodata)
     	*(.rodata*)
     	. = ALIGN(4);
-  	} >FLASH
+  	} > FLASH
 
 	.data			:
 	{
