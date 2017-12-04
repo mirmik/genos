@@ -77,8 +77,9 @@ namespace drivers {
 		hal::uart* uart;
 		gxx::bytering rxring;
 		gxx::bytering txring;
-		gxx::event::flag* flag;
 	public:
+		gxx::event::action_flag avail_flag;
+
 		uartring(hal::uart* uart, gxx::buffer buf, gxx::buffer ibuf) : uart(uart), txring(buf), rxring(ibuf) {}
 		uartring(hal::uart* uart, int len, int ilen) : uart(uart), txring(gxx::allocate_buffer(len)), rxring(gxx::allocate_buffer(ilen)) {}
 
@@ -89,13 +90,13 @@ namespace drivers {
 		}
 
 		int avail() { return rxring.avail(); }
-		void set_avail_flag(gxx::event::flag& flg) { flag = &flg; }
+		//void set_avail_flag(gxx::event::flag& flg) { flag = &flg; }
 	protected:
 		int readData(char* dat, size_t sz) {
 			//dprln(rxring.avail());
 			atomic_section_enter();
 			int ret = rxring.popn(dat, sz);
-			if (flag && rxring.empty()) flag->clr();
+			if (rxring.empty()) avail_flag.clr();
 			atomic_section_leave();
 			return ret;
 		}
@@ -120,7 +121,7 @@ namespace drivers {
 		void rx_handler() {
 			int c = uart->recvbyte();
 			rxring.push(c);
-			if (flag) flag->set();
+			avail_flag.set();
 		}
 
 		void tx_handler() {

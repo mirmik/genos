@@ -1,10 +1,5 @@
-#ifndef GENOS_AVR_ARCH_I2C_H
-#define GENOS_AVR_ARCH_I2C_H
-
-//#include <periph/map.h>
-
-#include <avr/io.h>
-#include <avr/interrupt.h>
+#ifndef GENOS_UTIL_COMPAT_I2C
+#define GENOS_UTIL_COMPAT_I2C
 
 //0x00 Bus Fail Автобус сломался… эээ в смысле аппаратная ошибка шины. Например, внезапный старт посреди передачи бита.
 //0x08 Start Был сделан старт. Теперь мы решаем что делать дальше, например послать адрес ведомого
@@ -32,115 +27,44 @@
 //0xC0 Send Last Byte Receive NACK Дали мастеру последний имеющийся байт, а он нам «иди NACK». Хамло. Ну и хрен с ним. Уходим с шины.
 //0xC8 Send Last Byte Receive ACK Дали мастеру последний имеющийся байт, а он требует еще. Но у нас нету, так что разворачиваемся и уходим с шины. А он пусть карманы воздухом наполняет (в этот момент мастер начнет получать якобы от slave 0xFF байты, на самом деле это просто чтение висящей шины).
 
-#include <gxx/debug/dprint.h>
-#include <gxx/util/setget.h>
-#include <gxx/buffer.h>
+//Misc:
+#define I2C_NO_INFO			0xF8 //no state information available
+#define I2C_BUS_ERROR		0x00 //illegal start or stop condition
 
-namespace arch {
-	class i2c {
-	public:
-		uint8_t local_address = 0x32;		// Адрес на который будем отзываться
-		uint8_t target_address = 0;
-		uint8_t mode = 0;
+//Master
+#define I2C_START			0x08 //start condition transmitted
+#define I2C_REP_START		0x10 //repeated start condition transmitted
 
-		gxx::buffer sendbuf;
-		size_t sendindex;
+//Master Transmitter
+#define I2C_MT_SLA_ACK		0x18 //SLA+W transmitted, ACK received
+#define I2C_MT_SLA_NACK		0x20 //SLA+W transmitted, NACK received
+#define I2C_MT_DATA_ACK		0x28 //data transmitted, ACK received
+#define I2C_MT_DATA_NACK	0x30 //data transmitted, NACK received
+#define I2C_MT_ARB_LOST		0x38 //arbitration lost in SLA+W or data
 
-		void init() {
-			TWBR = 0x80;         		// Настроим битрейт
-			TWSR = 0x00;
-		
-			hal::irqtbl::set_handler(ATMEGA_IRQ_TWI, gxx::fastaction(&i2c::handler, this));
-		}
+//Master Receiver	
+#define I2C_MR_ARB_LOST		0x38 //arbitration lost in SLA+R or NACK
+#define I2C_MR_SLA_ACK		0x40 //SLA+R transmitted, ACK received
+#define I2C_MR_SLA_NACK		0x48 //SLA+R transmitted, NACK received	
+#define I2C_MR_DATA_ACK		0x50 //data received, ACK returned
+#define I2C_MR_DATA_NACK	0x58 //data received, NACK returned
 
-		void enable() {
-			TWCR |= 1<<TWIE | 1<<TWEN;
-		}
+//Slave Transmitter
+#define I2C_ST_SLA_ACK			0xA8 //SLA+R received, ACK returned	
+#define I2C_ST_ARB_LOST_SLA_ACK	0xB0 //arbitration lost in SLA+RW, SLA+R received, ACK returned	
+#define I2C_ST_DATA_ACK			0xB8 //data transmitted, ACK received
+#define I2C_ST_DATA_NACK		0xC0 //data transmitted, NACK received	
+#define I2C_ST_LAST_DATA		0xC8 //last data byte transmitted, ACK received
 
-		//void send_start() {
-		//	TWCR |= 1<<TWSTA;
-		//}
-
-		void write(uint8_t target, gxx::buffer buf) {
-			sendbuf = buf;
-			target_address = target << 1;
-			sendindex = 0;
-
-			TWCR |=	1<<TWSTA; 
-		}
-
-		ACCESSOR(target, target_address);
-
-		//void init(uint8_t local_address) {
-		//	this-> local_address = local_address;
-		//	TWBR = 0x80;         		// Настроим битрейт
-		//	TWSR = 0x00;
-		//}
-
-		void init_slave()				// Настройка режима слейва (если нужно)
-		{
-			//TWAR = i2c_MasterAddress;		// Внесем в регистр свой адрес, на который будем отзываться. 
-											// 1 в нулевом бите означает, что мы отзываемся на широковещательные пакеты
-			//SlaveOutFunc = Addr;			// Присвоим указателю выхода по слейву функцию выхода
-			 
-			TWCR = 0<<TWSTA| 0<<TWSTO| 0<<TWINT| 1<<TWEA| 1<<TWEN| 1<<TWIE;	
-			// Включаем агрегат и начинаем слушать шину.
-		}
-
-		void handler() {
-			dprhexln(TWSR);
-			switch(TWSR & 0xF8) {
-				case 0x08: //Мы послали старт
-					if (mode == 0) {
-						TWDR = target_address;	// Адрес слейва
-						TWCR = 	0<<TWSTA|
-								0<<TWSTO|
-								1<<TWINT|
-								0<<TWEA|
-								1<<TWEN|
-								1<<TWIE;  	
-					}
-					break;
-
-				case 0x18: //Послали адрес на запись, получили подтверждение. Инициируем передачу:
-					TWDR = sendbuf[sendindex++];
-					TWCR = 	0<<TWSTA|
-						0<<TWSTO|
-						1<<TWINT|
-						0<<TWEA|
-						1<<TWEN|
-						1<<TWIE;  // Go! 
-					break;
-
-				case 0x28: //Послали адрес на запись, получили подтверждение. Инициируем передачу:
-					if (sendindex == sendbuf.size()) {
-						//Заканчиваем транзакцию
-						TWCR = 	0<<TWSTA|
-								1<<TWSTO|
-								1<<TWINT|
-								0<<TWEA|
-								1<<TWEN|
-								1<<TWIE;	
-						break;
-					}
-
-					else {
-						TWDR = sendbuf[sendindex++];
-						TWCR = 	0<<TWSTA|
-							0<<TWSTO|
-							1<<TWINT|
-							0<<TWEA|
-							1<<TWEN|
-							1<<TWIE;  // Go! 
-						break;
-					}
-
-				default:
-					dprln("twi automate default");
-					abort();
-			}
-		}
-	};
-}
+//Slave Receiver
+#define I2C_SR_SLA_ACK				0x60 //SLA+W received, ACK returned
+#define I2C_SR_ARB_LOST_SLA_ACK		0x68 //arbitration lost in SLA+RW, SLA+W received, ACK returned
+#define I2C_SR_GCALL_ACK			0x70 //general call received, ACK returned	
+#define I2C_SR_ARB_LOST_GCALL_ACK 	0x78 //arbitration lost in SLA+RW, general call received, ACK returned
+#define I2C_SR_DATA_ACK				0x80 //data received, ACK returned
+#define I2C_SR_DATA_NACK			0x88 //data received, NACK returned	
+#define I2C_SR_GCALL_DATA_ACK		0x90 //general call data received, ACK returned
+#define I2C_SR_GCALL_DATA_NACK		0x98 //general call data received, NACK returned
+#define I2C_SR_STOP					0xA0 //stop or repeated start condition received while selected
 
 #endif

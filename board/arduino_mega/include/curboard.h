@@ -8,12 +8,12 @@
 
 #include <arch/gpio.h>
 #include <arch/uart.h>
-#include <arch/i2c.h>
+//#include <arch/i2c.h>
 
 namespace board {
 	extern arch::gpio::pin led; //GPIOB, 7
 	extern arch::usart usart0;
-	extern arch::i2c i2c;
+	//extern arch::i2c i2c;
 }
 
 __BEGIN_DECLS

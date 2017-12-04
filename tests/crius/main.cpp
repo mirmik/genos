@@ -17,9 +17,15 @@
 #include <gxx/gstuff/automate.h>
 #include <genos/banner.h>
 
+//#include <genos/event/waiter.h>
+
+#include <arch/i2c_automate.h>
+
 char serbuf[512], iserbuf[32];
 arch::usart u0(usart0_data);
 drivers::uartring serial(&u0, serbuf, iserbuf);
+
+arch::i2c_automate i2c_autom;
 
 arch::gpio::pin rled(GPIOB, 7);
 arch::gpio::pin gled(GPIOC, 7);
@@ -40,8 +46,9 @@ void terminal_func() {
 	serial.set_avail_callback(terminal_tasklet.make_plan_delegate());
 }*/
 
-void terminal_func(); genos::tasklet terminal_tasklet { terminal_func };
-gxx::event::action_flag terminal_flag(terminal_tasklet.make_plan_delegate(), true);
+void terminal_func(); 
+genos::tasklet terminal_tasklet { terminal_func };
+
 void terminal_func() {
 	while(serial.avail()) { 
 		char c = serial.getchar();
@@ -49,7 +56,7 @@ void terminal_func() {
 		//dprln("term:", c, (int)c);
 	}
 	//serial.set_avail_callback(terminal_tasklet.make_plan_delegate());
-	terminal_flag.wait();
+	serial.avail_flag.wait();
 }
 
 #include <gxx/serialize/serialize.h>
@@ -103,6 +110,10 @@ void system_execute(gxx::buffer line) {
 	}
 }
 
+void i2c_finish(uint8_t mode) {
+	dprln("i2c_finish");
+}
+
 int main() {
 	board_init();
 
@@ -121,7 +132,7 @@ int main() {
 	u0.setup(115200); 
 
 	serial.init();
-	serial.set_avail_flag(terminal_flag);
+	serial.avail_flag.set_handler(terminal_tasklet.make_plan_delegate());
 
 	u0.enable();
 
@@ -137,6 +148,11 @@ int main() {
 		vt.del();
 		vt.down(1);
 	}*/
+
+	i2c_autom.init_master(100000);
+	i2c_autom.enable();
+
+	i2c_autom.set_master_finish_handler(i2c_finish);
 
 	genos::print_banner(serial);
 	genos::print_about(serial);

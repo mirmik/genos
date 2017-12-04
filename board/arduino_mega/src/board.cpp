@@ -7,7 +7,7 @@
 namespace board {
 	arch::gpio::pin led(GPIOB, 7);
 	arch::usart usart0(usart0_data);
-	arch::i2c i2c;
+//	arch::i2c i2c;
 }
 
 void board_init() {
