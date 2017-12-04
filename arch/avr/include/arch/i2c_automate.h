@@ -41,18 +41,19 @@
 namespace arch {
 	class i2c_automate : public hal::i2c_automate {
 	public:
-		//uint8_t local_address = 0x32;		// Адрес на который будем отзываться
-		//uint8_t target_address = 0;
-		//uint8_t mode = 0;
-
 		uint8_t target_address;
 		gxx::buffer sendbuf;
 		size_t sendindex;
 
 		uint8_t mode;
 
-		void init_master(uint32_t baud) {
-			TWBR = 0x80;         		// Настроим битрейт
+		void init_master(uint32_t scl_freq_hz = 100000) {
+			/* twi bit rate formula from atmega128 manual pg 204
+  			SCL Frequency = CPU Clock Frequency / (16 + (2 * TWBR))
+  			note: TWBR should be 10 or higher for master mode
+  			It is 72 for a 16mhz Wiring board with 100kHz TWI */
+			TWBR = ((F_CPU / scl_freq_hz) - 16) / 2;
+			dprln("TWBR:", TWBR);
 			TWSR = 0x00;
 
 			hal::irqtbl::set_handler(ATMEGA_IRQ_TWI, gxx::fastaction(&i2c_automate::handler, this));
@@ -62,10 +63,6 @@ namespace arch {
 			TWCR |= 1<<TWIE | 1<<TWEN;
 		}
 
-		//void send_start() {
-		//	TWCR |= 1<<TWSTA;
-		//}
-
 		void start_write(uint8_t target, gxx::buffer buf) {
 			sendbuf = buf;
 			target_address = target << 1;
@@ -73,69 +70,31 @@ namespace arch {
 			TWCR |=	1<<TWSTA; 
 		}
 
-		//ACCESSOR(target, target_address);
-
-		//void init(uint8_t local_address) {
-		//	this-> local_address = local_address;
-		//	TWBR = 0x80;         		// Настроим битрейт
-		//	TWSR = 0x00;
-		//}
-
-		void init_slave()				// Настройка режима слейва (если нужно)
-		{
-			//TWAR = i2c_MasterAddress;		// Внесем в регистр свой адрес, на который будем отзываться. 
-											// 1 в нулевом бите означает, что мы отзываемся на широковещательные пакеты
-			//SlaveOutFunc = Addr;			// Присвоим указателю выхода по слейву функцию выхода
-			 
-			TWCR = 0<<TWSTA| 0<<TWSTO| 0<<TWINT| 1<<TWEA| 1<<TWEN| 1<<TWIE;	
-			// Включаем агрегат и начинаем слушать шину.
-		}
-
 		void handler() {
-			dprhexln(TWSR);
+			dpr("i2c handler "); dprhexln(TWSR);
 			switch(TWSR & 0xF8) {
 				case 0x08: //Мы послали старт
 					if (mode == 0) {
 						TWDR = target_address;	// Адрес слейва
-						TWCR = 	0<<TWSTA|
-								0<<TWSTO|
-								1<<TWINT|
-								0<<TWEA|
-								1<<TWEN|
-								1<<TWIE;  	
+						TWCR = 	1<<TWINT | 1<<TWEN | 1<<TWIE;  	
 					}
 					break;
 
 				case 0x18: //Послали адрес на запись, получили подтверждение. Инициируем передачу:
 					TWDR = sendbuf[sendindex++];
-					TWCR = 	0<<TWSTA|
-						0<<TWSTO|
-						1<<TWINT|
-						0<<TWEA|
-						1<<TWEN|
-						1<<TWIE;  // Go! 
+					TWCR = 	1<<TWINT | 1<<TWEN | 1<<TWIE; 
 					break;
 
-				case 0x28: //Послали адрес на запись, получили подтверждение. Инициируем передачу:
+				case 0x28: //Послали адрес на запись, получили подтверждение. Продолжаем передачу:
 					if (sendindex == sendbuf.size()) {
 						//Заканчиваем транзакцию
-						TWCR = 	0<<TWSTA|
-								1<<TWSTO|
-								1<<TWINT|
-								0<<TWEA|
-								1<<TWEN|
-								1<<TWIE;	
+						TWCR = 	1<<TWSTO | 1<<TWINT | 1<<TWEN | 1<<TWIE;	
 						break;
 					}
 
 					else {
 						TWDR = sendbuf[sendindex++];
-						TWCR = 	0<<TWSTA|
-							0<<TWSTO|
-							1<<TWINT|
-							0<<TWEA|
-							1<<TWEN|
-							1<<TWIE;  // Go! 
+						TWCR = 1<<TWINT | 1<<TWEN | 1<<TWIE; 
 						break;
 					}
 

@@ -4,7 +4,7 @@
 #include <genos/util/twi.h>
 
 namespace hal {
-	class i2c_automate {
+	class wire {
 		/*enum state : public uint8_t {
 			BusFail = 0x00,
 			Start = 0x08,

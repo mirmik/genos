@@ -3,6 +3,7 @@
 
 #include <periph/map.h>
 #include <arch/gpio.h>
+#include <arch/usart.h>
 
 int del = 50000;
 
