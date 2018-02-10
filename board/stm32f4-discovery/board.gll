@@ -1,6 +1,0 @@
---[[regmodule {
-	name = "stm32f4-discovery",
-	sources = {
-		cc = {"src/board.c"}
-	}
-}]]

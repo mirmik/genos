@@ -1,6 +1,0 @@
---[[regmodule {
-	name = "glib_stream",
-	sources = {
-		cxx = {"strqueue.cpp"},
-	}
-}]]

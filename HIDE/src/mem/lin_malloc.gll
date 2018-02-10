@@ -1,5 +1,0 @@
-Module("genos.lin_malloc", {
-	sources = {
-		cc = {"malloc.c", "realloc.c"}
-	}
-})

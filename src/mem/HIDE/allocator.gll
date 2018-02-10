@@ -1,8 +1,0 @@
---[[regmodule
-{
-	name = "malloc_ops",
-	sources =
-	{
-		cc = {"allocator.c"}
-	}
-}]]
