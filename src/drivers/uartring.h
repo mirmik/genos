@@ -78,7 +78,8 @@ namespace drivers {
 		gxx::bytering rxring;
 		gxx::bytering txring;
 	public:
-		gxx::event::action_flag avail_flag;
+		gxx::event::action_flag rx_avail_flag;
+		gxx::event::action_flag tx_empty_flag;
 
 		uartring(hal::uart* uart, gxx::buffer buf, gxx::buffer ibuf) : uart(uart), txring(buf), rxring(ibuf) {}
 		uartring(hal::uart* uart, int len, int ilen) : uart(uart), txring(gxx::allocate_buffer(len)), rxring(gxx::allocate_buffer(ilen)) {}

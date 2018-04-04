@@ -1,93 +1,66 @@
 #ifndef GENOS_FILE_H
 #define GENOS_FILE_H
 
-#include <gxx/io2/strm.h>
-#include <resource/resource.h>
-#include <sync/semaphore.h>
-#include <sync/wait_queue.h>
-
-#include <fcntl.h>
+#include <gxx/io/base.h>
 
 namespace genos {
-	class file {
+	struct file : public  {
 	public:
-		uint16_t flags;
-
 		virtual int write(const char* data, size_t size, size_t off) = 0;
 		virtual int read(char* data, size_t size, size_t* off) = 0;
-		virtual int seek(size_t off) { return -1; };
-		virtual int pool() { return -1; };
+		//virtual int seek(size_t off) { return -1; };
+		//virtual int pool() { return -1; };
+
+		virtual void open() {};
+		virtual void release() {};
 		
-		virtual int open() = 0;
-		virtual int release() = 0;
 		//void resourceOpen() override;
 		//void resourceRelease() override;
 		//void resourceClose() override;
 	};
 
-	class strmdev : public file {
-	public:
-		genos::semaphore wsem{1}, rsem{1};
-		genos::wait_queue wwq, rwq;
+	struct iostorage_chardev : public file {
+		gxx::iostorage* storage;
+		genos::wait_queue txwait;
 
-		strmdev(){}
+		uint8_t refs = 0;
 
 		int write(const char* data, size_t size, size_t off) override {
-			return writeData(data, size);
-		}
-
-		int read(char* data, size_t size, size_t* off) override {
-			int ret;
-
-			if (rsem.down_interrutible()) {
-				return EAGAIN;
+			genos::wait_head waiter;
+				
+			genos::csection_enter();
+			if (!txwait.empty()) {
+				genos::init_waiter_for_current_schedee(&waiter);
+				txwait.add(&waiter);
+				__displace__();
 			}
 
-			if ((flags & O_NONBLOCK) && canRead() == 0) {
-				rsem.up();
-				return EAGAIN;
+			int writed = 0;
+			while(true) {
+				writed += storage->write(data + writed, size - writed);
+				if (writed == size) break;
+				genos::init_waiter_for_current_schedee(&waiter);
+				txwait.add_priority(&waiter);
+				__displace__();
 			}
+			genos::csection_leave();
+		};
 
-			if (canRead() == 0) {
-				if (schedee_wait_for(rwq)) {
-					rsem.up();
-					return EAGAIN;
-				}
-			}
+		int read(char* data, size_t size, size_t* off) {
 
-			ret = readData(data, size);
-			rsem.up();
-			return ret;
+		};
+
+		void open() {
+			genos::csection_guard guard; 
+			if (refs == 0) storage->clean; 
+			++refs;
+		};
+
+		void release() {
+			genos::csection_guard guard; 
+			--refs;
 		}
-
-		int seek(size_t off) override {
-
-		}
-
-		int pool() override {
-
-		}
-
-		/*void resourceOpen() override {
-			if (refs == 1) clean();
-		}
-
-		void resourceRelease() override {}
-
-		void resourceClose() override {
-
-		}*/
-
-	protected:
-		virtual int writeData(const char* data, size_t size) = 0;
-		virtual int readData(char* data, size_t size) = 0;
-		
-		virtual int canRead() = 0;
-		virtual int canWrite() = 0;
-	
-		virtual int clean();
-	};
-
+	}
 }
 
 #endif
