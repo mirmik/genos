@@ -1,7 +1,7 @@
 #ifndef GENOS_BOARD_H
 #define GENOS_BOARD_H
 
-#include <hal/arch.h>
+#include <genos/hal/arch.h>
 #include <curboard.h>
 #include <sys/cdefs.h>
 

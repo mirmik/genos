@@ -1,4 +1,4 @@
-#include <hal/procdelay.h>
+#include <genos/hal/procdelay.h>
 #include "genos_configure.h"
 
 #include <util/delay.h>

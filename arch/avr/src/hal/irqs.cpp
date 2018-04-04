@@ -1,4 +1,4 @@
-#include <hal/irqs.h>
+#include <genos/hal/irqs.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 

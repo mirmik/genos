@@ -1,6 +1,6 @@
 #include <gxx/debug/dprint.h>
 #include <stdint.h>
-#include <hal/arch.h>
+#include <genos/hal/arch.h>
 
 void debug_printhex_uint4(uint8_t b){
 	uint8_t c = b < 10 ? b + '0' : b + 'A' - 10;

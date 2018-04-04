@@ -5,7 +5,7 @@
 #include <gxx/event/flag.h>
 #include <gxx/io/iostorage.h>
 #include <gxx/bytering.h>
-#include <hal/uart.h>
+#include <genos/hal/uart.h>
 
 namespace drivers {
 

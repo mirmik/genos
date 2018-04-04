@@ -4,15 +4,15 @@
 #include <avr/io.h>
 
 #include <periph/usart.h>
-#include <hal/uart.h>
-#include <hal/irqtbl.h>
+#include <genos/hal/uart.h>
+#include <genos/hal/irqtbl.h>
 
 #include <gxx/util/bits.h>
 #include <gxx/event/delegate.h>
 
 namespace arch {
 
-	class usart : public hal::uart {
+	class usart : public genos::hal::uart {
 		struct usart_regs* regs;
 		int8_t irqbase;
 
@@ -60,9 +60,9 @@ namespace arch {
 
 		void setup(
 			int32_t baud = 115200, 
-			hal::uart::parity parity = hal::uart::parity::none, 
-			hal::uart::stopbits stopbits = hal::uart::stopbits::one, 
-			hal::uart::databits databits = hal::uart::databits::eight
+			genos::hal::uart::parity 	parity 		= genos::hal::uart::parity::none, 
+			genos::hal::uart::stopbits 	stopbits 	= genos::hal::uart::stopbits::one, 
+			genos::hal::uart::databits 	databits 	= genos::hal::uart::databits::eight
 		) 
 		{	
 			regs->ucsr_a |= 1 << U2X0;
@@ -76,11 +76,11 @@ namespace arch {
 			bits_mask_assign_bias(regs->ucsr_c, sparity, 0b11, 4);
 			
 			// STOP BITS
-			uint8_t sstopbits = stopbits == hal::uart::stopbits::one ? 0 : 1;
+			uint8_t sstopbits = stopbits ==genos::hal::uart::stopbits::one ? 0 : 1;
 			bits_mask_assign_bias(regs->ucsr_c, sstopbits, 0b1, 3);
 			
 			// DATA BITS
-			//uint8_t sbits = stopbits == hal::uart::stopbits::one ? 0 : 1;
+			//uint8_t sbits = stopbits ==genos::hal::uart::stopbits::one ? 0 : 1;
 			//bits_mask_assign_bias(regs->ucsr_c, mode, 0b011, 1);
 			//bits_mask_assign(regs->ucsr_b, mode, 0b100);
 		}
@@ -88,15 +88,15 @@ namespace arch {
 		usart(struct usart_data data) : regs(data.regs), irqbase(data.irqbase) {}
 	
 		void set_rx_irq_handler(gxx::fastaction handler) override {
-			hal::irqtbl::set_handler(irqbase + 0, handler);
+			genos::hal::irqtbl::set_handler(irqbase + 0, handler);
 		}
 
 		void set_tx_irq_handler(gxx::fastaction handler) override {
-			hal::irqtbl::set_handler(irqbase + 1, handler);
+			genos::hal::irqtbl::set_handler(irqbase + 1, handler);
 		}
 
 		void set_tc_irq_handler(gxx::fastaction handler) override {
-			hal::irqtbl::set_handler(irqbase + 2, handler);
+			genos::hal::irqtbl::set_handler(irqbase + 2, handler);
 		}
 	};
 }

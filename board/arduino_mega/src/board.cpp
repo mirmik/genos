@@ -1,4 +1,4 @@
-#include <hal/board.h>
+#include <genos/hal/board.h>
 #include <arch/irqs.h>
 
 #include <genos/systime.h>
@@ -13,7 +13,7 @@ namespace board {
 void board_init() {
 	arch_init();
 
-	board::led.mode(hal::gpio::output);
+	board::led.mode(genos::hal::gpio::output);
 	board::led.set();
 }
 
@@ -27,7 +27,7 @@ void board_shutdown(arch_shutdown_mode_t mode) {
 		break;
 		case ARCH_SHUTDOWN_MODE_ABORT:
 			arch::irqs::disable();
-			board::led.mode(hal::gpio::output);
+			board::led.mode(genos::hal::gpio::output);
 			
 			dprln("arch_shutdown");
 			while(1) {

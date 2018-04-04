@@ -4,7 +4,7 @@
 #define RED_LED 13
 
 #include <sys/cdefs.h>
-#include <hal/gpio.h>
+#include <genos/hal/gpio.h>
 
 #include <arch/gpio.h>
 #include <arch/uart.h>

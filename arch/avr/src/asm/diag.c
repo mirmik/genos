@@ -1,15 +1,12 @@
-#include "hal/arch.h"
-#include "hal/irq.h"
+#include "genos/hal/arch.h"
+#include "genos/hal/irq.h"
 #include "avr/io.h"
 
 #include <gxx/diag/diag.h>
-//#include <gxx/util/stub.h>
-
-//#include "genos_configure.h"
 
 #include <avr/io.h>
 
-int usart0_diag_putchar(char c)
+int usart0_diag_putchar(void* _, char c)
 {
 	irqstate_t save = global_irqs_save();
 	UCSR0A |= 1<<TXC0;

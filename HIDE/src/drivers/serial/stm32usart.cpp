@@ -5,7 +5,7 @@
 
 #include <assert.h>
 
-#include <hal/irq.h>
+#include <genos/hal/irq.h>
 #include <util/stub.h>
 
 STM32HardwareUsart::STM32HardwareUsart(usart_regs* regs, uint8_t irqno) : m_regs(regs), m_irqno(irqno) {

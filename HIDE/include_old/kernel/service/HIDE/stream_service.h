@@ -1,7 +1,7 @@
 #ifndef GENOS_MULTI_HANDLER_SERVICE_H
 #define GENOS_MULTI_HANDLER_SERVICE_H
 
-#include <hal/irq.h>
+#include <genos/hal/irq.h>
 
 #include <gxx/dlist.h>
 #include <kernel/service/service.h>

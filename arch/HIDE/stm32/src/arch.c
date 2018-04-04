@@ -1,6 +1,6 @@
-#include <hal/arch.h>
-#include <hal/ipl.h>
-#include <hal/systime.h>
+#include <genos/hal/arch.h>
+#include <genos/hal/ipl.h>
+#include <genos/hal/systime.h>
 #include <drivers/stm32/rcc.h>
 #include <gxx/debug/dprint.h>
 

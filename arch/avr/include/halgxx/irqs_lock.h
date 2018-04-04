@@ -1,7 +1,7 @@
 #ifndef GXX_AVR_irqs_lock_H
 #define GXX_AVR_irqs_lock_H
 
-#include <hal/irq.h>
+#include <genos/hal/irq.h>
 #include <inttypes.h>
 
 namespace gxx {

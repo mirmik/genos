@@ -1,4 +1,4 @@
-#include <hal/irq.h>
+#include <genos/hal/irq.h>
 
 void end_of_programm() {
 	/*programm end stub*/

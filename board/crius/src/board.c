@@ -1,7 +1,7 @@
 #include "hal/board.h"
 #include <drivers/gpiotbl.h>
-#include <hal/arch.h>
-#include <hal/irq.h>
+#include <genos/hal/arch.h>
+#include <genos/hal/irq.h>
 #include <gxx/debug/delay.h>
 
 #include <asm/diag.h>

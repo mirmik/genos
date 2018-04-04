@@ -1,15 +1,15 @@
 #ifndef GXX_ARCH_HAL_GPIO_H
 #define GXX_ARCH_HAL_GPIO_H
 
-#include <hal/gpio.h>
+#include <genos/hal/gpio.h>
 #include <periph/regs/gpio.h>
 
 namespace arch {
-	class gpio : public hal::gpio {
+	class gpio : public genos::hal::gpio {
 		gpio_regs* regs;
 
 	public:
-		class pin : public hal::gpio::pin {
+		class pin : public genos::hal::gpio::pin {
 			gpio_regs* regs;
 			uint8_t mask;
 

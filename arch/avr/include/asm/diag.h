@@ -6,7 +6,7 @@
 __BEGIN_DECLS
 
 int usart0_diag_init();
-int usart0_diag_putchar(int c);
+int usart0_diag_putchar(void*, int c);
 
 __END_DECLS
 

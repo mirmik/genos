@@ -1,4 +1,4 @@
-#include <hal/board.h>
+#include <genos/hal/board.h>
 
 #include <arch/irqs.h>
 #include <arch/gpio.h>

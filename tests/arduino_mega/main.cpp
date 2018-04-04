@@ -1,5 +1,5 @@
-#include <hal/board.h>
-#include <hal/irqs.h>
+#include <genos/hal/board.h>
+#include <genos/hal/irqs.h>
 
 #include <genos/systime.h>
 #include <drivers/uartring.h>

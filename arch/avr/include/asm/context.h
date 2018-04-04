@@ -1,7 +1,7 @@
 #ifndef GENOS_AVR_CONTEXT_H
 #define GENOS_AVR_CONTEXT_H
 
-#include <hal/subst.h>
+#include <genos/hal/subst.h>
 #include "inttypes.h"
 
 struct context {

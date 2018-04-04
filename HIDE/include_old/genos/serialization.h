@@ -4,7 +4,7 @@
 #include <gxx/debug/dprint.h>
 #include "genos_configure.h"
 #include <genos/defines/size_t.h>
-#include <hal/arch.h>
+#include <genos/hal/arch.h>
 #include <inttypes.h>
 #include <string.h>
 

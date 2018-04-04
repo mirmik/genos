@@ -1,7 +1,7 @@
 #ifndef GENOS_KERNEL_CSECTION_H
 #define GENOS_KERNEL_CSECTION_H
 
-#include <hal/irq.h>
+#include <genos/hal/irq.h>
 
 //ipl_t critical_section_enter();
 //void critical_section_leave(ipl_t);

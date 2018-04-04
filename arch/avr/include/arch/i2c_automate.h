@@ -36,10 +36,10 @@
 #include <gxx/util/setget.h>
 #include <gxx/buffer.h>
 
-#include <hal/i2c.h>
+#include <genos/hal/i2c.h>
 
 namespace arch {
-	class i2c_automate : public hal::i2c_automate {
+	class i2c_automate : publicgenos::hal::i2c_automate {
 	public:
 		uint8_t target_address;
 		gxx::buffer sendbuf;

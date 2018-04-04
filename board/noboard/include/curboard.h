@@ -2,7 +2,7 @@
 #define CRIUS_BOARD_H
 
 #include <sys/cdefs.h>
-#include <hal/arch.h>
+#include <genos/hal/arch.h>
 
 __BEGIN_DECLS
 

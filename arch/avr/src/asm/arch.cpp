@@ -1,9 +1,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include <hal/arch.h>
-#include <hal/irqtbl.h>
-#include <hal/irqs.h>
+#include <genos/hal/arch.h>
+#include <genos/hal/irqtbl.h>
+#include <genos/hal/irqs.h>
 
 #include <gxx/diag/diag.h>
 
@@ -41,14 +41,14 @@ int usart0_diag_init() {
 
 
 void arch_init() {	
-	hal::irqtbl::init();
+	genos::hal::irqtbl::init();
 
 	usart0_diag.putc = usart0_diag_putchar;
 	usart0_diag.write = diag_write_stub;
-	current_diag = &usart0_diag;
+	current_diag_ops = &usart0_diag;
 	usart0_diag_init();
 
-	hal::irqtbl::set_handler(timer0.irqs.ovf, gxx::make_fastaction(systime::system_tick));
+	genos::hal::irqtbl::set_handler(timer0.irqs.ovf, gxx::make_fastaction(systime::system_tick));
 	tc_8bit_interruptOverflowEnable(&timer0, 1);
 	tc_8bit_divider(&timer0, 64);
 	
