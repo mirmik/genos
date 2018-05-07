@@ -10,8 +10,6 @@ import licant.routine
 
 import os
 
-print(licant.util.green("Licant"))
-
 include("genos")
 include("gxx")
 binutils = make_gcc_binutils("avr")
