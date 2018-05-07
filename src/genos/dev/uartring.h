@@ -55,9 +55,6 @@ namespace genos {
 			}
 
 			ret += txring.push(dat, sz);
-			//sz -= ret;
-			//dat += ret;
-			
 			genos::atomic_section_leave();
 
 			return ret;

@@ -3,7 +3,7 @@
 
 namespace genos {
 
-	static inline void writeall(genos::file* flp, const char* data, size_t size, size_t off = 0) {
+	/*static inline void writeall(genos::cstream* flp, const char* data, size_t size, size_t off = 0) {
 		if (flp->is_cstream()) {
 			auto cstream = static_cast<genos::cstream*>(flp);
 			size_t writed = 0;
@@ -19,7 +19,7 @@ namespace genos {
 
 	static inline void print(genos::file* flp, const char* data) {
 		writeall(flp, data, strlen(data));
-	}
+	}*/
 
 }
 

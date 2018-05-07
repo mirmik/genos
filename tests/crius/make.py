@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #coding: utf-8
 
-from licant.cxx_modules import application, doit
+import licant
+from licant.cxx_modules import application
 from licant.modules import submodule
 from licant.libs import include
 from licant.cxx_make import make_gcc_binutils
@@ -46,4 +47,4 @@ application("main",
 
 licant.routine.add_routine("install", lambda x: os.system("./install.sh"))
 
-doit("main")
+licant.ex(default = "main")
