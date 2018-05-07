@@ -4,7 +4,7 @@
 #include <gxx/util/setget.h>
 #include <gxx/dlist.h>
 #include <gxx/event/delegate.h>
-#include <genos/systime.h>
+#include <genos/sysclock.h>
 
 namespace genos {
 	class timer {
@@ -12,8 +12,8 @@ namespace genos {
 		dlist_head lnk;
 		gxx::action dlg;
 
-		uint32_t start;
-		uint32_t interval;
+		genos::sysclock::time_t start;
+		genos::sysclock::time_t interval;
 		bool m_autorepeat;
 
 		bool check() { return check(systime::millis()); };
@@ -22,8 +22,8 @@ namespace genos {
 		uint32_t final() { return start + interval; }
 		void swift() { start += interval; }
 
-		timer(gxx::action dlg, uint32_t interval, uint32_t start) : dlg(dlg), start(start), interval(interval) {}
-		timer(gxx::action dlg, uint32_t interval) : dlg(dlg), start(systime::millis()), interval(interval) {}
+		timer(gxx::action dlg, genos::sysclock::time_t interval, genos::sysclock::time_t start) : dlg(dlg), start(start), interval(interval) {}
+		timer(gxx::action dlg, genos::sysclock::time_t interval) : dlg(dlg), start(systime::millis()), interval(interval) {}
 
 		void plan();
 		void unbind();

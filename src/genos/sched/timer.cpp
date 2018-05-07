@@ -30,7 +30,7 @@ void genos::timer_manager_class::unbind(genos::timer& tim) {
 }
 
 void genos::timer_manager_class::execute() {
-	uint32_t now = systime::millis();
+	auto now = sysclock.jiffies();
 	
 	while(!planed_list.empty()) {
 		genos::timer& timer = *planed_list.begin();
