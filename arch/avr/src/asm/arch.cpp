@@ -14,7 +14,7 @@
 
 __BEGIN_DECLS
 int usart0_diag_init();
-int usart0_diag_putchar(char c);
+int usart0_diag_putchar(void*, char c);
 __END_DECLS
 
 extern struct diag_ops usart0_diag;

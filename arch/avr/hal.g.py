@@ -4,7 +4,7 @@ module("genos.hal.avr.common",
 	sources = [
 		"src/asm/arch.cpp",
 		"src/asm/diag.c",
-		"src/asm/systime.cpp",
+		#"src/asm/systime.cpp",
 
 		"src/drivers/gpio.c",
 		"src/drivers/timer.c",

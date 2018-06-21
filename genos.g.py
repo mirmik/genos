@@ -3,6 +3,7 @@ from licant.modules import module
 scriptq.execute_recursive("arch", ".g.py")
 scriptq.execute_recursive("board", ".g.py")
 
+module ("genos", include_paths = "./src", sources = ["src/genos/systime.cpp"] )
 module ("genos.include", include_paths = "./src" )
 
 module ("genos.irqtbl", 	sources = [ "src/genos/hal/irqtbl.cpp" ] )

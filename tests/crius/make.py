@@ -14,7 +14,7 @@ include("genos")
 include("gxx")
 binutils = make_gcc_binutils("avr")
 
-application("main", 
+application("firmware", 
 	binutils = binutils,
 	sources = ["main.cpp"],
 	target = "firmware.bin",
@@ -43,6 +43,8 @@ application("main",
 	]
 )
 
-licant.routine.add_routine("install", lambda x: os.system("./install.sh"))
+@licant.routine
+def install():
+	os.execute("sudo avrdude -P/dev/ttyUSB0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")
 
-licant.ex(default = "main")
+licant.ex(default = "firmware")

@@ -12,6 +12,7 @@ namespace board {
 
 void board_init() {
 	arch_init();
+	systime::frequency = 16000000 / 256 / 64;
 
 	board::led.mode(genos::hal::gpio::output);
 	board::led.set();

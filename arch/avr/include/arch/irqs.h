@@ -6,6 +6,8 @@
 
 namespace arch {
 	namespace irqs {
+		using save_t = uint8_t;
+
 		static inline void enable(void) {
 			sei();
 		}
