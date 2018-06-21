@@ -7,8 +7,8 @@ module ("genos", include_paths = "./src", sources = ["src/genos/systime.cpp"] )
 module ("genos.include", include_paths = "./src" )
 
 module ("genos.irqtbl", 	sources = [ "src/genos/hal/irqtbl.cpp" ] )
-module ("genos.tasklet", 	sources = [ "src/genos/tasklet.cpp" ] )
-module ("genos.timer", 		sources = [ "src/genos/timer.cpp" ] )
+module ("genos.tasklet", 	sources = [ "src/genos/sched/tasklet.cpp" ] )
+module ("genos.timer", 		sources = [ "src/genos/sched/timer.cpp" ] )
 module ("genos.schedee",	sources = [ "src/genos/sched/schedee.cpp" ] )
 
 module ("genos.atomic", impl = "irqs", sources = [ "src/genos/impls/atomic_section_irqs.cpp" ] )

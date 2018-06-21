@@ -2,9 +2,9 @@
 #define GENOS_TIMER_H
 
 #include <gxx/util/setget.h>
-#include <gxx/dlist.h>
+#include <gxx/container/dlist.h>
 #include <gxx/event/delegate.h>
-#include <genos/sysclock.h>
+#include <genos/systime.h>
 
 namespace genos {
 	class timer {
@@ -12,8 +12,8 @@ namespace genos {
 		dlist_head lnk;
 		gxx::action dlg;
 
-		genos::sysclock::time_t start;
-		genos::sysclock::time_t interval;
+		systime::time_t start;
+		systime::time_t interval;
 		bool m_autorepeat;
 
 		bool check() { return check(systime::millis()); };
@@ -22,8 +22,8 @@ namespace genos {
 		uint32_t final() { return start + interval; }
 		void swift() { start += interval; }
 
-		timer(gxx::action dlg, genos::sysclock::time_t interval, genos::sysclock::time_t start) : dlg(dlg), start(start), interval(interval) {}
-		timer(gxx::action dlg, genos::sysclock::time_t interval) : dlg(dlg), start(systime::millis()), interval(interval) {}
+		timer(gxx::action dlg, systime::time_t interval, systime::time_t start) : dlg(dlg), start(start), interval(interval) {}
+		timer(gxx::action dlg, systime::time_t interval) : dlg(dlg), start(systime::millis()), interval(interval) {}
 
 		void plan();
 		void unbind();

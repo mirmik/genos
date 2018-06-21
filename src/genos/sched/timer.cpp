@@ -1,4 +1,4 @@
-#include <genos/timer.h>
+#include <genos/sched/timer.h>
 
 namespace genos {
 	timer_manager_class timer_manager;
@@ -30,7 +30,7 @@ void genos::timer_manager_class::unbind(genos::timer& tim) {
 }
 
 void genos::timer_manager_class::execute() {
-	auto now = sysclock.jiffies();
+	auto now = systime::now();
 	
 	while(!planed_list.empty()) {
 		genos::timer& timer = *planed_list.begin();

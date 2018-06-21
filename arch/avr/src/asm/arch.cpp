@@ -47,7 +47,7 @@ void arch_init() {
 	usart0_diag.write = diag_write_stub;
 	current_diag_ops = &usart0_diag;
 	usart0_diag_init();
-
+	
 	genos::hal::irqtbl::set_handler(timer0.irqs.ovf, gxx::make_fastaction(systime::system_tick));
 	tc_8bit_interruptOverflowEnable(&timer0, 1);
 	tc_8bit_divider(&timer0, 64);

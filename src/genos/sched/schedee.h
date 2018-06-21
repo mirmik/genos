@@ -1,8 +1,10 @@
 #ifndef GENOS_SCHED_H
 #define GENOS_SCHED_H
 
-#include <gxx/dlist.h>
-#include <genos/atomic.h>
+#include <gxx/container/dlist.h>
+//#include <genos/atomic.h>
+#include <gxx/syslock.h>
+#include <assert.h>
 
 #define PRIORITY_TOTAL 3
 
@@ -97,7 +99,8 @@ namespace genos {
 				fsch.finalize();
 			}
 		
-			atomic_section_enter();
+			//atomic_section_enter();
+			gxx::system_lock();
 
 			schedee* sch;
 			for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++) {
@@ -107,14 +110,14 @@ namespace genos {
 					runlist[priolvl].move_back(*sch);
 					current_schedee = sch;
 
-					atomic_section_leave();
+					gxx::system_unlock();
 					sch->execute();
 					return;
 				
 				}
 			}
 
-			atomic_section_leave();
+			gxx::system_unlock();
 
 			//Nobody to run
 			return;

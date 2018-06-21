@@ -1,12 +1,11 @@
 #include <genos/systime.h>
+#include <gxx/debug/dprint.h>
 
 static volatile uint64_t __jiffies;
 uint32_t systime::frequency;
 
 //void systime::system_tick() __attribute__((weak));
-void systime::system_tick() {
-	++__jiffies;
-}
+void systime::system_tick() { ++__jiffies; }
 
 ///jiffies
 systime::time_t systime::now() { return __jiffies; }
@@ -19,7 +18,7 @@ systime::time_t systime::microseconds(uint64_t ms) { return ms * frequency / 100
 */
 
 systime::time_t systime::millis() {
-	return __jiffies / systime::frequency * 1000;
+	return __jiffies * 1000 / systime::frequency;
 }
 
 void systime::delay(double d) {
