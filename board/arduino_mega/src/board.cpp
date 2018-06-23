@@ -1,7 +1,7 @@
 #include <genos/hal/board.h>
 #include <arch/irqs.h>
 
-#include <genos/systime.h>
+#include <genos/time/systime.h>
 #include <gxx/debug/dprint.h>
 
 namespace board {

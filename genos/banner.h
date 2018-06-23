@@ -3,7 +3,7 @@
 
 #include <genos/iolib.h>
 
-#define GENOS_VERSION "0.9.2"	
+#define GENOS_VERSION "0.10.1"	
 
 namespace genos {
 

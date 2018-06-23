@@ -10,7 +10,7 @@
 
 #include <periph/timer_device.h>
 
-#include <genos/systime.h>
+#include <genos/time/systime.h>
 
 __BEGIN_DECLS
 int usart0_diag_init();

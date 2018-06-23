@@ -1,17 +1,21 @@
 from licant.modules import module, submodule
 
 module("genos.hal.avr.common",
+	srcdir = "src",
+
 	sources = [
-		"src/asm/arch.cpp",
-		"src/asm/diag.c",
-		#"src/asm/systime.cpp",
+		"start.S",
+		"vectors.S",
+		"irqcall.S",
 
-		"src/drivers/gpio.c",
-		"src/drivers/timer.c",
-		#"src/drivers/usart.c",
+		"end_of_programm.c",
 
-		"src/asm/atmega/*"
+		"arch.cpp",
+		"diag.c",
+		#"periph/gpio.c",
+		"periph/timer.c",
 	],
+
 	include_paths = ["include"]
 )
 

@@ -1,4 +1,4 @@
-#include "drivers/gpio.h"
+#include <genos/drivers/gpio.h>
 #include <gxx/debug/dprint.h>
 
 inline void gpio_set_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {

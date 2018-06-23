@@ -3,15 +3,15 @@ from licant.modules import module
 scriptq.execute_recursive("arch", ".g.py")
 scriptq.execute_recursive("board", ".g.py")
 
-module ("genos", include_paths = "./src", sources = ["src/genos/systime.cpp"] )
-module ("genos.include", include_paths = "./src" )
+module ("genos", include_paths = [".", "src"], sources = [ "genos/time/systime.cpp" ] )
+module ("genos.include", include_paths = [".", "src"] )
 
-module ("genos.irqtbl", 	sources = [ "src/genos/hal/irqtbl.cpp" ] )
-module ("genos.tasklet", 	sources = [ "src/genos/sched/tasklet.cpp" ] )
-module ("genos.timer", 		sources = [ "src/genos/sched/timer.cpp" ] )
-module ("genos.schedee",	sources = [ "src/genos/sched/schedee.cpp" ] )
+module ("genos.irqtbl", sources = [ "genos/hal/irqtbl.cpp" ] )
+module ("genos.tasklet", srcdir="genos/sched/src", sources = [ "tasklet.cpp" ] )
+module ("genos.timer", srcdir="genos/sched/src", sources = [ "timer.cpp" ] )
+module ("genos.schedee", srcdir="genos/sched/src", sources = [ "schedee.cpp", "action.cpp" ] )
 
-module ("genos.atomic", impl = "irqs", sources = [ "src/genos/impls/atomic_section_irqs.cpp" ] )
-module ("genos.atomic", impl = "mutex", sources = [ "src/genos/impls/atomic_section_mutex.cpp" ] )
+#module ("genos.atomic", impl = "irqs", sources = [ "genos/impls/atomic_section_irqs.cpp" ] )
+#module ("genos.atomic", impl = "mutex", sources = [ "genos/impls/atomic_section_mutex.cpp" ] )
 
 module("genos.malloc", "lin", sources = ["src/mem/lin_malloc.c", "src/mem/lin_realloc.c"] )

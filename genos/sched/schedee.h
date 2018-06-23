@@ -20,10 +20,24 @@ namespace genos {
 		dlist_head lnk;
 		uint8_t prio = 0;
 		uint8_t state;
+		bool detached;
 
 		virtual void finalize() = 0;
 		virtual void execute() = 0;
 		virtual void displace() = 0;
+	};
+
+	class schedee_ptr {		
+	public:
+		schedee_ptr(const schedee_ptr&) = delete;
+		schedee_ptr(schedee_ptr&&) = default;
+		schedee_ptr(schedee* sch) : sch(sch) {}
+		~schedee_ptr() { if (sch) sch->detached = true; }
+		void detach() { sch->detached = true; sch = nullptr; }
+		schedee* operator->() { return sch; }
+
+	private:
+		schedee* sch;
 	};
 
 	class schedee_manager_class {
@@ -49,10 +63,18 @@ namespace genos {
 			return total;
 		}
 
-		void final(schedee& sch) {
-			assert(sch.state != SCHEDEE_STATE_FINAL);
-			sch.state = SCHEDEE_STATE_FINAL;
-			finallist.move_back(sch);
+		void final(schedee& sch) 
+		{
+			if (sch.detached) 
+			{
+				sch.state = SCHEDEE_STATE_FINAL;
+				finallist.move_back(sch);
+			}
+			else 
+			{
+				sch.state = SCHEDEE_STATE_ZOMBIE;
+				zombielist.move_back(sch);
+			}
 		}
 
 		void zombie(schedee& sch) {
@@ -113,7 +135,6 @@ namespace genos {
 					gxx::system_unlock();
 					sch->execute();
 					return;
-				
 				}
 			}
 
