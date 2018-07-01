@@ -143,6 +143,7 @@ namespace genos {
 			//Nobody to run
 			return;
 		}
+		void exec() { execute(); }
 	};
 
 	extern genos::schedee_manager_class schedee_manager;

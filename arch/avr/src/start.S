@@ -67,8 +67,8 @@ __start:
 	
 	/* Copy initial global data values from FLASH into RAM */
 
-	.global	__do_copy_data;			/* Required to suppress dragging in logic from libgcc */
-__do_copy_data:
+#	.global	__do_copy_data;			/* Required to suppress dragging in logic from libgcc */
+#__do_copy_data:
 
 #ifdef HAVE_RAMPZ
 	ldi		r17, hi8(_edata)
@@ -108,8 +108,8 @@ __do_copy_data:
 
 	/* Clear uninitialized data */
 
-	.global	__do_clear_bss;			/* Required to suppress dragging in logic from libgcc */
-__do_clear_bss:
+#	.global	__do_clear_bss;			/* Required to suppress dragging in logic from libgcc */
+#__do_clear_bss:
 
 	ldi		r17, hi8(_ebss)
 	ldi		r26, lo8(_sbss)
@@ -128,8 +128,8 @@ __do_clear_bss:
 
 	/* Call global ctors */
 
-.global __do_global_constructors
-__do_global_constructors:
+#.global __do_global_constructors
+#__do_global_constructors:
 	ldi		r30, lo8(_ctors_start)
 	ldi		r31, hi8(_ctors_start)
 	ldi		r18, hi8(_ctors_end)

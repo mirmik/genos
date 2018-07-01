@@ -33,11 +33,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mem/lin_malloc.h>
+#include <gxx/syslock.h>
 //#include "sectionname.h"
 //#include "stdlib_private.h"
 
 extern char *__brkval;
 extern struct __freelist *__flp;
+
+static gxx::syslock lock;
+
+extern "C" void * realloc(void *ptr, size_t len) __attribute__((used));
 
 //ATTRIBUTE_CLIB_SECTION
 void *

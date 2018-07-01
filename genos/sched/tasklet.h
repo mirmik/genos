@@ -22,6 +22,7 @@ namespace genos {
 	public:
 		void plan(tasklet& tsklt);
 		void execute();
+		void exec() { execute(); }
 	};
 
 	extern genos::tasklet_manager_class tasklet_manager;

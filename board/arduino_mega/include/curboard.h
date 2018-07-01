@@ -7,7 +7,7 @@
 #include <genos/hal/gpio.h>
 
 #include <arch/gpio.h>
-#include <arch/uart.h>
+#include <arch/usart.h>
 //#include <arch/i2c.h>
 
 namespace board {

@@ -1,88 +1,22 @@
 #ifndef GENOS_DRIVER_UARTRING_H
 #define GENOS_DRIVER_UARTRING_H
 
-#include <genos/atomic.h>
 #include <gxx/event/flag.h>
 #include <gxx/io/iostorage.h>
 #include <gxx/bytering.h>
 #include <genos/hal/uart.h>
 
 namespace drivers {
-
-	/*class uartring_ostream : public gxx::io::ostream {
-		hal::uart* uart;
-		gxx::bytering ring;
-
-	public:
-		uartring_ostream(hal::uart* uart, gxx::buffer buf) : uart(uart), ring(buf) {}
-
-		void init() {
-			uart->set_tx_irq_handler(gxx::fastaction(&uartring_ostream::tx_handler, this));
-		}
-
-	protected:
-		int writeData(const char* dat, size_t sz) {
-			if (uart->avail() && ring.empty()) {
-				uart->sendbyte(*dat++);
-				--sz;
-			}
-
-			while(sz) {
-				int ret = ring.push(dat, sz);
-				sz -= ret;
-				dat += ret;
-			}
-
-			uart->enable_tx_irq(true);
-		}
-
-		void tx_handler() {
-			uart->sendbyte(ring.pop());
-			if (ring.empty()) uart->enable_tx_irq(false);
-		}
-	};
-
-
-	class uartring_istorage : public gxx::io::istorage {
-		hal::uart* uart;
-		gxx::bytering ring;
-		gxx::once_delegate_flag flag;
-
-	public:
-		uartring_istorage(hal::uart* uart, gxx::buffer buf) : uart(uart), ring(buf) {}
-
-		void init() {
-			uart->set_rx_irq_handler(gxx::fastaction(&uartring_istorage::rx_handler, this));
-			uart->enable_rx_irq(true);
-		}
-
-		int avail() { return ring.avail(); }
-		void set_avail_callback(gxx::action dlg) { flag.event(dlg); }
-	protected:
-		int readData(char* dat, size_t sz) {
-			int ret = ring.popn(dat, sz);
-			if (ring.empty()) flag.clr();
-			return ret;
-		}
-
-		void rx_handler() {
-			int c = uart->recvbyte();
-			ring.push(c);
-			flag.set();
-		}
-	};*/
-
-
 	class uartring : public gxx::io::ostream, public gxx::io::istorage {
-		hal::uart* uart;
+		genos::hal::uart* uart;
 		gxx::bytering rxring;
 		gxx::bytering txring;
 	public:
 		gxx::event::action_flag rx_avail_flag;
 		gxx::event::action_flag tx_empty_flag;
 
-		uartring(hal::uart* uart, gxx::buffer buf, gxx::buffer ibuf) : uart(uart), txring(buf), rxring(ibuf) {}
-		uartring(hal::uart* uart, int len, int ilen) : uart(uart), txring(gxx::allocate_buffer(len)), rxring(gxx::allocate_buffer(ilen)) {}
+		uartring(genos::hal::uart* uart, gxx::buffer buf, gxx::buffer ibuf) : uart(uart), txring(buf), rxring(ibuf) {}
+		uartring(genos::hal::uart* uart, int len, int ilen) : uart(uart), txring(gxx::allocate_buffer(len)), rxring(gxx::allocate_buffer(ilen)) {}
 
 		void init() {
 			uart->set_tx_irq_handler(gxx::fastaction(&uartring::tx_handler, this));
@@ -95,15 +29,15 @@ namespace drivers {
 	protected:
 		int readData(char* dat, size_t sz) {
 			//dprln(rxring.avail());
-			atomic_section_enter();
+			gxx::system_lock();
 			int ret = rxring.popn(dat, sz);
-			if (rxring.empty()) avail_flag.clr();
-			atomic_section_leave();
+			if (rxring.empty()) rx_avail_flag.clr();
+			gxx::system_unlock();
 			return ret;
 		}
 
 		int writeData(const char* dat, size_t sz) {
-			atomic_section_enter();
+			gxx::system_lock();
 			if (uart->avail() && txring.empty()) {
 				uart->sendbyte(*dat++);
 				--sz;
@@ -116,13 +50,13 @@ namespace drivers {
 			}
 
 			uart->enable_tx_irq(true);
-			atomic_section_leave();
+			gxx::system_unlock();
 		}
 
 		void rx_handler() {
 			int c = uart->recvbyte();
 			rxring.push(c);
-			avail_flag.set();
+			rx_avail_flag.set();
 		}
 
 		void tx_handler() {

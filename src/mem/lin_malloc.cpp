@@ -33,8 +33,10 @@
  
 /* $Id: malloc.c 2149 2010-06-09 20:45:37Z joerg_wunsch $ */
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <mem/lin_malloc.h>
+#include <gxx/syslock.h>
+#include <memory>
 //#include "sectionname.h"
 //#include "stdlib_private.h"
 
@@ -51,6 +53,8 @@
  
 /* May be changed by the user only before the first malloc() call.  */
 
+static gxx::syslock lock;
+
 extern char _heap_start;
 
 //size_t __malloc_margin = 32;
@@ -60,10 +64,13 @@ char *__malloc_heap_start = &_heap_start;
 char *__brkval;
 struct __freelist *__flp;
 
+extern "C" void * malloc(size_t len) __attribute__((used));
 //ATTRIBUTE_CLIB_SECTION
 void *
 malloc(size_t len)
 {
+	std::lock_guard<gxx::syslock> lguard(lock);
+
 	struct __freelist *fp1, *fp2, *sfp1, *sfp2;
 	char *cp;
 	size_t s, avail;
@@ -183,9 +190,13 @@ malloc(size_t len)
 
 
 //ATTRIBUTE_CLIB_SECTION
+extern "C" void free(void *p) __attribute__((used));
+
 void
 free(void *p)
 {
+	std::lock_guard<gxx::syslock> lguard(lock);
+
 	struct __freelist *fp1, *fp2, *fpnew;
 	char *cp1, *cp2, *cpnew;
 
@@ -193,7 +204,7 @@ free(void *p)
 	if (p == 0)
 		return;
 
-	cpnew = p;
+	cpnew = (char*)p;
 	cpnew -= sizeof(size_t);
 	fpnew = (struct __freelist *)cpnew;
 	fpnew->nx = 0;

@@ -33,6 +33,7 @@ namespace genos {
 		void plan(timer_tasklet& tsklt);
 		void unbind(timer_tasklet& tsklt);
 		void execute();
+		void exec() { execute(); }
 	};
 
 	extern timer_manager_class timer_manager;

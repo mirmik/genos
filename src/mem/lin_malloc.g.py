@@ -1,3 +1,3 @@
 module("genos.malloc", "lin",
-	sources = ["malloc.c", "realloc.c"]
+	sources = ["malloc.cpp", "realloc.cpp"]
 )

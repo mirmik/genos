@@ -14,4 +14,4 @@ module ("genos.schedee", srcdir="genos/sched/src", sources = [ "schedee.cpp", "a
 #module ("genos.atomic", impl = "irqs", sources = [ "genos/impls/atomic_section_irqs.cpp" ] )
 #module ("genos.atomic", impl = "mutex", sources = [ "genos/impls/atomic_section_mutex.cpp" ] )
 
-module("genos.malloc", "lin", sources = ["src/mem/lin_malloc.c", "src/mem/lin_realloc.c"] )
+module("genos.malloc", "lin", sources = ["src/mem/lin_malloc.cpp", "src/mem/lin_realloc.cpp"] )

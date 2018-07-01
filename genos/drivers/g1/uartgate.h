@@ -36,8 +36,10 @@ namespace genos {
 		}
 
 		void init_recv() {
+			gxx::system_lock();
 			rpack = (g1::packet*) malloc(128 + sizeof(g1::packet) - sizeof(g1::packet_header));
 			recver.init(gxx::buffer((char*)&rpack->header, 128));
+			gxx::system_unlock();
 		}
 
 		void do_send(g1::packet* pack) {
@@ -57,15 +59,13 @@ namespace genos {
 		void send(g1::packet* pack) override {
 			gxx::system_lock();
 			bool b = insend == nullptr && to_send.empty();
-			gxx::system_unlock();
 			if (b) {
 				do_send(pack);
 			}
 			else {
-				gxx::system_lock();
 				to_send.move_back(*pack);
-				gxx::system_unlock();
 			}
+			gxx::system_unlock();
 		}
 
 		void rx_handler() {
@@ -75,7 +75,9 @@ namespace genos {
 		}
 
 		void handler(gxx::buffer) {
+			gxx::system_lock();
 			g1::packet* block = (g1::packet*)realloc(rpack, rpack->header.flen + sizeof(g1::packet) - sizeof(g1::packet_header));
+			gxx::system_unlock();
 			init_recv();
 
 			block->revert_stage(id);
