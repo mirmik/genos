@@ -6,4 +6,6 @@ namespace genos {
 	void displace();
 }
 
+extern "C" void __displace__();
+
 #endif

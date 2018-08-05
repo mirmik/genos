@@ -48,6 +48,7 @@ namespace genos {
 		schedee_list finallist;
 		schedee_list zombielist;
 
+	public:
 		schedee* current_schedee = nullptr;
 
 	public:

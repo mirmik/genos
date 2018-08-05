@@ -48,9 +48,9 @@ namespace arch {
 		gxx::delegate<void> operation_finish_handler;
 
 		enum Type {
-			i2c_sawp = 0b000,
-			i2c_sarp = 0b001,
-			i2c_sawsarp = 0b010,
+			i2c_sawp = 0b00,
+			i2c_sarp = 0b01,
+			i2c_sawsarp = 0b10,
 		};
 
 		//static constexpr uint8_t TYPEMASK = 0b00000111;
@@ -66,9 +66,10 @@ namespace arch {
 		union {
 			uint8_t flags;
 			struct {
-				uint8_t type : 3;
+				uint8_t type : 2;
 				uint8_t ERR_BF : 1;
 				uint8_t ERR_NA : 1;
+				uint8_t ERR_NK : 1;
 				uint8_t slave_mode:1;
 			};
 		};
@@ -211,20 +212,16 @@ namespace arch {
 							TWCR = 0<<TWSTA|0<<TWSTO|1<<TWINT|slave_mode<<TWEA|1<<TWEN|1<<TWIE;  	// Go!
 						}
 					}	 
+					break;
 				}
-				break;
+				
+				case 0x30: { //Байт ушел, но получили NACK причин две. 1я передача оборвана слейвом и так надо. 2я слейв сглючил.
+					ERR_NK = 1;				// Запишем статус ошибки. Хотя это не факт, что ошибка. 
+					TWCR = 0<<TWSTA|1<<TWSTO|1<<TWINT|slave_mode<<TWEA|1<<TWEN|1<<TWIE;	// Шлем Stop
+					error_handler(); // Отрабатываем событие выхода
+					break;
+				}
 			/*
-				case 0x30:	//Байт ушел, но получили NACK причин две. 1я передача оборвана слейвом и так надо. 2я слейв сглючил.
-						{
-						i2c_Do |= i2c_ERR_NK;				// Запишем статус ошибки. Хотя это не факт, что ошибка. 
-			
-						TWCR = 0<<TWSTA|1<<TWSTO|1<<TWINT|slave_mode<<TWEA|1<<TWEN|1<<TWIE;		// Шлем Stop
-			
-						MACRO_i2c_WhatDo_MasterOut													// Отрабатываем событие выхода
-			
-						break;
-						}
-			
 				case 0x38:	//  Коллизия на шине. Нашелся кто то поглавней
 						{
 						i2c_Do |= i2c_ERR_LP;			// Ставим ошибку потери приоритета

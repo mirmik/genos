@@ -1,4 +1,5 @@
 #include <genos/hal/subst.h>
+#include <string.h>
 #include <gxx/debug/dprint.h>
 
 void context_print(struct context* ctx)
@@ -40,8 +41,8 @@ void context_print(struct context* ctx)
 	debug_print("sreg:\t\t");debug_printhex_uint8(ctx->control);dln();
 };
 
-void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param, uint8_t irqen)
-{
+void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param, uint8_t irqen) {
+	memset(ctx, 0, sizeof(struct context));
 	ctx->regs[1] = 0;
 	ctx->control = irqen ? 0x80 : 0;
 	ctx->sp = stck;

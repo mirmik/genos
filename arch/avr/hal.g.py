@@ -8,6 +8,9 @@ module("genos.hal.avr.common",
 		"vectors.S",
 		"irqcall.S",
 
+		"switch_context.S",
+		"context.c",
+
 		"end_of_programm.c",
 
 		"arch.cpp",

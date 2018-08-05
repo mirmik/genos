@@ -1,7 +1,7 @@
 #ifndef GENOS_ACTION_IMPL_H
+#define GENOS_ACTION_IMPL_H
 
 #include <genos/sched/schedee.h>
-#include <genos/sched/action.h>
 
 namespace genos {
 	class action_schedee : public schedee {

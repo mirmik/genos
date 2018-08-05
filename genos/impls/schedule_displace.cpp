@@ -1,7 +1,20 @@
 #include <genos/schedule.h>
-#include <arch/stack.h>
+#include <genos/sched/schedee.h>
+#include <genos/sched/impl/process.h>
+#include <asm/startup.h>
 
 void genos::displace() {
+	//dprln("genos::displace");
+	genos::schedee_manager.current_schedee->displace();
+}
+
+extern "C" void __displace__() {
+	//dprln("__displace__");
 	RESET_STACK(); 
-	genos::schedule();
+
+	//context_print(&((genos::process_schedee*)genos::schedee_manager.current_schedee)->cntxt);
+
+	//while(1);
+
+	genos::schedule();	
 }

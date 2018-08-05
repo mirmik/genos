@@ -145,8 +145,10 @@ ldd r0, Y+32+0
 push r0
 ldd r0, Y+32+1 
 push r0
-ldi r16, 0x00
-push r16
+
+//TODO: RAMPZ???
+//ldi r16, 0x00
+//push r16
 
 ld r0, y+ 		; regs
 ld r1, y+
@@ -196,9 +198,9 @@ ret
 
 
 
-.global __schedule__
-.global context_save_and_invoke_schedule
-context_save_and_invoke_schedule:
+.global __displace__
+.global context_save_and_invoke_displace
+context_save_and_invoke_displace:
 
 push r28
 push r29
@@ -243,9 +245,11 @@ st y+, r27
 st y+, r30
 st y+, r31
 
-pop r0 		; pc counter
+//TODO: RAMPZ?
+//pop r0 		; pc counter
 pop r16
 pop r0
+
 st y+, r0
 st y+, r16
 
@@ -257,4 +261,11 @@ st y+, r0
 in r0, AVR_STATUS_ADDR
 st y+, r0
 
-jmp __schedule__
+jmp __displace__
+
+
+.global genos_context_displace
+genos_context_displace:
+
+call context_save_and_invoke_displace
+ret

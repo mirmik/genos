@@ -5,6 +5,7 @@
 
 #define STACKBASE (RAMEND)
 #define RESET_STACK() SP = STACKBASE
+#define SET_STACK_POINTER(arg) SP = arg
 
 #if defined(CHIP_ATMEGA2560)
 #	define HAVE_RAMPZ
