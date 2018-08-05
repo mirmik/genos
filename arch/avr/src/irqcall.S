@@ -1,7 +1,6 @@
 #include "periph/irqdefs.h"
 #include "excptmacros.h"
 
-
 /********************************************************************************************
  * External Symbols
  ********************************************************************************************/
@@ -141,6 +140,32 @@
 	HANDLER	atmega_u3rx, ATMEGA_IRQ_U3RX, excpt_common					/* 0x006C USART1 RX USART3 Rx Complete */
 	HANDLER	atmega_u3dre, ATMEGA_IRQ_U3DRE, excpt_common				/* 0x006E USART1 UDRE USART3 Data Register Empty */
 	HANDLER	atmega_u3tx, ATMEGA_IRQ_U3TX, excpt_common					/* 0x0070 USART1 TX USART3 Tx Complete */
+#elif defined(CHIP_ATMEGA328P)
+	HANDLER	atmega_int0,		ATMEGA_IRQ_INT0 	  , excpt_common /* 0x0002 INT0 External Interrupt Request 0 */
+	HANDLER	atmega_int1,		ATMEGA_IRQ_INT1 	  , excpt_common /* 0x0004 INT1 External Interrupt Request 1 */
+	HANDLER	atmega_pcint0,		ATMEGA_IRQ_PCINT0 	  , excpt_common /* 0x0006 PCINT0 Pin Change Interrupt Req 0 */
+	HANDLER	atmega_pcint1,		ATMEGA_IRQ_PCINT1 	  , excpt_common /* 0x0008 PCINT1 Pin Change Interrupt Req 1 */
+	HANDLER	atmega_pcint2,		ATMEGA_IRQ_PCINT2 	  , excpt_common /* 0x000A PCINT2 Pin Change Interrupt Req 2 */
+	HANDLER	atmega_wdt,			ATMEGA_IRQ_WDT	 	  , excpt_common /* 0x000C WDT Watchdog Time-out Interrupt */
+	HANDLER	atmega_tim2_compa,	ATMEGA_IRQ_TIM2_COMPA , excpt_common /* 0x000E TIMER2 COMPA Timer/Counter2 Compare Match A */
+	HANDLER	atmega_tim2_compb,	ATMEGA_IRQ_TIM2_COMPB , excpt_common /* 0x0010 TIMER2 COMPB Timer/Counter2 Compare Match B */
+	HANDLER	atmega_tim2_ovf,	ATMEGA_IRQ_TIM2_OVF   , excpt_common /* 0x0012 TIMER2 OVF Timer/Counter2 Overflow */
+	HANDLER	atmega_tim1_capt,	ATMEGA_IRQ_TIM1_CAPT  , excpt_common /* 0x0014 TIMER1 CAPT Timer/Counter1 Capture Event */
+	HANDLER	atmega_tim1_compa,	ATMEGA_IRQ_TIM1_COMPA , excpt_common /* 0x0016 TIMER1 COMPA Timer/Counter1 Compare Match A */
+	HANDLER	atmega_tim1_compb,	ATMEGA_IRQ_TIM1_COMPB , excpt_common /* 0x0018 TIMER1 COMPB Timer/Counter1 Compare Match B */
+	HANDLER	atmega_tim1_ovf,	ATMEGA_IRQ_TIM1_OVF   , excpt_common /* 0x001A TIMER1 OVF Timer/Counter1 Overflow */
+	HANDLER	atmega_tim0_compa,	ATMEGA_IRQ_TIM0_COMPA , excpt_common /* 0x001C TIMER0 COMPA Timer/Counter0 Compare Match A */
+	HANDLER	atmega_tim0_compb,	ATMEGA_IRQ_TIM0_COMPB , excpt_common /* 0x001E TIMER0 COMPB Timer/Counter0 Compare match B */
+	HANDLER	atmega_tim0_ovf,	ATMEGA_IRQ_TIM0_OVF   , excpt_common /* 0x0020 TIMER0 OVF Timer/Counter0 Overflow */
+	HANDLER	atmega_spi_stc,		ATMEGA_IRQ_SPI_STC    , excpt_common /* 0x0022 SPI, STC SPI Serial Transfer Complete */
+	HANDLER	atmega_u0rx,		ATMEGA_IRQ_U0RX       , excpt_common /* 0x0024 USART0 RX USART0 Rx Complete */
+	HANDLER	atmega_u0dre,		ATMEGA_IRQ_U0DRE      , excpt_common /* 0x0026 USART0 UDRE USART0 Data Register Empty */
+	HANDLER	atmega_u0tx,		ATMEGA_IRQ_U0TX       , excpt_common /* 0x0028 USART0 TX USART0 Tx Complete */
+	HANDLER	atmega_adc,			ATMEGA_IRQ_ADC        , excpt_common /* 0x002A ADC ADC Conversion Complete */
+	HANDLER	atmega_ee_rdy,		ATMEGA_IRQ_EE         , excpt_common /* 0x002C EE READY EEPROM Ready */
+	HANDLER	atmega_ana_comp,	ATMEGA_IRQ_ANACOMP    , excpt_common /* 0x002E ANALOG COMP Analog Comparator */
+	HANDLER	atmega_twi,			ATMEGA_IRQ_TWI        , excpt_common /* 0x0030 TWI 2-wire Serial Interface */
+	HANDLER	atmega_spm_rdy, 	ATMEGA_IRQ_SPMRDY     , excpt_common /* 0x0032 SPM READY Store Program Memory Ready */
 #else
 #  error "Unrecognized chip"
 #endif

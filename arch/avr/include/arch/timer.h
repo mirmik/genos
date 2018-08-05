@@ -1,8 +1,7 @@
-#ifndef GENOS_AVR_TIMER_DEVICE_H
-#define GENOS_AVR_TIMER_DEVICE_H
+#ifndef GENOS_AVR_TIMER_H
+#define GENOS_AVR_TIMER_H
 
 #include <periph/regs/timer.h>
-
 #include <sys/cdefs.h>
 #include <inttypes.h>
 
@@ -22,12 +21,20 @@ struct TimerDevice_16bit {
 	volatile uint8_t* 	timsk;
 };
 
+#if defined (CHIP_ATMEGA2560)
 extern struct TimerDevice_8bit timer0;
 extern struct TimerDevice_8bit timer2;
 extern struct TimerDevice_16bit timer1;
 extern struct TimerDevice_16bit timer3;
 extern struct TimerDevice_16bit timer4;
 extern struct TimerDevice_16bit timer5;
+#elif defined (CHIP_ATMEGA328P)
+extern struct TimerDevice_8bit timer0;
+extern struct TimerDevice_8bit timer2;
+extern struct TimerDevice_16bit timer1;
+#else
+#	error "unrecognized chip"
+#endif
 
 __BEGIN_DECLS
 

@@ -1,4 +1,3 @@
-//#include "genos_configure.h"
 #include <avr/io.h>
 #include <avr/common.h>
 #include <avr/sfr_defs.h>
@@ -7,14 +6,6 @@
  * External Symbols
  ****************************************************************************/
 
-	.global	__start				/* Entry point */
-	.global	_sbss				/* Start of .bss.  Defined by ld.script */
-	.global	_ebss				/* End of .bss.  Defined by ld.script */
-	.global	_sdata				/* Start of .data section in RAM */
-	.global	_edata				/* End of .data section in RAM */
-	.global	_eronly				/* Start of .data section in FLASH */
-	.global	_enoinit			/* End of uninitilized data.  Defined by ld.script */
-	.global	up_lowinit			/* Perform low level initialization */
 	.global	vectortab
 
 #if defined(CHIP_ATMEGA128)
@@ -144,6 +135,32 @@
 	.global	atmega_u3rx			/* 0x006C USART3 RX USART3 Rx Complete */
 	.global	atmega_u3dre		/* 0x006E USART3 UDRE USART3 Data Register Empty */
 	.global	atmega_u3tx			/* 0x0070 USART3 TX USART3 Tx Complete */
+#elif defined(CHIP_ATMEGA328P)
+	.global	atmega_int0			/* 0x0002 INT0 External Interrupt Request 0 */
+	.global	atmega_int1			/* 0x0004 INT1 External Interrupt Request 1 */
+	.global	atmega_pcint0		/* 0x0006 PCINT0 Pin Change Interrupt Req 0 */
+	.global	atmega_pcint1		/* 0x0008 PCINT1 Pin Change Interrupt Req 1 */
+	.global	atmega_pcint2		/* 0x000A PCINT2 Pin Change Interrupt Req 2 */
+	.global	atmega_wdt			/* 0x000C WDT Watchdog Time-out Interrupt */
+	.global	atmega_tim2_compa	/* 0x000E TIMER2 COMPA Timer/Counter2 Compare Match A */
+	.global	atmega_tim2_compb	/* 0x0010 TIMER2 COMPB Timer/Counter2 Compare Match B */
+	.global	atmega_tim2_ovf		/* 0x0012 TIMER2 OVF Timer/Counter2 Overflow */
+	.global	atmega_tim1_capt	/* 0x0014 TIMER1 CAPT Timer/Counter1 Capture Event */
+	.global	atmega_tim1_compa	/* 0x0016 TIMER1 COMPA Timer/Counter1 Compare Match A */
+	.global	atmega_tim1_compb	/* 0x0018 TIMER1 COMPB Timer/Counter1 Compare Match B */
+	.global	atmega_tim1_ovf		/* 0x001A TIMER1 OVF Timer/Counter1 Overflow */
+	.global	atmega_tim0_compa	/* 0x001C TIMER0 COMPA Timer/Counter0 Compare Match A */
+	.global	atmega_tim0_compb	/* 0x001E TIMER0 COMPB Timer/Counter0 Compare match B */
+	.global	atmega_tim0_ovf		/* 0x0020 TIMER0 OVF Timer/Counter0 Overflow */
+	.global	atmega_spi_stc		/* 0x0022 SPI, STC SPI Serial Transfer Complete */
+	.global	atmega_u0rx			/* 0x0024 USART0 RX USART0 Rx Complete */
+	.global	atmega_u0dre		/* 0x0026 USART0 UDRE USART0 Data Register Empty */
+	.global	atmega_u0tx			/* 0x0028 USART0 TX USART0 Tx Complete */
+	.global	atmega_adc			/* 0x002A ADC ADC Conversion Complete */
+	.global	atmega_ee_rdy		/* 0x002C EE READY EEPROM Ready */
+	.global	atmega_ana_comp		/* 0x002E ANALOG COMP Analog Comparator */
+	.global	atmega_twi			/* 0x0030 TWI 2-wire Serial Interface */
+	.global	atmega_spm_rdy		/* 0x0032 SPM READY Store Program Memory Ready */
 #else
 #error "Unrecognized chip"
 #endif
@@ -295,7 +312,33 @@ vectortab:
 	vector	atmega_u3rx			/* 0x006C USART3 RX USART3 Rx Complete */
 	vector	atmega_u3dre		/* 0x006E USART3 UDRE USART3 Data Register Empty */
 	vector	atmega_u3tx			/* 0x0070 USART3 TX USART3 Tx Complete */
+#elif defined(CHIP_ATMEGA328P)
+	vector	atmega_int0			/* 0x0002 INT0 External Interrupt Request 0 */
+	vector	atmega_int1			/* 0x0004 INT1 External Interrupt Request 1 */
+	vector	atmega_pcint0		/* 0x0006 PCINT0 Pin Change Interrupt Req 0 */
+	vector	atmega_pcint1		/* 0x0008 PCINT1 Pin Change Interrupt Req 1 */
+	vector	atmega_pcint2		/* 0x000A PCINT2 Pin Change Interrupt Req 2 */
+	vector	atmega_wdt			/* 0x000C WDT Watchdog Time-out Interrupt */
+	vector	atmega_tim2_compa	/* 0x000E TIMER2 COMPA Timer/Counter2 Compare Match A */
+	vector	atmega_tim2_compb	/* 0x0010 TIMER2 COMPB Timer/Counter2 Compare Match B */
+	vector	atmega_tim2_ovf		/* 0x0012 TIMER2 OVF Timer/Counter2 Overflow */
+	vector	atmega_tim1_capt	/* 0x0014 TIMER1 CAPT Timer/Counter1 Capture Event */
+	vector	atmega_tim1_compa	/* 0x0016 TIMER1 COMPA Timer/Counter1 Compare Match A */
+	vector	atmega_tim1_compb	/* 0x0018 TIMER1 COMPB Timer/Counter1 Compare Match B */
+	vector	atmega_tim1_ovf		/* 0x001A TIMER1 OVF Timer/Counter1 Overflow */
+	vector	atmega_tim0_compa	/* 0x001C TIMER0 COMPA Timer/Counter0 Compare Match A */
+	vector	atmega_tim0_compb	/* 0x001E TIMER0 COMPB Timer/Counter0 Compare match B */
+	vector	atmega_tim0_ovf		/* 0x0020 TIMER0 OVF Timer/Counter0 Overflow */
+	vector	atmega_spi_stc		/* 0x0022 SPI, STC SPI Serial Transfer Complete */
+	vector	atmega_u0rx			/* 0x0024 USART0 RX USART0 Rx Complete */
+	vector	atmega_u0dre		/* 0x0026 USART0 UDRE USART0 Data Register Empty */
+	vector	atmega_u0tx			/* 0x0028 USART0 TX USART0 Tx Complete */
+	vector	atmega_adc			/* 0x002A ADC ADC Conversion Complete */
+	vector	atmega_ee_rdy		/* 0x002C EE READY EEPROM Ready */
+	vector	atmega_ana_comp		/* 0x002E ANALOG COMP Analog Comparator */
+	vector	atmega_twi			/* 0x0030 TWI 2-wire Serial Interface */
+	vector	atmega_spm_rdy		/* 0x0032 SPM READY Store Program Memory Ready */
 #else
-#error "Unrecognized chip"
+#	error "Unrecognized chip"
 #endif
 	.endfunc

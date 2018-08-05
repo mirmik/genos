@@ -14,20 +14,30 @@ module("genos.hal.avr.common",
 		"diag.c",
 		#"periph/gpio.c",
 		"periph/timer.c",
+		"debug_blink.S"
 	],
 
 	include_paths = ["include"]
 )
 
 module("genos.hal", impl = "atmega2560",
-	include_paths = ["atmega2560/include"],
 	include_modules = [submodule("genos.hal.avr.common")],
-	ldscripts = ["atmega2560/ldscripts/flash.ld"],
+	ldscripts = ["ldscripts/atmega2560.ld"],
 
 	defines = ["CHIP_ATMEGA2560"],
-	cxx_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti -mmcu=atmega2560",
-	cc_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -mmcu=atmega2560",
+	cxx_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
+	cc_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
 	ld_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
+)
+
+module("genos.hal", impl = "atmega328p",
+	include_modules = [submodule("genos.hal.avr.common")],
+	ldscripts = ["ldscripts/atmega328p.ld"],
+
+	defines = ["CHIP_ATMEGA328P"],
+	cxx_flags = "-nostdlib -lgcc -lm -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
+	cc_flags = "-nostdlib -lgcc -lm -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	ld_flags = "-nostdlib -lgcc -lm -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
 )
 
 #Module("genos.arch.avr.head", {

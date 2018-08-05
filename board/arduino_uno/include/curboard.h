@@ -11,9 +11,7 @@
 //#include <arch/i2c.h>
 
 namespace board {
-	extern arch::gpio::pin red_led; //GPIOB, 7
-	extern arch::gpio::pin green_led; //GPIOC, 7
-	extern arch::gpio::pin yellow_led; //GPIOC, 6
+	extern arch::gpio::pin led; //GPIOB, 7
 	extern arch::usart usart0;
 	//extern arch::i2c i2c;
 }

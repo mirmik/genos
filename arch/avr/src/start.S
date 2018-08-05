@@ -48,11 +48,16 @@ __start:
 	clr r30
 	clr r31
 
+#ifdef HAVE_EIND
 	/* set EIND to 0, just to be sure we are sane */
 	ldi r16, 0
 	out		_SFR_IO_ADDR(EIND), r16 // EIND = 0x3c
+#endif
+
+#ifdef HAVE_RAMPZ
 	ldi r16, 0
 	out		_SFR_IO_ADDR(RAMPZ), r16
+#endif
 
 	/* Clear the zero register, clear the status register and initialize the
 	 * IDLE thread stack
@@ -60,8 +65,8 @@ __start:
 
 	clr		r1
 	out		_SFR_IO_ADDR(SREG), r1
-	ldi		r28, lo8(STACKBASE)
-	ldi		r29, hi8(STACKBASE)
+	ldi		r28, lo8(RAMEND)
+	ldi		r29, hi8(RAMEND)
 	out		_SFR_IO_ADDR(SPH), r29
 	out		_SFR_IO_ADDR(SPL), r28
 	
@@ -71,12 +76,12 @@ __start:
 #__do_copy_data:
 
 #ifdef HAVE_RAMPZ
-	ldi		r17, hi8(_edata)
-	ldi		r26, lo8(_sdata)
-	ldi		r27, hi8(_sdata)
-	ldi		r30, lo8(_eronly)
-	ldi		r31, hi8(_eronly)
-	ldi		r16, hh8(_eronly)
+	ldi		r17, hi8(__data_end)
+	ldi		r26, lo8(__data_start)
+	ldi		r27, hi8(__data_start)
+	ldi		r30, lo8(_etext)
+	ldi		r31, hi8(_etext)
+	ldi		r16, hh8(_etext)
 	out		_SFR_IO_ADDR(RAMPZ), r16
 	rjmp	.Lcopystart
 
@@ -85,15 +90,15 @@ __start:
 	st		X+, r0
 
 .Lcopystart:
-	cpi		r26, lo8(_edata)
+	cpi		r26, lo8(__data_end)
 	cpc		r27, r17
 	brne	.Lcopyloop
 #else
-	ldi		r17, hi8(_edata)
-	ldi		r26, lo8(_sdata)
-	ldi		r27, hi8(_sdata)
-	ldi		r30, lo8(_eronly)
-	ldi		r31, hi8(_eronly)
+	ldi		r17, hi8(__data_end)
+	ldi		r26, lo8(__data_start)
+	ldi		r27, hi8(__data_start)
+	ldi		r30, lo8(_etext)
+	ldi		r31, hi8(_etext)
 	rjmp	.Lcopystart
 
 .Lcopyloop:
@@ -101,41 +106,41 @@ __start:
 	st		X+, r0
 
 .Lcopystart:
-	cpi		r26, lo8(_edata)
+	cpi		r26, lo8(__data_end)
 	cpc		r27, r17
 	brne	.Lcopyloop
 #endif
 
 	/* Clear uninitialized data */
 
-#	.global	__do_clear_bss;			/* Required to suppress dragging in logic from libgcc */
-#__do_clear_bss:
+.global	__do_clear_bss;			/* Required to suppress dragging in logic from libgcc */
+__do_clear_bss:
 
-	ldi		r17, hi8(_ebss)
-	ldi		r26, lo8(_sbss)
-	ldi		r27, hi8(_sbss)
-	ldi		r16, hh8(_ebss)
-	out		_SFR_IO_ADDR(RAMPZ), r16
+	ldi		r17, hi8(__bss_end)
+	ldi		r26, lo8(__bss_start)
+	ldi		r27, hi8(__bss_start)
 	rjmp	.Lclearstart
 
 .Lclearloop:
 	st		X+, r1
-
+ 
 .Lclearstart:
-	cpi		r26, lo8(_ebss)
+	cpi		r26, lo8(__bss_end)
 	cpc		r27, r17
-	brne	.Lclearloop
+	brne .Lclearloop
 
 	/* Call global ctors */
 
-#.global __do_global_constructors
-#__do_global_constructors:
-	ldi		r30, lo8(_ctors_start)
-	ldi		r31, hi8(_ctors_start)
-	ldi		r18, hi8(_ctors_end)
-	ldi		r16, hh8(_ctors_end)
+.global __do_global_constructors
+__do_global_constructors:
+	ldi		r30, lo8(__ctors_start)
+	ldi		r31, hi8(__ctors_start)
+	ldi		r18, hi8(__ctors_end)
+#ifdef HAVE_RAMPZ
+	ldi		r16, hh8(__ctors_end)
 	out		_SFR_IO_ADDR(RAMPZ), r16
-	
+#endif
+
 	rjmp	.Lctorsstart
 
 .Lctorsloop:
@@ -160,7 +165,7 @@ __start:
 	pop r30
 	
 .Lctorsstart:
-	cpi		r30, lo8(_ctors_end)
+	cpi		r30, lo8(__ctors_end)
 	cpc		r31, r18
 	brne	.Lctorsloop
 

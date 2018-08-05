@@ -1,14 +1,17 @@
-#ifndef GENOS_STARTUP_H
-#define GENOS_STARTUP_H
+#ifndef GENOS_AVR_STARTUP_H
+#define GENOS_AVR_STARTUP_H
 
-#if defined(CHIP_ATMEGA2560)
+#include <avr/io.h>
 
-#define STACKBASE (0x21FF)
+#define STACKBASE (RAMEND)
 #define RESET_STACK() SP = STACKBASE
 
-#define HAVE_RAMPZ 1
+#if defined(CHIP_ATMEGA2560)
+#	define HAVE_RAMPZ
+#	define HAVE_EIND
+#elif defined(CHIP_ATMEGA328P)
 #else 
-#error "unrecognized chip"
+#	error "unrecognized chip"
 #endif
 
 #endif

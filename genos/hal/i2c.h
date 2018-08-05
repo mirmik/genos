@@ -1,9 +1,18 @@
 #ifndef GENOS_HAL_I2C_H
 #define GENOS_HAL_I2C_H
 
-#include <genos/util/twi.h>
 
-namespace hal {
+namespace genos {
+	namespace hal {
+		struct i2c_automate {
+
+		};
+	}
+}
+
+//#include <genos/util/twi.h>
+
+/*namespace hal {
 	class wire {
 		/*enum state : public uint8_t {
 			BusFail = 0x00,
@@ -33,7 +42,7 @@ namespace hal {
 			0xC8 Send Last Byte Re*/
 		//}
 
-		enum status {
+/*		enum status {
 			Ok,
 			Fault,
 		};
@@ -51,6 +60,6 @@ namespace hal {
 
 		void set_request_handler(gxx::delegate<void> dlg);
 	};
-}
+}*/
 
 #endif

@@ -102,9 +102,9 @@ SECTIONS
     	*(.init)
 		*(.handlers)
 
-     	_ctors_start = . ;
+     	__ctors_start = . ;
      	KEEP(SORT(*)(.ctors))
-    	_ctors_end = . ;
+    	__ctors_end = . ;
      	_dtors_start = . ;
      	KEEP(SORT(*)(.dtors))
 		_dtors_end = . ;
@@ -115,26 +115,24 @@ SECTIONS
 		_etext = . ;
 	} > flash
 
-	_eronly = ABSOLUTE(.);
-
 	.data			:
 	{
-		_sdata = ABSOLUTE(.);
+		__data_start = ABSOLUTE(.);
 		KEEP(*(.data))
 		*(.data.*)
 		KEEP(*(.rodata))
 		*(.rodata.*)                
 		*(.gnu.linkonce.d.*)
-		_edata = ABSOLUTE(.);
+		__data_end = ABSOLUTE(.);
 	} > sram AT > flash
 
 	.bss			:
 	{
-		_sbss = ABSOLUTE(.);
+		__bss_start = ABSOLUTE(.);
 		*(.bss .bss.*)
 		*(.gnu.linkonce.b.*)
 		*(COMMON)
-		_ebss = ABSOLUTE(.);
+		__bss_end = ABSOLUTE(.);
 		_heap_start = ABSOLUTE(.);
 	} > sram
 

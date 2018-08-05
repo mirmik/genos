@@ -1,17 +1,16 @@
 #ifndef GENOS_AVR_UART_H
 #define GENOS_AVR_UART_H
 
-#include <avr/io.h>
-
-#include <periph/usart.h>
+#include <periph/regs/usart.h>
 #include <genos/hal/uart.h>
 #include <genos/hal/irqtbl.h>
+
+#include <avr/io.h>
 
 #include <gxx/util/bits.h>
 #include <gxx/event/delegate.h>
 
 namespace arch {
-
 	class usart : public genos::hal::uart {
 		struct usart_regs* regs;
 		int8_t irqbase;
@@ -85,7 +84,7 @@ namespace arch {
 			//bits_mask_assign(regs->ucsr_b, mode, 0b100);
 		}
 
-		usart(struct usart_data data) : regs(data.regs), irqbase(data.irqbase) {}
+		usart(struct usart_regs* regs, int8_t irqbase) : regs(regs), irqbase(irqbase) {}
 	
 		void set_rx_irq_handler(gxx::fastaction handler) override {
 			genos::hal::irqtbl::set_handler(irqbase + 0, handler);
@@ -99,6 +98,16 @@ namespace arch {
 			genos::hal::irqtbl::set_handler(irqbase + 2, handler);
 		}
 	};
+
+/*#if defined (CHIP_ATMEGA2560)
+extern usart usart0(USART0, ATMEGA_IRQ_U0RX);
+extern usart usart1(USART1, ATMEGA_IRQ_U1RX);
+extern usart usart2(USART2, ATMEGA_IRQ_U2RX);
+#elif defined (CHIP_ATMEGA328P)
+extern usart usart0(USART0, ATMEGA_IRQ_U0RX);
+#else 
+#	error "unrecognized chip"
+#endif*/
 }
 
 #endif

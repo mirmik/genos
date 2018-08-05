@@ -148,6 +148,38 @@
 #  define AVR_PC_SIZE            3
 #  define IRQ_CONTEXT_SIZE       38 /* Size of the register state save array (in bytes) */
 
+#elif defined(CHIP_ATMEGA328P)
+
+#  define ATMEGA_IRQ_INT0 		0 /* 0x0002 INT0 External Interrupt Request 0 */
+#  define ATMEGA_IRQ_INT1 		1 /* 0x0004 INT1 External Interrupt Request 1 */
+#  define ATMEGA_IRQ_PCINT0 	2 /* 0x0006 PCINT0 Pin Change Interrupt Req 0 */
+#  define ATMEGA_IRQ_PCINT1 	3 /* 0x0008 PCINT1 Pin Change Interrupt Req 1 */
+#  define ATMEGA_IRQ_PCINT2 	4 /* 0x000A PCINT1 Pin Change Interrupt Req 1 */
+#  define ATMEGA_IRQ_WDT	 	5 /* 0x000C WDT Watchdog Time-out Interrupt */
+#  define ATMEGA_IRQ_TIM2_COMPA 6 /* 0x000E TIMER2 COMPA Timer/Counter2 Compare Match A */
+#  define ATMEGA_IRQ_TIM2_COMPB 7 /* 0x0010 TIMER2 COMPB Timer/Counter2 Compare Match B */
+#  define ATMEGA_IRQ_TIM2_OVF   8 /* 0x0012 TIMER2 OVF Timer/Counter2 Overflow */
+#  define ATMEGA_IRQ_TIM1_CAPT  9 /* 0x0014 TIMER1 CAPT Timer/Counter1 Capture Event */
+#  define ATMEGA_IRQ_TIM1_COMPA 10 /* 0x0016 TIMER2 COMPA Timer/Counter2 Compare Match A */
+#  define ATMEGA_IRQ_TIM1_COMPB 11 /* 0x0018 TIMER2 COMPB Timer/Counter2 Compare Match B */
+#  define ATMEGA_IRQ_TIM1_OVF   12 /* 0x001A TIMER2 OVF Timer/Counter2 Overflow */
+#  define ATMEGA_IRQ_TIM0_COMPA 13 /* 0x001C TIMER2 COMPA Timer/Counter2 Compare Match A */
+#  define ATMEGA_IRQ_TIM0_COMPB 14 /* 0x001E TIMER2 COMPB Timer/Counter2 Compare Match B */
+#  define ATMEGA_IRQ_TIM0_OVF   15 /* 0x0020 TIMER2 OVF Timer/Counter2 Overflow */
+#  define ATMEGA_IRQ_SPI_STC    16 /* 0x0022 SPI, STC SPI Serial Transfer Complete */
+#  define ATMEGA_IRQ_U0RX       17 /* 0x0024 USART0 RX USART0 Rx Complete */
+#  define ATMEGA_IRQ_U0DRE      18 /* 0x0026 USART0 UDRE USART0 Data Register Empty */
+#  define ATMEGA_IRQ_U0TX       19 /* 0x0028 USART0 TX USART0 Tx Complete */
+#  define ATMEGA_IRQ_ADC        20 /* 0x002A ADC Conversion Complete */
+#  define ATMEGA_IRQ_EE         21 /* 0x002C EEPROM Ready */
+#  define ATMEGA_IRQ_ANACOMP    22 /* 0x002E ANALOG COMP Analog Comparator */
+#  define ATMEGA_IRQ_TWI        23 /* 0x0030 TWI Two-wire Serial Interface */
+#  define ATMEGA_IRQ_SPMRDY     24 /* 0x0032 Store Program Memory Ready */
+
+#  define NR_IRQS             25
+//#  define AVR_PC_SIZE         2
+//#  define IRQ_CONTEXT_SIZE    38 /* Size of the register state save array (in bytes) */
+
 #else
   #error "Unrecognized chip"
 #endif

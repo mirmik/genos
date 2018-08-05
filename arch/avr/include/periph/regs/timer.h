@@ -4,7 +4,13 @@
 #include <inttypes.h>
 
 struct timsk_array {
+#if defined (CHIP_ATMEGA2560)
 	volatile uint8_t timsk[5];
+#elif defined (CHIP_ATMEGA328P)
+	volatile uint8_t timsk[2];
+#else 
+#	error "unrecognized chip"
+#endif
 }; 
 
 struct timer_8bit_regs {
@@ -45,13 +51,20 @@ struct timer_16bit_regs {
 #define TIMER_BASE_1 0x80
 #define TIMER_BASE_0 0x44
 
+#if defined (CHIP_ATMEGA2560)
 #define TIMER0 ((struct timer_8bit_regs *)(TIMER_BASE_0))
 #define TIMER2 ((struct timer_8bit_regs *)(TIMER_BASE_2))
-
 #define TIMER1 ((struct timer_16bit_regs *)(TIMER_BASE_1))
 #define TIMER3 ((struct timer_16bit_regs *)(TIMER_BASE_3))
 #define TIMER4 ((struct timer_16bit_regs *)(TIMER_BASE_4))
 #define TIMER5 ((struct timer_16bit_regs *)(TIMER_BASE_5))
+#elif defined (CHIP_ATMEGA328P)
+#define TIMER0 ((struct timer_8bit_regs *)(TIMER_BASE_0))
+#define TIMER2 ((struct timer_8bit_regs *)(TIMER_BASE_2))
+#define TIMER1 ((struct timer_16bit_regs *)(TIMER_BASE_1))
+#else 
+#	error "unrecognized chip"
+#endif
 
 #define TIMSK (((struct timsk_array *)(0x6E)) -> timsk)
 

@@ -1,21 +1,26 @@
-//#include <drivers/timer_counter.h>
 #include <periph/regs/timer.h>
-#include <periph/timer_device.h>
+#include <arch/timer.h>
 #include <periph/irqdefs.h>
 
 #include <gxx/util/bits.h>
 
 #include <assert.h>
-
-
 #include <avr/io.h>
 
+#if defined (CHIP_ATMEGA2560)
 struct TimerDevice_8bit timer0 = {TIMER0, {ATMEGA_IRQ_TIM0_OVF}, &TIMSK[0]};
 struct TimerDevice_8bit timer2 = {TIMER2, {ATMEGA_IRQ_TIM1_OVF}, &TIMSK[1]};
 struct TimerDevice_16bit timer1 = {TIMER1, {ATMEGA_IRQ_TIM2_OVF}, &TIMSK[2]};
 struct TimerDevice_16bit timer3 = {TIMER3, {ATMEGA_IRQ_TIM3_OVF}, &TIMSK[3]};
 struct TimerDevice_16bit timer4 = {TIMER4, {ATMEGA_IRQ_TIM4_OVF}, &TIMSK[4]};
 struct TimerDevice_16bit timer5 = {TIMER5, {ATMEGA_IRQ_TIM5_OVF}, &TIMSK[5]};
+#elif defined (CHIP_ATMEGA328P)
+struct TimerDevice_8bit timer0 = {TIMER0, {ATMEGA_IRQ_TIM0_OVF}, &TIMSK[0]};
+struct TimerDevice_8bit timer2 = {TIMER2, {ATMEGA_IRQ_TIM1_OVF}, &TIMSK[1]};
+struct TimerDevice_16bit timer1 = {TIMER1, {ATMEGA_IRQ_TIM2_OVF}, &TIMSK[2]};
+#else
+#	error "unrecognized chip"
+#endif
 
 uint8_t tc_divider_code(uint16_t divider) {
 	switch (divider) {
