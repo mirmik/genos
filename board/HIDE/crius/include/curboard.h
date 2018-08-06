@@ -2,11 +2,21 @@
 #define CRIUS_BOARD_H
 
 #define RED_LED 13
-#define GREEN_LED 30
-#define YELLOW_LED 31
 
 #include <sys/cdefs.h>
-#include <genos/hal/arch.h>
+#include <genos/hal/gpio.h>
+
+#include <arch/gpio.h>
+#include <arch/usart.h>
+//#include <arch/i2c.h>
+
+namespace board {
+	extern arch::gpio::pin red_led; //GPIOB, 7
+	extern arch::gpio::pin green_led; //GPIOC, 7
+	extern arch::gpio::pin yellow_led; //GPIOC, 6
+	extern arch::usart usart0;
+	//extern arch::i2c i2c;
+}
 
 __BEGIN_DECLS
 

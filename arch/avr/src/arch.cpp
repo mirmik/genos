@@ -27,6 +27,8 @@ void arch_init() {
 	genos::hal::irqtbl::set_handler(timer0.irqs.ovf, gxx::make_fastaction(systime::system_tick));
 	tc_8bit_interruptOverflowEnable(&timer0, 1);
 	tc_8bit_divider(&timer0, 64);
+
+	systime::frequency = F_CPU / 256 / 64;
 	
 //	tc_ovf_int_enable(0, system_tick);
 //	tc_start(0, TIMER_DIVIDER_64);
