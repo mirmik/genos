@@ -1,3 +1,0 @@
-Module ("cxx", {
-	sources = { cc = "__cxa_pure_virtual.c" }
-})

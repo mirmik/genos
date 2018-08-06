@@ -1,6 +1,0 @@
---[[regmodule {
-	name = "devnull",
-	sources = {
-		cxx = {"devnull.cpp"}
-	}
-}]]

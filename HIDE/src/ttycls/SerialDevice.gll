@@ -1,7 +1,0 @@
-Module("genos.kernel.serial", {
-	sources = {
-		cxx = {
-			"SerialDriver.cpp", "UartRingDriver.cpp"
-		} 
-	}
-})

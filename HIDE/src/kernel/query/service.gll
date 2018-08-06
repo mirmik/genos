@@ -1,5 +1,0 @@
-Module("genos.service", {
-	sources = {
-		cxx = "service.cpp"
-	}
-})
