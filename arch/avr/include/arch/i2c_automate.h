@@ -105,7 +105,7 @@ namespace arch {
 			TWBR = ((F_CPU / scl_freq_hz) - 16) / 2;
 			TWSR = 0x00;
 			genos::hal::irqtbl::set_handler(ATMEGA_IRQ_TWI, gxx::fastaction(&i2c_automate::handler, this));
-			dprln("i2c init for master mode with TWBR:", TWBR, "(freq:", (uint32_t)scl_freq_hz, ')');
+			//dprln("i2c init for master mode with TWBR:", TWBR, "(freq:", (uint32_t)scl_freq_hz, ')');
 		}
 
 		void enable() {
@@ -136,8 +136,8 @@ namespace arch {
 		void handler() {
 			uint8_t code = TWSR;
 			
-			dpr("i2c handler "); 
-			dprhexln(code);
+			//dpr("i2c handler "); 
+			//dprhexln(code);
 			
 			switch(code & 0xF8)	{ // Отсекаем биты прескалера
 				case 0x00: {	// Bus Fail (автобус сломался)

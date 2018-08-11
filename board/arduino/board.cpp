@@ -1,11 +1,13 @@
 #include <genos/hal/board.h>
 #include <arch/irqs.h>
+#include <periph/irqdefs.h>
 
 #include <genos/time/systime.h>
 #include <gxx/debug/dprint.h>
 
 namespace board {
 	arch::gpio::pin led(GPIOB, 7);
+	arch::usart usart0(USART0, ATMEGA_IRQ_U0RX);
 }
 
 void board_init() {

@@ -93,7 +93,7 @@ namespace genos {
 			assert(sch.state != SCHEDEE_STATE_WAIT);
 			sch.state = SCHEDEE_STATE_RUN;
 			runlist[sch.prio].move_back(sch);
-			dprln(runlist[sch.prio].size());
+			//dprln(runlist[sch.prio].size());
 		}
 
 		void stop(schedee& sch) {
@@ -160,7 +160,7 @@ namespace genos {
 __BEGIN_DECLS
 
 static inline void genos_schedee_unwait(void* arg) {
-	dprln("HERE");
+	//dprln("HERE");
 	genos::schedee_manager.unwait(* (genos::schedee*) arg, genos::SCHEDEE_STATE_WAIT);
 }
 

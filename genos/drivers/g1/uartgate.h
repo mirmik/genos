@@ -2,14 +2,14 @@
 #define GENOS_DRIVER_G1_UARTGATE_H
 
 #include <genos/hal/uart.h>
-#include <g1/gateway.h>
+#include <crow/gateway.h>
 #include <gxx/gstuff/automate.h>
 #include <gxx/syslock.h>
 
 namespace genos {
-	struct uartgate : public g1::gateway {
-		gxx::dlist<g1::packet, &g1::packet::lnk> to_send;
-		g1::packet* insend;
+	struct uartgate : public crow::gateway {
+		gxx::dlist<crow::packet, &crow::packet::lnk> to_send;
+		crow::packet* insend;
 
 		genos::hal::uart* u;
 
@@ -23,7 +23,7 @@ namespace genos {
 
 		uartgate(genos::hal::uart* u, size_t maxpacksz) : u(u) {}
 
-		g1::packet* rpack = nullptr;
+		crow::packet* rpack = nullptr;
 		gxx::gstuff::automate recver;
 		//uint16_t len;
 
@@ -37,13 +37,13 @@ namespace genos {
 
 		void init_recv() {
 			gxx::system_lock();
-			rpack = (g1::packet*) malloc(128 + sizeof(g1::packet) - sizeof(g1::packet_header));
+			rpack = (crow::packet*) malloc(128 + sizeof(crow::packet) - sizeof(crow::packet_header));
 			recver.init(gxx::buffer((char*)&rpack->header, 128));
 			gxx::system_unlock();
 		}
 
-		void do_send(g1::packet* pack) {
-			gxx::dlist<g1::packet, &g1::packet::lnk>::unbind(*pack);
+		void do_send(crow::packet* pack) {
+			gxx::dlist<crow::packet, &crow::packet::lnk>::unbind(*pack);
 			insend = pack;
 
 			send_ptr = (char*) &pack->header;
@@ -56,7 +56,7 @@ namespace genos {
 			u->enable_tx_irq(true);
 		}
 
-		void send(g1::packet* pack) override {
+		void send(crow::packet* pack) override {
 			gxx::system_lock();
 			bool b = insend == nullptr && to_send.empty();
 			if (b) {
@@ -74,16 +74,16 @@ namespace genos {
 			//debug_putchar(c);
 		}
 
-		void handler(gxx::buffer) {
+		void handler(gxx::buffer /*rpack as arg*/) {
 			gxx::system_lock();
-			g1::packet* block = (g1::packet*)realloc(rpack, rpack->header.flen + sizeof(g1::packet) - sizeof(g1::packet_header));
+			crow::packet* block = (crow::packet*)realloc(rpack, rpack->header.flen + sizeof(crow::packet) - sizeof(crow::packet_header));
 			gxx::system_unlock();
 			init_recv();
 
 			block->revert_stage(id);
 
-			g1::packet_initialization(block, this);
-			g1::travel(block);
+			crow::packet_initialization(block, this);
+			crow::travel(block);
 		}
 
 		void tx_handler() {
@@ -148,7 +148,7 @@ namespace genos {
 				do_send(&*to_send.begin());
 			}
 
-			g1::return_to_tower(tmp, g1::status::Sended);
+			crow::return_to_tower(tmp, crow::status::Sended);
 		}
 	};
 }
