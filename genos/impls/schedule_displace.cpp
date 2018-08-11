@@ -1,7 +1,7 @@
 #include <genos/schedule.h>
 #include <genos/sched/schedee.h>
 #include <genos/sched/impl/process.h>
-#include <asm/startup.h>
+#include <arch/startup.h>
 
 void genos::displace() {
 	//dprln("genos::displace");

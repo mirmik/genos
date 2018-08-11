@@ -1,5 +1,0 @@
-Implementation("genos.pipe", "static", {
-	sources = {
-		cxx = "static_pipe.cpp"
-	}
-})
