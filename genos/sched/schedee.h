@@ -2,6 +2,7 @@
 #define GENOS_SCHED_H
 
 #include <gxx/container/dlist.h>
+#include <gxx/debug/delay.h>
 //#include <genos/atomic.h>
 #include <gxx/syslock.h>
 #include <assert.h>
@@ -19,12 +20,15 @@ namespace genos {
 	public:
 		dlist_head lnk;
 		uint8_t prio = 0;
-		uint8_t state;
+		uint8_t state = SCHEDEE_STATE_STOP;
 		bool detached;
 
 		virtual void finalize() = 0;
 		virtual void execute() = 0;
 		virtual void displace() = 0;
+
+		void unwait(schedee& sch, uint8_t type);
+		void unwait_wstate();
 	};
 
 	class schedee_ptr {		
@@ -41,6 +45,7 @@ namespace genos {
 	};
 
 	class schedee_manager_class {
+	public:
 		using schedee_list = gxx::dlist<genos::schedee, &genos::schedee::lnk>;
 
 		schedee_list runlist[PRIORITY_TOTAL];
@@ -88,6 +93,7 @@ namespace genos {
 			assert(sch.state != SCHEDEE_STATE_WAIT);
 			sch.state = SCHEDEE_STATE_RUN;
 			runlist[sch.prio].move_back(sch);
+			dprln(runlist[sch.prio].size());
 		}
 
 		void stop(schedee& sch) {
@@ -103,6 +109,7 @@ namespace genos {
 		}
 
 		void unwait(schedee& sch, uint8_t type) {
+			//dprln("unwait");
 			if (sch.state == SCHEDEE_STATE_FINAL ||
 				sch.state == SCHEDEE_STATE_ZOMBIE) return;
 			assert(sch.state == type);
@@ -149,5 +156,14 @@ namespace genos {
 
 	extern genos::schedee_manager_class schedee_manager;
 }
+
+__BEGIN_DECLS
+
+static inline void genos_schedee_unwait(void* arg) {
+	dprln("HERE");
+	genos::schedee_manager.unwait(* (genos::schedee*) arg, genos::SCHEDEE_STATE_WAIT);
+}
+
+__END_DECLS
 
 #endif 

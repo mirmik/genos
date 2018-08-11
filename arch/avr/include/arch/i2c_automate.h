@@ -44,8 +44,10 @@
 namespace arch {
 	class i2c_automate : public genos::hal::i2c_automate {
 	public:
-		gxx::delegate<void> error_handler;
+		//gxx::delegate<void> error_handler;
 		gxx::delegate<void> operation_finish_handler;
+
+		void error_handler() { operation_finish_handler(); }
 
 		enum Type {
 			i2c_sawp = 0b00,
@@ -73,6 +75,10 @@ namespace arch {
 				uint8_t slave_mode:1;
 			};
 		};
+
+		i2c_automate() {
+			flags = 0;
+		}
 		/*uint8_t mode;
 
 		uint8_t i2c_Do;								// Переменная состояния передатчика IIC
@@ -106,8 +112,8 @@ namespace arch {
 			TWCR |= 1<<TWIE | 1<<TWEN;
 		}
 
-		void start_write(uint8_t target, gxx::buffer buf) {
-			sendbuf = buf;
+		void write(uint8_t target, const void* data, uint16_t size) {
+			sendbuf = gxx::buffer(data, size);
 			target_address = target << 1;
 			it = 0;
 			type = i2c_sawp;
@@ -115,10 +121,10 @@ namespace arch {
 			TWCR = 1<<TWSTA|0<<TWSTO|1<<TWINT|0<<TWEA|1<<TWEN|1<<TWIE; 
 		}
 
-		void start_read(uint8_t target, gxx::buffer wbuf, gxx::buffer rbuf, int readBytes) {
-			recvbuf = rbuf;
-			sendbuf = wbuf;
-			rbytecount = readBytes;
+		void writeread(uint8_t target, const void* out, uint16_t olen, void* in, uint16_t ilen) {
+			recvbuf = gxx::buffer(in, ilen);
+			sendbuf = gxx::buffer(out, olen);
+			rbytecount = ilen;
 			
 			target_address = target << 1;
 			it = 0;
@@ -235,7 +241,7 @@ namespace arch {
 						}*/
 			
 				case 0x40: { // Послали SLA+R получили АСК. А теперь будем получать байты
-					if ( it == rbytecount ) { // Если буфер кончится на этом байте, то 
+					if ( it+1 == rbytecount ) { // Если буфер кончится на этом байте, то 
 						TWCR = 0<<TWSTA|0<<TWSTO|1<<TWINT|0<<TWEA|1<<TWEN|1<<TWIE;	// Требуем байт, а в ответ потом пошлем NACK(Disconnect)
 					}															// Что даст понять слейву, что мол хватит гнать. И он отпустит шину
 					else {
@@ -256,7 +262,7 @@ namespace arch {
 				case 0x50: { // Приняли байт.		 
 					recvbuf[it++] = TWDR;			// Забрали его из буфера
 					// To Do: Добавить проверку переполнения буфера. А то мало ли что юзер затребует
-			
+
 					if ( it+1 == rbytecount ) { // Если остался еще один байт из тех, что мы хотели считать
 						TWCR = 0<<TWSTA|0<<TWSTO|1<<TWINT|0<<TWEA|1<<TWEN|1<<TWIE;		// Затребываем его и потом пошлем NACK (Disconnect)
 					}

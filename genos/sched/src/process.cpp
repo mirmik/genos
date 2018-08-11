@@ -16,6 +16,7 @@ void starter(void* arg) {
 
 genos::schedee_ptr genos::create_process(void(*func)(void*), void* arg, gxx::buffer zone) {
 	genos::process_schedee* sch = new genos::process_schedee;
+	dlist_init(&sch->lnk);
 	sch->zone = zone;
 	sch->func = func;
 	sch->arg = arg;
@@ -26,6 +27,9 @@ genos::schedee_ptr genos::create_process(void(*func)(void*), void* arg, gxx::buf
 }
 
 void genos::process_schedee::execute() {
+	//dprln("genos::process_schedee::execute");
+	//context_print(&cntxt);
+	//while(1);
 	context_load(&cntxt);
 }
 
@@ -33,6 +37,7 @@ void genos::process_schedee::finalize() {
 	delete this;
 }
 
+extern "C" void genos_context_displace(struct context*) __attribute__((noinline));
 extern "C" void genos_context_displace(struct context*);
 void genos::process_schedee::displace() {
 	genos_context_displace(&cntxt);

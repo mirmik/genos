@@ -10,6 +10,8 @@ void genos::displace() {
 
 extern "C" void __displace__() {
 	//dprln("__displace__");
+
+
 	RESET_STACK(); 
 
 	//context_print(&((genos::process_schedee*)genos::schedee_manager.current_schedee)->cntxt);

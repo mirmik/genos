@@ -3,7 +3,7 @@ from licant.modules import module
 scriptq.execute_recursive("arch", ".g.py")
 scriptq.execute_recursive("board", ".g.py")
 
-module ("genos", include_paths = [".", "src"], sources = [ "genos/time/systime.cpp" ] )
+module ("genos", include_paths = [".", "src"], sources = [ "genos/time/systime.cpp", "genos/impls/proclib.cpp" ] )
 module ("genos.include", include_paths = [".", "src"] )
 
 module ("genos.irqtbl", sources = [ "genos/hal/irqtbl.cpp" ] )
@@ -17,3 +17,9 @@ module ("genos.schedee", srcdir="genos/sched/src", sources = [ "schedee.cpp", "a
 module("genos.malloc", "lin", sources = ["src/mem/lin_malloc.cpp", "src/mem/lin_realloc.cpp"] )
 
 module ("genos.displace", "reset", srcdir="genos/impls", sources = [ "schedule_displace.cpp" ] )
+
+
+module("genos.addons.adafruit_motor_shield", sources = [
+	"genos/addons/Adafruit_MotorShield/Adafruit_MS_PWMServoDriver.cpp",
+	"genos/addons/Adafruit_MotorShield/Adafruit_MotorShield.cpp",
+])

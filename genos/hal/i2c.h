@@ -1,11 +1,13 @@
 #ifndef GENOS_HAL_I2C_H
 #define GENOS_HAL_I2C_H
 
+#include <stdint.h>
 
 namespace genos {
 	namespace hal {
 		struct i2c_automate {
-
+			virtual void write(uint8_t addr, const void* data, uint16_t size) = 0;
+			virtual void writeread(uint8_t addr, const void* out, uint16_t olen, void* in, uint16_t ilen) = 0;
 		};
 	}
 }

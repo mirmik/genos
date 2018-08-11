@@ -14,11 +14,16 @@ namespace genos {
 		gxx::action dlg;
 		genos::timer<systime::time_t> timer;
 
-		bool m_autorepeat;
+		bool m_autorepeat = false;
 
-		timer_tasklet(gxx::action dlg, systime::time_t interval, systime::time_t start) : dlg(dlg), timer{start,interval} {}
-		timer_tasklet(gxx::action dlg, systime::time_t interval) : dlg(dlg), timer{systime::millis(),interval} {}
+		timer_tasklet(gxx::action dlg, systime::time_t interval, systime::time_t start) : dlg(dlg), timer { start, interval } {
+			dlist_init(&lnk);
+		}
 
+		timer_tasklet(gxx::action dlg, systime::time_t interval) : dlg(dlg), timer { systime::jiffies(), interval } {
+			dlist_init(&lnk);
+		}
+		
 		void plan();
 		void unbind();
 		gxx::action make_plan_delegate() { return gxx::action(&timer_tasklet::plan, this); }

@@ -5,7 +5,7 @@
 //#include <asm/systime.h>
 
 namespace systime { 
-	using time_t = uint64_t;
+	using time_t = int64_t;
 
 	//extern volatile uint64_t __jiffies;
 	extern uint32_t frequency;
@@ -13,6 +13,7 @@ namespace systime {
 	void system_tick();
 
 	///jiffies
+	time_t jiffies();
 	time_t now();
 
 /*	///Перевести число миллисекунд в jiffies.
@@ -32,6 +33,8 @@ namespace systime {
 	void delay(double d);
 	
 	//void delayMicroseconds(uint16_t d);	
+
+	time_t ms2j(uint32_t ms);
 
 
 }
