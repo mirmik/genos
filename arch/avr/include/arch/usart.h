@@ -79,7 +79,7 @@ namespace arch {
 			bits_mask_assign_bias(regs->ucsr_c, sstopbits, 0b1, 3);
 			
 			// DATA BITS
-			//uint8_t sbits = stopbits ==genos::hal::uart::stopbits::one ? 0 : 1;
+			//uint8_t sbits = stopbits == genos::hal::uart::stopbits::one ? 0 : 1;
 			//bits_mask_assign_bias(regs->ucsr_c, mode, 0b011, 1);
 			//bits_mask_assign(regs->ucsr_b, mode, 0b100);
 		}

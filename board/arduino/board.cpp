@@ -6,7 +6,7 @@
 #include <gxx/debug/dprint.h>
 
 namespace board {
-	arch::gpio::pin led(GPIOB, 7);
+	arch::gpio::pin led(SYSLED_GPIO, SYSLED_PIN);
 	arch::usart usart0(USART0, ATMEGA_IRQ_U0RX);
 }
 

@@ -70,8 +70,8 @@ namespace genos {
 
 		void rx_handler() {
 			char c = u->recvbyte();
+			//u->sendbyte(c);
 			recver.newchar(c);
-			//debug_putchar(c);
 		}
 
 		void handler(gxx::buffer /*rpack as arg*/) {

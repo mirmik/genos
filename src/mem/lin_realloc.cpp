@@ -34,6 +34,7 @@
 #include <string.h>
 #include <mem/lin_malloc.h>
 #include <gxx/syslock.h>
+#include <memory>
 //#include "sectionname.h"
 //#include "stdlib_private.h"
 
@@ -48,6 +49,8 @@ extern "C" void * realloc(void *ptr, size_t len) __attribute__((used));
 void *
 realloc(void *ptr, size_t len)
 {
+	std::lock_guard<gxx::syslock> lguard(lock);
+	
 	struct __freelist *fp1, *fp2, *fp3, *ofp3;
 	char *cp, *cp1;
 	void *memp;

@@ -10,8 +10,18 @@
 #include <arch/usart.h>
 //#include <arch/i2c.h>
 
+#if defined(BOARD_ARDUINO_UNO)
+#	define SYSLED_GPIO GPIOB
+#	define SYSLED_PIN 5
+#elif defined (BOARD_ARDUINO_MEGA)
+#	define SYSLED_GPIO GPIOB
+#	define SYSLED_PIN 7
+#else 
+#	error "undefined board"
+#endif
+
 namespace board {
-	extern arch::gpio::pin led; //GPIOB, 7
+	extern arch::gpio::pin led;
 	extern arch::usart usart0;
 	//extern arch::i2c i2c;
 }
