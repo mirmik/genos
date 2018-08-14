@@ -6,6 +6,8 @@
 #include <gxx/gstuff/automate.h>
 #include <gxx/syslock.h>
 
+#define PACKET_DATAADDR_SIZE_MAX 64
+
 namespace genos {
 	struct uartgate : public crow::gateway {
 		gxx::dlist<crow::packet, &crow::packet::lnk> to_send;
@@ -37,8 +39,8 @@ namespace genos {
 
 		void init_recv() {
 			gxx::system_lock();
-			rpack = (crow::packet*) malloc(128 + sizeof(crow::packet) - sizeof(crow::packet_header));
-			recver.init(gxx::buffer((char*)&rpack->header, 128));
+			rpack = (crow::packet*) malloc(PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet) - sizeof(crow::packet_header));
+			recver.init(gxx::buffer((char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX));
 			gxx::system_unlock();
 		}
 
