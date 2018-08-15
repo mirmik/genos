@@ -20,4 +20,17 @@ module("genos.addons.adafruit_motor_shield", sources = [
 	"genos/addons/Adafruit_MotorShield/Adafruit_MotorShield.cpp",
 ])
 
-module("genos.fs", sources = ["src/fs/vfs.c", "src/fs/hlpr_path.c", "src/fs/node.c"])
+module("genos.fs", 
+	sources = [
+		"src/fs/vfs.c", 
+		"src/fs/hlpr_path.c", 
+		"src/fs/node.c",
+		"src/fs/mount_table.c",
+	]
+)
+
+module("genos.misc", 
+	sources = [
+		"src/mem/misc/pool.c",
+	]
+)

@@ -16,10 +16,11 @@
 #include <fcntl.h>
 //#include <fs/kflock.h>
 
+#define GENOS_NAME_MAX 8
 
 #include <sys/stat.h>
-typedef __uid_t uid_t;
-typedef __gid_t gid_t;
+//typedef __uid_t uid_t;
+//typedef __gid_t gid_t;
 
 struct nas;
 
@@ -37,8 +38,8 @@ typedef struct file_lock {
 
 typedef struct node {
 	/* node name (use vfs_get_path_by_node() for get full path*/
-	//char                  name[NAME_MAX + 1];
-	char* name;
+	char                  name[GENOS_NAME_MAX + 1];
+	//char* name;
 
 	mode_t                mode;/* discrete access mode Read-Write-Execution */
 	uid_t                 uid;/* owner user ID */

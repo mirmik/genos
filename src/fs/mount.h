@@ -9,7 +9,7 @@
 #define FS_MOUNT_H_
 
 
-#include <gxx/datastruct/dlist_head.h>
+#include <gxx/datastruct/dlist.h>
 
 struct node;
 struct path;

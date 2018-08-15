@@ -9,7 +9,7 @@
 #ifndef FILE_SYSTEM_H_
 #define FILE_SYSTEM_H_
 
-#include <gxx/datastruct/dlist_head.h>
+#include <gxx/datastruct/dlist.h>
 #include <sys/stat.h>
 #include <limits.h>
 

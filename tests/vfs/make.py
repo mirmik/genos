@@ -18,6 +18,7 @@ application("target",
 		("gxx.dprint", "cout"),
 
 		"genos.fs",
+		"genos.misc",
 	],
 
 	cc_flags = "-std=gnu11"

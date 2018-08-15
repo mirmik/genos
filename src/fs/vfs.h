@@ -20,6 +20,8 @@
 //XXX
 #include <fs/mount.h>
 
+__BEGIN_DECLS
+
 extern void if_mounted_follow_down(struct path *path);
 extern void if_root_follow_up(struct path *path);
 extern void vfs_get_root_path(struct path *path);
@@ -141,5 +143,6 @@ extern struct node *vfs_subtree_create_intermediate(struct node *parent, const c
 
 extern node_t *vfs_subtree_get_parent(node_t *node);
 
+__END_DECLS
 
 #endif /* FS_VFS_H_ */
