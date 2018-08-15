@@ -1,7 +1,7 @@
-#include <genos/hal/irq.h>
+#include <hal/irq.h>
 
+///programm end stub
 void end_of_programm() {
-	/*programm end stub*/
-	global_irqs_disable();
+	irqs_disable();
 	for( ; ; );
 }

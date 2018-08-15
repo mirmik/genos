@@ -3,9 +3,9 @@
 
 #include <gxx/debug/dprint.h>
 
-//#include <genos/hal/arch.h>
-#include <genos/hal/board.h>
-#include <genos/hal/irq.h>
+//#include <hal/arch.h>
+#include <hal/board.h>
+#include <hal/irq.h>
 
 #include <gxx/util/location.h>
 #include <sys/cdefs.h>

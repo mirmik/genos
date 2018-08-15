@@ -1,6 +1,6 @@
-#include <genos/hal/board.h>
-#include <genos/hal/gpio.h>
-#include <genos/hal/irqs.h>
+#include <hal/board.h>
+#include <hal/gpio.h>
+#include <hal/irqs.h>
 
 #include <genos/schedule.h>
 #include <genos/sched/tasklet.h>
@@ -12,7 +12,7 @@
 #include <g0/services/echo.h>
 #include <genos/drivers/g1/uartgate.h>
 
-#include <genos/hal/uart.h>
+#include <hal/uart.h>
 #include <arch/usart.h>
 
 #include <gxx/sshell.h>

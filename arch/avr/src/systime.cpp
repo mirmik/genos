@@ -1,5 +1,5 @@
 #include <genos/systime.h>
-#include <genos/hal/irq.h>
+#include <hal/irq.h>
 
 #include <avr/io.h>
 

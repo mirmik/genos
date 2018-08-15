@@ -6,7 +6,10 @@ scriptq.execute("board/board.g.py")
 module ("genos", include_paths = [".", "src"], sources = [ "genos/time/systime.cpp", "genos/impls/proclib.cpp" ] )
 module ("genos.include", include_paths = [".", "src"] )
 
-module ("genos.irqtbl", sources = [ "genos/hal/irqtbl.cpp" ] )
+#Deprecated
+module ("genos.irqtbl", sources = [ "src/hal/irqtable.c" ] )
+module ("genos.irqtable", sources = [ "src/hal/irqtable.c" ] )
+
 module ("genos.tasklet", srcdir="genos/sched/src", sources = [ "tasklet.cpp" ] )
 module ("genos.timer", srcdir="genos/sched/src", sources = [ "timer.cpp" ] )
 module ("genos.schedee", srcdir="genos/sched/src", sources = [ "schedee.cpp", "action.cpp", "process.cpp" ] )

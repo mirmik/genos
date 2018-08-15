@@ -2,7 +2,7 @@
 #define CRIUS_BOARD_H
 
 #include <sys/cdefs.h>
-#include <genos/hal/arch.h>
+#include <hal/arch.h>
 
 #include <drivers/gpio.h>
 

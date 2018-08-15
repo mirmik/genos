@@ -7,4 +7,4 @@
 #define BYTE_ORDER    __BYTE_ORDER
 #endif
 
-#define PLATFORM_ARCH "linux64"
+#define PLATFORM_ARCH "avr"

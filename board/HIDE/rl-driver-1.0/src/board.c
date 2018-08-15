@@ -1,8 +1,8 @@
 #include <drivers/gpio.h>
 
-#include <genos/hal/board.h>
-#include <genos/hal/arch.h>
-#include <genos/hal/irq.h>
+#include <hal/board.h>
+#include <hal/arch.h>
+#include <hal/irq.h>
 
 #include <gxx/debug/delay.h>
 #include <gxx/debug/dprint.h>

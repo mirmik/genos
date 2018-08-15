@@ -2,17 +2,17 @@
 #include <gxx/debug/dprint.h>
 #include <gxx/syslock.h>
 
-static volatile uint64_t __jiffies;
-uint32_t systime::frequency;
+volatile uint64_t __jiffies;
+uint32_t systime_frequency;
 
-//void systime::system_tick() __attribute__((weak));
-void systime::system_tick() { ++__jiffies; }
+__BEGIN_DECLS
+
 
 ///jiffies
-systime::time_t systime::jiffies() { 
-	gxx::system_lock();
-	systime::time_t ret = __jiffies;
-	gxx::system_unlock();
+time_t jiffies() { 
+	system_lock();
+	time_t ret = __jiffies;
+	system_unlock();
 	return ret; 
 }
 /*
@@ -23,16 +23,18 @@ systime::time_t systime::milliseconds(uint32_t ms) { return ms * frequency / 100
 systime::time_t systime::microseconds(uint64_t ms) { return ms * frequency / 1000000; }
 */
 
-systime::time_t systime::millis() {
-	return systime::jiffies() * 1000 / systime::frequency;
+time_t millis() {
+	return jiffies() * 1000 / systime_frequency;
 }
 
-void systime::delay(double d) {
-	auto n = now();
-	auto f = n + d * frequency;
-	while(now() < f);
+void delay(double d) {
+	auto n = __jiffies;
+	auto f = n + d * systime_frequency;
+	while(__jiffies < f);
 }
 
-systime::time_t systime::ms2j(uint32_t ms) {
-	return ms * systime::frequency / 1000;
+time_t ms2jiffies(uint32_t ms) {
+	return ms * systime_frequency / 1000;
 }
+
+__END_DECLS

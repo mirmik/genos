@@ -13,7 +13,7 @@ module("genos.hal.avr.common",
 
 		"end_of_programm.c",
 
-		"arch.cpp",
+		"arch.c",
 		"diag.c",
 		#"periph/gpio.c",
 		"periph/timer.c",

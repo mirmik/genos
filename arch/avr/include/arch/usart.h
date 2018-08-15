@@ -2,8 +2,8 @@
 #define GENOS_AVR_UART_H
 
 #include <periph/regs/usart.h>
-#include <genos/hal/uart.h>
-#include <genos/hal/irqtbl.h>
+#include <hal/uart.h>
+#include <hal/irqtable.h>
 
 #include <avr/io.h>
 
@@ -86,16 +86,16 @@ namespace arch {
 
 		usart(struct usart_regs* regs, int8_t irqbase) : regs(regs), irqbase(irqbase) {}
 	
-		void set_rx_irq_handler(gxx::fastaction handler) override {
-			genos::hal::irqtbl::set_handler(irqbase + 0, handler);
+		void set_rx_irq_handler(irq_handler_t handler, void* arg) override {
+			irq_set_handler(irqbase + 0, handler, arg);
 		}
 
-		void set_tx_irq_handler(gxx::fastaction handler) override {
-			genos::hal::irqtbl::set_handler(irqbase + 1, handler);
+		void set_tx_irq_handler(irq_handler_t handler, void* arg) override {
+			irq_set_handler(irqbase + 1, handler, arg);
 		}
 
-		void set_tc_irq_handler(gxx::fastaction handler) override {
-			genos::hal::irqtbl::set_handler(irqbase + 2, handler);
+		void set_tc_irq_handler(irq_handler_t handler, void* arg) override {
+			irq_set_handler(irqbase + 2, handler, arg);
 		}
 	};
 

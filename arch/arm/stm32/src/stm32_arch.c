@@ -1,6 +1,6 @@
-#include <genos/hal/arch.h>
-#include <genos/hal/irq.h>
-#include <genos/hal/systime.h>
+#include <hal/arch.h>
+#include <hal/irq.h>
+#include <hal/systime.h>
 #include <drivers/stm32/rcc.h>
 #include <gxx/debug/dprint.h>
 

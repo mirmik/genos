@@ -4,7 +4,7 @@
 #include <gxx/event/flag.h>
 #include <gxx/io/iostorage.h>
 #include <gxx/bytering.h>
-#include <genos/hal/uart.h>
+#include <hal/uart.h>
 
 namespace drivers {
 	class uartring : public gxx::io::ostream, public gxx::io::istorage {

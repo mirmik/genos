@@ -1,5 +1,5 @@
-#include <genos/hal/board.h>
-#include <genos/hal/arch.h>
+#include <hal/board.h>
+#include <hal/arch.h>
 
 void board_init() {}
 

@@ -1,7 +1,7 @@
 #ifndef STM32_IPL_H
 #define STM32_IPL_H
 
-#include <genos/hal/ipl.h>
+#include <hal/ipl.h>
 #include <inttypes.h>
 
 typedef unsigned int ipl_t;

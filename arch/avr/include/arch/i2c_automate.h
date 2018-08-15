@@ -37,7 +37,7 @@
 #include <gxx/buffer.h>
 #include <gxx/panic.h>
 
-#include <genos/hal/i2c.h>
+#include <hal/i2c.h>
 #include <periph/irqdefs.h>
 
 

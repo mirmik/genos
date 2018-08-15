@@ -12,15 +12,15 @@ namespace genos {
 	public:
 		dlist_head lnk;
 		gxx::action dlg;
-		genos::timer<systime::time_t> timer;
+		genos::timer<time_t> timer;
 
 		bool m_autorepeat = false;
 
-		timer_tasklet(gxx::action dlg, systime::time_t interval, systime::time_t start) : dlg(dlg), timer { start, interval } {
+		timer_tasklet(gxx::action dlg, time_t interval, time_t start) : dlg(dlg), timer { start, interval } {
 			dlist_init(&lnk);
 		}
 
-		timer_tasklet(gxx::action dlg, systime::time_t interval) : dlg(dlg), timer { systime::jiffies(), interval } {
+		timer_tasklet(gxx::action dlg, time_t interval) : dlg(dlg), timer { jiffies(), interval } {
 			dlist_init(&lnk);
 		}
 		

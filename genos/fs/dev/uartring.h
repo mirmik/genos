@@ -2,8 +2,8 @@
 #define GENOS_UARTRING_H
 
 #include <genos/fs/cdev.h>
-#include <genos/hal/uart.h>
-#include <genos/hal/atomic.h>
+#include <hal/uart.h>
+#include <hal/atomic.h>
 #include <gxx/bytering.h>
 
 namespace genos {

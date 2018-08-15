@@ -1,7 +1,7 @@
-#include <genos/hal/board.h>
+#include <hal/board.h>
 #include <genos/dev/uartring.h>
 
-#include <genos/hal/irqs.h>
+#include <hal/irqs.h>
 #include <genos/iolib.h>
 
 #include <genos/banner.h>

@@ -19,7 +19,7 @@ void genos::timer_manager_class::plan(genos::timer_tasklet& tim) {
 	auto it = planed_list.begin();
 	auto end = planed_list.end();
 	
-	systime::time_t final = tim.timer.final();
+	time_t final = tim.timer.final();
 
 	for(; it != end; it++) {
 		if (final - (*it).timer.final() < 0) break;
@@ -33,9 +33,9 @@ void genos::timer_manager_class::unbind(genos::timer_tasklet& tim) {
 }
 
 void genos::timer_manager_class::execute() {
-	gxx::system_lock();
-	systime::time_t now = systime::jiffies();
-	gxx::system_unlock();
+	system_lock();
+	time_t now = jiffies();
+	system_unlock();
 
 	//dprln("size: ", planed_list.size());
 	

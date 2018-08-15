@@ -130,7 +130,7 @@ namespace genos {
 			}
 		
 			//atomic_section_enter();
-			gxx::system_lock();
+			system_lock();
 
 			schedee* sch;
 			for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++) {
@@ -140,13 +140,13 @@ namespace genos {
 					runlist[priolvl].move_back(*sch);
 					current_schedee = sch;
 
-					gxx::system_unlock();
+					system_unlock();
 					sch->execute();
 					return;
 				}
 			}
 
-			gxx::system_unlock();
+			system_unlock();
 
 			//Nobody to run
 			return;

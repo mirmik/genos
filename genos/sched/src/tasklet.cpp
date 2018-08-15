@@ -10,20 +10,20 @@ void genos::tasklet::plan() {
 }
 
 void genos::tasklet_manager_class::plan(genos::tasklet& tsklt) {
-	gxx::system_lock();
+	system_lock();
 	planed_list.move_back(tsklt);
-	gxx::system_unlock();
+	system_unlock();
 }
 
 void genos::tasklet_manager_class::execute() {
 	//atomic_section_enter();
-	gxx::system_lock();
+	system_lock();
 	while(!planed_list.empty()) {
 		genos::tasklet& tsklt = *planed_list.begin();
 		planed_list.pop(tsklt);
-		gxx::system_unlock();
+		system_unlock();
 		tsklt.dlg();
-		gxx::system_lock();
+		system_lock();
 	}
-	gxx::system_unlock();
+	system_unlock();
 }

@@ -2,41 +2,24 @@
 #define GENOS_KERNEL_SYSTIME_H
 
 #include <inttypes.h>
-//#include <asm/systime.h>
 
-namespace systime { 
-	using time_t = int64_t;
+typedef int64_t time_t;
 
-	//extern volatile uint64_t __jiffies;
-	extern uint32_t frequency;
+extern volatile uint64_t __jiffies;
+extern uint32_t systime_frequency;
 
-	void system_tick();
+__BEGIN_DECLS
 
-	///jiffies
-	time_t jiffies();
-	time_t now();
+static inline void system_tick() { ++__jiffies; }
 
-/*	///Перевести число миллисекунд в jiffies.
-	time_t milliseconds(uint32_t ms);
+time_t jiffies();
+time_t millis();
+time_t micros();
 
-	///Перевести число микросекунд в jiffies.
-	time_t microseconds(uint64_t ms);
-*/
-
-	time_t millis();
-	time_t micros();
-
-	//uint64_t jiffies();
-	//uint32_t millis();
-	//uint32_t micros();	
-
-	void delay(double d);
+void delay(double d);
 	
-	//void delayMicroseconds(uint16_t d);	
+time_t ms2jiffies(uint32_t ms);
 
-	time_t ms2j(uint32_t ms);
-
-
-}
+__END_DECLS
 
 #endif

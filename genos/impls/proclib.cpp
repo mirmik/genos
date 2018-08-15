@@ -7,7 +7,7 @@
 void genos::sleep(int ms) {
 	genos::schedee* cur = genos::schedee_manager.current_schedee;
 	//dprln("sleep ms: ", systime::millis());
-	genos::timer_tasklet tim(gxx::make_delegate(&genos::schedee::unwait_wstate, cur), systime::ms2j(ms));
+	genos::timer_tasklet tim(gxx::make_delegate(&genos::schedee::unwait_wstate, cur), ms2jiffies(ms));
 	genos::schedee_manager.wait(*cur, genos::SCHEDEE_STATE_WAIT);
 
 	

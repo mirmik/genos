@@ -18,7 +18,7 @@
 #ifndef _Adafruit_MS_PWMServoDriver_H
 #define _Adafruit_MS_PWMServoDriver_H
 
-#include <genos/hal/i2c.h>
+#include <hal/i2c.h>
 #include <stdint.h>
 
 #define PCA9685_SUBADR1 0x2

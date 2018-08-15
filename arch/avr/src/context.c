@@ -1,4 +1,4 @@
-#include <genos/hal/subst.h>
+#include <hal/subst.h>
 #include <string.h>
 #include <gxx/debug/dprint.h>
 

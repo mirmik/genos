@@ -1,7 +1,7 @@
 #ifndef GXX_ARCH_HAL_GPIO_H
 #define GXX_ARCH_HAL_GPIO_H
 
-#include <genos/hal/gpio.h>
+#include <hal/gpio.h>
 #include <periph/regs/gpio.h>
 
 namespace arch {

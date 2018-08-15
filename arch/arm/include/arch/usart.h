@@ -2,7 +2,7 @@
 #define GENOS_ARM_USART_H
 
 #include <periph/map.h>
-#include <genos/hal/uart.h>
+#include <hal/uart.h>
 
 namespace arch {
 	class usart : publicgenos::hal::uart {

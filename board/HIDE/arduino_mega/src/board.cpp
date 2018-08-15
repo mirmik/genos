@@ -1,4 +1,4 @@
-#include <genos/hal/board.h>
+#include <hal/board.h>
 #include <arch/irqs.h>
 
 #include <genos/time/systime.h>

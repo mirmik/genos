@@ -1,7 +1,7 @@
 #ifndef GENOS_DRIVER_G1_UARTGATE_H
 #define GENOS_DRIVER_G1_UARTGATE_H
 
-#include <genos/hal/uart.h>
+#include <hal/uart.h>
 #include <crow/gateway.h>
 #include <gxx/gstuff/automate.h>
 #include <gxx/syslock.h>
