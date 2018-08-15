@@ -5,13 +5,21 @@
 
 namespace genos {
 	struct file {
-	public:
-		virtual bool is_cstream() { return false; }
 		virtual int write(const char* data, size_t size, size_t off) = 0;
 		virtual int read(char* data, size_t size, size_t* off) = 0;
 		virtual void open() {};
 		virtual void release() {};
 	};
+
+	struct inode {
+		dlist_head lnk;
+		const char* name;
+		struct file* flp;
+	};
+
+	struct dentry {
+		dlist_head nodes;
+	}
 }
 
 #endif

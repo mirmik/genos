@@ -19,3 +19,5 @@ module("genos.addons.adafruit_motor_shield", sources = [
 	"genos/addons/Adafruit_MotorShield/Adafruit_MS_PWMServoDriver.cpp",
 	"genos/addons/Adafruit_MotorShield/Adafruit_MotorShield.cpp",
 ])
+
+module("genos.fs", sources = ["src/fs/vfs.c", "src/fs/hlpr_path.c", "src/fs/node.c"])
