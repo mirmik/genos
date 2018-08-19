@@ -29,15 +29,15 @@ namespace drivers {
 	protected:
 		int readData(char* dat, size_t sz) {
 			//dprln(rxring.avail());
-			gxx::system_lock();
+			system_lock();
 			int ret = rxring.popn(dat, sz);
 			if (rxring.empty()) rx_avail_flag.clr();
-			gxx::system_unlock();
+			system_unlock();
 			return ret;
 		}
 
 		int writeData(const char* dat, size_t sz) {
-			gxx::system_lock();
+			system_lock();
 			if (uart->avail() && txring.empty()) {
 				uart->sendbyte(*dat++);
 				--sz;
@@ -50,7 +50,7 @@ namespace drivers {
 			}
 
 			uart->enable_tx_irq(true);
-			gxx::system_unlock();
+			system_unlock();
 		}
 
 		void rx_handler() {
