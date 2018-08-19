@@ -34,7 +34,7 @@ void genos::process_schedee::execute() {
 }
 
 void genos::process_schedee::finalize() {
-	delete this;
+	free(this);
 }
 
 extern "C" void genos_context_displace(struct context*) __attribute__((noinline));
