@@ -1,19 +1,32 @@
-/**
- * @file
- * @brief pool of nodes
- *
- * @date 06.10.10
- * @author Nikolay Korotky
- */
+#ifndef GENOS_FS_VFS_NODE_H
+#define GENOS_FS_VFS_NODE_H
 
-#ifndef FS_NODE_H_
-#define FS_NODE_H_
+#include <stdint.h>
+#include <fcntl.h>
 
-#include <fs/file_system.h>
+#include <gxx/datastruct/tree.h>
+
+#define GENOS_NAME_MAX 8
+
+struct node {
+	char name[GENOS_NAME_MAX + 1];
+
+	uint32_t mode;
+	uint8_t mounted;
+
+	const struct file_operations *fops;
+	void* privdata;
+
+	struct tree_link tree_link; 
+};
+
+struct node* node_alloc(const char *name, unsigned int name_len);
+
+/*#include <fs/file_system.h>
 #include <gxx/datastruct/tree.h>
 #include <limits.h>
-//#include <kernel/thread/sync/mutex.h>
-#include <fcntl.h>
+//#include <kernel/thread/sync/mutex.h>*/
+/*
 //#include <fs/kflock.h>
 
 #define GENOS_NAME_MAX 8
@@ -38,17 +51,17 @@ typedef struct file_lock {
 
 typedef struct node {
 	/* node name (use vfs_get_path_by_node() for get full path*/
-	char                  name[GENOS_NAME_MAX + 1];
+/*	char                  name[GENOS_NAME_MAX + 1];
 	//char* name;
 
 	mode_t                mode;/* discrete access mode Read-Write-Execution */
-	uid_t                 uid;/* owner user ID */
-	gid_t                 gid;/* owner group ID */
+//	uid_t                 uid;/* owner user ID */
+//	gid_t                 gid;/* owner group ID */
 
 	/* node attribute structure (extended information about node)*/
-	struct nas            *nas;
+//	struct nas            *nas;
 
-	int                   mounted; /* is mount point*/
+//	int                   mounted; /* is mount point*/
 
 	/* Two locks is temporary solution for compatibility,
 	 * only kflock should stay in future */
@@ -56,9 +69,9 @@ typedef struct node {
 	//flock_t	              flock;
 
 	/* service data structure for enabling tree operation */
-	struct tree_link      tree_link;
-} node_t;
-
+//	struct tree_link      tree_link;
+//} node_t;
+/*
 struct node_info {
 	size_t        size;
 	unsigned int  mtime;
@@ -80,7 +93,7 @@ typedef struct nas {
  * @param name_len (optional) how many bytes to take from name.
  *    If zero, the name must be a null-terminated string.
  */
-extern node_t *node_alloc(const char *name, size_t name_len);
+/*extern node_t *node_alloc(const char *name, size_t name_len);
 
 extern void node_free(node_t *node);
 
@@ -100,5 +113,5 @@ static inline int node_is_file(struct node *node) {
 	return S_ISREG(node->mode);
 }
 
-
+*/
 #endif /* FS_NODE_H_ */

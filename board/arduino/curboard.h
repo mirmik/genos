@@ -4,32 +4,24 @@
 #define RED_LED 13
 
 #include <sys/cdefs.h>
-#include <hal/gpio.h>
-
-#include <arch/gpio.h>
-#include <arch/usart.h>
-//#include <arch/i2c.h>
+#include <drivers/gpio/gpio.h>
 
 #if defined(BOARD_ARDUINO_UNO)
-#	define SYSLED_GPIO GPIOB
-#	define SYSLED_PIN 5
+#	define REDLED_GPIO GPIOB
+#	define REDLED_PIN 5
 #elif defined (BOARD_ARDUINO_MEGA)
-#	define SYSLED_GPIO GPIOB
-#	define SYSLED_PIN 7
+#	define REDLED_GPIO GPIOB
+#	define REDLED_PIN 7
 #else 
 #	error "undefined board"
 #endif
 
-namespace board {
-	extern arch::gpio::pin led;
-	extern arch::usart usart0;
-	//extern arch::i2c i2c;
-}
+extern struct gpio_pin_head led_red;
 
 __BEGIN_DECLS
 
-void board_init();
-void board_shutdown(arch_shutdown_mode_t mode) __attribute__((noreturn));
+//void board_init();
+//void board_shutdown(arch_shutdown_mode_t mode) __attribute__((noreturn));
 
 void emergency_stop();
 

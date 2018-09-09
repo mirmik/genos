@@ -1,7 +1,9 @@
 from licant.modules import module
 
-scriptq.execute_recursive("arch", ".g.py")
-scriptq.execute("board/board.g.py")
+licant.execute_recursive("arch", ".g.py")
+licant.execute("board/board.g.py")
+
+licant.execute("src/drivers/drivers.g.py")
 
 module ("genos", include_paths = [".", "src"], sources = [ "genos/time/systime.cpp", "genos/impls/proclib.cpp" ] )
 module ("genos.include", include_paths = [".", "src"] )
@@ -32,8 +34,24 @@ module("genos.fs",
 	]
 )
 
-module("genos.misc", 
+module("genos.mvfs", 
 	sources = [
-		"src/mem/misc/pool.c",
+		"src/mvfs/fstype.c",
+		"src/mvfs/super.c",
+		"src/mvfs/dentry.c",
+		"src/mvfs/path.c",
+		"src/mvfs/fsops.c",
+		"src/mvfs/vfsmount.c",
+		"src/mvfs/mvfs.c",
 	]
 )
+
+module("genos.mvfs.global_root", 
+	sources = [ "src/mvfs/variant/global_root.c" ]
+)
+
+#module("genos.misc", 
+#	sources = [
+#		"src/mem/misc/pool.c",
+#	]
+#)

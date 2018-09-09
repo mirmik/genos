@@ -1,40 +1,37 @@
-/*
- * @file
- *
- * @date May 28, 2013
- * @author: Anton Bondarev
- */
+#ifndef GENOS_FS_MOUNT_H
+#define GENOS_FS_MOUNT_H
 
-#ifndef FS_MOUNT_H_
-#define FS_MOUNT_H_
-
-
+#include <sys/cdefs.h>
 #include <gxx/datastruct/dlist.h>
 
-struct node;
+struct inode;
 struct path;
 
-#define MOUNT_DESC_STRINFO_LEN 16
-struct mount_descriptor {
-	struct node *mnt_point;
-	struct node *mnt_root;
-	struct mount_descriptor *mnt_parent;
-	struct dlist_head mnt_mounts;
-	struct dlist_head mnt_child;
-	char mnt_dev[MOUNT_DESC_STRINFO_LEN];
+//#define MOUNT_DESC_STRINFO_LEN 16
+struct mount {
+//	struct node *mnt_point;
+//	struct node *mnt_root;
+///	struct mount_descriptor *mnt_parent;
+//	struct dlist_head mnt_mounts;
+//	struct dlist_head mnt_child;
+//	char mnt_dev[MOUNT_DESC_STRINFO_LEN];
 };
 
-extern struct mount_descriptor *mount_table(void);
+__BEGIN_DECLS
 
-extern struct mount_descriptor *mount_table_add(struct path *mnt_point_path,
-		struct node *root, const char *dev);
+struct mount *mount_table(void);
 
-extern int mount_table_del(struct mount_descriptor *mdesc);
+//extern struct mount_descriptor *mount_table_add(struct path *mnt_point_path,
+//		struct node *root, const char *dev);
 
-extern struct mount_descriptor *mount_table_get_child(struct mount_descriptor *parent, struct node *mnt_point);
+//extern int mount_table_del(struct mount_descriptor *mdesc);
 
-extern int mount(char *dev,  char *dir, char *fs_type);
+//extern struct mount_descriptor *mount_table_get_child(struct mount_descriptor *parent, struct node *mnt_point);
 
-extern int umount(char *dir);
+//extern int mount(char *dev,  char *dir, char *fs_type);
 
-#endif /* FS_MOUNT_H_ */
+//extern int umount(char *dir);
+
+__END_DECLS
+
+#endif 

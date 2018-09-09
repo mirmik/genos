@@ -8,12 +8,12 @@
 #ifndef FS_PATH_H_
 #define FS_PATH_H_
 
-struct node;
+struct inode;
 struct mount_descriptor;
 
 struct path {
 	struct node *node;
-	struct mount_descriptor *mnt_desc;
+	struct mount *mnt_desc;
 };
 
 

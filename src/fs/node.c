@@ -1,18 +1,8 @@
-/**
- * @file
- * @brief pool of nodes
- *
- * @date 06.10.10
- * @author Nikolay Korotky
- * @author Eldar Abusalimov
- */
-
-
+#include <fs/node.h>
+#include <stdlib.h>
 #include <string.h>
 //#include <embox/unit.h>
-
-#include <fs/node.h>
-
+/*
 #include <mem/misc/pool.h>
 #include <limits.h>
 #include <errno.h>
@@ -47,8 +37,15 @@ static int node_init(void) {
 	return ENOERR;
 }*/
 
-node_t *node_alloc(const char *name, size_t name_len) {
-	struct node_tuple *nt;
+struct node *node_alloc(const char *name, unsigned int name_len) {
+	struct node * node = (struct node *) malloc(sizeof(struct node));
+	strncpy(node->name, name, name_len);
+
+	tree_link_init(&node->tree_link);
+
+	node->mounted = 0;
+
+/*	struct node_tuple *nt;
 	struct node *node;
 	struct nas *nas;
 
@@ -86,10 +83,11 @@ node_t *node_alloc(const char *name, size_t name_len) {
 	node->mounted = 0;
 
 	//flock_init(node);
-
+*/
 	return node;
 }
 
-void node_free(node_t *node) {
+/*void node_free(node_t *node) {
 	pool_free(&node_pool, member_cast_out(node, struct node_tuple, node));
 }
+*/

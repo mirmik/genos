@@ -1,12 +1,8 @@
-/**
- * @file
- *
- * @date May 17, 2013
- * @author: Anton Bondarev
- * @author: Vita Loginova
- */
+#include <fs/mount.h>
 
-#include <assert.h>
+#include <gxx/debug/dprint.h>
+
+/*#include <assert.h>
 #include <string.h>
 #include <errno.h>
 
@@ -24,9 +20,9 @@
 #endif
 
 POOL_DEF(mount_desc_pool, struct mount_descriptor, MOUNT_DESC_QUANTITY);
-
-static struct mount_descriptor *mnt_root = NULL;
-
+*/
+static struct mount *mnt_root = NULL;
+/*
 struct mount_descriptor *mount_table_get_child(struct mount_descriptor *parent, struct node *mnt_point) {
 	struct mount_descriptor *desc;
 
@@ -69,7 +65,7 @@ struct mount_descriptor *mount_table_add(struct path *mnt_point_path,
 	mdesc->mnt_root = root;
 
 	/* XXX mount root should preserve mode, uid/gid */
-	root->mode = mnt_point_path->node->mode;
+	/*root->mode = mnt_point_path->node->mode;
 	root->uid = mnt_point_path->node->uid;
 	root->gid = mnt_point_path->node->gid;
 
@@ -110,7 +106,8 @@ int mount_table_del(struct mount_descriptor *mdesc) {
 
 	return 0;
 }
-
-struct mount_descriptor *mount_table(void) {
+*/
+struct mount *mount_table(void) {
+	debug_print_line(__PRETTY_FUNCTION__);
 	return mnt_root;
 }

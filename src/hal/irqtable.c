@@ -22,7 +22,7 @@ void irq_stub(void* irqno) {
 	irqs_disable();
 	debug_print("IRQ_STUB_");
 	debug_printhex_ptr(irqno);
-	debug_print_line();
+	debug_print_line("");
 	while(1);
 }
 

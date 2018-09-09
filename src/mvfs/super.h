@@ -1,0 +1,79 @@
+#ifndef MVFS_SUPER_H
+#define MVFS_SUPER_H
+
+/**
+ *	Описатели суперблока и индксного дескриптора.
+ *
+ *	В mvfs данные объекты работают в тесной связи. Поэтому айноды включены в этот файл. 
+ */
+
+#include <stdlib.h>
+#include <stdint.h>
+
+struct dentry;
+
+///	Суперблок смонтированной файловой системы.
+struct super_block {
+	const struct file_system_type * s_fs;
+	struct dentry *  s_root; ///корневой dentry ветви.
+
+	void *			private;
+	uint16_t 		refs;
+
+	const struct inode_operations * i_op; ///Виртуальная таблица операций над объектами fs.
+	const struct file_operations  * f_op; ///Операции ввода-вывода и управления.
+};
+
+/// Индексный дескриптор файла.
+struct inode {
+	struct super_block *      i_sb; ///Указатель на суперблок, к которому относится данный inode.
+	uint16_t                  nlink;
+};
+
+///Один из специальных типов файлов.
+struct special_inode {
+	struct inode i;
+	const struct file_operations* f_ops;
+};
+
+struct inode_operations {
+	struct inode *(*alloc_inode)(struct super_block *sb); ///< Выделить inode с приватными данными, специфическими для fs.
+
+	int           (*destroy_inode)(struct inode *inode); ///< Парная предыдущей операция деаллокации.
+
+	///Процедура lookup. В отличие от большого vfs, с целью экономии памяти может ничего не возвращать.
+	///Принимает родительский inode. Может создать пару inode-dentry, или вернуть негативный dentry.
+	struct dentry *(*lookup) (struct inode *, const char* name, unsigned int nlen);
+
+	///Оторвать dentry от inode.
+	//int (*unlink) (struct inode *,struct dentry *);
+
+	//revalidate - вопрос на закэшированную запись.
+};
+
+
+__BEGIN_DECLS
+
+static inline const struct file_operations * mvfs_get_f_ops(struct inode* i) {
+	if (i->i_sb == NULL) return mcast_out(i, struct special_inode, i)->f_ops;
+	else return i->i_sb->f_op;
+}
+
+/*static inline struct dentry * mvfs_create_root_dentry() {
+	struct dentry * root = mvfs_dentry_alloc();
+	root->name[0] = '/';
+	root->name[1] = 0;
+	return root; 
+}
+
+static inline struct dentry * mvfs_get_root() {
+	static struct dentry * root_dentry = NULL;
+
+	if (!root_dentry) {
+		root_dentry = mvfs_create_root_dentry();
+	}
+
+	return root_dentry;
+}*/
+
+#endif

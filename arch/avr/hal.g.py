@@ -15,6 +15,9 @@ module("genos.hal.avr.common",
 
 		"arch.c",
 		"diag.c",
+
+		#"drivers_up.c",
+
 		#"periph/gpio.c",
 		"periph/timer.c",
 		"debug_blink.S"

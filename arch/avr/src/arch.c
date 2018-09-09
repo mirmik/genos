@@ -1,6 +1,3 @@
-#include <avr/io.h>
-#include <avr/interrupt.h>
-
 #include <hal/arch.h>
 #include <hal/irqtable.h>
 
@@ -20,7 +17,6 @@ void arch_init() {
 
 	usart0_diag_init();
 	diag_setup(&usart0_diag, NULL);
-	
 
 	irq_set_handler(ATMEGA_IRQ_TIM0_OVF, system_tick, NULL);
 	tc_8bit_interruptOverflowEnable(&timer0, 1);

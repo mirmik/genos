@@ -3,15 +3,15 @@
 
 #include <gxx/event/flag.h>
 #include <gxx/io/iostorage.h>
-#include <gxx/bytering.h>
+#include <gxx/datastruct/bytering.h>
 #include <hal/uart.h>
 
 namespace drivers {
 	class uartring : public gxx::io::ostream, public gxx::io::istorage {
 		genos::hal::uart* uart;
-		gxx::bytering rxring;
-		gxx::bytering txring;
-	public:
+		struct bytering_head rxring;
+		struct bytering_head txring;
+	/*public:
 		gxx::event::action_flag rx_avail_flag;
 		gxx::event::action_flag tx_empty_flag;
 
@@ -62,7 +62,7 @@ namespace drivers {
 		void tx_handler() {
 			uart->sendbyte(txring.pop());
 			if (txring.empty()) uart->enable_tx_irq(false);
-		}
+		}*/
 	};
 }
 

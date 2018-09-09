@@ -1,30 +1,41 @@
-/**
- * @file
- * @brief Describes tree of VFS (Virtual Filesystem Switch).
- *
- * @date 15.10.10
- * @author Nikolay Korotky
- */
+#ifndef GENOS_FS_VFS_H
+#define GENOS_FS_VFS_H
 
-#ifndef FS_VFS_H_
-#define FS_VFS_H_
-
-#include <errno.h>
-#include <string.h>
+/*#include <errno.h>
+#include <string.h>*/
 #include <fs/node.h>
 #include <fs/path.h>
 
+#include <sys/cdefs.h>
+/*
 #define LAST_IN_PATH         0x01
 //#define PATH_MAX 			 100
 
 //XXX
 #include <fs/mount.h>
-
+*/
 __BEGIN_DECLS
 
-extern void if_mounted_follow_down(struct path *path);
+/**
+ *	Ищет node, соответствующий строковому пути. Возвращает через path.
+ */
+int vfs_lookup(const char *str_path, struct path *path);
+
+struct node *vfs_create_root(void);
+struct node *vfs_get_root(void);
+
+/**
+ *	Возвращает путь до корневого нода. Если такого нету, создает его.
+ */
+void vfs_get_root_path(struct path *path);
+
+/**
+ *	???
+ */
+void if_mounted_follow_down(struct path *path);
+
+/*
 extern void if_root_follow_up(struct path *path);
-extern void vfs_get_root_path(struct path *path);
 extern void vfs_get_leaf_path(struct path *path);
 
 /**
@@ -42,15 +53,13 @@ extern void vfs_get_leaf_path(struct path *path);
  * \a path contains path till natural root (which parent is NULL, including)
  * @return negative on error
  */
-extern int vfs_get_pathbynode_tilln(struct path *node, struct path *parent, char *path,
+/*extern int vfs_get_pathbynode_tilln(struct path *node, struct path *parent, char *path,
 	size_t plen);
 
 extern int vfs_add_leaf(node_t *child, node_t *parent);
 
 extern int vfs_del_leaf(node_t *nod);
 
-extern node_t *vfs_create_root(void);
-extern node_t *vfs_get_root(void);
 extern node_t *vfs_get_leaf(void);
 
 extern int vfs_create(struct path *parent, const char *path, mode_t mode,
@@ -78,7 +87,7 @@ extern int vfs_get_child_next(struct path *parent_path,
  * @param exist_path - buffer for path which will be formed
  * @param buff_len - length of buffer for exist _path parameter
  */
-extern void vfs_get_exist_path(const char *path, char *exist_path, size_t buff_len,
+/*extern void vfs_get_exist_path(const char *path, char *exist_path, size_t buff_len,
 		struct path *path_node);
 
 /**
@@ -93,7 +102,7 @@ extern void vfs_get_exist_path(const char *path, char *exist_path, size_t buff_l
  *
  * @return See \a vfs_get_pathbynode_tilln
  */
-static inline int vfs_get_path_till_root(struct path *node, struct path *root, char *path,
+/*static inline int vfs_get_path_till_root(struct path *node, struct path *root, char *path,
 		size_t pathlen) {
 
 	if_root_follow_up(node);
@@ -117,7 +126,7 @@ static inline int vfs_get_path_till_root(struct path *node, struct path *root, c
  *
  * @return See \a vfs_get_pathbynode_tilln
  */
-static inline int vfs_get_path_by_node(struct path *node, char *path) {
+/*static inline int vfs_get_path_by_node(struct path *node, char *path) {
 	struct path root;
 	vfs_get_root_path(&root);
 
@@ -142,7 +151,7 @@ extern struct node *vfs_subtree_create(struct node *parent, const char *path, mo
 extern struct node *vfs_subtree_create_intermediate(struct node *parent, const char *path, mode_t mode);
 
 extern node_t *vfs_subtree_get_parent(node_t *node);
-
+*/
 __END_DECLS
 
 #endif /* FS_VFS_H_ */
