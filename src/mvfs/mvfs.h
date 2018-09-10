@@ -15,17 +15,17 @@ struct dentry;
 
 __BEGIN_DECLS
 
+/// Получить текущий root
+extern struct dentry* mvfs_get_root();
+extern struct dentry* mvfs_get_pwd();
+
 extern void mvfs_init();
 
+///Провести процедуру lookup от корня.
+extern int mvfs_lookup(const char* str_path, const char** pend, struct dentry** current);
+
+///Стандартные функции для реализации методов fs
 extern struct dentry * mvfs_virtual_lookup(struct inode *, const char* name, unsigned int nlen);
-
-/**
- *	Провести процедуру lookup
- */
-extern int mvfs_lookup(const char* str_path, struct dentry** result);
-
-extern struct dentry* mvfs_get_root();
-
 __END_DECLS
 
 #endif

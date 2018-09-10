@@ -25,7 +25,7 @@ static inline struct super_block * joke_get_sb(struct file_system_type *fs, int 
 		inited = 1;
 		joke_sb.sb.s_fs = &joke_fstype;
 		joke_sb.sb.i_op = &joke_i_op;
-		joke_sb.sb.s_root = mvfs_dentry_create("/", 1);
+		joke_sb.sb.s_root = mvfs_dentry_create("/");
 		joke_sb.sb.s_root->d_inode = NULL;
 	}
 

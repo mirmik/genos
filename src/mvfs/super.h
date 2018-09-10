@@ -7,6 +7,8 @@
  *	В mvfs данные объекты работают в тесной связи. Поэтому айноды включены в этот файл. 
  */
 
+#include <gxx/util/member.h>
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -58,6 +60,8 @@ static inline const struct file_operations * mvfs_get_f_ops(struct inode* i) {
 	if (i->i_sb == NULL) return mcast_out(i, struct special_inode, i)->f_ops;
 	else return i->i_sb->f_op;
 }
+
+extern int mvfs_inode_lookup_child(struct inode *, const char* name, unsigned int nlen, struct dentry **);
 
 /*static inline struct dentry * mvfs_create_root_dentry() {
 	struct dentry * root = mvfs_dentry_alloc();

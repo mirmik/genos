@@ -10,6 +10,7 @@
 
 #include <gxx/datastruct/tree.h>
 #include <stdint.h>
+#include <string.h>
 
 #define NAME_LENGTH_MAX 7
 
@@ -38,7 +39,10 @@ extern struct dentry * mvfs_dentry_alloc();
 extern void mvfs_dentry_dealloc(struct dentry *);
 
 ///Аллоцировать dentry и провести инициализацию с установкой имени.
-extern struct dentry * mvfs_dentry_create(const char* name, unsigned int nlen);
+extern struct dentry * mvfs_dentry_create_n(const char* name, unsigned int nlen);
+static inline struct dentry * mvfs_dentry_create(const char* name) {
+	return mvfs_dentry_create_n(name, strlen(name));
+}
 
 ///Добавить 
 extern void mvfs_dentry_add_child(struct dentry* child, struct dentry* parent);
@@ -49,7 +53,7 @@ extern void mvfs_dentry_add_child(struct dentry* child, struct dentry* parent);
  *	Возвращает найденный dentry, или NULL, если в списке такого нет.  
  *  Может реализовываться через хэштаблицу.
  */
-extern struct dentry * mvfs_dentry_find_child(struct dentry* parent, const char* name, unsigned int nlen);
+extern struct dentry * mvfs_dentry_lookup_child(struct dentry* parent, const char* name, unsigned int nlen);
 
 __END_DECLS
 
