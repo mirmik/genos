@@ -19,7 +19,7 @@ struct super_block {
 	const struct file_system_type * s_fs;
 	struct dentry *  s_root; ///корневой dentry ветви.
 
-	void *			private;
+	//void *			private;
 	uint16_t 		refs;
 
 	const struct inode_operations * i_op; ///Виртуальная таблица операций над объектами fs.
@@ -35,7 +35,7 @@ struct inode {
 ///Один из специальных типов файлов.
 struct special_inode {
 	struct inode i;
-	const struct file_operations* f_ops;
+	const struct file_operations* f_op;
 };
 
 struct inode_operations {
@@ -57,11 +57,13 @@ struct inode_operations {
 __BEGIN_DECLS
 
 static inline const struct file_operations * mvfs_get_f_ops(struct inode* i) {
-	if (i->i_sb == NULL) return mcast_out(i, struct special_inode, i)->f_ops;
+	if (i->i_sb == NULL) return mcast_out(i, struct special_inode, i)->f_op;
 	else return i->i_sb->f_op;
 }
 
 extern int mvfs_inode_lookup_child(struct inode *, const char* name, unsigned int nlen, struct dentry **);
+
+extern struct file * mvfs_open_inode(struct inode *);
 
 /*static inline struct dentry * mvfs_create_root_dentry() {
 	struct dentry * root = mvfs_dentry_alloc();

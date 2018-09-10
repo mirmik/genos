@@ -40,9 +40,6 @@ int mvfs_lookup(const char* str_path, const char** pend,
 	struct dentry * pos = *current;
 
 	while(str = path_next(str, &nlen)) {
-		printf("next: %s\n", str);
-		printf("cur: %.*s\n", nlen, str);
-
 		//Обходим дерево dentry.
 		pos = mvfs_dentry_lookup_child(pos, str, nlen);
 

@@ -39,11 +39,16 @@ module("genos.mvfs",
 		"src/mvfs/fstype.c",
 		"src/mvfs/super.c",
 		"src/mvfs/dentry.c",
-		"src/mvfs/path.c",
 		"src/mvfs/pathops.c",
 		"src/mvfs/fsops.c",
 		"src/mvfs/vfsmount.c",
+		"src/mvfs/cdev.c",
 		"src/mvfs/mvfs.c",
+		"src/mvfs/file.c",
+
+		"src/mvfs/char/null.c",
+		"src/mvfs/char/zero.c",
+		"src/mvfs/char/debug.c",
 	]
 )
 

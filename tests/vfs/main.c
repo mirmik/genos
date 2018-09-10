@@ -8,6 +8,11 @@
 
 #include <mvfs/fsops.h>
 #include <mvfs/variant/global_root.h>
+#include <mvfs/cdev.h>
+#include <mvfs/file.h>
+#include <mvfs/char/null.h>
+#include <mvfs/char/zero.h>
+#include <mvfs/char/debug.h>
 
 #include <stdio.h>
 
@@ -28,22 +33,26 @@ int main() {
 	mvfs_dentry_add_child(d, c);
 	mvfs_dentry_add_child(e, d);
 
-	struct dentry * it;
+	mvfs_set_global_root(a);
 
-	it = mvfs_dentry_lookup_child(a, "dev", 3);
-	dprln(it ? it->name : "NONE");
+	link_null_device("/dev");
+	link_zero_device("/dev");
+	link_debug_device("/dev");
 
-	it = mvfs_dentry_lookup_child(c, "mirmik", 6);
-	dprln(it ? it->name : "NONE");
+	int sts;
+	struct file * f1;
+	struct file * f2;
+	struct file * f3;
 
-	const char* path = "/home/mirmik/project";
-	const char* lpath;
-	struct dentry * resd = a;
+	sts = mvfs_open("/dev", 0, &f3);
+	printf("ERROR: %d\n", sts);
 
-	int sts = mvfs_lookup(path, &lpath, &resd);
-	printf("status: %d\n", sts); 
+	sts = mvfs_open("/dev/null", 0, &f1);
+	sts = mvfs_open("/dev/zero", 0, &f2);
+	sts = mvfs_open("/dev/debug", 0, &f3);
 
-	if (sts == 0) {
-		printf("result: %s\n", resd->name); 		
-	}
+	mvfs_write(f1, "HelloWorld\n", 11);
+	mvfs_write(f3, "HelloWorld\n", 11);
+
+	mvfs_close(f3);
 }

@@ -40,3 +40,7 @@ int path_is_double_dot(const char *path) {
 	return *path == '.' && *(path + 1) == '.'
 		&& (*(path + 2) == '/' || *(path + 2) == '\0');
 }
+
+int path_is_abs(const char *path) {
+	return path[0] == '/';  
+}

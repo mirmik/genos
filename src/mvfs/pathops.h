@@ -26,6 +26,8 @@ extern int path_is_single_dot(const char *path);
  */
 extern const char *path_next(const char *path, unsigned int *p_len);
 
+extern int path_is_abs(const char *path);
+
 __END_DECLS
 
 #endif
