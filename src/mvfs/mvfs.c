@@ -27,7 +27,7 @@ struct dentry * mvfs_virtual_lookup(struct inode * i, const char* name, unsigned
 }
 
 
-int mvfs_lookup(const char* str_path, const char** pend, 
+int mvfs_lookup_relative(const char* str_path, const char** pend, 
 	struct dentry** current
 ) {
 	int sts;

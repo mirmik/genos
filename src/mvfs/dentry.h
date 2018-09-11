@@ -32,12 +32,6 @@ struct dentry {
 
 __BEGIN_DECLS
 
-///Выделить новый дентри без инициализации. (Из пула, или из кучи, зависит от реализации.)
-extern struct dentry * mvfs_dentry_alloc();
-
-///Парный вызов. Деалоцировать дентри.
-extern void mvfs_dentry_dealloc(struct dentry *);
-
 ///Аллоцировать dentry и провести инициализацию с установкой имени.
 extern struct dentry * mvfs_dentry_create_n(const char* name, unsigned int nlen);
 static inline struct dentry * mvfs_dentry_create(const char* name) {

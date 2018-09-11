@@ -27,9 +27,6 @@ struct file_operations {
 
 __BEGIN_DECLS
 
-struct file* mvfs_file_alloc();
-void mvfs_file_destroy(struct file*);
-
 static inline int mvfs_write(struct file * filp, const char* data, unsigned int size) {
 	if (filp->f_op->write == NULL) return -ENOTSUP;
 	return filp->f_op->write(filp, data, size);

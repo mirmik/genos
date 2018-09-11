@@ -18,6 +18,10 @@ extern int mvfs_mount(const char *source, const char *target,
 
 extern int mvfs_mkdir(const char *path);
 
+extern int mvfs_chdir(const char *path);
+
+extern int mvfs_chroot(const char *path);
+
 __END_DECLS
 
 #endif
