@@ -1,5 +1,6 @@
 #include <mvfs/super.h>
 #include <mvfs/file.h>
+#include <mvfs/compat.h>
 #include <gxx/panic.h>
 
 #include <errno.h>

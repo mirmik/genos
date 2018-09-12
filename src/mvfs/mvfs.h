@@ -10,33 +10,30 @@
 #include <stdint.h>
 #include <assert.h>
 
-struct inode;
-struct dentry;
+#include <mvfs/compat.h>
+#include <mvfs/pathops.h>
 
+#include <mvfs/fstype.h>
+#include <mvfs/dentry.h>
+#include <mvfs/super.h>
 
 __BEGIN_DECLS
 
-/// Получить текущий root
-extern struct dentry* mvfs_get_root();
-extern struct dentry* mvfs_get_pwd();
-
+///Инициализация структур данных mvfs.
 extern void mvfs_init();
 
-///Провести процедуру lookup от корня.
-extern int mvfs_lookup(const char* str_path, const char** pend, struct dentry** current);
+///Провести процедуру lookup от current.
+extern int mvfs_lookup_relative(const char* str_path, const char** pend, struct dentry** current);
 
-static inline int mvfs_lookup_absolute(const char* str_path, const char** pend, struct dentry** current) {
-	*current = mvfs_get_root();
-	assert(*current);
+///Провести процедуру lookup по относительному пути.
+static inline int mvfs_lookup(const char* str_path, const char** pend, struct dentry** current) {
+	if (path_is_abs(str_path)) {
+		*current = mvfs_get_root();
+	} else {
+		*current = mvfs_get_pwd();
+	}
 	
-	return mvfs_lookup(str_path, pend, current); 	
-}
-
-static inline int mvfs_lookup_relative(const char* str_path, const char** pend, struct dentry** current) {
-	*current = mvfs_get_root();
-	assert(*current);
-	
-	return mvfs_lookup(str_path, pend, current); 	
+	return mvfs_lookup_relative(str_path, pend, current); 	
 }
 
 ///Стандартные функции для реализации методов fs

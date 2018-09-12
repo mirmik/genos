@@ -19,9 +19,6 @@
 int main() {
 	mvfs_register_fs(&joke_fstype);
 
-	//mvfs_mount_first("joke", 0, NULL);
-	//mvfs_mkdir("/dev");
-
 	struct dentry * a = mvfs_dentry_create("/");
 	struct dentry * b = mvfs_dentry_create("dev");
 	struct dentry * c = mvfs_dentry_create("home");
@@ -44,15 +41,25 @@ int main() {
 	struct file * f2;
 	struct file * f3;
 
-	sts = mvfs_open("/dev", 0, &f3);
-	printf("ERROR: %d\n", sts);
+	sts = mvfs_chdir("/dev");
+	printf("chdir sts: %d\n", sts);
 
-	sts = mvfs_open("/dev/null", 0, &f1);
-	sts = mvfs_open("/dev/zero", 0, &f2);
-	sts = mvfs_open("/dev/debug", 0, &f3);
+	sts = mvfs_open("null", 0, &f1);
+	printf("open sts: %d\n", sts);
+
+	sts = mvfs_open("zero", 0, &f2);
+	printf("open sts: %d\n", sts);
+	
+	sts = mvfs_open("debug", 0, &f3);
+	printf("open sts: %d\n", sts);
 
 	mvfs_write(f1, "HelloWorld\n", 11);
 	mvfs_write(f3, "HelloWorld\n", 11);
-
 	mvfs_close(f3);
+
+	sts = mvfs_chdir("/dev");
+	printf("chdir sts: %d\n", sts);
+
+	printf("res %d\n", a == mvfs_get_pwd());
+	printf("res %d\n", a == mvfs_get_root());
 }

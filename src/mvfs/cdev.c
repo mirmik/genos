@@ -11,7 +11,7 @@ int mvfs_link_cdev(struct char_device * cdev,
 	int sts;
 	struct dentry * parent;
 
-	if (sts = mvfs_lookup_absolute(dir, &dir, &parent)) { 
+	if (sts = mvfs_lookup(dir, &dir, &parent)) { 
 		return sts;
 	}
 

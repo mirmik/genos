@@ -30,6 +30,12 @@ struct super_block {
 struct inode {
 	struct super_block *      i_sb; ///Указатель на суперблок, к которому относится данный inode.
 	uint16_t                  nlink;
+	union {
+		uint8_t flags; 
+		struct {
+			uint8_t directory_flag : 1;
+		};
+	};
 };
 
 ///Один из специальных типов файлов.
@@ -64,22 +70,5 @@ static inline const struct file_operations * mvfs_get_f_ops(struct inode* i) {
 extern int mvfs_inode_lookup_child(struct inode *, const char* name, unsigned int nlen, struct dentry **);
 
 extern struct file * mvfs_open_inode(struct inode *);
-
-/*static inline struct dentry * mvfs_create_root_dentry() {
-	struct dentry * root = mvfs_dentry_alloc();
-	root->name[0] = '/';
-	root->name[1] = 0;
-	return root; 
-}
-
-static inline struct dentry * mvfs_get_root() {
-	static struct dentry * root_dentry = NULL;
-
-	if (!root_dentry) {
-		root_dentry = mvfs_create_root_dentry();
-	}
-
-	return root_dentry;
-}*/
 
 #endif

@@ -17,9 +17,6 @@ struct vfsmount {
 
 __BEGIN_DECLS
 
-struct vfsmount * mvfs_vfsmount_alloc();
-void mvfs_vfsmount_destroy(struct vfsmount *);
-
 struct vfsmount * mvfs_vfsmount_get(struct dentry * mount_point);
 struct vfsmount * mvfs_vfsmount_create(struct dentry * mount_point, struct dentry * root);
 

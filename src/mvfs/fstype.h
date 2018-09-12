@@ -23,7 +23,6 @@ struct file_system_type {
 __BEGIN_DECLS
 
 extern struct file_system_type * mvfs_get_fs(const char* name);
-
 extern void mvfs_register_fs(struct file_system_type* fs);
 
 __END_DECLS
