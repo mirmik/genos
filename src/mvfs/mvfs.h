@@ -15,6 +15,7 @@
 
 #include <mvfs/fstype.h>
 #include <mvfs/dentry.h>
+#include <mvfs/dirent.h>
 #include <mvfs/super.h>
 
 __BEGIN_DECLS
@@ -37,7 +38,8 @@ static inline int vfs_lookup(const char* str_path, const char** pend, struct den
 
 ///Стандартные функции для реализации методов fs
 extern struct dentry * vfs_virtual_lookup(struct inode *, struct dentry *);
-
+extern int vfs_common_open (struct inode *, struct file *);
+extern int vfs_common_release (struct inode *, struct file *);	
 
 /**
  *	@dir parent inode
@@ -62,6 +64,9 @@ extern int vfs_pwd(char* buf);
 
 
 extern void vfs_dpr_pwd();
+extern int vfs_iterate(struct file * filp, struct dirent * de);
+
+extern int vfs_debug_ls(const char* path);
 
 __END_DECLS
 

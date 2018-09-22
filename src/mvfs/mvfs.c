@@ -171,6 +171,7 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 	if (sts = vfs_open_inode(d->d_inode, filp))
 		return sts;
 
+	(*filp)->f_dentry = d;
 	return 0;
 }
 
@@ -199,14 +200,20 @@ int vfs_read(struct file * filp, char* data, unsigned int size) {
 	return filp->f_op->read(filp, data, size);
 }
 
-int vfs_pwd(char* buf) {
+int vfs_pwd(char* buf) 
+{
 	char* const bbuf = buf;
 	int len;
 	int flen = 0;
 	char* cursor;
 
-	for (struct dentry * d = vfs_get_pwd();; d = d->parent) {
+	if (vfs_get_pwd() == vfs_get_root()) {
+		*buf++ = '/';
+		*buf = '\0';
+		return 1;
+	}
 
+	for (struct dentry * d = vfs_get_pwd();; d = d->parent) {
 		if (d->parent == NULL) {
 			if (d->mount_point_flag) {
 				panic("TODO");
@@ -229,6 +236,8 @@ int vfs_pwd(char* buf) {
 	char* sit = bbuf;
 	char* eit = bbuf + flen - 1;
 
+	*buf = '\0';
+
 	while(eit > sit) {
 		char c;
 		c = *eit;
@@ -238,7 +247,6 @@ int vfs_pwd(char* buf) {
 		--eit;
 	}
 
-	*buf = '\0';
 	return flen;
 }
 
@@ -246,4 +254,51 @@ void vfs_dpr_pwd() {
 	char pwd[100];
 	vfs_pwd(pwd);
 	dprln(pwd);
+}
+
+int vfs_common_open (struct inode * i, struct file * f) {
+	(void) i; (void) f;
+	i->nlink++;
+	return 0;
+}
+
+int vfs_common_release (struct inode * i, struct file * f) {
+	(void) i; (void) f;
+	i->nlink--;
+	return 0;
+}
+
+int vfs_iterate(struct file * filp, struct dirent * de) {
+	return filp->f_op->iterate(filp, de);
+}
+
+int vfs_debug_ls(const char* path) {
+	int sts;
+	struct dentry * d;
+	struct dirent de;
+	struct file * filp;
+
+	if (path == NULL)
+		d = vfs_get_pwd();
+	else
+		if (sts = vfs_lookup(path, NULL, &d))
+			return sts;
+	if (sts = vfs_open_inode(d->d_inode, &filp))
+		return sts;
+	filp->f_dentry = d;
+
+	while(1) {
+		sts = vfs_iterate(filp, &de);
+		if (sts) {
+			return sts;
+			break;
+		}
+		if (*de.d_name == 0) break; 
+
+		dprln(de.d_name);
+	}
+
+	vfs_close(filp);
+
+	return 0;
 }

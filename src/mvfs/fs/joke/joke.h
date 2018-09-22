@@ -6,6 +6,7 @@
 #include <mvfs/super.h>
 #include <mvfs/file.h>
 #include <mvfs/dentry.h>
+#include <mvfs/dirent.h>
 
 #include <gxx/panic.h>
 #include <errno.h>
@@ -67,6 +68,32 @@ static int joke_rmdir(struct inode * i, struct dentry * d) {
 	return 0;
 }
 
+static int joke_iterate(struct file * filp, void * priv) {
+	struct dirent * de = (struct dirent *) priv;
+	struct dentry * parent;
+	struct dentry * d;
+	struct dlist_head * it;
+
+	if (filp->f_inode->directory_flag == 0) 
+		return ENOTSUP;
+
+	parent = filp->f_dentry;
+
+	it = parent->childrens.next;//dlist_entry_first(&parent->childrens, struct dentry, lnk);
+
+	int n = filp->pos;
+	while(n--) it = it->next;
+	filp->pos++;
+
+	if (it == &parent->childrens) de->d_name[0] = '\0';
+	else {
+		d = dlist_entry(it, struct dentry, lnk);
+		de->d_ino = 0;
+		strcpy(de->d_name, d->name);
+	}
+	return 0;
+}
+
 struct file_system_type joke_fstype = {
 	.name = "joke",
 	.get_sb = joke_get_sb,
@@ -81,10 +108,11 @@ const struct inode_operations joke_i_op = {
 };
 
 const struct file_operations joke_f_op = {
-	.open = NULL,
-	.release = NULL,
+	.open = vfs_common_open,
+	.release = vfs_common_release,
 	.write = NULL,
 	.read = NULL,
+	.iterate = joke_iterate,
 };
 
 #endif

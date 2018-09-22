@@ -50,8 +50,29 @@ int main() {
 	vfs_chdir("..");
 
 	vfs_mkdir("ggg");
-
+	vfs_chdir("ggg");
+	vfs_dpr_pwd();
 
 	vfs_dpr_dentry_tree(vfs_get_root());
 
+	vfs_chdir("../..");
+	vfs_dpr_pwd();
+
+	struct file * f;
+	sts = vfs_open("/dev", 0, &f);
+	if (sts) dprf("error: %s\n", strerror(sts));
+
+	dln();
+	vfs_mkdir("/home/mirmik/models");
+	vfs_debug_ls("/home/mirmik");
+
+	dln();
+
+	sts = vfs_rmdir("/home/mirmik/project");
+	sts = vfs_rmdir("/home/mirmik/models");
+	sts = vfs_rmdir("/home/mirmik");
+	sts = vfs_rmdir("/home/ggg");
+	sts = vfs_rmdir("/home");
+
+	vfs_dpr_dentry_tree(vfs_get_root());
 }
