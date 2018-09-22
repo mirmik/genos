@@ -11,7 +11,7 @@ __BEGIN_DECLS
 
 //extern void char_device_init(struct char_device * cdev);
 
-extern int mvfs_link_cdev(struct char_device * cdev, 
+extern int vfs_link_cdev(struct char_device * cdev, 
 	const struct file_operations * f_op, const char * dir,
 	const char* name);
 

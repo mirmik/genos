@@ -1,3 +1,7 @@
+/**
+	@file Операции над строковыми путями
+ */
+
 #ifndef MVFS_PATHOPS_H
 #define MVFS_PATHOPS_H
 
@@ -25,6 +29,8 @@ extern int path_is_single_dot(const char *path);
  * 	NULL if empty path supplied or none left
  */
 extern const char *path_next(const char *path, unsigned int *p_len);
+
+extern int path_is_simple(const char *path);
 
 extern int path_is_abs(const char *path);
 

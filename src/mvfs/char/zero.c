@@ -33,5 +33,5 @@ struct file_operations zero_f_ops = {
 struct char_device zero_device;
 
 int link_zero_device(const char* dir) {
-	return mvfs_link_cdev(&zero_device, &zero_f_ops, dir, "zero");	
+	return vfs_link_cdev(&zero_device, &zero_f_ops, dir, "zero");	
 }

@@ -17,8 +17,8 @@ struct vfsmount {
 
 __BEGIN_DECLS
 
-struct vfsmount * mvfs_vfsmount_get(struct dentry * mount_point);
-struct vfsmount * mvfs_vfsmount_create(struct dentry * mount_point, struct dentry * root);
+struct vfsmount * vfs_vfsmount_get(struct dentry * mount_point);
+struct vfsmount * vfs_vfsmount_create(struct dentry * mount_point, struct dentry * root);
 
 __END_DECLS
 

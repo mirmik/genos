@@ -27,20 +27,6 @@ struct file_operations {
 
 __BEGIN_DECLS
 
-static inline int mvfs_write(struct file * filp, const char* data, unsigned int size) {
-	if (filp->f_op->write == NULL) return -ENOTSUP;
-	return filp->f_op->write(filp, data, size);
-}
-
-static inline int mvfs_read(struct file * filp, char* data, unsigned int size) {
-	if (filp->f_op->read == NULL) return -ENOTSUP;
-	return filp->f_op->read(filp, data, size);
-}
-
-extern int mvfs_open(const char* path, int flags, struct file** filpp);
-extern int mvfs_close(struct file* filpp);
-extern int mvfs_open_with_root(const char* path, int flags, 
-	struct file** filpp, struct dentry * root);
 
 __END_DECLS
 

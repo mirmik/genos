@@ -4,7 +4,7 @@
 /**
  *	Описатели суперблока и индксного дескриптора.
  *
- *	В mvfs данные объекты работают в тесной связи. Поэтому айноды включены в этот файл. 
+ *	В vfs данные объекты работают в тесной связи. Поэтому айноды включены в этот файл. 
  */
 
 #include <gxx/util/member.h>
@@ -13,6 +13,7 @@
 #include <stdint.h>
 
 struct dentry;
+struct file;
 
 ///	Суперблок смонтированной файловой системы.
 struct super_block {
@@ -45,30 +46,37 @@ struct special_inode {
 };
 
 struct inode_operations {
-	struct inode *(*alloc_inode)(struct super_block *sb); ///< Выделить inode с приватными данными, специфическими для fs.
+//super_block operations:
+	//struct inode *(*alloc_inode)(struct super_block *sb); ///< Выделить inode с приватными данными, специфическими для fs.
+	//int           (*destroy_inode)(struct inode *inode); ///< Парная предыдущей операция деаллокации.
 
-	int           (*destroy_inode)(struct inode *inode); ///< Парная предыдущей операция деаллокации.
+//inode operations: 
+	///Создать inode для переданной dentry
+	//int (*create) (struct inode *, struct dentry *, uint8_t);
 
 	///Процедура lookup. В отличие от большого vfs, с целью экономии памяти может ничего не возвращать.
 	///Принимает родительский inode. Может создать пару inode-dentry, или вернуть негативный dentry.
-	struct dentry *(*lookup) (struct inode *, const char* name, unsigned int nlen);
+	struct dentry * (*lookup) (struct inode *, struct dentry *);
 
 	///Оторвать dentry от inode.
 	//int (*unlink) (struct inode *,struct dentry *);
 
 	//revalidate - вопрос на закэшированную запись.
+
+
+    int (*mkdir) (struct inode *, struct dentry *,int);
+    int (*rmdir) (struct inode *, struct dentry *);
 };
 
 
 __BEGIN_DECLS
 
-static inline const struct file_operations * mvfs_get_f_ops(struct inode* i) {
-	if (i->i_sb == NULL) return mcast_out(i, struct special_inode, i)->f_op;
+static inline const struct file_operations * vfs_get_f_ops(struct inode* i) {
+	if (i->i_sb == NULL) 
+		return mcast_out(i, struct special_inode, i)->f_op;
 	else return i->i_sb->f_op;
 }
 
-extern int mvfs_inode_lookup_child(struct inode *, const char* name, unsigned int nlen, struct dentry **);
-
-extern struct file * mvfs_open_inode(struct inode *);
+extern int vfs_open_inode(struct inode * i, struct file ** filpp);
 
 #endif

@@ -31,5 +31,5 @@ struct file_operations null_f_ops = {
 struct char_device null_device;
 
 int link_null_device(const char* dir) {
-	return mvfs_link_cdev(&null_device, &null_f_ops, dir, "null");	
+	return vfs_link_cdev(&null_device, &null_f_ops, dir, "null");	
 }

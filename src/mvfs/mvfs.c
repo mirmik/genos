@@ -1,82 +1,249 @@
-#include <mvfs/mvfs.h>
-#include <mvfs/pathops.h>
-#include <mvfs/dentry.h>
+#include <mvfs/fsops.h>
+#include <mvfs/fstype.h>
 #include <mvfs/super.h>
-#include <mvfs/vfsmount.h>
+#include <mvfs/dentry.h>
+#include <mvfs/file.h>
+#include <mvfs/pathops.h>
+#include <mvfs/variant/global_root.h>
 
+#include <gxx/panic.h>
 #include <gxx/debug/dprint.h>
-#include <gxx/util/iteration_counter.h>
 
-#include "stdio.h"
-#include "errno.h"
-#include "assert.h"
+#include <errno.h>
+#include <stdbool.h>
 
-void mvfs_init() {
-	//stable_init(&mvfs_vfsmount_hashtable);
+void vfs_init() {
+	//stable_init(&vfs_vfsmount_hashtable);
 }
 
-/**
- *	lookup для простых виртуальных fs.
- *
- *	Т.к. система держит всю информацию в памяти, просто говорим, что данных нет.
- *	Можно создать негативный dentry, но с целью экономии памяти, просто ничего не делаем.
- */
-struct dentry * mvfs_virtual_lookup(struct inode * i, const char* name, unsigned int nlen) {
-	(void) i; (void) name; (void) nlen;
-	return NULL;
+int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *data) 
+{
+	struct file_system_type * fs = vfs_get_fs(fstype);
+
+	struct super_block * sb = fs->get_sb(fs, mountflags, data);
+	vfs_set_global_root(sb->s_root);
+
+	return 0;
 }
 
-
-int mvfs_lookup_relative(const char* str_path, const char** pend, 
-	struct dentry** current
-) {
-	int sts;
-	const char* str;
-	struct vfsmount* mount;
-	unsigned int nlen;
-
-	str = str_path;
-	struct inode * ipos;
-	struct dentry * pos = *current;
-
-	while(str = path_next(str, &nlen)) {
-		//Обходим дерево dentry.
-		pos = mvfs_dentry_lookup_child(pos, str, nlen);
-
-		if (pos == NULL) {
-			//Если дентри не найден в дереве, пробуем запросить inode.
-			//Последнего найденного.
-
-			if (NULL == (ipos = (*current)->d_inode)) {
-				//Если inode данного объекта не существует (negative dentry), 
-				//просто говорим:				
-				return -ENOENT;
-			}
-
-			//Если inode существует, просим его создать нам dentry.
-			if (sts = mvfs_inode_lookup_child(ipos, str, nlen, &pos)) {
-				return sts;
-			}
-
-			//Если он смог, подшиваем этот dentry в дерево и переходим на него.
-			mvfs_dentry_add_child(pos, *current);
-		} else {
-			// Если дентри в дереве, надо проверить, не является ли он точкой монтирования.
-			if (pos->mount_point_flag) {
-				mount = mvfs_vfsmount_get(pos);
-				assert(mount);
-				//if (!mount) return -ENOKEY;
-				pos = mount->root; 
-			}
+static inline int vfs_is_directory(struct dentry * d) 
+{
+	if (dlist_empty(&d->childrens)) {
+		if (!d->d_inode || !d->d_inode->directory_flag) {
+			return false;
 		}
+	}
+	return true;
+}
 
-		//Готовимся к следующей итерации алгоритма.
-		//Если вернется ENOENT, неотработанная часть пути будет в pend.
-		str += nlen;
-		*current = pos;
-		*pend = str;
+int vfs_mount(const char *source, const char *target, 
+	const char* fstype, unsigned long mountflags, const void *data
+) {
+	panic("TODO");
+}
+
+int vfs_mkdir_do(struct inode * i, struct dentry * d, int f) 
+{
+	int sts;
+
+	if (i->i_sb->i_op->mkdir == NULL) 
+		return ENOTSUP;
+
+	if (sts = i->i_sb->i_op->mkdir(i, d, 0)) {
+		return sts;
 	}
 
-	//Путь полностью отработан. Дентри найден и вернется через поле current.
 	return 0;
+} 
+
+int vfs_mkdir(const char *path) 
+{
+
+	int sts;
+	struct dentry * d;
+	struct dentry * parent;
+	struct inode * i;
+	const char * pend;
+
+	sts = vfs_lookup(path, &pend, &parent);
+
+	if (sts == 0) return EEXIST;
+
+	i = parent->d_inode;
+	if (i->directory_flag != 1) return ENOTDIR;
+	if (!path_is_simple(pend)) return ENOTDIR;
+
+	d = vfs_dentry_create(pend);
+
+	if (sts = vfs_mkdir_do(i, d, 0)) {
+		vfs_dentry_dealloc(d);
+		return sts;
+	}
+
+	vfs_dentry_add_child(d, parent);
+	return 0;
+}
+
+int vfs_rmdir_do(struct inode * i, struct dentry * d) 
+{
+	int sts;
+
+	if (!dlist_empty(&d->childrens)) 
+		return ENOTEMPTY;
+
+	if (i->i_sb->i_op->rmdir == NULL) 
+		return ENOTSUP;
+
+	if (sts = i->i_sb->i_op->rmdir(i, d))
+		return sts;
+
+	vfs_dentry_clean(d);
+
+	return 0;	
+}
+
+int vfs_rmdir(const char *path) 
+{
+	int sts;
+	struct dentry * d;
+	struct inode * i;
+
+	if (sts = vfs_lookup(path, NULL, &d))
+		return sts;
+
+	i = d->d_inode;
+	if (i == NULL) 
+		return ENOENT;
+
+	if (d->d_inode->directory_flag == 0) 
+		return ENOTDIR;
+
+	return vfs_rmdir_do(i, d);
+}
+
+int vfs_chdir(const char *path) 
+{
+	struct dentry* tgt;
+	int sts;
+
+	if (sts = vfs_lookup(path, NULL, &tgt)) {
+		return sts;
+	}
+
+	if (!vfs_is_directory(tgt)) 
+		return ENOTDIR;
+
+	vfs_set_pwd(tgt);
+	return 0;
+}
+
+int vfs_chroot(const char *path) 
+{
+	struct dentry* tgt;
+	int sts;
+
+	if (sts = vfs_lookup(path, NULL, &tgt)) {
+		return sts;
+	}
+
+	if (!vfs_is_directory(tgt)) 
+		return ENOTDIR;
+
+	vfs_set_root(tgt);
+	return 0;
+}
+
+int vfs_open(const char* path, int flags, struct file** filp) {
+	int sts;
+	struct dentry* d;	
+
+	if (sts = vfs_lookup(path, NULL, &d)) {
+		return sts;
+	}
+
+	if (d->d_inode == NULL) {
+		//dentry без inode. (или негативный, или добавленный вручную) 
+		//Считаем, что файл не существует.
+		return -ENOENT;
+	}
+
+	//Осталось сгенерировать file.
+	if (sts = vfs_open_inode(d->d_inode, filp))
+		return sts;
+
+	return 0;
+}
+
+int vfs_close(struct file* filp) {
+	int sts;
+
+	sts = filp->f_op->release(filp->f_inode, filp);
+	if (sts) return sts;
+}
+
+int vfs_write(struct file * filp, const char* data, unsigned int size) {
+	errno = 0;
+
+	if (filp->f_op->write == NULL) 
+		return ENOTSUP;
+	
+	return filp->f_op->write(filp, data, size);
+}
+
+int vfs_read(struct file * filp, char* data, unsigned int size) {
+	errno = 0;
+
+	if (filp->f_op->read == NULL) 
+		return ENOTSUP;
+	
+	return filp->f_op->read(filp, data, size);
+}
+
+int vfs_pwd(char* buf) {
+	char* const bbuf = buf;
+	int len;
+	int flen = 0;
+	char* cursor;
+
+	for (struct dentry * d = vfs_get_pwd();; d = d->parent) {
+
+		if (d->parent == NULL) {
+			if (d->mount_point_flag) {
+				panic("TODO");
+			}
+			break;
+		}
+
+		len = strlen(d->name);
+		flen += len + 1;
+
+		cursor = d->name + len;
+		while(d->name != cursor) {
+			--cursor;
+			*buf++ = *cursor;
+		}
+
+		*buf++ = '/';
+	}
+
+	char* sit = bbuf;
+	char* eit = bbuf + flen - 1;
+
+	while(eit > sit) {
+		char c;
+		c = *eit;
+		*eit = *sit;
+		*sit = c;
+		++sit;
+		--eit;
+	}
+
+	*buf = '\0';
+	return flen;
+}
+
+void vfs_dpr_pwd() {
+	char pwd[100];
+	vfs_pwd(pwd);
+	dprln(pwd);
 }

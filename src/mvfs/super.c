@@ -6,23 +6,28 @@
 #include <errno.h>
 #include <stdio.h>
 
-int mvfs_inode_lookup_child(struct inode * inode, 
-	const char* name, unsigned int nlen, struct dentry ** retd
-) {
-	return -ENOTSUP;
-	//panic("TODO: mvfs_inode_lookup_child");
-}
+#include <assert.h>
+#include <gxx/debug/dprint.h>
 
-extern struct file * mvfs_open_inode(struct inode * i) {
+extern int vfs_open_inode(struct inode * i, struct file ** filpp) {
 	int sts;
-	struct file * filp = mvfs_file_alloc();
+	struct file * filp;
+	const struct file_operations * f_op = vfs_get_f_ops(i);
 
-	const struct file_operations * f_op = mvfs_get_f_ops(i);
+	if (f_op->open == NULL)
+		return ENOTSUP;
 
+	filp = vfs_file_alloc();
 	filp->f_op = f_op;
 	filp->f_inode = i;
 
 	sts = f_op->open(i, filp);
+	if (sts) {
+		vfs_file_dealloc(filp);
+		return sts;
+	}
 
-	return filp;
+	*filpp = filp;
+
+	return 0;
 }

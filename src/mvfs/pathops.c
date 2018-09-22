@@ -1,5 +1,6 @@
 #include <mvfs/pathops.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 int path_is_single_dot(const char *path) {
 	char nc = *(path + 1);
@@ -43,4 +44,12 @@ int path_is_double_dot(const char *path) {
 
 int path_is_abs(const char *path) {
 	return path[0] == '/';  
+}
+
+int path_is_simple(const char *path) {
+	char c;
+	while(c = *path++) 
+		if (c == '/')
+			return false;
+	return true;
 }

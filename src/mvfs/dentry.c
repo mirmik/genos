@@ -6,41 +6,50 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct dentry * mvfs_dentry_alloc() {
+struct dentry * vfs_dentry_alloc() {
 	return (struct dentry *) malloc(sizeof(struct dentry));
 }
 
-void mvfs_dentry_dealloc(struct dentry * d) {
+void vfs_dentry_dealloc(struct dentry * d) {
 	free(d);
 }
 
-struct dentry * mvfs_dentry_create_n(const char* name, unsigned int nlen) {
-	struct dentry * ret = mvfs_dentry_alloc();
+struct dentry * vfs_dentry_create_n(const char* name, unsigned int nlen) {
+	struct dentry * ret = vfs_dentry_alloc();
 
-	//if (ret != NULL) 
-	
 	strncpy(ret->name, name, nlen < NAME_LENGTH_MAX ? nlen : NAME_LENGTH_MAX);
-	tree_link_init(&ret->d_tree);
+	dlist_init(&ret->childrens);
+
 	ret->d_inode = NULL;	
 
 	return ret;
 }
 
-void mvfs_dentry_add_child(struct dentry* child, struct dentry* parent) {
-	mvfs_lock();
-	tree_add_link(&child->d_tree, &parent->d_tree);
-	mvfs_unlock();
+void vfs_dentry_add_child(struct dentry* child, struct dentry* parent) {
+	vfs_lock();
+	dlist_add(&child->lnk, &parent->childrens);
+	child->parent = parent;
+	vfs_unlock();
 }
 
-struct dentry * mvfs_dentry_lookup_child(struct dentry* parent, const char* name, unsigned int nlen) {
-	struct dentry* node;
-	
-	mvfs_lock();
-	tree_for_each_child_entry(node, &parent->d_tree, d_tree) {
-		int node_nlen = strlen(node->name);
-		if (node_nlen == nlen && strncmp(name, node->name, nlen) == 0) return node;
-	}
-	mvfs_unlock();
+static inline void __vfs_dpr_dentry_tree(struct dentry * d, const int t) {
+	struct dentry * it;
 
-	return NULL;
+	int i;
+
+	int tt = t;
+	while (tt--) dpr("  "); dprln(d->name);
+	dlist_for_each_entry(it, &d->childrens, lnk) {
+		__vfs_dpr_dentry_tree(it, t+1);
+	}
+}
+
+void vfs_dpr_dentry_tree(struct dentry * d) {
+	__vfs_dpr_dentry_tree(d, 0);
+}
+
+void vfs_dentry_clean(struct dentry * d) 
+{
+	dlist_del(&d->lnk);
+	vfs_dentry_dealloc(d);
 }
