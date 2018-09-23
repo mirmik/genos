@@ -3,4 +3,6 @@
 
 #include <drivers/bdev/bdev.h>
 
+void link_nullb_device(const char * dir);
+
 #endif

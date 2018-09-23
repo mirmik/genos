@@ -15,6 +15,7 @@ struct block_device {
 struct block_device_operations {
 	int (*write_block) (struct block_device *, char * buf, size_t sz, int blkno);
 	int (*read_block) (struct block_device *, char * buf, size_t sz, int blkno);
+	int (*ioctl) (struct block_dev *bdev, int cmd, void *buf, size_t size);
 };
 
 #endif
