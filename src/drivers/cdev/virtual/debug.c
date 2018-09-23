@@ -1,5 +1,6 @@
-#include <mvfs/char/debug.h>
-#include <mvfs/cdev.h>
+#include <drivers/cdev/virtual/debug.h>
+#include <drivers/cdev/cdev.h>
+
 #include <mvfs/file.h>
 #include <mvfs/mvfs.h>
 

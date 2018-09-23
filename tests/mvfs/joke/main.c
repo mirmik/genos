@@ -1,10 +1,10 @@
 #include <mvfs/mvfs.h>
 #include <mvfs/fs/joke/joke.h>
-
-#include <mvfs/char/debug.h>
-#include <mvfs/char/null.h>
-#include <mvfs/char/zero.h>
 #include <mvfs/file.h>
+
+#include <drivers/cdev/virtual/debug.h>
+#include <drivers/cdev/virtual/null.h>
+#include <drivers/cdev/virtual/zero.h>
 
 #include <stdio.h>
 

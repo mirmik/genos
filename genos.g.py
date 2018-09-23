@@ -36,19 +36,22 @@ module("genos.fs",
 
 module("genos.mvfs", 
 	sources = [
+		"src/mvfs/mvfs.c",
 		"src/mvfs/fstype.c",
 		"src/mvfs/super.c",
 		"src/mvfs/dentry.c",
 		"src/mvfs/pathops.c",
-		"src/mvfs/lookup.c",
 		"src/mvfs/vfsmount.c",
-		"src/mvfs/cdev.c",
-		"src/mvfs/mvfs.c",
+		"src/mvfs/lookup.c",
 		"src/mvfs/file.c",
+		
+		"src/drivers/cdev/cdev.c",
+		"src/drivers/cdev/virtual/null.c",
+		"src/drivers/cdev/virtual/zero.c",
+		"src/drivers/cdev/virtual/debug.c",
 
-		"src/mvfs/char/null.c",
-		"src/mvfs/char/zero.c",
-		"src/mvfs/char/debug.c",
+		"src/drivers/bdev/bdev.c",
+		"src/drivers/bdev/virtual/nullb.c",
 	]
 )
 
