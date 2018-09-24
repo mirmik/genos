@@ -12,8 +12,8 @@
 struct file_operations zero_f_ops;
 
 //Заполнить struct file.
-int zero_open(struct inode * i, struct file * f) {}
-int zero_release (struct inode * i, struct file * f) {}
+int zero_open(struct node * i, struct file * f) {}
+int zero_release (struct node * i, struct file * f) {}
 
 int zero_write (struct file * f, const char* data, unsigned int size) {
 	return size;

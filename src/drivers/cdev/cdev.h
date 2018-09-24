@@ -4,7 +4,7 @@
 #include <mvfs/node.h>
 
 struct char_device {
-	struct special_inode c_i;
+	struct special_node node;
 };
 
 __BEGIN_DECLS

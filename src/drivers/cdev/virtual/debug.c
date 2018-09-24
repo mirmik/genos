@@ -14,14 +14,14 @@
 struct file_operations debug_f_ops;
 
 //Заполнить struct file.
-static int __debug_open(struct inode * i, struct file * f) {
-	i->nlink++;
+static int __debug_open(struct node * i, struct file * f) {
+	//i->nlink++;
 	debug_print_line("debug_open");
 	return 0;
 }
 
-static int __debug_release (struct inode * i, struct file * f) {
-	i->nlink--;
+static int __debug_release (struct node * i, struct file * f) {
+	//i->nlink--;
 	debug_print_line("debug_release");
 	return 0;
 }

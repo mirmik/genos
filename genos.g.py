@@ -34,6 +34,10 @@ module("genos.fs",
 	]
 )
 
+module("genos.sched", "stub",
+	sources = ["src/sched/waitstub.c"],
+)
+
 module("genos.mvfs", 
 	sources = [
 		"src/mvfs/mvfs.c",
@@ -46,13 +50,13 @@ module("genos.mvfs",
 		"src/mvfs/lookup.c",
 		"src/mvfs/file.c",
 		
-		#"src/drivers/cdev/cdev.c",
-		#"src/drivers/cdev/virtual/null.c",
-		#"src/drivers/cdev/virtual/zero.c",
-		#"src/drivers/cdev/virtual/debug.c",
+		"src/drivers/cdev/cdev.c",
+		"src/drivers/cdev/virtual/null.c",
+		"src/drivers/cdev/virtual/zero.c",
+		"src/drivers/cdev/virtual/debug.c",
 
-		#"src/drivers/bdev/bdev.c",
-		#"src/drivers/bdev/virtual/nullb.c",
+		"src/drivers/bdev/bdev.c",
+		"src/drivers/bdev/virtual/nullb.c",
 	]
 )
 

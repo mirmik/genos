@@ -1,11 +1,11 @@
 #include <drivers/bdev/virtual/nullb.h>
 
-static int nullb_write_block (struct block_device * dev, char * buf, size_t sz, int blkno) {
+static int nullb_write_block (struct block_device * dev, char * buf, size_t sz, size_t blkno) {
 	(void) dev; (void) buf; (void) blkno; 
 	return sz;
 }
 
-static int nullb_read_block (struct block_device * dev, char * buf, size_t sz, int blkno) {
+static int nullb_read_block (struct block_device * dev, char * buf, size_t sz, size_t blkno) {
 	(void) dev; (void) buf; (void) blkno; 
 	return 0;
 }

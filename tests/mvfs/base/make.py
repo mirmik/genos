@@ -19,6 +19,8 @@ application("target",
 
 		"genos.mvfs",
 		"genos.mvfs.global_root",
+		
+		("genos.sched", "stub"),
 		#"genos.misc",
 		#"genos.chardev"
 	],
