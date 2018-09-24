@@ -1,8 +1,8 @@
 #include <mvfs/fsops.h>
 #include <mvfs/fstype.h>
 #include <mvfs/super.h>
-#include <mvfs/dentry.h>
 #include <mvfs/file.h>
+#include <mvfs/dirent.h>
 #include <mvfs/pathops.h>
 #include <mvfs/variant/global_root.h>
 
@@ -11,6 +11,7 @@
 
 #include <errno.h>
 #include <stdbool.h>
+#include <string.h>
 
 void vfs_init() {
 	//stable_init(&vfs_vfsmount_hashtable);
@@ -26,10 +27,10 @@ int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *da
 	return 0;
 }
 
-static inline int vfs_is_directory(struct dentry * d) 
+static inline int vfs_is_directory(struct node * d) 
 {
 	if (dlist_empty(&d->childrens)) {
-		if (!d->d_inode || !d->d_inode->directory_flag) {
+		if (!d->negative_flag || !d->directory_flag) {
 			return false;
 		}
 	}
@@ -42,14 +43,14 @@ int vfs_mount(const char *source, const char *target,
 	panic("TODO");
 }
 
-int vfs_mkdir_do(struct inode * i, struct dentry * d, int f) 
+int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f) 
 {
 	int sts;
 
-	if (i->i_sb->i_op->mkdir == NULL) 
+	if (parent->i_sb->i_op->mkdir == NULL) 
 		return ENOTSUP;
 
-	if (sts = i->i_sb->i_op->mkdir(i, d, 0)) {
+	if (sts = parent->i_sb->i_op->mkdir(parent, name, nlen, 0)) {
 		return sts;
 	}
 
@@ -58,46 +59,36 @@ int vfs_mkdir_do(struct inode * i, struct dentry * d, int f)
 
 int vfs_mkdir(const char *path) 
 {
-
 	int sts;
-	struct dentry * d;
-	struct dentry * parent;
-	struct inode * i;
+	struct node * parent;
 	const char * pend;
 
 	sts = vfs_lookup(path, &pend, &parent);
 
 	if (sts == 0) return EEXIST;
 
-	i = parent->d_inode;
-	if (i->directory_flag != 1) return ENOTDIR;
+	if (parent->directory_flag != 1) return ENOTDIR;
 	if (!path_is_simple(pend)) return ENOTDIR;
 
-	d = vfs_dentry_create(pend);
-
-	if (sts = vfs_mkdir_do(i, d, 0)) {
-		vfs_dentry_dealloc(d);
+	if (sts = vfs_mkdir_do(parent, pend, strlen(pend), 0)) {
 		return sts;
 	}
 
-	vfs_dentry_add_child(d, parent);
 	return 0;
 }
 
-int vfs_rmdir_do(struct inode * i, struct dentry * d) 
+int vfs_rmdir_do(struct node * dir) 
 {
 	int sts;
 
-	if (!dlist_empty(&d->childrens)) 
+	if (!dlist_empty(&dir->childrens)) 
 		return ENOTEMPTY;
 
-	if (i->i_sb->i_op->rmdir == NULL) 
+	if (dir->i_sb->i_op->rmdir == NULL) 
 		return ENOTSUP;
 
-	if (sts = i->i_sb->i_op->rmdir(i, d))
+	if (sts = dir->i_sb->i_op->rmdir(dir))
 		return sts;
-
-	vfs_dentry_clean(d);
 
 	return 0;	
 }
@@ -105,25 +96,23 @@ int vfs_rmdir_do(struct inode * i, struct dentry * d)
 int vfs_rmdir(const char *path) 
 {
 	int sts;
-	struct dentry * d;
-	struct inode * i;
-
+	struct node * d;
+	
 	if (sts = vfs_lookup(path, NULL, &d))
 		return sts;
 
-	i = d->d_inode;
-	if (i == NULL) 
+	if (d->negative_flag == 0) 
 		return ENOENT;
 
-	if (d->d_inode->directory_flag == 0) 
+	if (d->directory_flag == 0) 
 		return ENOTDIR;
 
-	return vfs_rmdir_do(i, d);
+	return vfs_rmdir_do(d);
 }
 
 int vfs_chdir(const char *path) 
 {
-	struct dentry* tgt;
+	struct node* tgt;
 	int sts;
 
 	if (sts = vfs_lookup(path, NULL, &tgt)) {
@@ -139,7 +128,7 @@ int vfs_chdir(const char *path)
 
 int vfs_chroot(const char *path) 
 {
-	struct dentry* tgt;
+	struct node* tgt;
 	int sts;
 
 	if (sts = vfs_lookup(path, NULL, &tgt)) {
@@ -154,7 +143,7 @@ int vfs_chroot(const char *path)
 }
 
 int vfs_open(const char* path, int flags, struct file** filp) {
-	int sts;
+	/*int sts;
 	struct dentry* d;	
 
 	if (sts = vfs_lookup(path, NULL, &d)) {
@@ -172,7 +161,7 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 		return sts;
 
 	(*filp)->f_dentry = d;
-	return 0;
+	return 0;*/
 }
 
 int vfs_close(struct file* filp) {
@@ -202,7 +191,7 @@ int vfs_read(struct file * filp, char* data, unsigned int size) {
 
 int vfs_pwd(char* buf) 
 {
-	char* const bbuf = buf;
+/*	char* const bbuf = buf;
 	int len;
 	int flen = 0;
 	char* cursor;
@@ -247,7 +236,7 @@ int vfs_pwd(char* buf)
 		--eit;
 	}
 
-	return flen;
+	return flen;*/
 }
 
 void vfs_dpr_pwd() {
@@ -256,15 +245,15 @@ void vfs_dpr_pwd() {
 	dprln(pwd);
 }
 
-int vfs_common_open (struct inode * i, struct file * f) {
+int vfs_common_open (struct node * i, struct file * f) {
 	(void) i; (void) f;
-	i->nlink++;
+	//i->nlink++;
 	return 0;
 }
 
-int vfs_common_release (struct inode * i, struct file * f) {
+int vfs_common_release (struct node * i, struct file * f) {
 	(void) i; (void) f;
-	i->nlink--;
+	//i->nlink--;
 	return 0;
 }
 
@@ -273,7 +262,7 @@ int vfs_iterate(struct file * filp, struct dirent * de) {
 }
 
 int vfs_debug_ls(const char* path) {
-	int sts;
+/*	int sts;
 	struct dentry * d;
 	struct dirent de;
 	struct file * filp;
@@ -300,5 +289,5 @@ int vfs_debug_ls(const char* path) {
 
 	vfs_close(filp);
 
-	return 0;
+	return 0;*/
 }

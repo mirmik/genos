@@ -1,12 +1,12 @@
 #include <mvfs/mvfs.h>
 #include <mvfs/pathops.h>
-#include <mvfs/dentry.h>
 #include <mvfs/super.h>
 #include <mvfs/vfsmount.h>
 
 #include <gxx/debug/dprint.h>
 #include <gxx/util/iteration_counter.h>
 
+#include "string.h"
 #include "stdio.h"
 #include "errno.h"
 #include "assert.h"
@@ -16,14 +16,13 @@
  *
  *	Т.к. система держит всю информацию в памяти, просто говорим, что данных нет.
  */
-struct dentry * vfs_virtual_lookup(struct inode * i, struct dentry * d) {
-	(void) i;
-	d->d_inode = NULL;
+struct node * vfs_virtual_lookup(struct node * i, const char * name) {
+	(void) i; (void) name;
 	return NULL;
 }
 
-struct dentry * vfs_dentry_lookup_child(struct dentry* parent, const char* name, unsigned int nlen) {
-	struct dentry* node;
+struct node * vfs_dentry_lookup_child(struct node* parent, const char* name, unsigned int nlen) {
+	/*struct node* node;
 
 	if (nlen <= 2) {
 		if (nlen == 1 && name[0] == '.') return parent;
@@ -42,13 +41,13 @@ struct dentry * vfs_dentry_lookup_child(struct dentry* parent, const char* name,
 	}
 	vfs_unlock();
 
-	return NULL;
+	return NULL;*/
 }
 
-int vfs_lookup_directory_child(struct inode * dir, struct dentry * ddir, 
+int vfs_lookup_directory_child(struct node * dir, struct dentry * ddir, 
 	const char* name, unsigned int nlen, struct dentry **dret) 
 {
-	int sts;
+	/*int sts;
 	struct dentry * ret;
 
 	if (dir->i_sb->i_op->lookup == NULL) return ENOTSUP;
@@ -61,19 +60,19 @@ int vfs_lookup_directory_child(struct inode * dir, struct dentry * ddir,
 	}
 
 	vfs_dentry_add_child(ret, ddir);
-	return 0;
+	return 0;*/
 }
 
 int vfs_lookup_relative(const char* str_path, const char** pend, 
-	struct dentry** current
+	struct node** current
 ) {
-	int sts;
+	/*int sts;
 	const char* str;
 	struct vfsmount* mount;
 	unsigned int nlen;
 
 	str = str_path;
-	struct inode * ipos;
+	struct node * ipos;
 	struct dentry * pos = *current;
 
 	while(str = path_next(str, &nlen)) {
@@ -83,16 +82,16 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 		pos = vfs_dentry_lookup_child(pos, str, nlen);
 
 		if (pos == NULL) {
-			//Если дентри не найден в дереве, пробуем запросить inode.
+			//Если дентри не найден в дереве, пробуем запросить node.
 			//Последнего найденного.
 
-			if (NULL == (ipos = (*current)->d_inode) || ipos->directory_flag == 0) {
-				//Если inode данного объекта не существует (negative dentry), или он не дирректорий 
+			if (NULL == (ipos = (*current)->d_node) || ipos->directory_flag == 0) {
+				//Если node данного объекта не существует (negative dentry), или он не дирректорий 
 				//просто говорим:				
 				return ENOENT;
 			}
 
-			//Если inode существует, пробуем создать новый dentry.
+			//Если node существует, пробуем создать новый dentry.
 			if (sts = vfs_lookup_directory_child(ipos, *current, str, nlen, &pos)) {
 				return sts;
 			}
@@ -114,5 +113,5 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 	}
 
 	//Путь полностью отработан. Дентри найден и вернется через поле current.
-	return pos->d_inode ? 0 : ENOENT;
+	return pos->d_node ? 0 : ENOENT;*/
 }

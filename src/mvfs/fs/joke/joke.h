@@ -5,17 +5,16 @@
 #include <mvfs/fstype.h>
 #include <mvfs/super.h>
 #include <mvfs/file.h>
-#include <mvfs/dentry.h>
 #include <mvfs/dirent.h>
 
 #include <gxx/panic.h>
 #include <errno.h>
 
 struct file_system_type joke_fstype;
-const struct inode_operations joke_i_op;
+const struct node_operations joke_i_op;
 const struct file_operations joke_f_op;
 
-static struct inode fixino;
+static struct node fixino;
 
 struct joke_super_block {
 	struct super_block sb;
@@ -30,8 +29,7 @@ static inline struct super_block * joke_get_sb(struct file_system_type *fs, int 
 		joke_sb.sb.s_fs = &joke_fstype;
 		joke_sb.sb.i_op = &joke_i_op;
 		joke_sb.sb.f_op = &joke_f_op;
-		joke_sb.sb.s_root = vfs_dentry_create("/");
-		joke_sb.sb.s_root->d_inode = &fixino;
+		joke_sb.sb.s_root = &fixino;
 
 		fixino.i_sb = &joke_sb.sb;
 		fixino.directory_flag = 1;
@@ -58,13 +56,11 @@ static int joke_put_inode(struct inode * i) {
 
 static int joke_mkdir(struct inode * i, struct dentry * d, int m) {
 	d->d_inode = &fixino;
-	fixino.nlink++;
 	return 0;
 }
 
 static int joke_rmdir(struct inode * i, struct dentry * d) {
 	d->d_inode = NULL;
-	fixino.nlink--;
 	return 0;
 }
 

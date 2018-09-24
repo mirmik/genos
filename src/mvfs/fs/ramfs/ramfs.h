@@ -4,7 +4,6 @@
 #include <mvfs/fsops.h>
 #include <mvfs/fstype.h>
 #include <mvfs/super.h>
-#include <mvfs/dentry.h>
 
 #include <gxx/panic.h>
 #include <errno.h>

@@ -12,28 +12,27 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include <mvfs/inode.h>
+#include <mvfs/node.h>
 
-struct dentry;
 struct file;
 
 ///	Суперблок смонтированной файловой системы.
 struct super_block {
 	const struct file_system_type * s_fs;
-	struct dentry *  s_root; ///корневой dentry ветви.
+	struct node * s_root; ///корневой dentry ветви.
 
 	//void *			private;
 	uint16_t 		refs;
 
-	const struct inode_operations * i_op; ///Виртуальная таблица операций над объектами fs.
+	const struct node_operations * i_op; ///Виртуальная таблица операций над объектами fs.
 	const struct file_operations  * f_op; ///Операции ввода-вывода и управления.
 };
 
 __BEGIN_DECLS
 
-static inline const struct file_operations * vfs_get_f_ops(struct inode* i) {
+static inline const struct file_operations * vfs_get_f_ops(struct node* i) {
 	if (i->i_sb == NULL) 
-		return mcast_out(i, struct special_inode, i)->f_op;
+		return mcast_out(i, struct special_node, node)->f_op;
 	else return i->i_sb->f_op;
 }
 

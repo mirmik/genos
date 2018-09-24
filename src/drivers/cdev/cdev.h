@@ -1,7 +1,7 @@
 #ifndef MVFS_CDEV_H
 #define MVFS_CDEV_H
 
-#include <mvfs/inode.h>
+#include <mvfs/node.h>
 
 struct char_device {
 	struct special_inode c_i;

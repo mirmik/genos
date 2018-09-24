@@ -10,12 +10,12 @@
 __BEGIN_DECLS
 
 /// Impl. Получить текущий root
-extern struct dentry* vfs_get_root();
-extern void vfs_set_root(struct dentry*);
+extern struct node* vfs_get_root();
+extern void vfs_set_root(struct node*);
 
 /// Impl. Получить текущий путь.
-extern struct dentry* vfs_get_pwd();
-extern void vfs_set_pwd(struct dentry*);
+extern struct node* vfs_get_pwd();
+extern void vfs_set_pwd(struct node*);
 
 /// Impl. Лок структур данных vfs.
 static inline void vfs_lock() {}
@@ -27,8 +27,8 @@ extern void vfs_file_dealloc(struct file*);
 extern struct vfsmount * vfs_vfsmount_alloc();
 extern void vfs_vfsmount_dealloc(struct vfsmount *);
 
-extern struct dentry * vfs_dentry_alloc();
-extern void vfs_dentry_dealloc(struct dentry *);
+//extern struct dentry * vfs_dentry_alloc();
+//extern void vfs_dentry_dealloc(struct dentry *);
 
 __END_DECLS
 

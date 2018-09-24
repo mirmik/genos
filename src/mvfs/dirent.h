@@ -2,7 +2,7 @@
 #define MVFS_DIRECTORY_H
 
 #include <stdint.h>
-#include <mvfs/mvfs.h>
+#include <mvfs/node.h>
 
 struct dirent {
     uint32_t       d_ino;    /* inode number */

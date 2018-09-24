@@ -1,7 +1,7 @@
 #ifndef MVFS_BLOCK_DEVICE_H
 #define MVFS_BLOCK_DEVICE_H
 
-#include <mvfs/inode.h>
+#include <mvfs/node.h>
 #include <stdlib.h>
 
 struct block_device_operations;

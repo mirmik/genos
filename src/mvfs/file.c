@@ -1,6 +1,5 @@
 #include <mvfs/file.h>
 #include <mvfs/super.h>
-#include <mvfs/dentry.h>
 #include <mvfs/pathops.h>
 #include <mvfs/mvfs.h>
 #include <stdlib.h>

@@ -1,5 +1,5 @@
 #include <mvfs/mvfs.h>
-#include <mvfs/fs/joke/joke.h>
+//#include <mvfs/fs/joke/joke.h>
 #include <mvfs/fsops.h>
 
 #include <gxx/debug/dprint.h>
@@ -8,16 +8,16 @@
 
 #include <mvfs/fsops.h>
 #include <mvfs/variant/global_root.h>
-#include <mvfs/cdev.h>
+//#include <mvfs/cdev.h>
 #include <mvfs/file.h>
-#include <mvfs/char/null.h>
-#include <mvfs/char/zero.h>
-#include <mvfs/char/debug.h>
+//#include <mvfs/char/null.h>
+//#include <mvfs/char/zero.h>
+//#include <mvfs/char/debug.h>
 
 #include <stdio.h>
 
 int main() {
-	mvfs_register_fs(&joke_fstype);
+//	mvfs_register_fs(&joke_fstype);
 
 	struct dentry * a = mvfs_dentry_create("/");
 	struct dentry * b = mvfs_dentry_create("dev");
@@ -32,9 +32,9 @@ int main() {
 
 	mvfs_set_global_root(a);
 
-	link_null_device("/dev");
-	link_zero_device("/dev");
-	link_debug_device("/dev");
+//	link_null_device("/dev");
+//	link_zero_device("/dev");
+//	link_debug_device("/dev");
 
 	int sts;
 	struct file * f1;
