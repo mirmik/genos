@@ -30,7 +30,7 @@ int vfs_lookup_child(struct node** pos,
 
 	if (p->negative_flag || p->directory_flag == 0) {
 		//Если node данного объекта не существует (negative dentry), или он не дирректорий 
-		//просто говорим:				
+		//просто говорим:	
 		return ENOENT;
 	}
 
@@ -49,15 +49,16 @@ int vfs_lookup_child(struct node** pos,
 	vfs_lock();
 	dlist_for_each_entry(it, &p->childrens, lnk) {
 		int node_nlen = strlen(it->name);
-		if (node_nlen == nlen && strncmp(name, it->name, nlen) == 0) 
+		if (node_nlen == nlen && strncmp(name, it->name, nlen) == 0) {
 			*pos = it;
 			return 0;
+		}
 	}
 	vfs_unlock();
 
 	//TODO: node lookup.
-	
-	return 0;
+			
+	return ENOENT;
 }
 
 int vfs_lookup_relative(const char* str_path, const char** pend, 
@@ -71,13 +72,13 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 	str = str_path;
 	struct node * pos = *current;
 
+	if (pend) *pend = str;
 	while(str = path_next(str, &nlen)) {
 		if (pend) *pend = str;
 
 		//Обходим дерево dentry.
-		if (sts = vfs_lookup_child(&pos, str, nlen)) {
+		if (sts = vfs_lookup_child(&pos, str, nlen))
 			return sts;
-		}
 
 		//Если он смог, переходим на него.
 		// Если дентри в дереве, надо проверить, не является ли он точкой монтирования.
@@ -95,5 +96,5 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 	}
 
 	//Путь полностью отработан. Дентри найден и вернется через поле current.
-	return *pend ? ENOENT : 0;
+	return 0;
 }

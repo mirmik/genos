@@ -27,9 +27,6 @@ extern void vfs_file_dealloc(struct file*);
 extern struct vfsmount * vfs_vfsmount_alloc();
 extern void vfs_vfsmount_dealloc(struct vfsmount *);
 
-//extern struct dentry * vfs_dentry_alloc();
-//extern void vfs_dentry_dealloc(struct dentry *);
-
 __END_DECLS
 
 #endif

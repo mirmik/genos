@@ -11,7 +11,7 @@ struct vfsmount * vfs_vfsmount_alloc()
 	return (struct vfsmount *) malloc(sizeof(struct vfsmount));
 }
 
-void vfs_vfsmount_destroy(struct vfsmount * m) 
+void vfs_vfsmount_dealloc(struct vfsmount * m) 
 {
 	free(m);
 }
@@ -23,8 +23,10 @@ struct vfsmount * vfs_vfsmount_get(struct node * mount_point)
 {
 	struct vfsmount * it;
 
-	dlist_for_each_entry(it, &vfsmount_list, link) {
-		if (it->mount_point == mount_point) return it;
+	dlist_for_each_entry(it, &vfsmount_list, link) 
+	{
+		if (it->mount_point == mount_point) 
+			return it;
 	}
 
 	return NULL;

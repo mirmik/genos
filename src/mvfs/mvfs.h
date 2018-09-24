@@ -62,10 +62,11 @@ extern int vfs_close(struct file* filpp);
 extern int vfs_pwd(char* buf);
 
 
-extern void vfs_dpr_pwd();
-extern int vfs_iterate(struct file * filp, struct dirent * de);
+extern void vfs_debug_pwd();
 
+extern int vfs_iterate(struct file * filp, struct dirent * de);
 extern int vfs_debug_ls(const char* path);
+extern int vfs_debug_tree(const char* path);
 
 __END_DECLS
 

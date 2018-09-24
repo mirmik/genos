@@ -20,6 +20,8 @@ void vfs_init() {
 int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *data) 
 {
 	struct file_system_type * fs = vfs_get_fs(fstype);
+	if (fs == NULL) 
+		return ENOENT;
 
 	struct super_block * sb = fs->get_sb(fs, mountflags, data);
 	vfs_set_global_root(sb->s_root);
@@ -27,15 +29,15 @@ int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *da
 	return 0;
 }
 
-static inline int vfs_is_directory(struct node * d) 
+/*static inline int vfs_is_directory(struct node * d) 
 {
 	if (dlist_empty(&d->childrens)) {
-		if (!d->negative_flag || !d->directory_flag) {
+		if (!d->directory_flag) {
 			return false;
 		}
 	}
 	return true;
-}
+}*/
 
 int vfs_mount(const char *source, const char *target, 
 	const char* fstype, unsigned long mountflags, const void *data
@@ -50,9 +52,8 @@ int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f)
 	if (parent->i_sb->i_op->mkdir == NULL) 
 		return ENOTSUP;
 
-	if (sts = parent->i_sb->i_op->mkdir(parent, name, nlen, 0)) {
+	if (sts = parent->i_sb->i_op->mkdir(parent, name, nlen, 0))
 		return sts;
-	}
 
 	return 0;
 } 
@@ -64,14 +65,17 @@ int vfs_mkdir(const char *path)
 	const char * pend;
 
 	sts = vfs_lookup(path, &pend, &parent);
-	if (sts == 0) return EEXIST;
+	if (sts == 0) 
+		return EEXIST;
 
-	if (parent->directory_flag != 1) return ENOTDIR;
-	if (!path_is_simple(pend)) return ENOTDIR;
+	if (parent->directory_flag != 1) 
+		return ENOTDIR;
 
-	if (sts = vfs_mkdir_do(parent, pend, strlen(pend), 0)) {
+	if (!path_is_simple(pend)) 
+		return ENOTDIR;
+
+	if (sts = vfs_mkdir_do(parent, pend, strlen(pend), 0))
 		return sts;
-	}
 
 	return 0;
 }
@@ -118,7 +122,7 @@ int vfs_chdir(const char *path)
 		return sts;
 	}
 
-	if (!vfs_is_directory(tgt)) 
+	if (!tgt->directory_flag) 
 		return ENOTDIR;
 
 	vfs_set_pwd(tgt);
@@ -134,7 +138,7 @@ int vfs_chroot(const char *path)
 		return sts;
 	}
 
-	if (!vfs_is_directory(tgt)) 
+	if (!tgt->directory_flag) 
 		return ENOTDIR;
 
 	vfs_set_root(tgt);
@@ -142,6 +146,7 @@ int vfs_chroot(const char *path)
 }
 
 int vfs_open(const char* path, int flags, struct file** filp) {
+	panic("open");
 	/*int sts;
 	struct dentry* d;	
 
@@ -190,7 +195,7 @@ int vfs_read(struct file * filp, char* data, unsigned int size) {
 
 int vfs_pwd(char* buf) 
 {
-/*	char* const bbuf = buf;
+	char* const bbuf = buf;
 	int len;
 	int flen = 0;
 	char* cursor;
@@ -201,7 +206,7 @@ int vfs_pwd(char* buf)
 		return 1;
 	}
 
-	for (struct dentry * d = vfs_get_pwd();; d = d->parent) {
+	for (struct node * d = vfs_get_pwd();; d = d->parent) {
 		if (d->parent == NULL) {
 			if (d->mount_point_flag) {
 				panic("TODO");
@@ -235,10 +240,10 @@ int vfs_pwd(char* buf)
 		--eit;
 	}
 
-	return flen;*/
+	return flen;
 }
 
-void vfs_dpr_pwd() {
+void vfs_debug_pwd() {
 	char pwd[100];
 	vfs_pwd(pwd);
 	dprln(pwd);
@@ -271,6 +276,7 @@ int vfs_debug_ls(const char* path) {
 	else
 		if (sts = vfs_lookup(path, NULL, &d))
 			return sts;
+
 	if (sts = vfs_open_node(d, &filp))
 		return sts;
 	
@@ -288,4 +294,17 @@ int vfs_debug_ls(const char* path) {
 	vfs_close(filp);
 
 	return 0;
+}
+
+int vfs_debug_tree(const char* path) {
+	struct node * d;
+	int sts;
+
+	if (path == NULL)
+		d = vfs_get_pwd();
+	else
+		if (sts = vfs_lookup(path, NULL, &d))
+			return sts;
+
+	vfs_dpr_node_tree(d);
 }

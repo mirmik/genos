@@ -38,6 +38,15 @@ module("genos.sched", "stub",
 	sources = ["src/sched/waitstub.c"],
 )
 
+module("genos.sched", "impl",
+	sources = [
+		"src/sched/wait.c",
+		"src/sched/sched.c",
+		"src/sched/api.c",
+		"src/sched/schedee/autom.c",
+	],
+)
+
 module("genos.mvfs", 
 	sources = [
 		"src/mvfs/mvfs.c",
@@ -57,12 +66,20 @@ module("genos.mvfs",
 
 		"src/drivers/bdev/bdev.c",
 		"src/drivers/bdev/virtual/nullb.c",
+	],
+
+	defines = [
+		("MVFS_INCLUDED")
 	]
 )
 
-module("genos.mvfs.global_root", 
-	sources = [ "src/mvfs/variant/global_root.c" ]
+module("genos.mvfs.global", 
+	sources = [ "src/mvfs/variant/global_root.c", "src/mvfs/variant/global_pwd.c" ]
 )
+
+module("genos.mvfs.schedee_support", 
+	sources = [ "src/mvfs/variant/global_root.c", "src/mvfs/variant/schedee_support.c" ]
+) 
 
 #module("genos.misc", 
 #	sources = [

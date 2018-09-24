@@ -1,19 +1,24 @@
 #include <sched/wait.h>
 #include <sched/schedee.h>
+#include <sched/sched.h>
 
-struct schedee_waiter {
+#include <stdlib.h>
+
+struct schedee_waiter 
+{
 	struct dlist_head wait_lnk;
-	struct dlist_head proc_lnk;
+	//struct dlist_head proc_lnk;
 	struct schedee * sch;
 };
 
-void init_waiter(struct waiter * wait, struct schedee * sch) {
-	//dlist_add(wait->proc_lnk)
+void init_waiter(struct schedee_waiter * wait, struct schedee * sch)
+{
 	wait->sch = sch;
 }
 
-static int __wait_current_schedee(struct dlist_head * head, bool priority, struct waiter * wp) 
-{
+static int __wait_current_schedee(struct dlist_head * head, int priority, 
+	struct schedee_waiter * wp
+) {
 	if (priority) 
 		dlist_add(&wp->wait_lnk, head);
 	else 
@@ -23,16 +28,16 @@ static int __wait_current_schedee(struct dlist_head * head, bool priority, struc
 	return 0;
 }
 
-int wait_current_schedee(struct dlist_head * head, bool priority) 
+int wait_current_schedee(struct dlist_head * head, int priority) 
 {
 	struct schedee * cur;
 
 	cur = current_schedee();
 
-	if (cur == NULL || !schedee_can_displace(cur))
+	if (cur == NULL || !cur->can_displace_flag)
 		return -1;
 	
-	if (schedee_has_context(cur)) {
+	if (cur->has_context_flag) {
 		struct schedee_waiter w;
 		return __wait_current_schedee(head, priority, &w);
 	} else {
@@ -42,10 +47,29 @@ int wait_current_schedee(struct dlist_head * head, bool priority)
 	}
 }
 
-int unwait_one(struct dlist_head * head) {
+void __unwait(struct schedee_waiter * it)
+{
+	struct schedee * sch = it->sch;
+	
+	dlist_del(&it->wait_lnk);
+	
+	if (sch->has_context_flag)
+		free(it);
 
+	schedee_run(sch);
 }
 
-int unwait_all(struct dlist_head * head) {
+void unwait_one(struct dlist_head * head)
+{
+	struct schedee_waiter * it;
+	it = dlist_first_entry(head, struct schedee_waiter, wait_lnk);
+	__unwait(it);
+}
 
+void unwait_all(struct dlist_head * head)
+{
+	struct schedee_waiter * it;
+	dlist_for_each_entry(it, head, wait_lnk) {
+		__unwait(it);
+	} 
 }

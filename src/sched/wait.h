@@ -11,11 +11,10 @@
 
 __BEGIN_DECLS
 
-int wait_current_schedee(struct dlist_head * head);
-int wait_current_schedee_priority(struct dlist_head * head);
+int wait_current_schedee(struct dlist_head * head, int priority);
 
-int unwait_one(struct dlist_head * head);
-int unwait_all(struct dlist_head * head);
+void unwait_one(struct dlist_head * head);
+void unwait_all(struct dlist_head * head);
 
 __END_DECLS
 

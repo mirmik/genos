@@ -1,15 +1,21 @@
 #ifndef GENOS_DRIVERS_SPI_H
 #define GENOS_DRIVERS_SPI_H
 
+#include <sys/cdefs.h>
+
+struct spi_operations;
+
 struct spi_device {
-    uint8_t chip_s
-
-
-
-    .chip_select    = 0,
-    .max_speed_hz   = 1 * 1000 * 1000,
-    .bus_num        = 1,
-    .mode           = SPI_MODE_3,
+    const struct spi_operations * spi_op;
 };
+
+struct spi_operations {
+	void (*select)   (struct spi_device *dev, void *slct, int en);
+	void (*exchange) (struct spi_device *dev, const void *txbuf, void *rxbuf, size_t len);
+};
+
+__BEGIN_DECLS
+
+__END_DECLS
 
 #endif

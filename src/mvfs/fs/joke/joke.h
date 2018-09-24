@@ -44,7 +44,9 @@ static void joke_kill_sb(struct super_block * sb) {
 
 static int joke_mkdir(struct node * i, const char * name, size_t nlen, int flags) {
 	//debug_print_line("joke_mkdir");
-	virtual_node_create_as_child(name, nlen, i);
+	struct node * node = virtual_node_create_as_child(name, nlen, i);
+	node->directory_flag = 1;
+	node->i_sb = &joke_sb.sb;
 	return 0;
 }
 
