@@ -21,6 +21,7 @@ struct node {
 		struct {
 			uint8_t negative_flag : 1;
 			uint8_t directory_flag : 1;
+			uint8_t special_node_flag : 1;
 		};
 	};
 };
