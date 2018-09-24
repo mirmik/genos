@@ -64,7 +64,6 @@ int vfs_mkdir(const char *path)
 	const char * pend;
 
 	sts = vfs_lookup(path, &pend, &parent);
-
 	if (sts == 0) return EEXIST;
 
 	if (parent->directory_flag != 1) return ENOTDIR;
@@ -167,7 +166,7 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 int vfs_close(struct file* filp) {
 	int sts;
 
-	sts = filp->f_op->release(filp->f_inode, filp);
+	sts = filp->f_op->release(filp->f_node, filp);
 	if (sts) return sts;
 }
 
@@ -262,8 +261,8 @@ int vfs_iterate(struct file * filp, struct dirent * de) {
 }
 
 int vfs_debug_ls(const char* path) {
-/*	int sts;
-	struct dentry * d;
+	int sts;
+	struct node * d;
 	struct dirent de;
 	struct file * filp;
 
@@ -272,10 +271,9 @@ int vfs_debug_ls(const char* path) {
 	else
 		if (sts = vfs_lookup(path, NULL, &d))
 			return sts;
-	if (sts = vfs_open_inode(d->d_inode, &filp))
+	if (sts = vfs_open_node(d, &filp))
 		return sts;
-	filp->f_dentry = d;
-
+	
 	while(1) {
 		sts = vfs_iterate(filp, &de);
 		if (sts) {
@@ -289,5 +287,5 @@ int vfs_debug_ls(const char* path) {
 
 	vfs_close(filp);
 
-	return 0;*/
+	return 0;
 }

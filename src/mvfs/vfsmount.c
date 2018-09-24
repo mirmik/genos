@@ -19,7 +19,7 @@ void vfs_vfsmount_destroy(struct vfsmount * m)
 /**
  *	В качестве ключа для поиска в таблице точек монтирования используется дентри точки монтирования.
  */
-struct vfsmount * vfs_vfsmount_get(struct dentry * mount_point) 
+struct vfsmount * vfs_vfsmount_get(struct node * mount_point) 
 {
 	struct vfsmount * it;
 
@@ -30,7 +30,7 @@ struct vfsmount * vfs_vfsmount_get(struct dentry * mount_point)
 	return NULL;
 }
 
-struct vfsmount * vfs_vfsmount_create(struct dentry * mount_point, struct dentry * root) 
+struct vfsmount * vfs_vfsmount_create(struct node * mount_point, struct node * root) 
 {
 	struct vfsmount * ret;
 

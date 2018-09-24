@@ -36,7 +36,7 @@ static inline int vfs_lookup(const char* str_path, const char** pend, struct nod
 }
 
 ///Стандартные функции для реализации методов fs
-extern struct node * vfs_virtual_lookup(struct node * dir, const char * name);
+extern struct node * vfs_virtual_lookup(struct node * dir, const char * name, size_t nlen);
 extern int vfs_common_open (struct node *, struct file *);
 extern int vfs_common_release (struct node *, struct file *);	
 

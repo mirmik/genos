@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <gxx/debug/dprint.h>
 
-extern int vfs_open_inode(struct inode * i, struct file ** filpp) {
+int vfs_open_node(struct node * i, struct file ** filpp) {
 	int sts;
 	struct file * filp;
 	const struct file_operations * f_op = vfs_get_f_ops(i);
@@ -19,7 +19,7 @@ extern int vfs_open_inode(struct inode * i, struct file ** filpp) {
 
 	filp = vfs_file_alloc();
 	filp->f_op = f_op;
-	filp->f_inode = i;
+	filp->f_node = i;
 
 	sts = f_op->open(i, filp);
 	if (sts) {

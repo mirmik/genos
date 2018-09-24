@@ -15,14 +15,13 @@ struct file_operations;
 
 struct file {
 	int pos;
-	struct dentry * f_dentry;
-	struct inode * f_inode; ///< Родительский inode. Держит ссылку.
+	struct node * f_node; ///< Родительский node. Держит ссылку.
 	const struct file_operations* f_op;
 };
 
 struct file_operations {
-	int (*open) (struct inode *, struct file *); ///< заполнить структуру файла по inode.
-	int (*release) (struct inode *, struct file *);	
+	int (*open) (struct node *, struct file *); ///< заполнить структуру файла по inode.
+	int (*release) (struct node *, struct file *);	
 	int (*write) (struct file*, const char* data, unsigned int size);
 	int (*read) (struct file*, char* data, unsigned int size);
 
