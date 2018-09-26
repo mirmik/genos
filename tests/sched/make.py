@@ -12,7 +12,7 @@ application("target",
 	sources = ["main.c"],
 
 	include_modules = [ 
-		"gxx.c_only",
+		("gxx", "posix"),
 		("gxx.dprint", "cout"),
 		("gxx.syslock", "mutex"),
 

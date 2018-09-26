@@ -18,7 +18,7 @@ application("target",
 		("gxx.dprint", "cout"),
 
 		"genos.mvfs",
-		"genos.mvfs.global_root",
+		"genos.mvfs.global",
 		
 		("genos.sched", "stub"),
 		#"genos.misc",

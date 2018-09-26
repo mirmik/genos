@@ -146,26 +146,25 @@ int vfs_chroot(const char *path)
 }
 
 int vfs_open(const char* path, int flags, struct file** filp) {
-	panic("open");
-	/*int sts;
-	struct dentry* d;	
+	int sts;
+	struct node* d;	
 
 	if (sts = vfs_lookup(path, NULL, &d)) {
 		return sts;
 	}
 
-	if (d->d_inode == NULL) {
+	if (d->negative_flag) {
 		//dentry без inode. (или негативный, или добавленный вручную) 
 		//Считаем, что файл не существует.
 		return -ENOENT;
 	}
 
 	//Осталось сгенерировать file.
-	if (sts = vfs_open_inode(d->d_inode, filp))
+	if (sts = vfs_open_node(d, filp))
 		return sts;
 
-	(*filp)->f_dentry = d;
-	return 0;*/
+	(*filp)->f_node = d;
+	return 0;
 }
 
 int vfs_close(struct file* filp) {

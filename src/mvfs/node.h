@@ -49,11 +49,20 @@ extern int vfs_open_node(struct node * i, struct file ** filpp);
 struct node * virtual_node_alloc();
 void virtual_node_dealloc(struct node *);
 
+static inline void node_init(struct node * node, const char * name, size_t nlen) {
+	dlist_init(&node->childrens);
+	strncpy(node->name, name, nlen < NAME_LENGTH_MAX ? nlen : NAME_LENGTH_MAX);
+	node->flags = 0;
+}
+
+static inline void node_add_child(struct node * node, struct node * parent) {
+	dlist_add(&node->lnk, &parent->childrens);
+	node->parent = parent;
+}
+
 static inline struct node * virtual_node_create(const char * name, size_t nlen) {
 	struct node * ret = virtual_node_alloc();
-	dlist_init(&ret->childrens);
-	ret->flags = 0;
-	strncpy(ret->name, name, nlen < NAME_LENGTH_MAX ? nlen : NAME_LENGTH_MAX);
+	node_init(ret, name, nlen);
 	return ret;
 }
 
@@ -61,8 +70,7 @@ static inline struct node * virtual_node_create_as_child(const char * name, size
 	struct node * parent
 ) {
 	struct node * ret = virtual_node_create(name, nlen);
-	dlist_add(&ret->lnk, &parent->childrens);
-	ret->parent = parent;
+	node_add_child(ret, parent);
 }
 
 static inline void virtual_node_release(struct node * node) {
