@@ -12,6 +12,15 @@
    { 8192, 1056, 11, (0xF<<2) }, // 64M AT45DB642
 };*/
 
+/*****************************************************************************
+*  Коды комманд для использования с df_PageFunc
+******************************************************************************/
+#define DF_FLASH_TO_BUF1 		0x53	/* Main memory page to buffer 1 transfer  */
+#define DF_FLASH_TO_BUF2 		0x55	/* Main memory page to buffer 2 transfer */
+#define DF_BUF1_TO_FLASH_WITH_ERASE   	0x83	/* Buffer 1 to main memory page program with built-in erase */
+#define DF_BUF2_TO_FLASH_WITH_ERASE   	0x86	/* Buffer 2 to main memory page program with built-in erase */
+#define DF_BUF1_TO_FLASH_WITHOUT_ERASE  0x88	/* Buffer 1 to main memory page program without built-in erase */
+#define DF_BUF2_TO_FLASH_WITHOUT_ERASE  0x89	/* Buffer 2 to main memory page program without built-in erase */
 
 struct df_info
 {
@@ -36,6 +45,8 @@ static inline struct df_info info_AT45DB081() {	struct df_info ret = { 4096, 264
 static inline struct df_info info_AT45DB161() {	struct df_info ret = { 4096, 528,  10, (0xB<<2) }; return ret; }
 static inline struct df_info info_AT45DB321() {	struct df_info ret = { 8192, 528,  10, (0xD<<2) }; return ret; }
 static inline struct df_info info_AT45DB642() {	struct df_info ret = { 8192, 1056, 11, (0xF<<2) }; return ret; }
+
+
 
 __END_DECLS
 
