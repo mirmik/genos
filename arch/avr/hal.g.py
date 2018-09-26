@@ -31,9 +31,10 @@ module("genos.hal", impl = "atmega2560",
 	ldscripts = ["ldscripts/atmega2560.ld"],
 
 	defines = ["CHIP_ATMEGA2560"],
-	cxx_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
-	cc_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
-	ld_flags = "-nostdlib -lgcc -lm -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	cxx_flags = "-mmcu=atmega2560",
+	cc_flags = "-mmcu=atmega2560",
+	ld_flags = "-nostdlib -mmcu=atmega2560",
+	libs = ["m", "gcc"],
 )
 
 module("genos.hal", impl = "atmega328p",

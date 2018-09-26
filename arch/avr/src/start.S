@@ -71,8 +71,8 @@ __start:
 	
 	/* Copy initial global data values from FLASH into RAM */
 
-#	.global	__do_copy_data;			/* Required to suppress dragging in logic from libgcc */
-#__do_copy_data:
+.global	__do_copy_data;			/* Required to suppress dragging in logic from libgcc */
+__do_copy_data:
 
 #ifdef HAVE_RAMPZ
 	ldi		r17, hi8(__data_end)

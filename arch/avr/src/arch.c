@@ -2,7 +2,7 @@
 #include <hal/irqtable.h>
 
 #include <arch/timer.h>
-#include <genos/time/systime.h>
+#include <systime/systime.h>
 
 #include <gxx/diag/diag.h>
 #include <periph/irqdefs.h>

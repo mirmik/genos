@@ -1,6 +1,6 @@
 #include <hal/board.h>
 #include <arch/irq.h>
-#include <genos/time/systime.h>
+#include <systime/systime.h>
 
 #include <gxx/debug/dprint.h>
 
