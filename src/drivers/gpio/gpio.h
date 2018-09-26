@@ -75,8 +75,9 @@ __BEGIN_DECLS
 extern int gpio_settings(struct gpio *gpio, gpio_mask_t mask, uint32_t mode);
 
 extern void gpio_set_level(struct gpio *gpio, gpio_mask_t mask, uint8_t level);
-
 extern gpio_mask_t gpio_get_level(struct gpio *gpio, gpio_mask_t mask);
+
+extern void gpio_toggle(struct gpio *gpio, gpio_mask_t mask);
 
 //extern int gpio_pin_irq_attach(struct gpio *gpio, gpio_mask_t mask,
 //		irq_handler_t pin_handler, int mode, void *data);

@@ -5,8 +5,18 @@
 
 struct spi_operations;
 
+enum spi_mode_e {
+	SPI_MODE_0,
+	SPI_MODE_1,
+	SPI_MODE_2,
+	SPI_MODE_3
+};
+
 struct spi_device {
     const struct spi_operations * spi_op;
+    void * current_sellected;
+
+    uint8_t mode;
 };
 
 struct spi_operations {
