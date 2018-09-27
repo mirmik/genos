@@ -27,8 +27,7 @@ application("firmware",
 		submodule("gxx.libc"),
 		submodule("gxx.std"),
 		submodule("gxx.include"),
-		submodule("gxx.util"),
-		submodule("gxx.panic", "abort"),
+		submodule("gxx.c_only"),
 		
 	#gxx support
 		submodule("gxx.dprint", "diag"),
@@ -42,12 +41,17 @@ application("firmware",
 		submodule("genos.systime"),
 		submodule("genos.sched", "impl"),
 
-		submodule("genos.drivers.spi.avr")
+		submodule("genos.drivers.spi.avr"),
+		submodule("genos.drivers.gpio.avr"),
+
+		submodule("genos.mvfs"),
+		submodule("genos.mvfs.global"),
+		submodule("genos.malloc", "lin"),
 	]
 )
 
 @licant.routine
 def install():
-	os.system("sudo avrdude -P/dev/ttyUSB0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")
+	os.system("avrdude -P/dev/ttyUSB0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")
 
 licant.ex(default = "firmware")

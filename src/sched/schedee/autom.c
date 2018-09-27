@@ -6,7 +6,7 @@
 struct autom_schedee {
 	struct schedee sch;
 
-	int (*task) (void*, int*);
+	void* (*task) (void*, int*);
 	void * arg;
 	int state;
 };
@@ -21,7 +21,7 @@ struct schedee_operations autom_schedee_op = {
 	.finalize = autom_schedee_finalize,
 };
 
-struct schedee * create_autom_schedee(int (*task) (void*, int*), void * arg) 
+struct schedee * create_autom_schedee(void* (*task) (void*, int*), void * arg) 
 {
 	struct autom_schedee * sch = (struct autom_schedee *) 
 		malloc(sizeof(struct autom_schedee));

@@ -9,7 +9,7 @@ inline gpio_mask_t gpio_get_level(struct gpio* g, gpio_mask_t mask) {
 	return g->pin;
 }
 
-inline void gpio_tgl_level(struct gpio* g, gpio_mask_t mask) {
+inline void gpio_toggle(struct gpio* g, gpio_mask_t mask) {
 	g->pin = mask;
 }
 

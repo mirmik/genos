@@ -16,7 +16,7 @@ void schedee_manager();
 void __schedule__();
 int  __displace__();
 
-struct schedee * create_autom_schedee(int(*task)(void*, int*), void* arg);
+struct schedee * create_autom_schedee(void*(*task)(void*, int*), void* arg);
 struct schedee * create_process(int(*task)(void*), void* arg, int heapsize);
 
 __END_DECLS

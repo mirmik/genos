@@ -6,7 +6,6 @@ module("genos.board", impl = "arduino_mega",
 	defines = ["F_CPU=16000000", "BOARD_ARDUINO_MEGA"],
 	include_modules = [
 		submodule("genos.hal", impl="atmega2560"),
-		submodule("drivers.avr_gpio"),
 	]
 )
 
@@ -16,6 +15,5 @@ module("genos.board", impl = "arduino_uno",
 	defines = ["F_CPU=16000000", "BOARD_ARDUINO_UNO"],
 	include_modules = [
 		submodule("genos.hal", impl="atmega328p"),
-		submodule("drivers.avr_gpio"),
 	]
 )
