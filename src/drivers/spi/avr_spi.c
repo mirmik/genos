@@ -2,67 +2,88 @@
 #include <sched/wait.h>
 
 #include <drivers/gpio/pin.h>
+#include <avr/io.h>
+
+#include <gxx/panic.h>
+
+#include <stdint.h>
+#include <errno.h>
+#include <assert.h>
 
 struct avr_spi_device {
 	struct spi_device spi;
-	int32_t frequency;
 
-	struct dlist_head wait_list; 
-
-	const void *txbuf;
-	void *rxbuf;
+	void * current_select;
+    
+    const uint8_t *txbuf;
+	uint8_t *rxbuf;
 	size_t len;
 	size_t counter;
 
+	uint8_t mode;
+
+	int32_t frequency;
+	struct dlist_head wait_list; 
 	uint8_t in_work;
 };
 
-static inline void avr_spi_sendbyte(uint8_t tx) { SDPR = tx; }
+static inline void avr_spi_sendbyte(uint8_t tx) { SPDR = tx; }
 static inline void avr_spi_txidlewait() { while(!(SPSR & 0x80)); }
 static inline uint8_t avr_spi_recvbyte() { uint8_t rx = SPDR; return rx; }
+static inline uint8_t avr_spi_irq_enable() { panic("TODO"); }
+static inline uint8_t avr_spi_irq_disable() { panic("TODO"); }
 
-void avr_spi_select (struct spi_device *dev, void *slct, int en) {
-	struct avr_spi_device * avr_spi = mcast_out(struct avr_spi_device, dev, spi);
+int avr_spi_select (struct spi_device *dev, void *slct, int en) {
+	struct avr_spi_device * spi = mcast_out(dev, struct avr_spi_device, spi);
 	struct gpio_pin * npin = (struct gpio_pin *) slct;
-	struct gpio_pin * opin = (struct gpio_pin *) dev->current_select;
+	struct gpio_pin * opin = (struct gpio_pin *) spi->current_select;
 
-	if (en == false) {
+	if (en == 0) {
 		assert(npin == opin);
-		gpio_pin_clr(opin);
-		dev->current_select = NULL;
-		return;	
+		gpio_pin_set_level(opin, 0);
+		spi->current_select = NULL;
+		return 0;	
 	}
 
 	if (opin != NULL) {
-		gpio_pin_clr(opin);
+		gpio_pin_set_level(opin, 0);
 	}
-	gpio_pin_set(npin);
-	
-	dev->current_select = slct;
-	return;
+	gpio_pin_set_level(npin, 1);
+		
+	spi->current_select = slct;
+	return 0;
 }
 
-void avr_spi_exchange (struct spi_device *dev, const void *txbuf, void *rxbuf, size_t len) {
+int avr_spi_exchange (struct spi_device *dev, const void *txbuf, void *rxbuf, int len, int flags) {
 	int sts;
 	struct avr_spi_device * spi = mcast_out(dev, struct avr_spi_device, spi);
 
+	if (flags && NOSCHED) {
+		while(len--) {
+			avr_spi_sendbyte(*(char*)txbuf++);
+			avr_spi_txidlewait();
+			*(char*)rxbuf++ = avr_spi_recvbyte();
+		}
+		return 0;
+	}
+
 	while (spi->in_work) {
-		sts = wait_current_schedee(&spi->wait_list, false);
+		sts = wait_current_schedee(&spi->wait_list, 0);
 		if (sts == -1) {
 			return EAGAIN;
 		}
 	}
 
-	dev->txbuf = txbuf;
-	dev->rxbuf = rxbuf;
-	dev->counter = 0;
-	dev->len = len;
+	spi->txbuf = txbuf;
+	spi->rxbuf = rxbuf;
+	spi->counter = 0;
+	spi->len = len;
 
-	avr_spi_sendbyte(txbuf[0]);
-	avr_spi_enable_irq(dev);
+	avr_spi_sendbyte(spi->txbuf[0]);
+	avr_spi_irq_enable();
 
 	//Ставим поток в начало очереди, чтобы обработчик прерывания снял его оттуда позже.
-	wait_current_schedee(&spi->wait_list, true);
+	wait_current_schedee(&spi->wait_list, WAIT_PRIORITY);
 
 	//Отдаем управление следующему процессу, если такой находится.
 	spi->in_work = 0;
@@ -71,11 +92,11 @@ void avr_spi_exchange (struct spi_device *dev, const void *txbuf, void *rxbuf, s
 
 
 void avr_spi_irq_handler(struct spi_device * dev) {
-	struct avr_spi_device * spi = mcast_out(dev, struct avr_spi_device, spi);
-	rxbuf[counter] = avr_spi_recvbyte(spi);
+	struct avr_spi_device * spi =  mcast_out(dev, struct avr_spi_device, spi);
+	spi->rxbuf[spi->counter] = avr_spi_recvbyte(spi);
 	
-	if (counter != len) {
-		avr_spi_sendbyte(txbuf[++counter]);
+	if (spi->counter != spi->len) {
+		avr_spi_sendbyte(spi->txbuf[++spi->counter]);
 	} else {
 		avr_spi_irq_disable(spi);
 	}
@@ -84,6 +105,20 @@ void avr_spi_irq_handler(struct spi_device * dev) {
 	unwait_one(&spi->wait_list);
 }
 
-void link_avr_spi() {
+struct avr_spi_device avr_spi;
 
+const struct spi_operations avr_spi_operations = {
+	.select = avr_spi_select,
+	.exchange = avr_spi_exchange,
+};
+
+struct spi_device * get_avr_spi_device() {
+	static char inited = 0;
+
+	if (!inited) {
+		avr_spi.current_select = NULL;
+		spi_device_init(&avr_spi.spi, &avr_spi_operations);
+	}
+
+	return &avr_spi.spi;
 }

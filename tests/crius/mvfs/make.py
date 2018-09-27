@@ -22,22 +22,27 @@ application("firmware",
 	cc_flags = "-Os -flto",
 
 	include_modules = [
+	#stdlibs
+		submodule("gxx.posix"),
+		submodule("gxx.libc"),
+		submodule("gxx.std"),
+		submodule("gxx.include"),
+		submodule("gxx.util"),
+		submodule("gxx.panic", "abort"),
+		
+	#gxx support
+		submodule("gxx.dprint", "diag"),
+		submodule("gxx.diag", "impl"),
+		submodule("gxx.syslock", "genos.atomic"),
+
+	#base and os support
 		submodule("genos.include"),
 		submodule("genos.board", "arduino_mega"),
 		submodule("genos.irqtbl"),
 		submodule("genos.systime"),
 		submodule("genos.sched", "impl"),
 
-		submodule("gxx.syslock", "genos.atomic"),
-		
-		submodule("gxx.posix"),
-		submodule("gxx.libc"),
-		submodule("gxx.std"),
-		submodule("gxx.include"),
-		
-		submodule("gxx.dprint", "diag"),
-		submodule("gxx.diag", "impl"),
-#		submodule("gxx.c_only"),
+		submodule("genos.drivers.spi.avr")
 	]
 )
 

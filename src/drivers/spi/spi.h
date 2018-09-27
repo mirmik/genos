@@ -2,6 +2,7 @@
 #define GENOS_DRIVERS_SPI_H
 
 #include <sys/cdefs.h>
+#include <sched/flags.h>
 
 struct spi_operations;
 
@@ -14,17 +15,26 @@ enum spi_mode_e {
 
 struct spi_device {
     const struct spi_operations * spi_op;
-    void * current_sellected;
-
-    uint8_t mode;
 };
 
 struct spi_operations {
-	void (*select)   (struct spi_device *dev, void *slct, int en);
-	void (*exchange) (struct spi_device *dev, const void *txbuf, void *rxbuf, size_t len);
+	int (*select)   (struct spi_device *spi, void *slct, int en);
+	int (*exchange) (struct spi_device *spi, const void *txbuf, void *rxbuf, int len, int flags);
 };
 
 __BEGIN_DECLS
+
+static inline void spi_device_init(struct spi_device * spi, const struct spi_operations * ops) {
+	spi->spi_op = ops;
+}
+
+static inline int spi_select(struct spi_device * spi, void* slct, int en) { 
+	return spi->spi_op->select(spi, slct, en); 
+}
+
+static inline int spi_exchange(struct spi_device *spi, const void *txbuf, void *rxbuf, int len, int flags) { 
+	return spi->spi_op->exchange(spi, txbuf, rxbuf, len, flags); 
+}
 
 __END_DECLS
 

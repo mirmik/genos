@@ -26,7 +26,7 @@ static inline void gpio_pin_init(struct gpio_pin * pin, struct gpio * io, uint8_
 }
 
 static inline void gpio_pin_set_level(struct gpio_pin * ptr, uint8_t lvl) {
-	gpio_set_level(ptr->gpio, ptr->mask);
+	gpio_set_level(ptr->gpio, ptr->mask, lvl);
 }
 
 static inline void gpio_pin_toggle(struct gpio_pin * ptr) {

@@ -9,6 +9,8 @@
 #include <sys/cdefs.h>
 #include <gxx/datastruct/dlist.h>
 
+#define WAIT_PRIORITY 1
+
 __BEGIN_DECLS
 
 int wait_current_schedee(struct dlist_head * head, int priority);

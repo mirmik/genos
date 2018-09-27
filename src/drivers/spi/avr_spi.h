@@ -5,7 +5,7 @@
 
 __BEGIN_DECLS
 
-extern void link_avr_spi();
+extern struct spi_device* get_avr_spi_device();
 
 __END_DECLS
 
