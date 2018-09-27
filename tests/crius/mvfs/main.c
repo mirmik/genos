@@ -1,6 +1,8 @@
 #include <hal/board.h>
 #include <drivers/gpio/gpio.h>
 
+#include <drivers/spi/avr_spi.h>
+
 int main() {
 	board_init();
 
