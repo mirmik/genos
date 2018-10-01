@@ -44,15 +44,16 @@ void ktimer_swift(struct ktimer * tim)
 
 void ktimer_plan(struct ktimer * t) 
 {
-	struct ktimer * it;// = dlist_first_entry(&ktimer_list, struct ktimer, lnk);
-	struct dlist_head * sit = NULL;
-	//struct ktimer * eit = dlist_last_entry(&ktimer_list, struct ktimer, lnk);
-	
-	time_t final = t->start + t->interval;
+	struct ktimer * it;
+	struct dlist_head * sit;
 	time_t it_final;
+	time_t final;
 
-	//for(; it != eit; it = dlist_next_entry(it, lnk)) 
-	//{
+	system_lock();
+
+	final = t->start + t->interval;
+	sit = NULL;
+
 	dlist_for_each_entry(it, &ktimer_list, lnk) 
 	{
 		it_final = it->start + it->interval;
@@ -62,14 +63,18 @@ void ktimer_plan(struct ktimer * t)
 			break; 
 		}
 	}
-	//}
 	
 	dlist_add_tail(&t->lnk, sit ? sit : &ktimer_list);
+
+	system_unlock();
 }
 
 void timer_manager() {
-	time_t now = jiffies();
+	time_t now;
+
+	now = jiffies();
 	
+	system_lock();
 	while(!dlist_empty(&ktimer_list)) 
 	{
 		struct ktimer * it = dlist_first_entry(&ktimer_list, struct ktimer, lnk);
@@ -81,4 +86,5 @@ void timer_manager() {
 		} 
 		else break;
 	}
+	system_unlock();
 }

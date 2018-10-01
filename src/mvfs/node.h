@@ -52,6 +52,7 @@ void virtual_node_dealloc(struct node *);
 static inline void node_init(struct node * node, const char * name, size_t nlen) {
 	dlist_init(&node->childrens);
 	strncpy(node->name, name, nlen < NAME_LENGTH_MAX ? nlen : NAME_LENGTH_MAX);
+	node->name[nlen] = '\0';
 	node->flags = 0;
 }
 
