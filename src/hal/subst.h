@@ -15,6 +15,7 @@ void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void
 
 //EXPERIMENTAL
 void context_load(struct context* next);
+void genos_context_displace(struct context* cntxt);
 void context_save_and_invoke_displace(struct context* cntxt);
 
 void context_print (struct context* cntxt);

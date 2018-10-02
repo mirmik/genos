@@ -73,7 +73,7 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 	if (pend) 
 		*pend = str;
 
-	for(str = path_next(str, &nlen); str; str = path_next(str, &nlen)) 
+	while((str = path_next(str, &nlen)))
 	{
 		if (pend) 
 			*pend = str;
@@ -88,7 +88,7 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 		if (pos->mount_point_flag) 
 		{
 			mount = vfs_vfsmount_get(pos);
-			assert(mount);
+			assert(mount != NULL);
 			//if (!mount) return -ENOKEY;
 			pos = mount->root; 
 		}

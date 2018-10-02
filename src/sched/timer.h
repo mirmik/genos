@@ -28,6 +28,9 @@ struct ktimer * ktimer_create(ktimer_callback_t act, void* arg,
 struct ktimer * ktimer_create_for(ktimer_callback_t act, void* arg, 
 	time_t interval);
 
+struct ktimer * ktimer_create_for_milliseconds(ktimer_callback_t act, void* arg, 
+	uint32_t ms);
+
 void ktimer_dealloc(struct ktimer * ptr);
 
 void ktimer_plan(struct ktimer * t);

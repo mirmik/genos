@@ -2,6 +2,7 @@
 #define GENOS_AVR_CONTEXT_H
 
 #include <hal/subst.h>
+#include <arch/startup.h>
 #include "inttypes.h"
 
 struct context {

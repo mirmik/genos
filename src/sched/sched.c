@@ -1,4 +1,5 @@
 #include <sched/sched.h>
+#include <arch/startup.h>
 #include <gxx/syslock.h>
 
 #define PRIORITY_TOTAL 4
@@ -84,4 +85,9 @@ int __displace__() {
 
 	sch->sch_op->displace(sch);
 	return 0;
+}
+
+int __kill_stack_and_schedule_invoke__() {
+	RESET_STACK();
+	while(1) __schedule__();
 }

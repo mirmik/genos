@@ -50,6 +50,7 @@ module("genos.sched", "impl",
 		"src/sched/timer.c",
 		"src/sched/api.c",
 		"src/sched/schedee/autom.c",
+		"src/sched/schedee/cooperative.c",
 
 		"src/sched/posix/fcntl_mvfs.c",
 		"src/sched/posix/unistd_mvfs.c",

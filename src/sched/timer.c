@@ -32,6 +32,11 @@ struct ktimer * ktimer_create_for(ktimer_callback_t act, void* arg, time_t inter
 	return ktimer_create(act, arg, jiffies(), interval);
 } 
 
+struct ktimer * ktimer_create_for_milliseconds(ktimer_callback_t act, void* arg, uint32_t interval) 
+{
+	return ktimer_create(act, arg, jiffies(), ms2jiffies(interval));
+} 
+
 static inline uint8_t ktimer_check(struct ktimer * tim, time_t now) 
 {
 	return now - tim->start >= tim->interval;

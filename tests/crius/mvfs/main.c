@@ -18,7 +18,6 @@
 #include <drivers/cdev/virtual/debug.h>
 
 #include <sched/sched.h>
-#include <sched/sched.h>
 #include <sched/timer.h>
 
 #include <sched/api.h>
@@ -28,8 +27,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
-
-//GPIO_PIN(dataflash_pin, GPIOB, 6);
 
 int i;
 
@@ -41,14 +38,6 @@ void led_blink_timer(void* arg, struct ktimer * tim) {
 }
 
 void * aproc(void * arg, int * state) {
-	//open("/dev/debug");
-
-	//struct file * filp;
-	/*int sts = vfs_open("/dev/debug", 0, &filp);
-		if (sts) 
-			dprf("error on open %s", strerror(sts));
-	
-	vfs_write(filp, "HelloWorld\r\n", 12);*/
 
 	int fd = open("/dev/debug", O_WRONLY|O_CREAT);
 		if (fd < 0) 
@@ -61,8 +50,7 @@ void * aproc(void * arg, int * state) {
 			perror("write");
 
 	printf("mirmik\r\n");
-	perror("mirmik");
-
+	
 	schedee_exit();
 	return 0;
 }
@@ -70,21 +58,10 @@ void * aproc(void * arg, int * state) {
 int main() {
 	int sts;
 
-	__debug_delay_multiplier = 100;
-
-	//char buf[128] = "\0\x29";
-
 	board_init();
 	schedee_manager_init();
 
 	gpio_settings(GPIOB, 1<<7, GPIO_MODE_OUTPUT);
-
-	//struct spi_device * spi = get_avr_spi_device();
-
-	//spi_select(spi, &dataflash_pin, 1);
-	
-	//int sts = spi_exchange(spi, buf, buf, 2, NOSCHED);
-	//if (sts) dprf("exchange status: %d", sts);
 
 	vfs_register_fs(&joke_fstype);
 	vfs_mount_first("joke", 0, NULL);

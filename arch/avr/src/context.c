@@ -50,6 +50,6 @@ void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void
 	ctx->pc = (uintptr_t)func;
 	//*(void**)&ctx->regs[24] = param;
 	uintptr_t aparam = (uintptr_t) param;
-	ctx->regs[24] = UINT16_HI(aparam);
-	ctx->regs[25] = UINT16_LO(aparam);
+	ctx->regs[24] = UINT16_LO(aparam);
+	ctx->regs[25] = UINT16_HI(aparam);
 }

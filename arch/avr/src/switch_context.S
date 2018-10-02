@@ -1,4 +1,5 @@
 #include <avr/io.h>
+#include <arch/startup.h>
 
 .global context_switch
 context_switch:
@@ -147,8 +148,10 @@ ldd r0, Y+32+1
 push r0
 
 //TODO: RAMPZ???
-//ldi r16, 0x00
-//push r16
+#ifdef HAVE_RAMPZ
+ldi r16, 0x00
+push r16
+#endif
 
 ld r0, y+ 		; regs
 ld r1, y+
@@ -198,7 +201,7 @@ ret
 
 
 
-.global __displace__
+.global __kill_stack_and_schedule_invoke__
 .global context_save_and_invoke_displace
 context_save_and_invoke_displace:
 
@@ -246,7 +249,10 @@ st y+, r30
 st y+, r31
 
 //TODO: RAMPZ?
-//pop r0 		; pc counter
+#ifdef HAVE_RAMPZ
+pop r0 		; pc counter
+#endif
+
 pop r16
 pop r0
 
@@ -261,7 +267,7 @@ st y+, r0
 in r0, AVR_STATUS_ADDR
 st y+, r0
 
-jmp __displace__
+jmp __kill_stack_and_schedule_invoke__
 
 
 .global genos_context_displace

@@ -7,16 +7,31 @@
 #include <drivers/gpio/gpio.h>
 
 #if defined(BOARD_ARDUINO_UNO)
-#	define REDLED_GPIO GPIOB
-#	define REDLED_PIN 5
+#	define RED_LED_GPIO GPIOB
+#	define RED_LED_MASK 1<<5
+#	define RED_LED_PIN     5
+
 #elif defined (BOARD_ARDUINO_MEGA)
-#	define REDLED_GPIO GPIOB
-#	define REDLED_PIN 7
+#	define RED_LED_GPIO GPIOB
+#	define RED_LED_MASK 1<<7
+#	define RED_LED_PIN     7
+
+#elif defined (BOARD_CRIUS_AIOP2)
+#	define RED_LED_GPIO GPIOB
+#	define RED_LED_MASK 1<<7
+#	define RED_LED_PIN     7
+
+#	define YELLOW_LED_GPIO GPIOC
+#	define YELLOW_LED_MASK 1<<6
+#	define YELLOW_LED_PIN     6
+
+#	define GREEN_LED_GPIO GPIOC
+#	define GREEN_LED_MASK 1<<7
+#	define GREEN_LED_PIN     7
+
 #else 
 #	error "undefined board"
 #endif
-
-extern struct gpio_pin_head led_red;
 
 __BEGIN_DECLS
 
