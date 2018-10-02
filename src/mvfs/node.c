@@ -5,8 +5,6 @@
 static inline void __vfs_dpr_node_tree(struct node * d, const int t) {
 	struct node * it;
 
-	int i;
-
 	int tt = t;
 	while (tt--) dpr("  "); dprln(d->name);
 	dlist_for_each_entry(it, &d->childrens, lnk) {

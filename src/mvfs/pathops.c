@@ -48,7 +48,7 @@ int path_is_abs(const char *path) {
 
 int path_is_simple(const char *path) {
 	char c;
-	while(c = *path++) 
+	for(c = *path++; c; c = *path++) 
 		if (c == '/')
 			return false;
 	return true;

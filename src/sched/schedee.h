@@ -35,6 +35,7 @@ struct schedee {
 		};
 	};
 
+	int local_errno;
 #ifdef MVFS_INCLUDED
 	struct node * pwd;
 	struct file * fds [SCHEDEE_FDMAX]; //массив файловых дескрипторов
@@ -67,7 +68,11 @@ static inline void schedee_init(struct schedee* sch, int prio, const struct sche
 	for (int i = 0; i < SCHEDEE_FDMAX; ++i)
 		sch->fds[i] = NULL;
 #endif
+
+	sch->local_errno = 0;
 } 
+
+int schedee_get_free_fd(struct schedee * sch);
 
 __END_DECLS
 

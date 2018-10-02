@@ -43,6 +43,7 @@ int vfs_mount(const char *source, const char *target,
 	const char* fstype, unsigned long mountflags, const void *data
 ) {
 	panic("TODO");
+	return 0;
 }
 
 int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f) 
@@ -52,8 +53,9 @@ int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f)
 	if (parent->i_sb->i_op->mkdir == NULL) 
 		return ENOTSUP;
 
-	if (sts = parent->i_sb->i_op->mkdir(parent, name, nlen, 0))
-		return sts;
+	sts = parent->i_sb->i_op->mkdir(parent, name, nlen, 0);
+		if (sts)
+			return sts;
 
 	return 0;
 } 
@@ -65,8 +67,8 @@ int vfs_mkdir(const char *path)
 	const char * pend;
 
 	sts = vfs_lookup(path, &pend, &parent);
-	if (sts == 0) 
-		return EEXIST;
+		if (sts == 0) 
+			return EEXIST;
 
 	if (parent->directory_flag != 1) 
 		return ENOTDIR;
@@ -74,8 +76,9 @@ int vfs_mkdir(const char *path)
 	if (!path_is_simple(pend)) 
 		return ENOTDIR;
 
-	if (sts = vfs_mkdir_do(parent, pend, strlen(pend), 0))
-		return sts;
+	sts = vfs_mkdir_do(parent, pend, strlen(pend), 0);
+		if (sts)
+			return sts;
 
 	return 0;
 }
@@ -90,8 +93,9 @@ int vfs_rmdir_do(struct node * dir)
 	if (dir->i_sb->i_op->rmdir == NULL) 
 		return ENOTSUP;
 
-	if (sts = dir->i_sb->i_op->rmdir(dir))
-		return sts;
+	sts = dir->i_sb->i_op->rmdir(dir);
+		if (sts)
+			return sts;
 
 	return 0;	
 }
@@ -101,8 +105,9 @@ int vfs_rmdir(const char *path)
 	int sts;
 	struct node * d;
 	
-	if (sts = vfs_lookup(path, NULL, &d))
-		return sts;
+	sts = vfs_lookup(path, NULL, &d);
+		if (sts)
+			return sts;
 
 	if (d->negative_flag == 0) 
 		return ENOENT;
@@ -118,9 +123,9 @@ int vfs_chdir(const char *path)
 	struct node* tgt;
 	int sts;
 
-	if (sts = vfs_lookup(path, NULL, &tgt)) {
-		return sts;
-	}
+	sts = vfs_lookup(path, NULL, &tgt);
+		if (sts)
+			return sts;
 
 	if (!tgt->directory_flag) 
 		return ENOTDIR;
@@ -134,9 +139,10 @@ int vfs_chroot(const char *path)
 	struct node* tgt;
 	int sts;
 
-	if (sts = vfs_lookup(path, NULL, &tgt)) {
-		return sts;
-	}
+	sts = vfs_lookup(path, NULL, &tgt);
+		if (sts) 
+			return sts;
+
 
 	if (!tgt->directory_flag) 
 		return ENOTDIR;
@@ -149,9 +155,9 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 	int sts;
 	struct node* d;	
 
-	if (sts = vfs_lookup(path, NULL, &d)) {
-		return sts;
-	}
+	sts = vfs_lookup(path, NULL, &d);
+		if (sts)
+			return sts;
 
 	if (d->negative_flag) {
 		//dentry без inode. (или негативный, или добавленный вручную) 
@@ -160,8 +166,9 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 	}
 
 	//Осталось сгенерировать file.
-	if (sts = vfs_open_node(d, filp))
-		return sts;
+	sts = vfs_open_node(d, filp);
+		if (sts)
+			return sts;
 
 	(*filp)->f_node = d;
 	return 0;
@@ -171,7 +178,10 @@ int vfs_close(struct file* filp) {
 	int sts;
 
 	sts = filp->f_op->release(filp->f_node, filp);
-	if (sts) return sts;
+		if (sts) 
+			return sts;
+
+	return 0;
 }
 
 int vfs_write(struct file * filp, const char* data, unsigned int size) {
@@ -272,12 +282,16 @@ int vfs_debug_ls(const char* path) {
 
 	if (path == NULL)
 		d = vfs_get_pwd();
-	else
-		if (sts = vfs_lookup(path, NULL, &d))
+	else 
+	{
+		sts = vfs_lookup(path, NULL, &d);
+		if (sts)
 			return sts;
+	}
 
-	if (sts = vfs_open_node(d, &filp))
-		return sts;
+	sts = vfs_open_node(d, &filp);
+		if (sts)
+			return sts;
 	
 	while(1) {
 		sts = vfs_iterate(filp, &de);
@@ -302,8 +316,11 @@ int vfs_debug_tree(const char* path) {
 	if (path == NULL)
 		d = vfs_get_pwd();
 	else
-		if (sts = vfs_lookup(path, NULL, &d))
-			return sts;
+		sts = vfs_lookup(path, NULL, &d);
+			if (sts)
+				return sts;
 
 	vfs_dpr_node_tree(d);
+
+	return 0;
 }

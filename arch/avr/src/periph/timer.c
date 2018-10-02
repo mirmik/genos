@@ -44,11 +44,11 @@ void tc_16bit_divider(struct TimerDevice_16bit* timer, uint16_t divider) {
 
 uint8_t tc_8bit_value(struct TimerDevice_8bit* timer) {
 	return timer->regs->tcnt;
-};
+}
 
 uint16_t tc_16bit_value(struct TimerDevice_16bit* timer) {
 	return timer->regs->tcnt;
-};
+}
 /*
 void TimerDevice_8bit::start() {};
 

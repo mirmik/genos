@@ -18,8 +18,8 @@ application("firmware",
 	sources = ["main.c"],
 	target = "firmware.bin",
 
-	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto",
-	cc_flags = "-Os -flto",
+	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto -pedantic",
+	cc_flags = "-Os -flto --pedantic-error -Werror=all",
 
 	include_modules = [
 	#stdlibs
@@ -36,6 +36,7 @@ application("firmware",
 
 	#base and os support
 		submodule("genos.include"),
+		submodule("genos.errno"),
 		submodule("genos.board", "arduino_mega"),
 		submodule("genos.irqtbl"),
 		submodule("genos.systime"),

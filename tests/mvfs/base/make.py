@@ -21,6 +21,7 @@ application("target",
 		"genos.mvfs.global",
 		
 		("genos.sched", "stub"),
+		("genos.errno"),
 		#"genos.misc",
 		#"genos.chardev"
 	],

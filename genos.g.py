@@ -46,9 +46,13 @@ module("genos.sched", "impl",
 	sources = [
 		"src/sched/wait.c",
 		"src/sched/sched.c",
+		"src/sched/schedee.c",
 		"src/sched/timer.c",
 		"src/sched/api.c",
 		"src/sched/schedee/autom.c",
+
+		"src/sched/posix/fcntl_mvfs.c",
+		"src/sched/posix/unistd_mvfs.c",
 	],
 )
 
@@ -87,6 +91,8 @@ module("genos.mvfs.schedee_support",
 ) 
 
 module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )
+
+module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 
 #module("genos.misc", 
 #	sources = [

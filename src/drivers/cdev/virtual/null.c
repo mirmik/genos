@@ -11,8 +11,8 @@
 struct file_operations null_f_ops;
 
 //Заполнить struct file.
-int null_open(struct node * i, struct file * f) {}
-int null_release (struct node * i, struct file * f) {}
+int null_open(struct node * i, struct file * f) { return 0; }
+int null_release (struct node * i, struct file * f) { return 0; }
 
 int null_write (struct file * f, const char* data, unsigned int size) {
 	return size;

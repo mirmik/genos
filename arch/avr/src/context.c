@@ -1,6 +1,7 @@
 #include <hal/subst.h>
 #include <string.h>
 #include <gxx/debug/dprint.h>
+#include <util/access.h>
 
 void context_print(struct context* ctx)
 {
@@ -39,7 +40,7 @@ void context_print(struct context* ctx)
 	debug_print("pc:\t\t");debug_printhex_uint16(ctx->pc);dln();
 	debug_print("sp:\t\t");debug_printhex_uint16(ctx->sp);dln();
 	debug_print("sreg:\t\t");debug_printhex_uint8(ctx->control);dln();
-};
+}
 
 void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param, uint8_t irqen) {
 	memset(ctx, 0, sizeof(struct context));
@@ -47,5 +48,8 @@ void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void
 	ctx->control = irqen ? 0x80 : 0;
 	ctx->sp = stck;
 	ctx->pc = (uintptr_t)func;
-	*(void**)&ctx->regs[24] = param;
-};
+	//*(void**)&ctx->regs[24] = param;
+	uintptr_t aparam = (uintptr_t) param;
+	ctx->regs[24] = UINT16_HI(aparam);
+	ctx->regs[25] = UINT16_LO(aparam);
+}

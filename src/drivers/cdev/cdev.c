@@ -13,9 +13,10 @@ int vfs_link_cdev(struct char_device * cdev,
 	int sts;
 	struct node * parent;
 
-	if (sts = vfs_lookup(dir, NULL, &parent)) { 
-		return sts;
-	}
+	sts = vfs_lookup(dir, NULL, &parent);
+		if (sts) 
+			return sts;
+	
 	
 	node_init(&cdev->node.node, name, strlen(name));
 	node_add_child(&cdev->node.node, parent);

@@ -30,8 +30,8 @@ struct avr_spi_device {
 static inline void avr_spi_sendbyte(uint8_t tx) { SPDR = tx; }
 static inline void avr_spi_txidlewait() { while(!(SPSR & 0x80)); }
 static inline uint8_t avr_spi_recvbyte() { uint8_t rx = SPDR; return rx; }
-static inline uint8_t avr_spi_irq_enable() { panic("TODO"); }
-static inline uint8_t avr_spi_irq_disable() { panic("TODO"); }
+static inline uint8_t avr_spi_irq_enable() { panic("TODO"); return -1; }
+static inline uint8_t avr_spi_irq_disable() { panic("TODO"); return -1; }
 
 int avr_spi_select (struct spi_device *dev, void *slct, int en) {
 	struct avr_spi_device * spi = mcast_out(dev, struct avr_spi_device, spi);
@@ -57,12 +57,14 @@ int avr_spi_select (struct spi_device *dev, void *slct, int en) {
 int avr_spi_exchange (struct spi_device *dev, const void *txbuf, void *rxbuf, int len, int flags) {
 	int sts;
 	struct avr_spi_device * spi = mcast_out(dev, struct avr_spi_device, spi);
+	uint8_t * _rxbuf = (uint8_t *) rxbuf;
+	uint8_t * _txbuf = (uint8_t *) txbuf;
 
 	if (flags && NOSCHED) {
 		while(len--) {
-			avr_spi_sendbyte(*(char*)txbuf++);
+			avr_spi_sendbyte(*_txbuf++);
 			avr_spi_txidlewait();
-			*(char*)rxbuf++ = avr_spi_recvbyte();
+			*_rxbuf++ = avr_spi_recvbyte();
 		}
 		return 0;
 	}
@@ -88,6 +90,8 @@ int avr_spi_exchange (struct spi_device *dev, const void *txbuf, void *rxbuf, in
 	//Отдаем управление следующему процессу, если такой находится.
 	spi->in_work = 0;
 	unwait_one(&spi->wait_list);
+
+	return 0;
 }
 
 

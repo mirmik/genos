@@ -15,7 +15,9 @@ int usart0_diag_putchar(void* _, char c)
 	//while ((UCSR0A & (1 << UDRE0)) == 0) {}; 
 	while ((UCSR0A & (1 << TXC0)) == 0) {}; 
 	irqs_restore(save);
-};
+
+	return 0;
+}
 
 
 #define SERIAL_8N1 0x06
@@ -36,7 +38,9 @@ int usart0_diag_init() {
 	
 	//UCSR0B|= _BV(RXEN0);
 	UCSR0B |= 1 << TXEN0;
-};
+
+	return 0;
+}
 
 const struct diag_ops usart0_diag = {
 	.putc = usart0_diag_putchar,

@@ -28,4 +28,6 @@ int gpio_settings(struct gpio* g, gpio_mask_t mask, uint32_t mode) {
 		g->ddr |= mask;		
 		return 0;
 	};
+
+	return -1;
 }

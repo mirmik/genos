@@ -15,6 +15,7 @@ struct file_operations;
 
 struct file {
 	int pos;
+	uint8_t refs;
 	struct node * f_node; ///< Родительский node. Держит ссылку.
 	const struct file_operations* f_op;
 };

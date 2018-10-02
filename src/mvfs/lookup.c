@@ -27,7 +27,6 @@ int vfs_lookup_child(struct node** pos,
 	struct node * it;
 	struct node * p = *pos;
 
-
 	if (p->negative_flag || p->directory_flag == 0) {
 		//Если node данного объекта не существует (negative dentry), или он не дирректорий 
 		//просто говорим:	
@@ -57,7 +56,6 @@ int vfs_lookup_child(struct node** pos,
 	vfs_unlock();
 
 	//TODO: node lookup.
-			
 	return ENOENT;
 }
 
@@ -65,24 +63,30 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 	struct node** current
 ) {
 	int sts;
-	const char* str;
-	struct vfsmount* mount;
 	unsigned int nlen;
-
+	const char* str;
+	struct node * pos;
+	struct vfsmount* mount;
+	
 	str = str_path;
-	struct node * pos = *current;
+	pos = *current;
+	if (pend) 
+		*pend = str;
 
-	if (pend) *pend = str;
-	while(str = path_next(str, &nlen)) {
-		if (pend) *pend = str;
+	for(str = path_next(str, &nlen); str; str = path_next(str, &nlen)) 
+	{
+		if (pend) 
+			*pend = str;
 
 		//Обходим дерево dentry.
-		if (sts = vfs_lookup_child(&pos, str, nlen))
-			return sts;
+		sts = vfs_lookup_child(&pos, str, nlen);
+			if (sts)
+				return sts;
 
 		//Если он смог, переходим на него.
 		// Если дентри в дереве, надо проверить, не является ли он точкой монтирования.
-		if (pos->mount_point_flag) {
+		if (pos->mount_point_flag) 
+		{
 			mount = vfs_vfsmount_get(pos);
 			assert(mount);
 			//if (!mount) return -ENOKEY;

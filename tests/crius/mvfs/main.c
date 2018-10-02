@@ -25,6 +25,10 @@
 
 #include <gxx/util/iteration_counter.h>
 
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+
 //GPIO_PIN(dataflash_pin, GPIOB, 6);
 
 int i;
@@ -37,11 +41,35 @@ void led_blink_timer(void* arg, struct ktimer * tim) {
 }
 
 void * aproc(void * arg, int * state) {
-	debug_print_line("aproc");
+	//open("/dev/debug");
+
+	//struct file * filp;
+	/*int sts = vfs_open("/dev/debug", 0, &filp);
+		if (sts) 
+			dprf("error on open %s", strerror(sts));
+	
+	vfs_write(filp, "HelloWorld\r\n", 12);*/
+
+	int fd = open("/dev/debug", O_WRONLY|O_CREAT);
+		if (fd < 0) 
+			perror("open");
+
+	int fd2 = dup2(fd, 1);
+
+	int ret = write(fd2, "HelloWorld\r\n", 12);
+		if (ret < 0) 
+			perror("write");
+
+	printf("mirmik\r\n");
+	perror("mirmik");
+
 	schedee_exit();
+	return 0;
 }
 
 int main() {
+	int sts;
+
 	__debug_delay_multiplier = 100;
 
 	//char buf[128] = "\0\x29";
@@ -63,9 +91,18 @@ int main() {
 
 	vfs_mkdir("/dev");
 
-	link_debug_device("/dev");
-	link_null_device("/dev");
-	link_zero_device("/dev");
+	
+	sts = link_debug_device("/dev");
+		if (sts) 
+			dprf("error on link %s", strerror(sts));
+	
+	sts = link_null_device("/dev");
+		if (sts) 
+			dprf("error on link %s", strerror(sts));
+	
+	sts = link_zero_device("/dev");
+		if (sts) 
+			dprf("error on link %s", strerror(sts));
 
 	vfs_debug_tree(NULL);
 
