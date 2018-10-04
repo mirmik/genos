@@ -51,6 +51,21 @@ application("firmware",
 	]
 )
 
+def noexcept(func):
+	def decorator(*argv, **kwargs):
+		try:
+			func(*argv, **kwargs)
+		except:
+			pass
+	return decorator
+
+
+@licant.routine
+def distclean():
+	import shutil
+	noexcept(shutil.rmtree)('build')
+	noexcept(os.remove)('firmware.bin')
+	
 @licant.routine
 def install():
 	os.system("avrdude -P/dev/ttyUSB0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")
