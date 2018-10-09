@@ -56,7 +56,7 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*), void * arg, i
 	sch -> heapsize = heapsize;
 	sch -> task = task;
 	sch -> arg = arg;
-	sch -> sch.can_displace_flag = 1;
+	sch -> sch.flag.can_displace = 1;
 
 	return &sch->sch;
 }
@@ -68,7 +68,7 @@ static void cooperative_schedee_execute(struct schedee* sch) {
 
 static void cooperative_schedee_displace(struct schedee* sch) {
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
-	sch->runned_flag = 0;
+	sch->flag.runned = 0;
 	context_save_and_invoke_displace(&csch->cntxt);
 }
 

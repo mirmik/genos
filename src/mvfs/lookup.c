@@ -27,7 +27,7 @@ int vfs_lookup_child(struct node** pos,
 	struct node * it;
 	struct node * p = *pos;
 
-	if (p->negative_flag || p->directory_flag == 0) {
+	if (p->flag.negative || p->flag.directory == 0) {
 		//Если node данного объекта не существует (negative dentry), или он не дирректорий 
 		//просто говорим:	
 		return ENOENT;
@@ -85,7 +85,7 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 
 		//Если он смог, переходим на него.
 		// Если дентри в дереве, надо проверить, не является ли он точкой монтирования.
-		if (pos->mount_point_flag) 
+		if (pos->flag.mount_point) 
 		{
 			mount = vfs_vfsmount_get(pos);
 			assert(mount != NULL);

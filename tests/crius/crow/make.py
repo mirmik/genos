@@ -11,11 +11,12 @@ import os
 
 include("genos")
 include("gxx")
+include("crow")
 binutils = make_gcc_binutils("avr")
 
 application("firmware", 
 	binutils = binutils,
-	sources = ["main.c"],
+	sources = ["main.cpp"],
 	target = "firmware.bin",
 
 	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto -pedantic",
@@ -37,7 +38,7 @@ application("firmware",
 	#base and os support
 		submodule("genos.include"),
 		submodule("genos.errno"),
-		submodule("genos.board", "arduino_mega"),
+		submodule("genos.board", "crius_aiop2"),
 		submodule("genos.irqtbl"),
 		submodule("genos.systime"),
 		submodule("genos.sched", "impl"),
@@ -48,9 +49,27 @@ application("firmware",
 		submodule("genos.mvfs"),
 		submodule("genos.mvfs.global"),
 		submodule("genos.malloc", "lin"),
+
+		submodule("crow"),
+		submodule("crow.allocator", "malloc"),
 	]
 )
 
+def noexcept(func):
+	def decorator(*argv, **kwargs):
+		try:
+			func(*argv, **kwargs)
+		except:
+			pass
+	return decorator
+
+
+@licant.routine
+def distclean():
+	import shutil
+	noexcept(shutil.rmtree)('build')
+	noexcept(os.remove)('firmware.bin')
+	
 @licant.routine(deps = ["firmware"])
 def install():
 	os.system("avrdude -P/dev/ttyUSB0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")

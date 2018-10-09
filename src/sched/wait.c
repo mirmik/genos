@@ -34,10 +34,10 @@ int wait_current_schedee(struct dlist_head * head, int priority)
 
 	cur = current_schedee();
 
-	if (cur == NULL || !cur->can_displace_flag)
+	if (cur == NULL || !cur->flag.can_displace)
 		return -1;
 	
-	if (cur->has_context_flag) {
+	if (cur->flag.has_context) {
 		struct schedee_waiter w;
 		return __wait_current_schedee(head, priority, &w);
 	} else {
@@ -53,7 +53,7 @@ void __unwait(struct schedee_waiter * it)
 	
 	dlist_del(&it->wait_lnk);
 	
-	if (sch->has_context_flag)
+	if (sch->flag.has_context)
 		free(it);
 
 	schedee_run(sch);

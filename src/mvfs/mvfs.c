@@ -70,7 +70,7 @@ int vfs_mkdir(const char *path)
 		if (sts == 0) 
 			return EEXIST;
 
-	if (parent->directory_flag != 1) 
+	if (parent->flag.directory != 1) 
 		return ENOTDIR;
 
 	if (!path_is_simple(pend)) 
@@ -109,10 +109,10 @@ int vfs_rmdir(const char *path)
 		if (sts)
 			return sts;
 
-	if (d->negative_flag == 0) 
+	if (d->flag.negative == 0) 
 		return ENOENT;
 
-	if (d->directory_flag == 0) 
+	if (d->flag.directory == 0) 
 		return ENOTDIR;
 
 	return vfs_rmdir_do(d);
@@ -127,7 +127,7 @@ int vfs_chdir(const char *path)
 		if (sts)
 			return sts;
 
-	if (!tgt->directory_flag) 
+	if (!tgt->flag.directory) 
 		return ENOTDIR;
 
 	vfs_set_pwd(tgt);
@@ -144,7 +144,7 @@ int vfs_chroot(const char *path)
 			return sts;
 
 
-	if (!tgt->directory_flag) 
+	if (!tgt->flag.directory) 
 		return ENOTDIR;
 
 	vfs_set_root(tgt);
@@ -159,7 +159,7 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 		if (sts)
 			return sts;
 
-	if (d->negative_flag) {
+	if (d->flag.negative) {
 		//dentry без inode. (или негативный, или добавленный вручную) 
 		//Считаем, что файл не существует.
 		return -ENOENT;
@@ -217,7 +217,7 @@ int vfs_pwd(char* buf)
 
 	for (struct node * d = vfs_get_pwd();; d = d->parent) {
 		if (d->parent == NULL) {
-			if (d->mount_point_flag) {
+			if (d->flag.mount_point) {
 				panic("TODO");
 			}
 			break;

@@ -29,10 +29,10 @@ struct schedee {
 	union {
 		uint8_t flags;
 		struct {
-			uint8_t runned_flag : 1;
-			uint8_t can_displace_flag : 1;
-			uint8_t has_context_flag : 1;
-		};
+			uint8_t runned : 1;
+			uint8_t can_displace : 1;
+			uint8_t has_context : 1;
+		} flag;
 	};
 
 	int local_errno;

@@ -28,7 +28,7 @@ struct schedee * create_autom_schedee(void* (*task) (void*, int*), void * arg)
 
 	schedee_init(&sch->sch, 0, &autom_schedee_op);
 
-	sch->sch.can_displace_flag = 1;
+	sch->sch.flag.can_displace = 1;
 	sch->task = task;
 	sch->arg = arg;
 
@@ -41,7 +41,7 @@ static void autom_schedee_execute(struct schedee* sch) {
 } 
 
 static void autom_schedee_displace(struct schedee* sch) {
-	sch->runned_flag = 0;
+	sch->flag.runned = 0;
 }
 
 static void autom_schedee_finalize(struct schedee* sch) {

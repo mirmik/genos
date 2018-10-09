@@ -37,7 +37,7 @@ void schedee_stop(struct schedee * sch) {
 
 void __schedee_execute(struct schedee * sch) {
 	__current_schedee = sch;
-	sch->runned_flag = 1;
+	sch->flag.runned = 1;
 	system_unlock();
 	sch->sch_op->execute(sch);
 }
@@ -80,7 +80,7 @@ void schedee_manager()
 int __displace__() {
 	struct schedee * sch = current_schedee();
 
-	if (sch->can_displace_flag == 0) 
+	if (sch->flag.can_displace == 0) 
 		return -1;
 
 	sch->sch_op->displace(sch);

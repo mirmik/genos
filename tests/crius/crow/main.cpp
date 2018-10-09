@@ -9,6 +9,15 @@
 #include <sched/sched.h>
 #include <sched/timer.h>
 
+#include <crow/tower.h>
+
+//#include <drivers/crow/uartgate.h>
+
+#include <drivers/serial/avr_uart.h>
+//#include <drivers/serial/uartring.h>
+
+//struct avr_uart uart0;
+
 int main() {
 	//int sts;
 
@@ -26,7 +35,13 @@ int main() {
 
 void __schedule__() {
 	while(1) {
+		crow_onestep();
 		timer_manager();
 		schedee_manager();
 	}
+}
+
+
+uint16_t crow_millis() {
+	return millis();
 }

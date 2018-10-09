@@ -22,11 +22,11 @@ struct node {
 	union {
 		uint8_t flags;
 		struct {
-			uint8_t negative_flag : 1;
-			uint8_t directory_flag : 1;
-			uint8_t special_node_flag : 1;
-			uint8_t mount_point_flag : 1;
-		};
+			uint8_t negative : 1;
+			uint8_t directory : 1;
+			uint8_t special_node : 1;
+			uint8_t mount_point : 1;
+		} flag;
 	};
 };
 
