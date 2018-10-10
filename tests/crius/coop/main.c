@@ -25,6 +25,9 @@ void led_blink_timer(void* arg, struct ktimer * tim) {
 }
 
 void * mproc(void * arg) {
+	void* ptr = arg;
+	int r = __atomic_is_lock_free(0, ptr);
+	dprdec(r);
 
 	debug_print_line("HelloWorld");
 	__displace__();
