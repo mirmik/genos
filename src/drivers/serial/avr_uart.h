@@ -17,11 +17,17 @@ int avr_uart_enable(struct uart * dev, bool en) {
 }
 
 int avr_uart_getc(struct uart *dev) {
-	
+	struct avr_uart* uart = mcast_out(dev, avr_uart, u);
+	return uart->regs->udr;
 }
 
 int avr_uart_putc(struct uart *dev, int symbol, bool last) {
-	
+	struct avr_uart* uart = mcast_out(dev, avr_uart, u);
+	uart->regs->udr = symbol;
+
+	if (last) avr_tx_irq_disable();
+
+	return 1;
 }
 
 int avr_uart_hasrx(struct uart *dev) {
