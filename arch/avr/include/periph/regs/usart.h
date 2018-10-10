@@ -1,6 +1,8 @@
 #ifndef AVR2560_USART_H
 #define AVR2560_USART_H
 
+#include <gxx/util/bits.h>
+
 struct usart_regs {
 	volatile uint8_t ucsr_a;
 	volatile uint8_t ucsr_b;

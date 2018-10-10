@@ -40,7 +40,7 @@ static inline int uart_getc(struct uart *dev) {
 }
 
 static inline int uart_putc(struct uart *dev, int symbol) {
-	return dev->u_op->putc(dev, symbol, last);
+	return dev->u_op->putc(dev, symbol);
 }
 
 static inline int uart_hasrx(struct uart *dev) {

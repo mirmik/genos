@@ -9,7 +9,7 @@
 #include <sched/sched.h>
 #include <sched/timer.h>
 
-#include <crow/tower.h>
+//#include <crow/tower.h>
 
 //#include <drivers/crow/uartgate.h>
 
@@ -35,7 +35,7 @@ int main() {
 
 void __schedule__() {
 	while(1) {
-		crow_onestep();
+	//	crow_onestep();
 		timer_manager();
 		schedee_manager();
 	}
