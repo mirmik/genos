@@ -18,7 +18,7 @@ struct uart_operations {
 	int (*setup)(struct uart *dev, const struct uart_params *params);
 };
 
-///uart low-half driver
+///uart bottom-half driver
 struct uart {
 	void(*handler)(int);
 	const struct uart_operations * u_op;
