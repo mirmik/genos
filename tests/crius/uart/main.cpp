@@ -13,12 +13,11 @@
 
 //#include <drivers/crow/uartgate.h>
 
-#include <drivers/serial/avr_uart.h>
 #include <periph/irqdefs.h>
-
+#include <drivers/serial/avr_usart.h>
 //#include <drivers/serial/uartring.h>
 
-//struct avr_uart uart0;
+struct avr_usart uart0;
 
 int main() {
 	//int sts;
@@ -31,6 +30,11 @@ int main() {
 
 	gpio_set_level(RED_LED_GPIO, RED_LED_MASK, 1);
 	gpio_set_level(GREEN_LED_GPIO, GREEN_LED_MASK, 1);
+
+	struct uart_params uparams = { 115200, UART_PARITY_NONE, 1, 8 };
+	usart_regs_sendbyte(USART0, 'A');
+
+	avr_usart_init(&uart0, USART0, ATMEGA_IRQ_U0RX);
 
 	__schedule__();
 }

@@ -134,12 +134,12 @@
 	HANDLER	atmega_tim5_compb, ATMEGA_IRQ_TIM5_COMPB, excpt_common		/* 0x0060 TIMER5 COMPB Timer/Counter5 Compare Match B */
 	HANDLER	atmega_tim5_compc, ATMEGA_IRQ_TIM5_COMPC, excpt_common		/* 0x0062 TIMER5 COMPC Timer/Counter5 Compare Match C */
 	HANDLER	atmega_tim5_ovf, ATMEGA_IRQ_TIM5_OVF, excpt_common			/* 0x0064 TIMER5 OVF Timer/Counter5 Overflow */
-	HANDLER	atmega_u2rx, ATMEGA_IRQ_U2RX, excpt_common					/* 0x0066 USART1 RX USART2 Rx Complete */
-	HANDLER	atmega_u2dre, ATMEGA_IRQ_U2DRE, excpt_common				/* 0x0068 USART1 UDRE USART2 Data Register Empty */
-	HANDLER	atmega_u2tx, ATMEGA_IRQ_U2TX, excpt_common					/* 0x006A USART1 TX USART2 Tx Complete */
-	HANDLER	atmega_u3rx, ATMEGA_IRQ_U3RX, excpt_common					/* 0x006C USART1 RX USART3 Rx Complete */
-	HANDLER	atmega_u3dre, ATMEGA_IRQ_U3DRE, excpt_common				/* 0x006E USART1 UDRE USART3 Data Register Empty */
-	HANDLER	atmega_u3tx, ATMEGA_IRQ_U3TX, excpt_common					/* 0x0070 USART1 TX USART3 Tx Complete */
+	HANDLER	atmega_u2rx, ATMEGA_IRQ_U2RX, excpt_common					/* 0x0066 USART2 RX USART2 Rx Complete */
+	HANDLER	atmega_u2dre, ATMEGA_IRQ_U2DRE, excpt_common				/* 0x0068 USART2 UDRE USART2 Data Register Empty */
+	HANDLER	atmega_u2tx, ATMEGA_IRQ_U2TX, excpt_common					/* 0x006A USART2 TX USART2 Tx Complete */
+	HANDLER	atmega_u3rx, ATMEGA_IRQ_U3RX, excpt_common					/* 0x006C USART3 RX USART3 Rx Complete */
+	HANDLER	atmega_u3dre, ATMEGA_IRQ_U3DRE, excpt_common				/* 0x006E USART3 UDRE USART3 Data Register Empty */
+	HANDLER	atmega_u3tx, ATMEGA_IRQ_U3TX, excpt_common					/* 0x0070 USART3 TX USART3 Tx Complete */
 #elif defined(CHIP_ATMEGA328P)
 	HANDLER	atmega_int0,		ATMEGA_IRQ_INT0 	  , excpt_common /* 0x0002 INT0 External Interrupt Request 0 */
 	HANDLER	atmega_int1,		ATMEGA_IRQ_INT1 	  , excpt_common /* 0x0004 INT1 External Interrupt Request 1 */

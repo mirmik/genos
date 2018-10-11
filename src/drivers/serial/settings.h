@@ -10,10 +10,10 @@ enum uart_parity_e {
 };
 
 struct uart_params {
-	uint32_t baud_rate;
-	enum uart_parity_e parity;
-	int n_stop;
-	int n_bits;
+	uint32_t 			baud;
+	enum uart_parity_e 	parity;
+	int 				nstop;
+	int 				nbits;
 };
 
 #endif

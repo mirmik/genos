@@ -1,13 +1,15 @@
 #ifndef UART_DEVICE_H_
 #define UART_DEVICE_H_
 
+#include <sys/cdefs.h>
 #include <drivers/serial/settings.h>
 #include <stdbool.h>
 
 struct uart;
 
 #define UART_IRQCODE_RX 0
-#define UART_IRQCODE_TX 1
+#define UART_IRQCODE_TX 1 // Можно положить следующий байт
+#define UART_IRQCODE_TC 2 // Конвеер завершил свою работу.
 
 struct uart_operations {
 	int (*enable)(struct uart *dev, bool en);

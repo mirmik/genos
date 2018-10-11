@@ -6,15 +6,15 @@
 
 #include <hal/irqtable.h>
 
-struct avr_uart {
+struct avr_usart {
 	struct uart u;
-	struct uart_regs * regs;
+	struct usart_regs * regs;
 	uint8_t base_irq;
 };
 
 __BEGIN_DECLS
 
-int avr_uart_init(struct avr_uart * dev, struct uart_regs * regs, int base_irq);
+int avr_usart_init(struct avr_usart * dev, struct usart_regs * regs, int base_irq);
 
 __END_DECLS
 
