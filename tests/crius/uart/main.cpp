@@ -15,9 +15,10 @@
 
 #include <periph/irqdefs.h>
 #include <drivers/serial/avr_usart.h>
-//#include <drivers/serial/uartring.h>
+#include <drivers/serial/uartring.h>
 
 struct avr_usart uart0;
+struct uartring serial0;
 
 int main() {
 	//int sts;
