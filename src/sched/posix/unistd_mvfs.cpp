@@ -25,7 +25,7 @@ ssize_t write(int fd, const void *buf, size_t nbyte)
 		if (sts) 
 			return sts;
 
-	return vfs_write(filp, buf, nbyte);
+	return vfs_write(filp, (const char*)buf, nbyte);
 }
 
 ssize_t read(int fd, void *buf, size_t nbyte) 
@@ -36,7 +36,7 @@ ssize_t read(int fd, void *buf, size_t nbyte)
 		if (sts) 
 			return sts;
 
-	return vfs_read(filp, buf, nbyte);
+	return vfs_read(filp, (char*)buf, nbyte);
 }
 
 int dup2(int oldfd, int newfd) 

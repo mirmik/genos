@@ -24,7 +24,6 @@ struct node * vfs_virtual_lookup(struct node * i, const char * name, size_t nlen
 int vfs_lookup_child(struct node** pos, 
 	const char* name, unsigned int nlen) 
 {
-	struct node * it;
 	struct node * p = *pos;
 
 	if (p->flag.negative || p->flag.directory == 0) {
@@ -46,13 +45,15 @@ int vfs_lookup_child(struct node** pos,
 	}
 
 	vfs_lock();
-	dlist_for_each_entry(it, &p->childrens, lnk) {
-		int node_nlen = strlen(it->name);
-		if (node_nlen == nlen && strncmp(name, it->name, nlen) == 0) {
-			*pos = it;
+	//dlist_for_each_entry(it, &p->childs.list, lnk) {
+	for ( auto& it : p->childs ) {
+		int node_nlen = strlen(it.name);
+		if (node_nlen == nlen && strncmp(name, it.name, nlen) == 0) {
+			*pos = &it;
 			return 0;
 		}
 	}
+	//}
 	vfs_unlock();
 
 	//TODO: node lookup.

@@ -15,7 +15,7 @@ binutils = make_gcc_binutils("avr")
 
 application("firmware", 
 	binutils = binutils,
-	sources = ["main.c"],
+	sources = ["main.cpp"],
 	target = "firmware.bin",
 
 	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto -pedantic",

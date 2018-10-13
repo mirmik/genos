@@ -11,13 +11,15 @@ struct super_block;
  *	Тип - заголовок файловой системы
  */
 struct file_system_type {
-	char name [FILESYSTEM_NAME_MAX];
+	const char * name;
 
 	///< Создать суперблок.
-	struct super_block *(*get_sb) (struct file_system_type *, int, const void *);	
-	void (*kill_sb) (struct super_block *);
+	virtual struct super_block * get_sb (int, const void *) = 0;	
+	virtual void kill_sb(struct super_block *) = 0;
 
 	struct slist_head fs_list;
+
+	file_system_type(const char * _name) : name(_name) {}
 };
 
 __BEGIN_DECLS

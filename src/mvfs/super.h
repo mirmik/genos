@@ -18,24 +18,22 @@ struct file;
 
 ///	Суперблок смонтированной файловой системы.
 struct super_block {
-	const struct file_system_type * s_fs;
-	struct node * s_root; ///корневой dentry ветви.
+	const struct file_system_type * fs;
+	struct node * root; ///корневой dentry ветви.
 
 	//void *			private;
 	uint16_t 		refs;
 
-	const struct node_operations * i_op; ///Виртуальная таблица операций над объектами fs.
-	const struct file_operations  * f_op; ///Операции ввода-вывода и управления.
+	void common_init(const struct file_system_type * _fs, struct node * _root) 
+	{
+		fs = _fs;
+		root = _root; 
+		root->flag.directory = 1;
+		root->sb = this;
+	}
 };
 
 __BEGIN_DECLS
-
-static inline const struct file_operations * vfs_get_f_ops(struct node* i) {
-	if (i->i_sb == NULL) 
-		return mcast_out(i, struct special_node, node)->f_op;
-	else return i->i_sb->f_op;
-}
-
 __END_DECLS
 
 #endif

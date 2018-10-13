@@ -12,8 +12,10 @@
 int main() {
 	int sts;
 
+	
 	vfs_register_fs(&joke_fstype);
-	vfs_mount_first("joke", 0, NULL);
+	sts = vfs_mount_first("joke", 0, NULL);
+		if (sts) dprf("%s\n", strerror(sts));
 
 	sts = vfs_mkdir("/dev");
 		if (sts) dprf("%s\n", strerror(sts));

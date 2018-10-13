@@ -47,35 +47,36 @@ module("genos.sched", "impl",
 		"src/sched/wait.c",
 		"src/sched/sched.c",
 		"src/sched/schedee.c",
+		"src/sched/schedee_mvfs.cpp",
 		"src/sched/timer.c",
 		"src/sched/api.c",
 		"src/sched/schedee/autom.c",
 		"src/sched/schedee/cooperative.c",
 
-		"src/sched/posix/fcntl_mvfs.c",
-		"src/sched/posix/unistd_mvfs.c",
+		"src/sched/posix/fcntl_mvfs.cpp",
+		"src/sched/posix/unistd_mvfs.cpp",
 	],
 )
 
 module("genos.mvfs", 
 	sources = [
-		"src/mvfs/mvfs.c",
-		"src/mvfs/fstype.c",
-		"src/mvfs/super.c",
-		"src/mvfs/variant/other.c",
-		"src/mvfs/node.c",
-		"src/mvfs/pathops.c",
-		"src/mvfs/vfsmount.c",
-		"src/mvfs/lookup.c",
-		"src/mvfs/file.c",
+		"src/mvfs/mvfs.cpp",
+		"src/mvfs/fstype.cpp",
+		"src/mvfs/super.cpp",
+		"src/mvfs/variant/other.cpp",
+		"src/mvfs/node.cpp",
+		"src/mvfs/pathops.cpp",
+		"src/mvfs/vfsmount.cpp",
+		"src/mvfs/lookup.cpp",
+		"src/mvfs/file.cpp",
 		
-		"src/drivers/cdev/cdev.c",
-		"src/drivers/cdev/virtual/null.c",
-		"src/drivers/cdev/virtual/zero.c",
-		"src/drivers/cdev/virtual/debug.c",
+		"src/drivers/cdev/cdev.cpp",
+		"src/drivers/cdev/virtual/null.cpp",
+		"src/drivers/cdev/virtual/zero.cpp",
+		"src/drivers/cdev/virtual/debug.cpp",
 
-		"src/drivers/bdev/bdev.c",
-		"src/drivers/bdev/virtual/nullb.c",
+		#"src/drivers/bdev/bdev.cpp",
+		#"src/drivers/bdev/virtual/nullb.cpp",
 	],
 
 	defines = [
@@ -84,11 +85,11 @@ module("genos.mvfs",
 )
 
 module("genos.mvfs.global", 
-	sources = [ "src/mvfs/variant/global_root.c", "src/mvfs/variant/global_pwd.c" ]
+	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/global_pwd.cpp" ]
 )
 
 module("genos.mvfs.schedee_support", 
-	sources = [ "src/mvfs/variant/global_root.c", "src/mvfs/variant/schedee_support.c" ]
+	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/schedee_support.c" ]
 ) 
 
 module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )

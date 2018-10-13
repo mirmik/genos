@@ -11,48 +11,17 @@ struct uart;
 #define UART_IRQCODE_TX 1 // Можно положить следующий байт
 #define UART_IRQCODE_TC 2 // Конвеер завершил свою работу.
 
-struct uart_operations {
-	int (*enable)(struct uart *dev, bool en);
-	int (*txirq)(struct uart *dev, bool en);
-	int (*getc)(struct uart *dev);
-	int (*putc)(struct uart *dev, int symbol);
-	int (*hasrx)(struct uart *dev);
-	int (*setup)(struct uart *dev, const struct uart_params *params);
-};
-
 ///uart bottom-half driver
 struct uart {
-	void(*handler)(int);
-	const struct uart_operations * u_op;
+	void(*handler)(void*, int);
+	void * handarg;
+
+	virtual int enable(bool en) = 0;
+	virtual int txirq(bool en) = 0;
+	virtual int getc() = 0;
+	virtual int putc(int symbol) = 0;
+	virtual int hasrx() = 0;
+	virtual int setup(const struct uart_params *params) = 0;
 };
-
-__BEGIN_DECLS
-
-
-static inline int uart_enable(struct uart * dev, bool en) {
-	return dev->u_op->enable(dev, en);
-}
-
-static inline int uart_txirq(struct uart * dev, bool en) {
-	return dev->u_op->txirq(dev, en);
-}
-
-static inline int uart_getc(struct uart *dev) {
-	return dev->u_op->getc(dev);
-}
-
-static inline int uart_putc(struct uart *dev, int symbol) {
-	return dev->u_op->putc(dev, symbol);
-}
-
-static inline int uart_hasrx(struct uart *dev) {
-	return dev->u_op->hasrx(dev);
-}
-
-static inline int uart_setup(struct uart *dev, const struct uart_params *params) {
-	return dev->u_op->setup(dev, params);	
-}
-
-__END_DECLS
 
 #endif

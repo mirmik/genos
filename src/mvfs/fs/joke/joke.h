@@ -13,93 +13,96 @@
 
 #include <gxx/debug/dprint.h>
 
-struct file_system_type joke_fstype;
-const struct node_operations joke_i_op;
-const struct file_operations joke_f_op;
+struct joke_node * 	joke_node_create(const char * name, size_t nlen);
+struct joke_node * 	joke_node_create_as_child(const char * name, size_t nlen, struct node * parent);
+void 				joke_node_release(struct joke_node * node);
 
-struct joke_super_block {
-	struct super_block sb;
-} joke_sb;
+struct joke_super_block : public super_block {};
 
-static inline struct super_block * joke_get_sb(struct file_system_type *fs, int flags, const void * data) {
+struct joke_fstype_class : public file_system_type  
+{
+	joke_fstype_class() : file_system_type("joke") {};
+	struct super_block * get_sb(int flags, const void * data) override;
+	void kill_sb(struct super_block * sb) override;
+};
+
+struct joke_super_block joke_sb;
+struct joke_fstype_class joke_fstype;
+
+struct joke_node : public node {
+	int mkdir(const char * name, size_t nlen, int flags) {
+		debug_print_line("joke_mkdir");
+		struct node * node = joke_node_create_as_child(name, nlen, this);
+		node->flag.directory = 1;
+		node->sb = &joke_sb;
+		return 0;
+	}
+	
+	int rmdir() {	
+		dlist_del(&lnk);
+		delete this;
+		return 0;
+	}
+	
+	int iterate(struct file * filp, void * priv) {
+		struct dirent * de = (struct dirent *) priv;
+		struct node * parent;
+		struct node * d;
+	
+		if (filp->node->flag.directory == 0) 
+			return ENOTSUP;
+	
+		parent = filp->node;
+		
+		auto it = parent->childs.begin();
+
+		int n = filp->pos;
+		while(n--) it++;
+		filp->pos++;
+	
+		if (it == parent->childs.end()) de->d_name[0] = '\0';
+		else {
+			de->d_ino = 0;
+			strcpy(de->d_name, it->name);
+		}
+		return 0;
+	}
+};
+
+struct joke_node * joke_node_create(const char * name, size_t nlen) {
+	struct joke_node * ret = new joke_node;
+	node_init(ret, name, nlen);
+	return ret;
+}
+
+struct joke_node * joke_node_create_as_child(const char * name, size_t nlen,
+	struct node * parent
+) {
+	struct joke_node * ret = joke_node_create(name, nlen);
+	node_add_child(ret, parent);
+	return ret;
+}
+
+struct super_block * 
+joke_fstype_class::get_sb(int flags, const void * data) 
+{
+	joke_node * root;
 	static uint8_t inited = 0;
 
 	if (inited == 0) {
 		inited = 1;
 		
-		joke_sb.sb.s_fs = &joke_fstype;
-		joke_sb.sb.i_op = &joke_i_op;
-		joke_sb.sb.f_op = &joke_f_op;
-		joke_sb.sb.s_root = virtual_node_create("/", 1);
-		joke_sb.sb.s_root->directory_flag = 1;
-		joke_sb.sb.s_root->i_sb = &joke_sb.sb;
+		root = joke_node_create("/", 1);
+		joke_sb.common_init(&joke_fstype, root);
 	}
 
-	return &joke_sb.sb;
+	return &joke_sb;
 }
 
-static void joke_kill_sb(struct super_block * sb) {
+void 
+joke_fstype_class::kill_sb(struct super_block * sb) 
+{
 	panic("joke sb deallocated");
 }
-
-static int joke_mkdir(struct node * i, const char * name, size_t nlen, int flags) {
-	//debug_print_line("joke_mkdir");
-	struct node * node = virtual_node_create_as_child(name, nlen, i);
-	node->directory_flag = 1;
-	node->i_sb = &joke_sb.sb;
-	return 0;
-}
-
-static int joke_rmdir(struct node * i) {
-	//debug_print_line("joke_rmdir");
-	virtual_node_release(i);
-	return 0;
-}
-
-static int joke_iterate(struct file * filp, void * priv) {
-	struct dirent * de = (struct dirent *) priv;
-	struct node * parent;
-	struct node * d;
-	struct dlist_head * it;
-
-	if (filp->f_node->directory_flag == 0) 
-		return ENOTSUP;
-
-	parent = filp->f_node;
-	it = parent->childrens.next;//dlist_entry_first(&parent->childrens, struct dentry, lnk);
-
-	int n = filp->pos;
-	while(n--) it = it->next;
-	filp->pos++;
-
-	if (it == &parent->childrens) de->d_name[0] = '\0';
-	else {
-		d = dlist_entry(it, struct node, lnk);
-		de->d_ino = 0;
-		strcpy(de->d_name, d->name);
-	}
-	return 0;
-}
-
-struct file_system_type joke_fstype = {
-	.name = "joke",
-	.get_sb = joke_get_sb,
-	.kill_sb = joke_kill_sb
-};
-
-const struct node_operations joke_i_op = {
-	//.create = joke_create_inode,
-	.lookup = vfs_virtual_lookup,
-	.mkdir = joke_mkdir,
-	.rmdir = joke_rmdir,
-};
-
-const struct file_operations joke_f_op = {
-	.open = vfs_common_open,
-	.release = vfs_common_release,
-	.write = NULL,
-	.read = NULL,
-	.iterate = joke_iterate,
-};
 
 #endif

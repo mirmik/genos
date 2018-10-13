@@ -8,7 +8,8 @@
 #include <gxx/datastruct/dlist.h>
 
 #ifdef MVFS_INCLUDED
-#	include <mvfs/mvfs.h>
+//#	include <mvfs/mvfs.h>
+struct file;
 #endif
 
 #define SCHEDEE_STATE_RUN 		0
@@ -53,6 +54,7 @@ struct schedee_operations {
 __BEGIN_DECLS
 
 struct schedee * current_schedee();
+void shedee_mvfs_support_init(struct schedee* sch);
 
 static inline void schedee_init(struct schedee* sch, int prio, const struct schedee_operations * op) {
 	dlist_init(&sch->lnk);
@@ -64,9 +66,10 @@ static inline void schedee_init(struct schedee* sch, int prio, const struct sche
 	sch->parent = current_schedee(); 
 
 #ifdef MVFS_INCLUDED
-	sch->pwd = sch->parent ? sch->parent->pwd : vfs_get_root();
-	for (int i = 0; i < SCHEDEE_FDMAX; ++i)
-		sch->fds[i] = NULL;
+	shedee_mvfs_support_init(sch);
+	//sch->pwd = sch->parent ? sch->parent->pwd : vfs_get_root();
+	//for (int i = 0; i < SCHEDEE_FDMAX; ++i)
+	//	sch->fds[i] = NULL;
 #endif
 
 	sch->local_errno = 0;

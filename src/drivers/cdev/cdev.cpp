@@ -6,8 +6,7 @@
 
 #include <gxx/panic.h>
 
-int vfs_link_cdev(struct char_device * cdev, 
-	const struct file_operations * f_op, const char * dir,
+int vfs_link_cdev(struct char_device * cdev, const char * dir,
 	const char* name
 ) {
 	int sts;
@@ -18,9 +17,8 @@ int vfs_link_cdev(struct char_device * cdev,
 			return sts;
 	
 	
-	node_init(&cdev->node.node, name, strlen(name));
-	node_add_child(&cdev->node.node, parent);
-	cdev->node.f_op = f_op;
+	node_init(cdev, name, strlen(name));
+	node_add_child(cdev, parent);
 
 	return 0;
 }

@@ -6,15 +6,21 @@
 
 #include <hal/irqtable.h>
 
-struct avr_usart {
-	struct uart u;
+struct avr_usart : public uart {
 	struct usart_regs * regs;
 	uint8_t base_irq;
+
+	int enable(bool en) override;
+	int txirq(bool en) override;
+	int getc() override;
+	int putc(int symbol) override;
+	int hasrx() override;
+	int setup(const struct uart_params *params) override;
+
+	int init(struct usart_regs * regs, int base_irq);
 };
 
 __BEGIN_DECLS
-
-int avr_usart_init(struct avr_usart * dev, struct usart_regs * regs, int base_irq);
 
 __END_DECLS
 

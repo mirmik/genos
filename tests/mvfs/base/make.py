@@ -9,7 +9,7 @@ licant.libs.include("genos")
 licant.libs.include("gxx")
 
 application("target",
-	sources = ["main.c"],
+	sources = ["main.cpp"],
 
 	include_modules = [
 		"genos.include", 

@@ -23,8 +23,8 @@ int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *da
 	if (fs == NULL) 
 		return ENOENT;
 
-	struct super_block * sb = fs->get_sb(fs, mountflags, data);
-	vfs_set_global_root(sb->s_root);
+	struct super_block * sb = fs->get_sb(mountflags, data);
+	vfs_set_global_root(sb->root);
 
 	return 0;
 }
@@ -50,10 +50,7 @@ int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f)
 {
 	int sts;
 
-	if (parent->i_sb->i_op->mkdir == NULL) 
-		return ENOTSUP;
-
-	sts = parent->i_sb->i_op->mkdir(parent, name, nlen, 0);
+	sts = parent->mkdir(name, nlen, 0);
 		if (sts)
 			return sts;
 
@@ -87,13 +84,10 @@ int vfs_rmdir_do(struct node * dir)
 {
 	int sts;
 
-	if (!dlist_empty(&dir->childrens)) 
+	if (!dir->childs.empty()) 
 		return ENOTEMPTY;
 
-	if (dir->i_sb->i_op->rmdir == NULL) 
-		return ENOTSUP;
-
-	sts = dir->i_sb->i_op->rmdir(dir);
+	sts = dir->rmdir();
 		if (sts)
 			return sts;
 
@@ -170,36 +164,29 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 		if (sts)
 			return sts;
 
-	(*filp)->f_node = d;
+	(*filp)->node = d;
 	return 0;
 }
 
 int vfs_close(struct file* filp) {
 	int sts;
 
-	sts = filp->f_op->release(filp->f_node, filp);
+	sts = filp->node->release(filp);
 		if (sts) 
 			return sts;
 
 	return 0;
 }
 
-int vfs_write(struct file * filp, const char* data, unsigned int size) {
+int vfs_write(struct file * filp, const char* data, unsigned int size) 
+{
 	errno = 0;
-
-	if (filp->f_op->write == NULL) 
-		return ENOTSUP;
-	
-	return filp->f_op->write(filp, data, size);
+	return filp->node->write(filp, data, size);
 }
 
 int vfs_read(struct file * filp, char* data, unsigned int size) {
 	errno = 0;
-
-	if (filp->f_op->read == NULL) 
-		return ENOTSUP;
-	
-	return filp->f_op->read(filp, data, size);
+	return filp->node->read(filp, data, size);
 }
 
 int vfs_pwd(char* buf) 
@@ -271,7 +258,7 @@ int vfs_common_release (struct node * i, struct file * f) {
 }
 
 int vfs_iterate(struct file * filp, struct dirent * de) {
-	return filp->f_op->iterate(filp, de);
+	return filp->node->iterate(filp, de);
 }
 
 int vfs_debug_ls(const char* path) {

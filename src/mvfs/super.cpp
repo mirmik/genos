@@ -12,20 +12,15 @@
 int vfs_open_node(struct node * i, struct file ** filpp) {
 	int sts;
 	struct file * filp;
-	const struct file_operations * f_op = vfs_get_f_ops(i);
-
-	if (f_op->open == NULL)
-		return ENOTSUP;
 
 	filp = vfs_file_alloc();
-	filp->f_op = f_op;
-	filp->f_node = i;
+	filp->node = i;
 
-	sts = f_op->open(i, filp);
-	if (sts) {
-		vfs_file_dealloc(filp);
-		return sts;
-	}
+	sts = i->open(filp);
+		if (sts) {
+			vfs_file_dealloc(filp);
+			return sts;
+		}
 
 	*filpp = filp;
 
