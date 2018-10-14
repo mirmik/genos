@@ -27,9 +27,9 @@ time_t millis() {
 }
 
 void delay(double d) {
-	uint64_t n = __jiffies;
-	uint64_t f = n + d * systime_frequency;
-	while(__jiffies < f);
+	time_t n = millis();
+	time_t f = n + d;
+	while(f - millis() > 0);
 }
 
 time_t ms2jiffies(uint32_t ms) {

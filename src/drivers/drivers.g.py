@@ -6,7 +6,7 @@ licant.module("genos.drivers.common",
 	sources = ["serial/uartring.cpp"]
 )
 
-licant.module("genos.drivers.spi.avr", sources = ["spi/avr_spi.c"])
+licant.module("genos.drivers.spi.avr", sources = ["spi/avr_spi.cpp"])
 licant.module("genos.drivers.usart.avr", sources = [ "serial/avr_usart.cpp" ])
 licant.module("genos.drivers.avr",
 	include_modules = [
@@ -16,3 +16,5 @@ licant.module("genos.drivers.avr",
 		#"genos.drivers.gpio.avr",
 	],
 )
+
+licant.module("genos.drivers.atmel_dataflash", sources = ["bdev/atmel_dataflash.cpp"])

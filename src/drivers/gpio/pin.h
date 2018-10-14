@@ -16,9 +16,13 @@ struct gpio_pin {
 	gpio_mask_t mask;
 };
 
-#define GPIO_PIN(name, io, num) struct gpio_pin name = { .gpio=(io), .mask=1<<(num) };
+#define GPIO_PIN(name, io, num) struct gpio_pin name = { io, 1<<(num) };
 
 __BEGIN_DECLS
+
+static inline int gpio_pin_settings(struct gpio_pin * pin, uint32_t mode) {
+	return gpio_settings(pin->gpio, pin->mask, mode);
+}
 
 static inline void gpio_pin_init(struct gpio_pin * pin, struct gpio * io, uint8_t num) {
 	pin->gpio = io;

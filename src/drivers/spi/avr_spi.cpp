@@ -10,7 +10,91 @@
 #include <errno.h>
 #include <assert.h>
 
-struct avr_spi_device {
+#include <periph/regs/spi.h>
+
+void avr_spi_device::init(const char * name) {
+	avr_spi_init_master();
+}
+
+int avr_spi_device::setfrequency (uint32_t freq) 
+{
+	
+}
+
+int avr_spi_device::enable (bool en) {
+	return avr_spi_enable(en);
+} 
+
+int avr_spi_device::exbyte (int byte) 
+{
+	avr_spi_sendbyte(byte);
+	avr_spi_txidlewait();
+	return avr_spi_recvbyte();
+}
+
+int avr_spi_device::select (void *slct, int en) 
+{
+	struct gpio_pin * npin = (struct gpio_pin *) slct;
+	struct gpio_pin * opin = (struct gpio_pin *) current_select;
+
+	if (en == 0) {
+		assert(npin == opin);
+		gpio_pin_set_level(opin, 1);
+		current_select = nullptr;
+		return 0;	
+	}
+
+	if (opin != nullptr) {
+		gpio_pin_set_level(opin, 1);
+	}
+	gpio_pin_set_level(npin, 0);
+		
+	current_select = slct;
+	return 0;
+}
+
+int avr_spi_device::exchange (const void *_txbuf, void *_rxbuf, int len) 
+{
+	int sts;
+	uint8_t * rxbuf = (uint8_t *) _rxbuf;
+	uint8_t * txbuf = (uint8_t *) _txbuf;
+
+	//if (flags && NOSCHED) {
+	while(len--) {
+		avr_spi_sendbyte(*txbuf++);
+		avr_spi_txidlewait();
+		*rxbuf++ = avr_spi_recvbyte();
+	}
+	return 0;
+	//}
+
+	/*while (in_work) {
+		sts = wait_current_schedee(&spi->wait_list, 0);
+		if (sts == -1) {
+			return EAGAIN;
+		}
+	}
+
+	spi->txbuf = txbuf;
+	spi->rxbuf = rxbuf;
+	spi->counter = 0;
+	spi->len = len;
+
+	avr_spi_sendbyte(spi->txbuf[0]);
+	avr_spi_irq_enable();
+
+	//Ставим поток в начало очереди, чтобы обработчик прерывания снял его оттуда позже.
+	wait_current_schedee(&spi->wait_list, WAIT_PRIORITY);
+
+	//Отдаем управление следующему процессу, если такой находится.
+	spi->in_work = 0;
+	unwait_one(&spi->wait_list);
+
+	return 0;*/
+}
+
+/*
+struct avr_spi_device : public spi_device {
 	struct spi_device spi;
 
 	void * current_select;
@@ -25,9 +109,9 @@ struct avr_spi_device {
 	int32_t frequency;
 	struct dlist_head wait_list; 
 	uint8_t in_work;
-};
+};*/
 
-static inline void avr_spi_sendbyte(uint8_t tx) { SPDR = tx; }
+/*static inline void avr_spi_sendbyte(uint8_t tx) { SPDR = tx; }
 static inline void avr_spi_txidlewait() { while(!(SPSR & 0x80)); }
 static inline uint8_t avr_spi_recvbyte() { uint8_t rx = SPDR; return rx; }
 static inline uint8_t avr_spi_irq_enable() { panic("TODO"); return -1; }
@@ -125,4 +209,4 @@ struct spi_device * get_avr_spi_device() {
 	}
 
 	return &avr_spi.spi;
-}
+}*/

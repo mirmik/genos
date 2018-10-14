@@ -15,27 +15,19 @@ enum spi_mode_e {
 
 struct spi_device {
     const struct spi_operations * spi_op;
+
+    uint8_t locked;
+
+	virtual int enable 			(bool en = true);
+	virtual int select   		(void *slct, int en);
+	virtual int exbyte 			(int byte);
+	virtual int exchange 		(const void *txbuf, void *rxbuf, int len);
+	virtual int setfrequency	(uint32_t freq);
+
+	void lock() { locked = 1; }
+	void unlock() { locked = 0; }
+
+	virtual void init(const char * name);
 };
-
-struct spi_operations {
-	int (*select)   (struct spi_device *spi, void *slct, int en);
-	int (*exchange) (struct spi_device *spi, const void *txbuf, void *rxbuf, int len, int flags);
-};
-
-__BEGIN_DECLS
-
-static inline void spi_device_init(struct spi_device * spi, const struct spi_operations * ops) {
-	spi->spi_op = ops;
-}
-
-static inline int spi_select(struct spi_device * spi, void* slct, int en) { 
-	return spi->spi_op->select(spi, slct, en); 
-}
-
-static inline int spi_exchange(struct spi_device *spi, const void *txbuf, void *rxbuf, int len, int flags) { 
-	return spi->spi_op->exchange(spi, txbuf, rxbuf, len, flags); 
-}
-
-__END_DECLS
 
 #endif
