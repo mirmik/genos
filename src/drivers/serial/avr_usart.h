@@ -14,6 +14,7 @@ struct avr_usart : public uart {
 	int txirq(bool en) override;
 	int getc() override;
 	int putc(int symbol) override;
+	int cantx() override;
 	int hasrx() override;
 	int setup(const struct uart_params *params) override;
 

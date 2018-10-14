@@ -10,7 +10,8 @@ void schedee_exit() {
 	__displace__();
 }
 
-void __unsleep(void * sch, struct ktimer * tim) {
+void __unsleep(void * priv, struct ktimer * tim) {
+	struct schedee * sch = (struct schedee *) priv;
 	schedee_run(sch);
 	ktimer_dealloc(tim);
 }

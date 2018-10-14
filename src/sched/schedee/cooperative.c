@@ -56,6 +56,7 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*), void * arg, i
 	sch -> heapsize = heapsize;
 	sch -> task = task;
 	sch -> arg = arg;
+	sch -> sch.flag.has_context = 1;
 	sch -> sch.flag.can_displace = 1;
 
 	return &sch->sch;

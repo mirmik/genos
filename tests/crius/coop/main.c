@@ -10,6 +10,7 @@
 #include <sched/timer.h>
 
 #include <sched/api.h>
+#include <sched/wait.h>
 
 #include <gxx/util/iteration_counter.h>
 
@@ -24,26 +25,31 @@ void led_blink_timer(void* arg, struct ktimer * tim) {
 	ktimer_plan(tim);
 }
 
-void * mproc(void * arg) {
-	void* ptr = arg;
-	int r = __atomic_is_lock_free(0, ptr);
-	dprdec(r);
+DLIST_HEAD(wlist);
 
-	debug_print_line("HelloWorld");
-	__displace__();
-	debug_print_line("HelloWorld");
+void * mproc(void * arg) {
+	debug_print_line("proc1: wait wlist");
+	wait_current_schedee(&wlist, 0);
 
 	while (1) {
 		do_iteration(3) {
-			debug_print_line("msleep");
+			debug_print_line("proc1: msleep 1000");
 			msleep(1000);
 		}
 		do_after {
-			debug_print_line("mproc exit");
+			debug_print_line("proc1: exit");
 			schedee_exit(0);
 		};
 	}
 
+	return NULL;
+}
+
+void * mproc2(void * arg) {
+	debug_print_line("proc2: msleep 4000");
+	msleep(4000);
+	debug_print_line("proc2: unwait wlist");
+	unwait_one(&wlist);
 	return NULL;
 }
 
@@ -57,6 +63,7 @@ int main() {
 
 	ktimer_create_for(led_blink_timer, NULL, 1000);
 	schedee_run(create_cooperative_schedee(mproc, NULL, 256));
+	schedee_run(create_cooperative_schedee(mproc2, NULL, 256));
 
 	irqs_enable();
 	__schedule__();

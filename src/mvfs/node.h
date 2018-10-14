@@ -29,6 +29,7 @@ struct node {
 			uint8_t special_node : 1;
 			uint8_t mount_point : 1;
 			uint8_t noblock : 1;
+			uint8_t nosched : 1;
 		} flag;
 	};
 

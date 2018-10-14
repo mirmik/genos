@@ -8,6 +8,7 @@
 
 #include <sched/sched.h>
 #include <sched/timer.h>
+#include <sched/api.h>
 
 //#include <crow/tower.h>
 
@@ -19,6 +20,26 @@
 
 struct avr_usart uart0;
 struct uartring_device serial0;
+
+void * maintask(void *) {
+	int ret1= serial0.write("HelloWorld\n", 11);
+	int ret2= serial0.write("Hello2orld\n", 11);
+	int ret3= serial0.write("Hello3orld\n", 11);
+	serial0.write("Hello4orld\n", 11);
+	serial0.write("Hello5orld\n", 11);
+	serial0.write("Hello6orld\n", 11);
+	serial0.write("Hello7orld\n", 11);
+	serial0.write("Hello8orld\n", 11);
+
+	volatile uint64_t count = 10000;
+	while(count--);
+	dprln("HelloWorld");
+
+	msleep(100);
+	
+	ret3= serial0.write("Hello3orld\n", 11);
+	
+}
 
 int main() {
 	board_init();
@@ -39,21 +60,9 @@ int main() {
 
 	serial0.init(&uart0, "ttyS0");
 	
+	schedee_run(create_cooperative_schedee(maintask, NULL, 512));
+
 	irqs_enable();
-
-
-	//uart0.putc('D');
-	int ret1= serial0.write("HelloWorld\n", 11);
-	int ret2= serial0.write("HelloWorld\n", 11);
-	int ret3= serial0.write("HelloWorld\n", 11);
-	int ret4= serial0.write("HelloWorld\n", 11);
-
-	debug_delay(100000);
-	dprln(ret1);
-	dprln(ret2);
-	dprln(ret3);
-	dprln(ret4);
-
 	__schedule__();
 }
 

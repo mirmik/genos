@@ -1,29 +1,42 @@
 #include <drivers/serial/uartring.h>
 
+#include <gxx/syslock.h>
 #include <gxx/panic.h>
+
 #include <sched/api.h>
 #include <sched/wait.h>
 
 int uartring_device::write(const char* data, unsigned int size) 
 {
+	int curwrited;
 	size_t writed = 0;
 
-	if (ring_empty(&txring)) 
+	if (uart->cantx() && ring_empty(&txring)) 
 	{
 		writed++;
-		uart->putc(*data++);
+		uart->putc(*data);
 	}
 
 	while (size != writed) 
 	{
-		writed += ring_write(&txring, txbuffer, data, size);
-		uart->txirq(true);
-	
-		if (flag.noblock || current_schedee() == NULL 
-			|| current_schedee()->flag.has_context == NULL) 
-		{
+		system_lock();
+		curwrited = ring_write(&txring, txbuffer, data + writed, size - writed);
+		if (curwrited) 
+			uart->txirq(true);
+		system_unlock();
+		writed += curwrited;
+
+		if (writed == size) 
 			break;
-		}
+
+		if (flag.noblock)
+			break;
+
+		if (flag.nosched) 
+			continue;
+
+		if (current_schedee() == NULL) 
+			break;
 
 		else 
 		{
@@ -34,7 +47,6 @@ int uartring_device::write(const char* data, unsigned int size)
 		//{
 		//}
 	}
-
 	return writed;
 }
 
@@ -63,12 +75,14 @@ void uartring_irq_handler(void* priv, int code)
 	struct uartring_device* uring = (struct uartring_device*) priv;
 	switch(code) {
 		case UART_IRQCODE_TX: {
-			char c = ring_getc(&uring->txring, uring->txbuffer);
-			if ( ring_empty(&uring->txring) ) {
+			if ( ring_empty(&uring->txring) ) 
+			{
 				uring->uart->txirq(false);
 				unwait_one(&uring->txwlst);
+				return;
 			}
 
+			char c = ring_getc(&uring->txring, uring->txbuffer);
 			uring->uart->putc(c);
 			return;
 		}
@@ -89,6 +103,8 @@ int uartring_device::init(struct uart * u, const char* name)
 
 	ring_init(&rxring, UARTRING_BUFFER_SIZE_RX);
 	ring_init(&txring, UARTRING_BUFFER_SIZE_TX);
+
+	dlist_init(&txwlst);
 
 	//uart->enable(false);
 

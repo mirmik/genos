@@ -24,6 +24,10 @@ int avr_usart::putc(int symbol) {
 	return usart_regs_sendbyte(regs, symbol);
 }
 
+int avr_usart::cantx() {
+	return usart_regs_cansend(regs);	
+}
+
 int avr_usart::hasrx() {
 	return usart_regs_canrecv(regs);	
 }

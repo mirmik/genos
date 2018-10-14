@@ -20,6 +20,7 @@ struct uart {
 	virtual int txirq(bool en) = 0;
 	virtual int getc() = 0;
 	virtual int putc(int symbol) = 0;
+	virtual int cantx() = 0;
 	virtual int hasrx() = 0;
 	virtual int setup(const struct uart_params *params) = 0;
 };
