@@ -31,6 +31,7 @@ struct schedee * create_autom_schedee(void* (*task) (void*, int*), void * arg)
 	sch->sch.flag.can_displace = 1;
 	sch->task = task;
 	sch->arg = arg;
+	sch->state = 0;
 
 	return &sch->sch;
 }

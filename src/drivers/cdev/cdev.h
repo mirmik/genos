@@ -3,8 +3,20 @@
 
 #include <mvfs/node.h>
 
-struct char_device : public node {
-	
+struct char_device : public node 
+{
+	virtual int write(const char * data, unsigned int size);
+	virtual int read(char * data, unsigned int size);
+
+	int write(struct file * filp, const char * data, unsigned int size) override {
+		return write(data, size);
+	}	
+
+	int read(struct file * filp, char * data, unsigned int size) override {
+		return read(data, size);
+	}
+
+	virtual int waitread() {}
 };
 
 __BEGIN_DECLS

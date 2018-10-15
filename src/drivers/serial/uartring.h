@@ -22,16 +22,19 @@ struct uartring_device : public char_device {
 	struct ring_head txring;
 
 	struct dlist_head txwlst;
+	struct dlist_head rxwlst;
 
 	int init(struct uart * u, const char* name);
 
-	int write(const char* data, unsigned int size);
+	int write(const char* data, unsigned int size) override;
+	int read(char* data, unsigned int size) override;
+	int waitread() override;
 
 	//file operations
-	int write(struct file * f, const char* data, unsigned int size);	
-	int read(struct file * f, char* data, unsigned int size);	
-	int open(struct node * i, struct file * f);	
-	int release (struct node * i, struct file * f);
+	//int write(struct file * f, const char* data, unsigned int size);	
+	//int read(struct file * f, char* data, unsigned int size);	
+	int open(struct file * f) override;	
+	int release (struct file * f) override;
 };
 
 __BEGIN_DECLS

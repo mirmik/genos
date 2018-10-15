@@ -24,12 +24,12 @@ struct debug_device_class : public char_device {
 		return 0;
 	}
 	
-	int write (struct file * f, const char* data, unsigned int size) override {
+	int write (const char* data, unsigned int size) override {
 		debug_write(data, size);
 		return size;
 	}
 	
-	int read (struct file * f, char* data, unsigned int size) override {
+	int read (char* data, unsigned int size) override {
 		memset(data, 0, size);
 		return size;
 	}

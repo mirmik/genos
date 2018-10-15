@@ -50,22 +50,20 @@ int uartring_device::write(const char* data, unsigned int size)
 	return writed;
 }
 
-int uartring_device::write(struct file * f, const char* data, unsigned int size) 
+int uartring_device::read(char* data, unsigned int size) 
 {
-	return write(data, size);
+	if (ring_empty(&rxring)) 
+		return 0;
+
+	return ring_read(&rxring, rxbuffer, data, size);
 }
 
-int uartring_device::read(struct file * f, char* data, unsigned int size) 
-{
-	return 0;
-}
-
-int uartring_device::open(struct node * i, struct file * f) 
+int uartring_device::open(struct file * f) 
 { 
 	return 0; 
 }
 
-int uartring_device::release (struct node * i, struct file * f) 
+int uartring_device::release (struct file * f) 
 { 
 	return 0; 
 }
@@ -88,7 +86,9 @@ void uartring_irq_handler(void* priv, int code)
 		}
 
 		case UART_IRQCODE_RX: {
-			panic("1");
+			ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->getc());
+			unwait_one(&uring->rxwlst);
+			return;
 		}
 
 		case UART_IRQCODE_TC: //fallthrow
@@ -105,6 +105,7 @@ int uartring_device::init(struct uart * u, const char* name)
 	ring_init(&txring, UARTRING_BUFFER_SIZE_TX);
 
 	dlist_init(&txwlst);
+	dlist_init(&rxwlst);
 
 	//uart->enable(false);
 
@@ -118,3 +119,17 @@ int uartring_device::init(struct uart * u, const char* name)
 
 	return 0;
 }
+
+int uartring_device::waitread() {
+	system_lock();
+
+	if (ring_avail(&rxring)) 
+	{
+		system_unlock();
+		return 1;
+	}
+
+	wait_current_schedee(&rxwlst, 0);
+	system_unlock();
+	return 0;
+} 
