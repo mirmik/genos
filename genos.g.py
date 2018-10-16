@@ -103,3 +103,4 @@ module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 #)
 
 module ("genos.utility.getty", sources = ["src/utility/nologin_getty.cpp"])
+module ("genos.utility.sh", sources = ["src/utility/sh.cpp"])

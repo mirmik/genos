@@ -20,18 +20,27 @@ void schedee_manager_init() {
 }
 
 void schedee_run(struct schedee * sch) {
+	sch->state = SCHEDEE_STATE_RUN;
 	dlist_move(&sch->lnk, &runlist[sch->prio]);
 }
 
+void __schedee_wait_for(struct schedee * parent, struct schedee * child) {
+	parent->state = SCHEDEE_STATE_WAIT_SCHEDEE;
+	dlist_move(&parent->lnk, &waitlist);
+}
+
 void schedee_wait(struct schedee * sch) {
+	sch->state = SCHEDEE_STATE_WAIT;
 	dlist_move(&sch->lnk, &waitlist);
 }
 
 void schedee_final(struct schedee * sch) {
+	sch->state = SCHEDEE_STATE_FINAL;
 	dlist_move(&sch->lnk, &finallist);
 }
 
 void schedee_stop(struct schedee * sch) {
+	sch->state = SCHEDEE_STATE_STOP;
 	dlist_del_init(&sch->lnk);
 }
 
@@ -54,6 +63,7 @@ void schedee_manager()
 		//процесса из системы. Удаление может быть достаточно
 		//длительным, но в любом случае это не проблемы планировщика.
 		dlist_del(&sch->lnk);
+		schedee_notify_finalize(sch);
 		sch->sch_op->finalize(sch);
 	}
 		

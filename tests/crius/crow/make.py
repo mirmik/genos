@@ -50,8 +50,8 @@ application("firmware",
 		submodule("genos.mvfs.global"),
 		submodule("genos.malloc", "lin"),
 
-		#submodule("crow"),
-		#submodule("crow.allocator", "malloc"),
+		submodule("crow"),
+		submodule("crow.allocator", "malloc"),
 	]
 )
 

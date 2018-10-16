@@ -7,6 +7,7 @@ __BEGIN_DECLS
 
 void schedee_run(struct schedee * sch);
 void schedee_wait(struct schedee * sch);
+void __schedee_wait_for(struct schedee * parent, struct schedee * child);
 void schedee_stop(struct schedee * sch);
 void schedee_final(struct schedee * sch);
 

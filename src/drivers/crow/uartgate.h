@@ -10,9 +10,25 @@ void uartgate_tx_handler(void*);
 
 struct crow_uartgate {
 	struct crow_gw gw;
+
+	struct uart * uart;
+
 	struct dlist_head to_send;
 	struct crowket * insend;
 };
+
+__BEGIN_DECLS
+
+void crow_uartgate_init(struct crow_uartgate * ugate, struct uart * uart) {
+	ugate->uart = uart;
+	dlist_init(&ugate->to_send);
+	ugate->insend = NULL;
+
+
+	crow_link_gate(&ugate->gw, 10);
+}
+
+__END_DECLS
 
 /*namespace genos {
 	struct uartgate : public crow::gateway {

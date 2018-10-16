@@ -51,6 +51,7 @@ application("firmware",
 		submodule("genos.malloc", "lin"),
 
 		submodule("genos.utility.getty"),
+		submodule("genos.utility.sh"),
 
 		#submodule("crow"),
 		#submodule("crow.allocator", "malloc"),

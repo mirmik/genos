@@ -12,11 +12,12 @@
 struct file;
 #endif
 
-#define SCHEDEE_STATE_RUN 		0
-#define SCHEDEE_STATE_WAIT 		2
-#define SCHEDEE_STATE_STOP 		3
-#define SCHEDEE_STATE_FINAL 	4
-#define SCHEDEE_STATE_ZOMBIE 	5
+#define SCHEDEE_STATE_RUN 			0
+#define SCHEDEE_STATE_WAIT 			2
+#define SCHEDEE_STATE_WAIT_SCHEDEE 	6
+#define SCHEDEE_STATE_STOP 			3
+#define SCHEDEE_STATE_FINAL 		4
+#define SCHEDEE_STATE_ZOMBIE 		5
 
 #define SCHEDEE_FDMAX 5
 
@@ -54,8 +55,19 @@ struct schedee_operations {
 __BEGIN_DECLS
 
 struct schedee * current_schedee();
-void shedee_mvfs_support_init(struct schedee* sch);
 
+/// Уведомить родителя (если он есть), что процесс завершен. 
+void schedee_notify_finalize(struct schedee * sch);
+
+/// Проинициализировать структуры данных поддержки файловой системы.
+void schedee_mvfs_support_init(struct schedee* sch);
+
+/// Переоткрыть родительские файлы от своего имени.
+void schedee_copy_parent_files(struct schedee* sch);
+
+void schedee_debug_print_fds(struct schedee* sch);
+
+/// Проинициализировать основные поля процесса.
 static inline void schedee_init(struct schedee* sch, int prio, const struct schedee_operations * op) {
 	dlist_init(&sch->lnk);
 	sch->prio = prio;
@@ -66,15 +78,15 @@ static inline void schedee_init(struct schedee* sch, int prio, const struct sche
 	sch->parent = current_schedee(); 
 
 #ifdef MVFS_INCLUDED
-	shedee_mvfs_support_init(sch);
-	//sch->pwd = sch->parent ? sch->parent->pwd : vfs_get_root();
-	//for (int i = 0; i < SCHEDEE_FDMAX; ++i)
-	//	sch->fds[i] = NULL;
+	schedee_mvfs_support_init(sch);
+	if (sch->parent)
+		schedee_copy_parent_files(sch);
 #endif
 
 	sch->local_errno = 0;
 } 
 
+int schedee_setfd(struct schedee * sch, struct file * node, int fd);
 int schedee_get_free_fd(struct schedee * sch);
 
 __END_DECLS

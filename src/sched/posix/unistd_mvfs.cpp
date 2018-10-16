@@ -19,6 +19,8 @@ static inline int get_filp(int fd, struct file ** filpp) {
 
 ssize_t write(int fd, const void *buf, size_t nbyte) 
 {
+	dprln("write");
+
 	struct file * filp;
 
 	int sts = get_filp(fd, &filp);

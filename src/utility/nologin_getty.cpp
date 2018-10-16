@@ -3,12 +3,22 @@
 
 #include <gxx/panic.h>
 
+#include <sched/sched.h>
+#include <mvfs/file.h>
+#include <mvfs/compat.h>
+
+#include <utility/sh.h>
+
 static int newline(struct getty_context * cntxt) {
-	dpr("line_state: "); debug_write(cntxt->line.buf, cntxt->line.len); dprln();
+	struct schedee * sch = create_autom_schedee(sh_utility, NULL);
+	schedee_run(sch);
+	__schedee_wait_for(current_schedee(), sch);
+	__displace__();
 }
 
 void * nologin_getty(void * arg, int * state) 
 {
+	struct file * filp;
 	char c;
 	int ret;
 
@@ -19,6 +29,12 @@ void * nologin_getty(void * arg, int * state)
 	switch (*state) 
 	{
 		case 0:
+			//filp = vfs_file_alloc();
+			//cdev->open(filp);
+			vfs_open_node(cdev, &filp);
+			schedee_setfd(current_schedee(), filp, 0); //input
+			schedee_setfd(current_schedee(), filp, 1); //output
+
 			cntxt->last = '\n';
 			sline_setbuf(line, cntxt->buffer, GETTY_LINE_LENGTH);
 			*state = 1;

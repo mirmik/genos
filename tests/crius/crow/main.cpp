@@ -9,11 +9,11 @@
 #include <sched/sched.h>
 #include <sched/timer.h>
 
-//#include <crow/tower.h>
+#include <crow/tower.h>
 
-//#include <drivers/crow/uartgate.h>
+#include <drivers/crow/uartgate.h>
 
-#include <drivers/serial/avr_uart.h>
+#include <drivers/serial/avr_usart.h>
 #include <periph/irqdefs.h>
 
 //#include <drivers/serial/uartring.h>
@@ -32,17 +32,18 @@ int main() {
 	gpio_set_level(RED_LED_GPIO, RED_LED_MASK, 1);
 	gpio_set_level(GREEN_LED_GPIO, GREEN_LED_MASK, 1);
 
+
+
 	__schedule__();
 }
 
 void __schedule__() {
 	while(1) {
-	//	crow_onestep();
+		crow_onestep();
 		timer_manager();
 		schedee_manager();
 	}
 }
-
 
 uint16_t crow_millis() {
 	return millis();
