@@ -24,10 +24,10 @@ module ("genos.malloc", "lin", sources = ["src/mem/lin_malloc.cpp", "src/mem/lin
 #module ("genos.displace", "reset", srcdir="genos/impls", sources = [ "schedule_displace.cpp" ] )
 #
 #
-#module("genos.addons.adafruit_motor_shield", sources = [
-#	"genos/addons/Adafruit_MotorShield/Adafruit_MS_PWMServoDriver.cpp",
-#	"genos/addons/Adafruit_MotorShield/Adafruit_MotorShield.cpp",
-#])
+module("genos.addons.adafruit_motor_shield", sources = [
+	"src/addons/Adafruit_MotorShield/Adafruit_MS_PWMServoDriver.cpp",
+	"src/addons/Adafruit_MotorShield/Adafruit_MotorShield.cpp",
+])
 #
 #module("genos.fs", 
 #	sources = [

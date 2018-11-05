@@ -18,7 +18,7 @@
 #define _Adafruit_MotorShield_h_
 
 #include <inttypes.h>
-#include "genos/addons/Adafruit_MotorShield/Adafruit_MS_PWMServoDriver.h"
+#include "Adafruit_MS_PWMServoDriver.h"
 
 //#define MOTORDEBUG
 

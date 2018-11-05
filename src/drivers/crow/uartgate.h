@@ -24,7 +24,6 @@ void crow_uartgate_init(struct crow_uartgate * ugate, struct uart * uart) {
 	dlist_init(&ugate->to_send);
 	ugate->insend = NULL;
 
-
 	crow_link_gate(&ugate->gw, 10);
 }
 

@@ -7,6 +7,8 @@
 #include <avr/interrupt.h>
 #include <stdint.h>
 
+#include <gxx/event/delegate.h>
+
 //0x00 Bus Fail Автобус сломался… эээ в смысле аппаратная ошибка шины. Например, внезапный старт посреди передачи бита.
 //0x08 Start Был сделан старт. Теперь мы решаем что делать дальше, например послать адрес ведомого
 //0x10 ReStart Был обнаружен повторный старт. Можно переключиться с записи на чтение или наоборот. От логики зависит.
@@ -38,6 +40,7 @@
 #include <gxx/panic.h>
 
 #include <hal/i2c.h>
+#include <hal/irqtable.h>
 #include <periph/irqdefs.h>
 
 
