@@ -24,7 +24,7 @@ Adafruit_MS_PWMServoDriver::Adafruit_MS_PWMServoDriver(uint8_t addr) {
 	_i2caddr = addr;
 }
 
-void Adafruit_MS_PWMServoDriver::begin(genos::hal::i2c_automate* i2c) {
+void Adafruit_MS_PWMServoDriver::begin(i2c_device* i2c) {
 	this->i2c = i2c;
 	reset();
 }
@@ -72,7 +72,6 @@ void Adafruit_MS_PWMServoDriver::setPWM(uint8_t num, uint16_t on, uint16_t off) 
 	outdata[4] = off>>8;
 
 	i2c->write(_i2caddr, outdata, 5);
-	genos::wait();		
 }
 
 uint8_t Adafruit_MS_PWMServoDriver::read8(uint8_t addr) {
@@ -80,7 +79,6 @@ uint8_t Adafruit_MS_PWMServoDriver::read8(uint8_t addr) {
 	char outdata[1];
 	outdata[0] = addr;
 	i2c->writeread(_i2caddr, outdata, 1, indata, 1);
-	genos::wait();
 	return indata[0];
 
 
@@ -105,8 +103,7 @@ void Adafruit_MS_PWMServoDriver::write8(uint8_t addr, uint8_t d) {
 	outdata[0] = addr;
 	outdata[1] = d;
 	i2c->write(_i2caddr, outdata, 2);
-	genos::wait();
-
+	
 
 
 /*  WIRE.beginTransmission(_i2caddr);

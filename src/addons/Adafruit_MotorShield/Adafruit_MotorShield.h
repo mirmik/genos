@@ -92,7 +92,7 @@ class Adafruit_MotorShield
   public:
     Adafruit_MotorShield(uint8_t addr = 0x60);
 
-    void begin(genos::hal::i2c_automate *theWire, uint16_t freq = 1600);
+    void begin(i2c_device *theWire, uint16_t freq = 1600);
     Adafruit_DCMotor *getMotor(uint8_t n);
     Adafruit_StepperMotor *getStepper(uint16_t steps, uint8_t n);
 
@@ -101,7 +101,7 @@ class Adafruit_MotorShield
     void setPWM(uint8_t pin, uint16_t val);
     void setPin(uint8_t pin, bool val);
  private:
-    genos::hal::i2c_automate *_i2c;
+    i2c_device *_i2c;
     uint8_t _addr;
     uint16_t _freq;
     Adafruit_DCMotor dcmotors[4];

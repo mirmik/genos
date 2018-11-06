@@ -18,7 +18,7 @@
 #ifndef _Adafruit_MS_PWMServoDriver_H
 #define _Adafruit_MS_PWMServoDriver_H
 
-#include <hal/i2c.h>
+#include <drivers/i2c/i2c.h>
 #include <stdint.h>
 
 #define PCA9685_SUBADR1 0x2
@@ -41,13 +41,13 @@
 class Adafruit_MS_PWMServoDriver {
  public:
   Adafruit_MS_PWMServoDriver(uint8_t addr = 0x40);
-  void begin(genos::hal::i2c_automate* i2c);
+  void begin(i2c_device* i2c);
   void reset(void);
   void setPWMFreq(float freq);
   void setPWM(uint8_t num, uint16_t on, uint16_t off);
 
  private:
-  genos::hal::i2c_automate* i2c;
+ i2c_device* i2c;
   uint8_t _i2caddr;
 
   uint8_t read8(uint8_t addr);

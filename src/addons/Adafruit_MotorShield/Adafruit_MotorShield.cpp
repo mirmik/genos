@@ -65,7 +65,7 @@ Adafruit_MotorShield::Adafruit_MotorShield(uint8_t addr) {
 	(on Due)
 */
 /**************************************************************************/
-void Adafruit_MotorShield::begin(genos::hal::i2c_automate *theWire, uint16_t freq) {
+void Adafruit_MotorShield::begin(i2c_device *theWire, uint16_t freq) {
 	_i2c = theWire;
 	_pwm.begin(_i2c);
 	_freq = freq;

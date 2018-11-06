@@ -31,8 +31,8 @@ module("genos.hal", impl = "atmega2560",
 	ldscripts = ["ldscripts/atmega2560.ld"],
 
 	defines = ["CHIP_ATMEGA2560"],
-	cxx_flags = "-mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
-	cc_flags = "-mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	cxx_flags = "-nostdlib -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
+	cc_flags = "-nostdlib -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
 	ld_flags = "-nostdlib -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -ffunction-sections",
 	libs = ["m", "gcc"],
 )
@@ -42,9 +42,10 @@ module("genos.hal", impl = "atmega328p",
 	ldscripts = ["ldscripts/atmega328p.ld"],
 
 	defines = ["CHIP_ATMEGA328P"],
-	cxx_flags = "-nostdlib -lgcc -lm -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
-	cc_flags = "-nostdlib -lgcc -lm -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
-	ld_flags = "-nostdlib -lgcc -lm -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	cxx_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
+	cc_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	ld_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	libs = ["m", "gcc"],
 )
 
 #Module("genos.arch.avr.head", {
