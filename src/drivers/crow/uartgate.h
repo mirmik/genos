@@ -11,23 +11,31 @@ void uartgate_tx_handler(void*);
 struct crow_uartgate {
 	struct crow_gw gw;
 
-	struct uart * uart;
+	struct uart * u;
 
 	struct dlist_head to_send;
 	struct crowket * insend;
+	struct crowket* rpack;
+
+	uint8_t send_state = 0;
+	uint8_t send_crc;
+	char* send_ptr;
+	char* send_end;		
 };
 
 __BEGIN_DECLS
 
-void crow_uartgate_init(struct crow_uartgate * ugate, struct uart * uart) {
-	ugate->uart = uart;
-	dlist_init(&ugate->to_send);
-	ugate->insend = NULL;
-
-	crow_link_gate(&ugate->gw, 10);
-}
+void crow_uartgate_nblock_onestep(crow_gw_t* g);
+void crow_uartgate_send(crow_gw_t* g, crowket_t* pack);
+void crow_uartgate_init(struct crow_uartgate * ugate, struct uart * uart);
 
 __END_DECLS
+
+const struct crow_gw_operations crow_uartgate_ops =
+{
+	.send = crow_uartgate_send,
+	.nblock_onestep = crow_uartgate_nblock_onestep
+};
 
 /*namespace genos {
 	struct uartgate : public crow::gateway {

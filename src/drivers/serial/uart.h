@@ -18,11 +18,12 @@ struct uart {
 
 	virtual int enable(bool en) = 0;
 	virtual int txirq(bool en) = 0;
-	virtual int getc() = 0;
-	virtual int putc(int symbol) = 0;
+	virtual int recvbyte() = 0;
+	virtual int sendbyte(int symbol) = 0;
 	virtual int cantx() = 0;
 	virtual int hasrx() = 0;
-	virtual int setup(const struct uart_params *params) = 0;
+	//virtual int setup(const struct uart_params *params) = 0;
+	virtual int setup(int32_t baud, enum uart_parity_e parity, uint8_t databits, uint8_t stopbits) = 0;
 };
 
 #endif

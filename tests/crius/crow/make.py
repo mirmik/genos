@@ -19,8 +19,8 @@ application("firmware",
 	sources = ["main.cpp"],
 	target = "firmware.bin",
 
-	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto -pedantic",
-	cc_flags = "-Os -flto --pedantic-error -Werror=all",
+	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto",
+	cc_flags = "-Os -flto -Wall",
 
 	include_modules = [
 	#stdlibs
@@ -45,6 +45,8 @@ application("firmware",
 
 		submodule("genos.drivers.spi.avr"),
 		submodule("genos.drivers.gpio.avr"),
+		submodule("genos.drivers.usart.avr"),
+		submodule("genos.drivers.crow.uartgate"),
 
 		submodule("genos.mvfs"),
 		submodule("genos.mvfs.global"),

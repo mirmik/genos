@@ -64,14 +64,14 @@ static inline void usart_regs_tcirq(struct usart_regs* regs, bool en) {
 
 static inline void usart_regs_setup(
 	struct usart_regs* regs, 
-	const struct uart_params * s
-	//int32_t baud, 
-	//enum uart_parity_e parity, 
-	//uint8_t stopBits, 
-	//uint8_t dataBits
+//	const struct uart_params * s
+	int32_t baud, 
+	enum uart_parity_e parity, 
+	uint8_t stopBits, 
+	uint8_t dataBits
 ) {	
 	regs->ucsr_a |= 1 << U2X0;
-	uint16_t baud_setting = (F_CPU / 4 / s->baud - 1) / 2;
+	uint16_t baud_setting = (F_CPU / 4 / baud - 1) / 2;
   
 	regs->ubrr_h = baud_setting >> 8;
 	regs->ubrr_l = baud_setting;

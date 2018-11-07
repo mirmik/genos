@@ -16,11 +16,11 @@ int avr_usart::txirq(bool en) {
 	return 0;
 }
 
-int avr_usart::getc() {
+int avr_usart::recvbyte() {
 	return usart_regs_recvbyte(regs);
 }
 
-int avr_usart::putc(int symbol) {
+int avr_usart::sendbyte(int symbol) {
 	return usart_regs_sendbyte(regs, symbol);
 }
 
@@ -32,8 +32,8 @@ int avr_usart::hasrx() {
 	return usart_regs_canrecv(regs);	
 }
 
-int avr_usart::setup(const struct uart_params *params) {
-	usart_regs_setup(regs, params);		
+int avr_usart::setup(int32_t baud, enum uart_parity_e parity, uint8_t databits, uint8_t stopbits) {
+	usart_regs_setup(regs, baud, parity, databits, stopbits);		
 	return 0;
 }
 
