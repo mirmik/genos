@@ -31,6 +31,7 @@ void* mainproc(void*)
 	uint8_t raddr[1];
 	hexer_s(raddr, 1, ".10");
 
+	//msleep(1000);
 	while(1) 
 	{
 		crow_send(raddr, 1, "HelloWorld", 10, 0, 0, 200);
@@ -38,9 +39,22 @@ void* mainproc(void*)
 	}
 }
 
+void user_incoming(crowket* pack) 
+{
+	gpio_toggle(GREEN_LED_GPIO, GREEN_LED_MASK);
+	crow_release(pack);
+}
+
+
+extern "C" void dos() 
+{
+	gpio_toggle(RED_LED_GPIO, RED_LED_MASK);
+}
+
 int main()
 {
 	board_init();
+
 	schedee_manager_init();
 
 	uart0.init(USART0, ATMEGA_IRQ_U0RX);
@@ -55,9 +69,11 @@ int main()
 	uart0.enable(true);
 
 	crow_uartgate_init(&uartgate, &uart0);
+	crow_user_incoming_handler = user_incoming;
 
 	irqs_enable();
 
+	//delay(1);
 
 	schedee_run(create_cooperative_schedee(mainproc, nullptr, 200));
 

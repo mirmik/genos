@@ -2,12 +2,17 @@
 #include <gxx/util/member.h>
 #include <hal/irqtable.h>
 
+#include <gxx/debug/delay.h>
+
 int avr_usart::enable(bool en) {
 	usart_regs_enable_rx(regs, en);
 	usart_regs_enable_tx(regs, en);
 	usart_regs_tcirq(regs, false);
 	usart_regs_txirq(regs, false);
 	usart_regs_rxirq(regs, en);
+
+	cpu_delay(10000);
+
 	return 0;
 }
 

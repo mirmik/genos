@@ -2,6 +2,8 @@
 #define GENOS_DRIVERS_CROW_UARTGATE_H
 
 #include <crow/gateway.h>
+#include <gxx/gstuff/autorecv.h>
+#include <gxx/datastruct/ring.h>
 
 #define PACKET_DATAADDR_SIZE_MAX 64
 
@@ -21,6 +23,11 @@ struct crow_uartgate {
 	uint8_t send_crc;
 	char* send_ptr;
 	char* send_end;		
+
+	struct gstuff_autorecv recver;
+
+	char recvring_buffer[16];
+	struct ring_head recvring;
 };
 
 __BEGIN_DECLS

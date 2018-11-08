@@ -7,8 +7,11 @@
 #include <gxx/gstuff/gstuff.h>
 
 #include <drivers/serial/uart.h>
+#include <hal/irq.h>
 
 #include <gxx/util/crc.h>
+
+extern "C" void dos();
 
 static void crow_uartgate_do_send(struct crow_uartgate * ugate, crowket* pack)
 {
@@ -42,17 +45,13 @@ void crow_uartgate_sended(struct crow_uartgate * ugate)
 	crow_return_to_tower(tmp, CROW_SENDED);
 }
 
-void crow_uartgate_nblock_onestep(struct crow_gw * g)
-{}
-
 void crow_uartgate_send(struct crow_gw * g, crowket* pack)
 {
 	crow_uartgate* ugate = mcast_out(g, crow_uartgate, gw);
 
 	system_lock();
-	bool b = ugate->insend == nullptr && dlist_empty(&ugate->to_send);
 
-	if (b)
+	if (ugate->insend == nullptr && dlist_empty(&ugate->to_send))
 	{
 		crow_uartgate_do_send(ugate, pack);
 	}
@@ -134,12 +133,57 @@ void uartgate_tx_handler(void* arg)
 	}
 }
 
+static inline void init_recv(struct crow_uartgate * ugate)
+{
+	system_lock();
+	ugate->rpack = (struct crowket*) malloc(PACKET_DATAADDR_SIZE_MAX + sizeof(crowket) - sizeof(crow_header));
+	
+	gstuff_autorecv_setbuf(&ugate->recver, (char*)&ugate->rpack->header, PACKET_DATAADDR_SIZE_MAX);
+	gstuff_autorecv_reset(&ugate->recver);
+
+	system_unlock();
+}
+
+static inline void newline_handler(crow_uartgate* gate) {
+	crowket* block = (crowket*) realloc(gate->rpack, gate->rpack->header.flen + sizeof(crowket) - sizeof(crow_header));
+	
+	init_recv(gate);
+
+	crowket_revert_g(block, gate->gw.id);
+	crowket_initialization(block, &gate->gw);
+
+	crow_travel(block);
+}
+
+
+void crow_uartgate_nblock_onestep(struct crow_gw * g)
+{
+	int sts;
+	char c;
+
+	crow_uartgate* gate = mcast_out(g, crow_uartgate, gw);
+
+	if (ring_avail(&gate->recvring))
+	{
+		c = ring_getc(&gate->recvring, gate->recvring_buffer);
+
+		sts = gstuff_autorecv_newchar(&gate->recver, c);
+
+		if (sts == GSTUFF_NEWPACKAGE) {
+			newline_handler(gate);
+		} else {
+		//free(gate->rpack);
+		//init_recv(gate);
+		}
+	}
+}
+
 void uartgate_rx_handler(void* arg)
 {
 	crow_uartgate* gate = (crow_uartgate*) arg;
-	char c = gate->u->recvbyte();
-	//gate->recver.newchar(c);
+	ring_putc(&gate->recvring, gate->recvring_buffer, gate->u->recvbyte());
 }
+
 
 void uartgate_handler(void* arg, int variant)
 {
@@ -150,31 +194,21 @@ void uartgate_handler(void* arg, int variant)
 	}
 }
 
-static inline void init_recv(struct crow_uartgate * ugate)
-{
-	system_lock();
-	ugate->rpack = (struct crowket*) malloc(PACKET_DATAADDR_SIZE_MAX + sizeof(crowket) - sizeof(crow_header));
-	//recver.init(gxx::buffer((char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX));
-	system_unlock();
-}
-
 void crow_uartgate_init(struct crow_uartgate * ugate, struct uart * uart)
 {
 	ugate->u = uart;
 	dlist_init(&ugate->to_send);
 	ugate->insend = NULL;
+	init_recv(ugate);
+
+	ring_init(&ugate->recvring, 16);
 
 	ugate->gw.ops = &crow_uartgate_ops;
 	crow_link_gate(&ugate->gw, 10);
 
-	//u->set_rx_irq_handler(uartgate_rx_handler, this);
-	//u->set_tx_irq_handler(uartgate_tx_handler, this);
 	ugate->u->handarg = (void*) ugate;
 	ugate->u->handler = uartgate_handler;
 
 	ugate->u->enable(true);
 
-	//u->enable_rx_irq(true);
-	//recver.set_callback(gxx::make_delegate(&uartgate::handler, this));
-	init_recv(ugate);
 }
