@@ -5,8 +5,8 @@
 
 struct char_device : public node 
 {
-	virtual int write(const char * data, unsigned int size);
-	virtual int read(char * data, unsigned int size);
+	virtual int write(const char * data, unsigned int size) = 0;
+	virtual int read(char * data, unsigned int size) = 0;
 
 	int write(struct file * filp, const char * data, unsigned int size) override {
 		return write(data, size);

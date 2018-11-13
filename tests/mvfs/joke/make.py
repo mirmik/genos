@@ -9,7 +9,7 @@ licant.libs.include("genos")
 licant.libs.include("gxx")
 
 application("target",
-	sources = ["main.c"],
+	sources = ["main.cpp"],
 
 	include_modules = [
 		"genos.include", 
@@ -18,7 +18,7 @@ application("target",
 		("gxx.dprint", "cout"),
 
 		"genos.mvfs",
-		"genos.mvfs.global_root",
+		"genos.mvfs.global",
 		#"genos.misc",
 		#"genos.chardev"
 	],

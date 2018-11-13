@@ -8,71 +8,71 @@
 
 #include <stdio.h>
 
-int main() {
+int main()
+{
+	struct file * dfile;
+	struct file * f;
 	int sts;
 
+	dprln("registry fs:");
 	vfs_register_fs(&joke_fstype);
 	vfs_mount_first("joke", 0, NULL);
 
-	if (sts = vfs_mkdir("dev")) {
+
+	dprln("mkdir:");
+	if (sts = vfs_mkdir("dev"))
+		dprf("error: %s\n", strerror(sts));
+	
+	sts = vfs_mkdir("/home");
+	if (sts)
+		dprf("error: %s\n", strerror(sts));
+
+	sts = vfs_mkdir("/home/mirmik");
+	if (sts)
+		dprf("error: %s\n", strerror(sts));
+
+	sts = vfs_mkdir("/home/mirmik/project");
+	if (sts)
+		dprf("error: %s\n", strerror(sts));
+
+	sts = vfs_mkdir("/home/mirmik/project/genos");
+	if (sts)
+		dprf("error: %s\n", strerror(sts));
+
+	if (sts = vfs_rmdir("/home/mirmik/project/genos"))
+	{
 		dprf("error: %s\n", strerror(sts));
 	}
 
-	vfs_mkdir("/home");
-	vfs_mkdir("/home/mirmik");
-	vfs_mkdir("/home/mirmik/project");
-	vfs_mkdir("/home/mirmik/project/genos");
+	vfs_debug_tree("/");
 
-	if (sts = vfs_rmdir("/home/mirmik/project/genos")) {
-		dprf("error: %s\n", strerror(sts));
-	}
-
-	vfs_dpr_dentry_tree(vfs_get_root());
-
+	dprln("link devices:");
 	link_debug_device("/dev");
 	link_zero_device("/dev");
 	link_null_device("/dev");
 
+	vfs_debug_tree("/");
 
-	vfs_dpr_dentry_tree(vfs_get_root());
-
-	struct file * dfile;
-
+	dprln("open:");
 	sts = vfs_open("/dev/debug", 0, &dfile);
 	if (sts) dprf("error: %s\n", strerror(sts));
-	
+
+	dprln("write:");
 	sts = vfs_write(dfile, "HelloWorld\n", 11);
 	if (sts < 0) dprf("error: %s\n", strerror(errno));
 
+	dprln("chdir && pwd");
 	vfs_chdir("/home/mirmik");
-
-	vfs_dpr_pwd();
-	vfs_chdir("..");
-
-	vfs_mkdir("ggg");
-	vfs_chdir("ggg");
-	vfs_dpr_pwd();
-
-	vfs_dpr_dentry_tree(vfs_get_root());
-
+	vfs_debug_pwd();
 	vfs_chdir("../..");
-	vfs_dpr_pwd();
+	vfs_debug_pwd();
 
-	struct file * f;
-	sts = vfs_open("/dev", 0, &f);
-	if (sts) dprf("error: %s\n", strerror(sts));
-
-	dln();
-	vfs_mkdir("/home/mirmik/models");
-	vfs_debug_ls("/home/mirmik");
-
-	dln();
-
+	dprln("remove:");
 	sts = vfs_rmdir("/home/mirmik/project");
 	sts = vfs_rmdir("/home/mirmik/models");
 	sts = vfs_rmdir("/home/mirmik");
 	sts = vfs_rmdir("/home/ggg");
 	sts = vfs_rmdir("/home");
 
-	vfs_dpr_dentry_tree(vfs_get_root());
+	vfs_debug_tree("/");
 }

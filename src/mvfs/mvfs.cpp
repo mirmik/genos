@@ -103,7 +103,7 @@ int vfs_rmdir(const char *path)
 		if (sts)
 			return sts;
 
-	if (d->flag.negative == 0) 
+	if (d->flag.negative == 1) 
 		return ENOENT;
 
 	if (d->flag.directory == 0) 

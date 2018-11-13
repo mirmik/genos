@@ -31,7 +31,6 @@ struct joke_fstype_class joke_fstype;
 
 struct joke_node : public node {
 	int mkdir(const char * name, size_t nlen, int flags) {
-		debug_print_line("joke_mkdir");
 		struct node * node = joke_node_create_as_child(name, nlen, this);
 		node->flag.directory = 1;
 		node->sb = &joke_sb;

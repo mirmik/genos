@@ -14,20 +14,18 @@ struct i2c_device
 	virtual void write_start(uint8_t target, const void* data, uint16_t size);
 	virtual void writeread_start(uint8_t target, const void* out, uint16_t olen, void* in, uint16_t ilen);
 	virtual int status();
-
-	void wait_operation_finish();
-
+	
 	int write(uint8_t target, const void* data, uint16_t size)
 	{
 		write_start(target, data, size);
-		wait_operation_finish();
+		wait_current_schedee(&wlnk, 1);
 		return status();
 	}
 
 	int writeread(uint8_t target, const void* out, uint16_t olen, void* in, uint16_t ilen)
 	{
 		writeread_start(target, out, olen, in, ilen);
-		wait_operation_finish();
+		wait_current_schedee(&wlnk, 1);
 		return status();
 	}
 

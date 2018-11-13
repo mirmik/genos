@@ -25,8 +25,6 @@ application("target",
 		#"genos.misc",
 		#"genos.chardev"
 	],
-
-	cc_flags = "-std=gnu11"
 )
 
 licant.ex("target")
