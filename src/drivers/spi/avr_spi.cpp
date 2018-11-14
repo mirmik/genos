@@ -14,6 +14,7 @@
 
 void avr_spi_device::init(const char * name) {
 	avr_spi_init_master();
+	//avr_spi_set_divider(2);
 }
 
 int avr_spi_device::setfrequency (uint32_t freq) 

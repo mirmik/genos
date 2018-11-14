@@ -14,6 +14,14 @@
 struct gpio_pin {
 	struct gpio * gpio;
 	gpio_mask_t mask;
+
+#ifdef __cplusplus
+	gpio_pin(struct gpio * gpio, gpio_mask_t mask) : gpio(gpio), mask(mask) {}
+	void set(int lvl) { gpio_set_level(gpio, mask, lvl); }
+	void toggle() { gpio_toggle(gpio, mask); }
+	uint8_t get() { return !!gpio_get_level(gpio, mask); }
+	int settings(uint32_t mode) { return gpio_settings(gpio, mask, mode); }
+#endif
 };
 
 #define GPIO_PIN(name, io, num) struct gpio_pin name = { io, 1<<(num) };

@@ -48,6 +48,8 @@ application("firmware",
 		submodule("genos.mvfs"),
 		submodule("genos.mvfs.global"),
 		submodule("genos.malloc", "lin"),
+
+		submodule("genos.drivers.bdev.atmel_dataflash"),
 	]
 )
 

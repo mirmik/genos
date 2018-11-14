@@ -23,3 +23,7 @@ licant.module("genos.drivers.atmel_dataflash", sources = ["bdev/atmel_dataflash.
 licant.module("genos.drivers.crow.uartgate",
 	sources = ["crow/uartgate.cpp"]
 )
+
+licant.module("genos.drivers.bdev.atmel_dataflash",
+	sources = ["bdev/atmel_dataflash.cpp"]
+)

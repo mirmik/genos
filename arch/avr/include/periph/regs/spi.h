@@ -29,7 +29,9 @@ static inline void avr_spi_init_master() {
     // Enable SPI, Set as Master
     // Prescaler: Fosc/16, Enable Interrupts
     //The MOSI, SCK pins are as per ATMega8
-    SPCR=(1<<SPE)|(1<<MSTR)|(1<<SPR0);//|(1<<SPIE);
+    //SPCR=(1<<SPE)|(1<<MSTR)|(1<<SPR0);//|(1<<SPIE);
+    SPCR = (1<<SPE) | (1<<MSTR) | (1<<CPHA) | (1<<CPOL);
+    SPSR = (1<<SPI2X);
 }
 
 static inline void avr_spi_sendbyte(uint8_t tx) 
