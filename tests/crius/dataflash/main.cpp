@@ -13,6 +13,8 @@
 
 #include <drivers/spi/avr_spi.h>
 
+avr_spi_device spi;
+
 void led_blink_timer(void* arg, struct ktimer * tim) {
 	gpio_toggle(RED_LED_GPIO, RED_LED_MASK);
 	gpio_toggle(GREEN_LED_GPIO, GREEN_LED_MASK);
@@ -32,8 +34,7 @@ int main() {
 
 	ktimer_create_for(led_blink_timer, NULL, 1000);
 
-	struct spi_device * spi = get_avr_spi_device();
-	(void) spi;
+	spi.init("spi");
 
 	irqs_enable();
 	__schedule__();
