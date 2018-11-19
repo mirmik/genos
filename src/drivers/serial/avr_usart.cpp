@@ -1,6 +1,7 @@
 #include <drivers/serial/avr_usart.h>
 #include <gxx/util/member.h>
 #include <hal/irqtable.h>
+#include <hal/board.h>
 
 #include <gxx/debug/delay.h>
 
@@ -39,6 +40,7 @@ int avr_usart::hasrx() {
 
 int avr_usart::setup(int32_t baud, enum uart_parity_e parity, uint8_t databits, uint8_t stopbits) {
 	usart_regs_setup(regs, baud, parity, databits, stopbits);		
+	irqinit();
 	return 0;
 }
 
@@ -59,10 +61,7 @@ static void _tx_handler(void * arg) {
 	if (usart->handler) usart->handler(usart->handarg, UART_IRQCODE_TC); 		
 }
 
-int avr_usart::init(struct usart_regs * _regs, int _base_irq) {
-	regs = _regs;
-	base_irq = _base_irq;
-	
+int avr_usart::irqinit() {
 	irq_set_handler(base_irq    , _rx_handler, (void*)this);
 	irq_set_handler(base_irq + 1, _dre_handler, (void*)this);
 	irq_set_handler(base_irq + 2, _tx_handler, (void*)this);

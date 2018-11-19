@@ -21,27 +21,37 @@ void schedee_manager_init() {
 
 void schedee_run(struct schedee * sch) {
 	sch->state = SCHEDEE_STATE_RUN;
+	system_lock();
 	dlist_move(&sch->lnk, &runlist[sch->prio]);
+	system_unlock();
 }
 
 void __schedee_wait_for(struct schedee * parent, struct schedee * child) {
 	parent->state = SCHEDEE_STATE_WAIT_SCHEDEE;
+	system_lock();
 	dlist_move(&parent->lnk, &waitlist);
+	system_unlock();
 }
 
 void schedee_wait(struct schedee * sch) {
 	sch->state = SCHEDEE_STATE_WAIT;
+	system_lock();
 	dlist_move(&sch->lnk, &waitlist);
+	system_unlock();
 }
 
 void schedee_final(struct schedee * sch) {
 	sch->state = SCHEDEE_STATE_FINAL;
+	system_lock();
 	dlist_move(&sch->lnk, &finallist);
+	system_unlock();
 }
 
 void schedee_stop(struct schedee * sch) {
 	sch->state = SCHEDEE_STATE_STOP;
+	system_lock();
 	dlist_del_init(&sch->lnk);
+	system_unlock();
 }
 
 void __schedee_execute(struct schedee * sch) {

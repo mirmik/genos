@@ -14,7 +14,7 @@ int uartring_device::write(const char* data, unsigned int size)
 	if (uart->cantx() && ring_empty(&txring)) 
 	{
 		writed++;
-		uart->putc(*data);
+		uart->sendbyte(*data);
 	}
 
 	while (size != writed) 
@@ -81,12 +81,12 @@ void uartring_irq_handler(void* priv, int code)
 			}
 
 			char c = ring_getc(&uring->txring, uring->txbuffer);
-			uring->uart->putc(c);
+			uring->uart->sendbyte(c);
 			return;
 		}
 
 		case UART_IRQCODE_RX: {
-			ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->getc());
+			ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->recvbyte());
 			unwait_one(&uring->rxwlst);
 			return;
 		}

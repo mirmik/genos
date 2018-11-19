@@ -5,6 +5,7 @@
 
 #include <sys/cdefs.h>
 #include <drivers/gpio/gpio.h>
+#include <drivers/gpio/pin.h>
 
 #if defined(BOARD_ARDUINO_UNO)
 #	define RED_LED_GPIO GPIOB
@@ -33,6 +34,10 @@
 #	error "undefined board"
 #endif
 
+#define SYSLED_GPIO RED_LED_GPIO
+#define SYSLED_MASK RED_LED_MASK
+#define SYSLED_PIN  RED_LED_PIN
+
 __BEGIN_DECLS
 
 //void board_init();
@@ -41,5 +46,14 @@ __BEGIN_DECLS
 void emergency_stop();
 
 __END_DECLS
+
+#ifdef __cplusplus
+
+namespace board 
+{
+	extern gpio_pin sysled;
+}
+
+#endif
 
 #endif

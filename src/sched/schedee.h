@@ -81,13 +81,15 @@ static inline void schedee_init(struct schedee* sch, int prio, const struct sche
 	schedee_mvfs_support_init(sch);
 	if (sch->parent)
 		schedee_copy_parent_files(sch);
-#endif
+#endif //MVFS_INCLUDED
 
 	sch->local_errno = 0;
 } 
 
+#ifdef MVFS_INCLUDED
 int schedee_setfd(struct schedee * sch, struct file * node, int fd);
 int schedee_get_free_fd(struct schedee * sch);
+#endif //MVFS_INCLUDED
 
 __END_DECLS
 

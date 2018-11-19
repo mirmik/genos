@@ -31,6 +31,21 @@ void waiter_put(struct waiter * w)
 	free(w);
 }
 
+static int waiter_to_list(struct dlist_head * head, int priority, 
+	struct waiter * wp
+) {
+	system_lock();
+
+	if (priority) 
+		dlist_add(&wp->wait_lnk, head);
+	else 
+		dlist_add_tail(&wp->wait_lnk, head);
+
+	system_unlock();
+
+	return 0;
+}
+
 static int waiter_to_list_and_displace(struct dlist_head * head, int priority, 
 	struct waiter * wp
 ) {
@@ -110,4 +125,22 @@ void unwait_all(struct dlist_head * head)
 
 	system_unlock();
 	} 
+}
+
+void __unwait_flag(void* priv) 
+{
+	volatile uint8_t * flag = (volatile uint8_t *) priv;
+	*flag = 1;
+}
+
+int wait_flag_setted(struct dlist_head * head, int priority) 
+{
+	struct schedee * cur;
+	volatile uint8_t flag = 0;
+
+	struct waiter * w = waiter_get(__unwait_flag, (void*)&flag);
+	waiter_to_list(head, priority, w);
+
+	while(flag == 0);
+	return 0;
 }

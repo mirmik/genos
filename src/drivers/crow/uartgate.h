@@ -10,14 +10,12 @@
 void uartgate_rx_handler(void*);
 void uartgate_tx_handler(void*);
 
-struct crow_uartgate {
-	struct crow_gw gw;
-
+struct crow_uartgate : public crow::gateway {
 	struct uart * u;
 
 	struct dlist_head to_send;
-	struct crowket * insend;
-	struct crowket* rpack;
+	struct crow::packet * insend;
+	struct crow::packet * rpack;
 
 	uint8_t send_state = 0;
 	uint8_t send_crc;
@@ -26,174 +24,19 @@ struct crow_uartgate {
 
 	struct gstuff_autorecv recver;
 
-	char recvring_buffer[16];
+	char recvring_buffer[PACKET_DATAADDR_SIZE_MAX];
 	struct ring_head recvring;
+
+	void nblock_onestep() override;
+	void send(crow::packet* pack) override;
+	void init(struct uart * uart);
+	
+public:
+	void newline_handler(); 
+	void init_recv();
+
+	void do_send(crow::packet* pack);
+	void sended();
 };
-
-__BEGIN_DECLS
-
-void crow_uartgate_nblock_onestep(crow_gw_t* g);
-void crow_uartgate_send(crow_gw_t* g, crowket_t* pack);
-void crow_uartgate_init(struct crow_uartgate * ugate, struct uart * uart);
-
-__END_DECLS
-
-const struct crow_gw_operations crow_uartgate_ops =
-{
-	.send = crow_uartgate_send,
-	.nblock_onestep = crow_uartgate_nblock_onestep
-};
-
-/*namespace genos {
-	struct uartgate : public crow::gateway {
-		gxx::dlist<crow::packet, &crow::packet::lnk> to_send;
-		crow::packet* insend;
-
-		genos::hal::uart* u;
-
-		//gxx::gstuff::automate reader;
-		size_t maxpacksz;
-
-		uint8_t send_state = 0;
-		uint8_t send_crc;
-		char* send_ptr;
-		char* send_end;		
-
-		uartgate(genos::hal::uart* u, size_t maxpacksz) : u(u) {}
-
-		crow::packet* rpack = nullptr;
-		gxx::gstuff::automate recver;
-		//uint16_t len;
-
-		void init() {
-			u->set_rx_irq_handler(uartgate_rx_handler, this);
-			u->set_tx_irq_handler(uartgate_tx_handler, this);
-			u->enable_rx_irq(true);
-			recver.set_callback(gxx::make_delegate(&uartgate::handler, this));
-			init_recv();			
-		}
-
-		void init_recv() {
-			gxx::system_lock();
-			rpack = (crow::packet*) malloc(PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet) - sizeof(crow::packet_header));
-			recver.init(gxx::buffer((char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX));
-			gxx::system_unlock();
-		}
-
-		void do_send(crow::packet* pack) {
-			gxx::dlist<crow::packet, &crow::packet::lnk>::unbind(*pack);
-			insend = pack;
-
-			send_ptr = (char*) &pack->header;
-			send_end = (char*) pack->endptr();
-			
-			u->sendbyte(gxx::gmsg::strt);
-			send_crc = 0xFF;
-			send_state = 0;
-
-			u->enable_tx_irq(true);
-		}
-
-		void send(crow::packet* pack) override {
-			gxx::system_lock();
-			bool b = insend == nullptr && to_send.empty();
-			if (b) {
-				do_send(pack);
-			}
-			else {
-				to_send.move_back(*pack);
-			}
-			gxx::system_unlock();
-		}
-
-		void handler(gxx::buffer /*rpack as arg*//*) {
-/*			gxx::system_lock();
-			crow::packet* block = (crow::packet*)realloc(rpack, rpack->header.flen + sizeof(crow::packet) - sizeof(crow::packet_header));
-			gxx::system_unlock();
-			init_recv();
-
-			block->revert_stage(id);
-
-			crow::packet_initialization(block, this);
-			crow::travel(block);
-		}
-
-
-		void sended() {
-			auto tmp = insend;
-
-			if (to_send.empty()) {
-				insend = nullptr;
-			}
-			else {
-				do_send(&*to_send.begin());
-			}
-
-			crow::return_to_tower(tmp, crow::status::Sended);
-		}
-	};
-}
-
-
-void uartgate_tx_handler(void* arg) {
-	genos::uartgate* gate = (genos::uartgate*) arg;
-	char c;
-	switch (gate->send_state) {
-		case 0:
-			if (gate->send_ptr == gate->send_end) {
-				
-				if ((char)gate->send_crc == gxx::gmsg::strt || (char)gate->send_crc == gxx::gmsg::stub) {
-					gate->u->sendbyte(gxx::gmsg::stub);
-					gate->send_state = 4;
-					return;
-				}
-
-				gate->send_state = 2;
-				gate->u->sendbyte(gate->send_crc);
-				return;
-			}
-
-			c = *gate->send_ptr++;
-			strmcrc8(&gate->send_crc, c);
-
-			if (c==gxx::gmsg::strt || c==gxx::gmsg::stub) {
-				gate->u->sendbyte(gxx::gmsg::stub);
-				gate->send_state = 1;
-			} else {
-				gate->u->sendbyte(c);
-			}
-			return;
-		case 1:
-			switch(*(gate->send_ptr-1)) {
-				case gxx::gmsg::strt: gate->u->sendbyte(gxx::gmsg::stub_strt); break;
-				case gxx::gmsg::stub: gate->u->sendbyte(gxx::gmsg::stub_stub); break;
-			}
-			gate->send_state = 0;
-			return;
-		case 2:
-			gate->u->sendbyte(gxx::gmsg::strt);
-			gate->send_state = 3;
-			return;
-		case 3:
-			gate->u->enable_tx_irq(false);
-			gate->sended();
-			return;
-		case 4:
-			switch((char)gate->send_crc) {
-				case gxx::gmsg::strt: gate->u->sendbyte(gxx::gmsg::stub_strt); break;
-				case gxx::gmsg::stub: gate->u->sendbyte(gxx::gmsg::stub_stub); break;
-			}
-			gate->send_state = 2;
-			return;
-	}
-}
-
-void uartgate_rx_handler(void* arg) {
-	genos::uartgate* gate = (genos::uartgate*) arg;	
-	char c = gate->u->recvbyte();
-	gate->recver.newchar(c);
-}
-
-#endif*/
 
 #endif

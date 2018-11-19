@@ -14,6 +14,7 @@
 __BEGIN_DECLS
 
 int wait_current_schedee(struct dlist_head * head, int priority);
+int wait_flag_setted(struct dlist_head * head, int priority);
 
 void unwait_one(struct dlist_head * head);
 void unwait_all(struct dlist_head * head);

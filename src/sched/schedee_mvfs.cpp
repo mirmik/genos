@@ -1,3 +1,5 @@
+#ifdef MVFS_INCLUDED
+
 #include "schedee.h"
 #include <mvfs/compat.h>
 #include <mvfs/file.h>
@@ -30,3 +32,5 @@ void schedee_debug_print_fds(struct schedee* sch) {
 	}
 	dln();
 }
+
+#endif //MVFS_INCLUDED

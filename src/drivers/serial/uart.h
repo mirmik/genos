@@ -16,7 +16,7 @@ struct uart {
 	void(*handler)(void*, int);
 	void * handarg;
 
-	virtual int enable(bool en) = 0;
+	virtual int enable(bool en=true) = 0;
 	virtual int txirq(bool en) = 0;
 	virtual int recvbyte() = 0;
 	virtual int sendbyte(int symbol) = 0;
@@ -24,6 +24,14 @@ struct uart {
 	virtual int hasrx() = 0;
 	//virtual int setup(const struct uart_params *params) = 0;
 	virtual int setup(int32_t baud, enum uart_parity_e parity, uint8_t databits, uint8_t stopbits) = 0;
+
+	int begin(int32_t baud, enum uart_parity_e parity=UART_PARITY_NONE, uint8_t databits=8, uint8_t stopbits=1) 
+	{
+		int ret = setup(baud, parity, databits, stopbits);
+		txirq(false);
+		enable(true);
+		return ret;
+	}
 };
 
 #endif

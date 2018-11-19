@@ -4,10 +4,10 @@
 
 #include <gxx/debug/dprint.h>
 
-/*namespace board {
-	arch::gpio::pin led(SYSLED_GPIO, SYSLED_PIN);
-	arch::usart usart0(USART0, ATMEGA_IRQ_U0RX);
-}*/
+namespace board {
+	gpio_pin sysled(SYSLED_GPIO, SYSLED_MASK);
+	//avr_usart usart0(USART0, ATMEGA_IRQ_U0RX);
+}
 
 void board_init() {
 	arch_init();

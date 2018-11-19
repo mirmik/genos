@@ -10,54 +10,53 @@
 #include <hal/irq.h>
 
 #include <gxx/util/crc.h>
+#include <gxx/trace.h>
 
-extern "C" void dos();
+#include <hal/board.h>
 
-static void crow_uartgate_do_send(struct crow_uartgate * ugate, crowket* pack)
+void crow_uartgate::do_send(crow::packet* pack)
 {
 	dlist_del(&pack->lnk);
-	ugate->insend = pack;
+	insend = pack;
 
-	ugate->send_ptr = (char*) &pack->header;
-	ugate->send_end = (char*) pack->endptr();
+	send_ptr = (char*) &pack->header;
+	send_end = (char*) pack->endptr();
 
-	ugate->u->sendbyte(GSTUFF_START);
-	ugate->send_crc = 0xFF;
-	ugate->send_state = 0;
+	u->sendbyte(GSTUFF_START);
+	send_crc = 0xFF;
+	send_state = 0;
 
-	ugate->u->txirq(true);
+	u->txirq(true);
 }
 
-void crow_uartgate_sended(struct crow_uartgate * ugate)
+void crow_uartgate::sended()
 {
-	auto tmp = ugate->insend;
+	auto tmp = insend;
 
-	if (dlist_empty(&ugate->to_send))
+	if (dlist_empty(&to_send))
 	{
-		ugate->insend = nullptr;
+		insend = nullptr;
 	}
 	else
 	{
-		struct crowket * entry = dlist_first_entry(&ugate->to_send, struct crowket, lnk);
-		crow_uartgate_do_send(ugate, entry);
+		struct crow::packet * entry = dlist_first_entry(&to_send, struct crow::packet, lnk);
+		do_send(entry);
 	}
 
-	crow_return_to_tower(tmp, CROW_SENDED);
+	crow::return_to_tower(tmp, CROW_SENDED);
 }
 
-void crow_uartgate_send(struct crow_gw * g, crowket* pack)
+void crow_uartgate::send(crow::packet* pack)
 {
-	crow_uartgate* ugate = mcast_out(g, crow_uartgate, gw);
-
 	system_lock();
 
-	if (ugate->insend == nullptr && dlist_empty(&ugate->to_send))
+	if (insend == nullptr && dlist_empty(&to_send))
 	{
-		crow_uartgate_do_send(ugate, pack);
+		do_send(pack);
 	}
 	else
 	{
-		dlist_move_tail(&pack->lnk, &ugate->to_send);
+		dlist_move_tail(&pack->lnk, &to_send);
 	}
 
 	system_unlock();
@@ -118,7 +117,7 @@ void uartgate_tx_handler(void* arg)
 
 		case 3:
 			gate->u->txirq(false);
-			crow_uartgate_sended(gate);
+			gate->sended();
 			return;
 
 		case 4:
@@ -133,49 +132,53 @@ void uartgate_tx_handler(void* arg)
 	}
 }
 
-static inline void init_recv(struct crow_uartgate * ugate)
+void crow_uartgate::init_recv()
 {
 	system_lock();
-	ugate->rpack = (struct crowket*) malloc(PACKET_DATAADDR_SIZE_MAX + sizeof(crowket) - sizeof(crow_header));
+	rpack = (struct crow::packet*) malloc(PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet) - sizeof(crow::header));
 	
-	gstuff_autorecv_setbuf(&ugate->recver, (char*)&ugate->rpack->header, PACKET_DATAADDR_SIZE_MAX);
-	gstuff_autorecv_reset(&ugate->recver);
+	gstuff_autorecv_setbuf(&recver, (char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX);
+	gstuff_autorecv_reset(&recver);
 
 	system_unlock();
 }
 
-static inline void newline_handler(crow_uartgate* gate) {
-	crowket* block = (crowket*) realloc(gate->rpack, gate->rpack->header.flen + sizeof(crowket) - sizeof(crow_header));
+void crow_uartgate::newline_handler() 
+{
+	crow::packet* block = (crow::packet*) realloc(rpack, rpack->header.flen + sizeof(crow::packet) - sizeof(crow::header));
 	
-	init_recv(gate);
+	init_recv();
 
-	crowket_revert_g(block, gate->gw.id);
-	crowket_initialization(block, &gate->gw);
+	block->revert_gate(id);
+	crow::packet_initialization(block, this);
 
-	crow_travel(block);
+	crow::travel(block);
 }
 
 
-void crow_uartgate_nblock_onestep(struct crow_gw * g)
+void crow_uartgate::nblock_onestep()
 {
+	//TRACE();
 	int sts;
 	char c;
 
-	crow_uartgate* gate = mcast_out(g, crow_uartgate, gw);
-
-	if (ring_avail(&gate->recvring))
+	if (ring_avail(&recvring))
 	{
-		c = ring_getc(&gate->recvring, gate->recvring_buffer);
 
-		sts = gstuff_autorecv_newchar(&gate->recver, c);
+		c = ring_getc(&recvring, recvring_buffer);
+
+		sts = gstuff_autorecv_newchar(&recver, c);
 
 		if (sts == GSTUFF_NEWPACKAGE) {
-			newline_handler(gate);
+			newline_handler();
 		} else {
 		//free(gate->rpack);
 		//init_recv(gate);
 		}
 	}
+
+	//dprln("exit from");
+	//while(1);
 }
 
 void uartgate_rx_handler(void* arg)
@@ -194,21 +197,19 @@ void uartgate_handler(void* arg, int variant)
 	}
 }
 
-void crow_uartgate_init(struct crow_uartgate * ugate, struct uart * uart)
+void crow_uartgate::init(struct uart * uart)
 {
-	ugate->u = uart;
-	dlist_init(&ugate->to_send);
-	ugate->insend = NULL;
-	init_recv(ugate);
+	u = uart;
+	dlist_init(&to_send);
+	insend = NULL;
+	init_recv();
 
-	ring_init(&ugate->recvring, 16);
+	ring_init(&recvring, PACKET_DATAADDR_SIZE_MAX);
 
-	ugate->gw.ops = &crow_uartgate_ops;
-	crow_link_gate(&ugate->gw, 10);
+	crow::link_gate(this, 0xF4);
 
-	ugate->u->handarg = (void*) ugate;
-	ugate->u->handler = uartgate_handler;
+	u->handarg = (void*) this;
+	u->handler = uartgate_handler;
 
-	ugate->u->enable(true);
-
+	u->enable(true);
 }
