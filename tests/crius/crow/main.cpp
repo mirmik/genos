@@ -21,28 +21,31 @@
 
 #include <sched/api.h>
 
+#include <gxx/trace.h>
+
 //#include <drivers/serial/uartring.h>
 
-avr_usart uart0;
+avr_usart uart0(USART0, ATMEGA_IRQ_U0RX);
 crow_uartgate uartgate;
 
 void* mainproc(void*) 
-{
+{	
 	uint8_t raddr[1];
-	hexer_s(raddr, 1, ".10");
+	hexer_s(raddr, 1, "#F4");
 
+	gpio_set_level(GREEN_LED_GPIO, GREEN_LED_MASK, 0);
 	//msleep(1000);
 	while(1) 
 	{
-		crow_send(raddr, 1, "HelloWorld", 10, 0, 0, 200);
+		crow::send(raddr, 1, "HelloWorld", 10, 0, 0, 200);
 		msleep(1000);
 	}
 }
 
-void user_incoming(crowket* pack) 
+void user_incoming(crow::packet* pack) 
 {
 	gpio_toggle(GREEN_LED_GPIO, GREEN_LED_MASK);
-	crow_release(pack);
+	crow::release(pack);
 }
 
 
@@ -57,8 +60,6 @@ int main()
 
 	schedee_manager_init();
 
-	uart0.init(USART0, ATMEGA_IRQ_U0RX);
-
 	gpio_settings(RED_LED_GPIO, RED_LED_MASK, GPIO_MODE_OUTPUT);
 	gpio_settings(GREEN_LED_GPIO, GREEN_LED_MASK, GPIO_MODE_OUTPUT);
 
@@ -68,14 +69,14 @@ int main()
 	uart0.setup(115200, UART_PARITY_NONE, 8, 1);
 	uart0.enable(true);
 
-	crow_uartgate_init(&uartgate, &uart0);
-	crow_user_incoming_handler = user_incoming;
+	uartgate.init(&uart0);
+	crow::user_incoming_handler = user_incoming;
 
 	irqs_enable();
 
 	//delay(1);
 
-	schedee_run(create_cooperative_schedee(mainproc, nullptr, 200));
+	schedee_run(create_cooperative_schedee(mainproc, nullptr, 256));
 
 	__schedule__();
 }
@@ -84,13 +85,13 @@ void __schedule__()
 {
 	while (1)
 	{
-		crow_onestep();
+		crow::onestep();
 		timer_manager();
 		schedee_manager();
 	}
 }
 
-uint16_t crow_millis()
+uint16_t crow::millis()
 {
-	return millis();
+	return ::millis();
 }

@@ -1,3 +1,5 @@
+#define NOTRACE 1
+
 #include <drivers/crow/uartgate.h>
 #include <crow/tower.h>
 
@@ -16,6 +18,7 @@
 
 void crow_uartgate::do_send(crow::packet* pack)
 {
+	TRACE();
 	dlist_del(&pack->lnk);
 	insend = pack;
 
@@ -31,6 +34,7 @@ void crow_uartgate::do_send(crow::packet* pack)
 
 void crow_uartgate::sended()
 {
+	TRACE();
 	auto tmp = insend;
 
 	if (dlist_empty(&to_send))
@@ -48,6 +52,7 @@ void crow_uartgate::sended()
 
 void crow_uartgate::send(crow::packet* pack)
 {
+	TRACE();
 	system_lock();
 
 	if (insend == nullptr && dlist_empty(&to_send))
@@ -64,6 +69,7 @@ void crow_uartgate::send(crow::packet* pack)
 
 void uartgate_tx_handler(void* arg)
 {
+	TRACE();
 	crow_uartgate* gate = (crow_uartgate*) arg;
 	char c;
 
@@ -134,8 +140,9 @@ void uartgate_tx_handler(void* arg)
 
 void crow_uartgate::init_recv()
 {
+	TRACE();
 	system_lock();
-	rpack = (struct crow::packet*) malloc(PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet) - sizeof(crow::header));
+	rpack = (struct crow::packet*) crow::allocate_packet(PACKET_DATAADDR_SIZE_MAX);
 	
 	gstuff_autorecv_setbuf(&recver, (char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX);
 	gstuff_autorecv_reset(&recver);
@@ -145,7 +152,8 @@ void crow_uartgate::init_recv()
 
 void crow_uartgate::newline_handler() 
 {
-	crow::packet* block = (crow::packet*) realloc(rpack, rpack->header.flen + sizeof(crow::packet) - sizeof(crow::header));
+	TRACE();
+	crow::packet* block = rpack;
 	
 	init_recv();
 
@@ -158,7 +166,7 @@ void crow_uartgate::newline_handler()
 
 void crow_uartgate::nblock_onestep()
 {
-	//TRACE();
+	TRACE();
 	int sts;
 	char c;
 
@@ -183,6 +191,7 @@ void crow_uartgate::nblock_onestep()
 
 void uartgate_rx_handler(void* arg)
 {
+	TRACE();
 	crow_uartgate* gate = (crow_uartgate*) arg;
 	ring_putc(&gate->recvring, gate->recvring_buffer, gate->u->recvbyte());
 }
@@ -190,6 +199,7 @@ void uartgate_rx_handler(void* arg)
 
 void uartgate_handler(void* arg, int variant)
 {
+	TRACE();
 	switch(variant) {
 		case UART_IRQCODE_RX: uartgate_rx_handler(arg); break;
 		case UART_IRQCODE_TX: uartgate_tx_handler(arg); break;
@@ -199,6 +209,7 @@ void uartgate_handler(void* arg, int variant)
 
 void crow_uartgate::init(struct uart * uart)
 {
+	TRACE();
 	u = uart;
 	dlist_init(&to_send);
 	insend = NULL;

@@ -1,3 +1,7 @@
+#define NOTRACE 1
+
+#include <gxx/trace.h>
+
 #include <sched/sched.h>
 #include <sched/api.h>
 #include <stdlib.h>
@@ -7,7 +11,8 @@
 
 #include <gxx/debug/dprint.h>
 
-struct cooperative_schedee {
+struct cooperative_schedee
+{
 	struct schedee sch;
 
 	struct context cntxt;
@@ -23,29 +28,33 @@ struct cooperative_schedee {
 	//void * arg;
 };
 
-static void cooperative_schedee_execute(struct schedee* sch); 
+static void cooperative_schedee_execute(struct schedee* sch);
 static void cooperative_schedee_displace(struct schedee* sch);
 static void cooperative_schedee_finalize(struct schedee* sch);
 
-struct schedee_operations cooperative_schedee_op = {
+struct schedee_operations cooperative_schedee_op =
+{
 	.execute = cooperative_schedee_execute,
 	.displace = cooperative_schedee_displace,
 	.finalize = cooperative_schedee_finalize,
 };
 
-static inline void starter (void * sch) {
+static inline void starter (void * sch)
+{
+	TRACE();
 	struct cooperative_schedee * csch = (struct cooperative_schedee *) sch;
 
 	void* ret = csch->task(csch->arg);
 	csch->ret = ret;
 
-	schedee_exit(0);
+	schedee_exit();
 }
 
-struct schedee * create_cooperative_schedee(void* (*task) (void*), void * arg, int heapsize) 
+struct schedee * create_cooperative_schedee(void* (*task) (void*), void * arg, int heapsize)
 {
-	struct cooperative_schedee * sch = (struct cooperative_schedee *) 
-		malloc(sizeof(struct cooperative_schedee));
+	TRACE();
+	struct cooperative_schedee * sch = (struct cooperative_schedee *)
+	                                   malloc(sizeof(struct cooperative_schedee));
 
 	void* heap = malloc(heapsize);
 
@@ -62,18 +71,24 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*), void * arg, i
 	return &sch->sch;
 }
 
-static void cooperative_schedee_execute(struct schedee* sch) {
+static void cooperative_schedee_execute(struct schedee* sch)
+{
+	TRACE();
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
 	context_load(&csch->cntxt);
-} 
+}
 
-static void cooperative_schedee_displace(struct schedee* sch) {
+static void cooperative_schedee_displace(struct schedee* sch)
+{
+	TRACE();
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
 	sch->flag.runned = 0;
 	context_save_and_invoke_displace(&csch->cntxt);
 }
 
-static void cooperative_schedee_finalize(struct schedee* sch) {
+static void cooperative_schedee_finalize(struct schedee* sch)
+{
+	TRACE();
 	struct cooperative_schedee * asch = mcast_out(sch, struct cooperative_schedee, sch);
-	free(asch);	
+	free(asch);
 }
