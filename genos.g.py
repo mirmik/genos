@@ -2,8 +2,8 @@ from licant.modules import module
 
 licant.execute_recursive("arch", ".g.py")
 licant.execute("board/board.g.py")
-
 licant.execute("src/drivers/drivers.g.py")
+licant.execute("src/sched/sched.g.py")
 
 #module ("genos", include_paths = [".", "src"], sources = [ 
 #	"genos/time/systime.cpp", 
@@ -38,26 +38,6 @@ module("genos.addons.adafruit_motor_shield", sources = [
 #	]
 #)
 
-module("genos.sched", "stub",
-	sources = ["src/sched/waitstub.c"],
-)
-
-module("genos.sched", "impl",
-	sources = [
-		"src/sched/wait.c",
-		"src/sched/sched.cpp",
-		"src/sched/schedee.c",
-		"src/sched/schedee_mvfs.cpp",
-		"src/sched/timer.c",
-		"src/sched/api.c",
-		"src/sched/schedee/autom.cpp",
-		"src/sched/schedee/cooperative.cpp",
-
-		"src/sched/posix/fcntl_mvfs.cpp",
-		"src/sched/posix/unistd_mvfs.cpp",
-	],
-)
-
 module("genos.mvfs", 
 	sources = [
 		"src/mvfs/mvfs.cpp",
@@ -89,7 +69,7 @@ module("genos.mvfs.global",
 )
 
 module("genos.mvfs.schedee_support", 
-	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/schedee_support.c" ]
+	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/schedee_support.cpp" ]
 ) 
 
 module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )

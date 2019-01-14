@@ -12,9 +12,14 @@ application("target",
 	sources = ["main.cpp"],
 
 	mdepends = [ 
-		("gxx"),
+		("gxx", "posix"),
+		("gxx.dprint", "stdout"),
+		("gxx.syslock", "mutex"),
 
-		("genos.include"),
+		"genos.include",
+		"genos.mvfs",
+		"genos.mvfs.schedee_support",
+		
 		("genos.sched.cooperative", "__none__"),
 		("genos.sched", "impl"),
 	],
