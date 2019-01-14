@@ -135,7 +135,7 @@ void __unwait_flag(void* priv)
 
 int wait_flag_setted(struct dlist_head * head, int priority) 
 {
-	struct schedee * cur;
+	//struct schedee * cur;
 	volatile uint8_t flag = 0;
 
 	struct waiter * w = waiter_get(__unwait_flag, (void*)&flag);
