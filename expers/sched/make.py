@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 #coding:utf-8
 
 import licant
@@ -9,17 +9,13 @@ licant.libs.include("genos")
 licant.libs.include("gxx")
 
 application("target",
-	sources = ["main.c"],
+	sources = ["main.cpp"],
 
-	include_modules = [ 
-		("gxx", "posix"),
-		("gxx.dprint", "cout"),
-		("gxx.syslock", "mutex"),
+	mdepends = [ 
+		("gxx"),
 
-		"genos.include",
-		"genos.mvfs",
-		"genos.mvfs.schedee_support",
-		
+		("genos.include"),
+		("genos.sched.cooperative", "__none__"),
 		("genos.sched", "impl"),
 	],
 

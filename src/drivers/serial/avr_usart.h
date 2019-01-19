@@ -18,7 +18,10 @@ struct avr_usart : public uart {
 	int hasrx() override;
 	int setup(int32_t baud, enum uart_parity_e parity=UART_PARITY_NONE, uint8_t databits=8, uint8_t stopbits=1) override;
 	
+	void init(struct usart_regs * regs, int base_irq) { this->regs=regs; this->base_irq=base_irq; }
+
 	avr_usart(struct usart_regs * regs, int base_irq) : regs(regs), base_irq(base_irq) { }
+	avr_usart(){}
 private: 
 	int irqinit();
 };

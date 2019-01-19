@@ -7,7 +7,6 @@ module("genos.hal.arm.common",
 	cxx_flags = "-nostdlib  -nostdinc -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
 	cc_flags = "-nostdlib -nostdinc -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections",
 	ld_flags = "-nostdlib -lgcc -lm -march=armv6-m -mthumb -Wl,--gc-sections -fdata-sections -ffunction-sections",
-
 )
 
 module("genos.hal.arm.arch", impl = "armv6-m",

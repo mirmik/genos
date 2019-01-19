@@ -1,7 +1,6 @@
 #define NOTRACE 1
 
 #include <sched/sched.h>
-#include <arch/startup.h>
 #include <gxx/syslock.h>
 
 #include <gxx/trace.h>
@@ -81,7 +80,18 @@ void __schedee_execute(struct schedee * sch)
 	sch->sch_op->execute(sch);
 }
 
-void schedee_manager()
+int genos::schedee_manager::total_planed() 
+{
+	int sum = 0;
+	struct dlist_head* sch;
+	for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++)
+	{
+		dlist_for_each(sch, &runlist[priolvl]) { sum++; }
+	}	
+	return sum;
+}
+
+void genos::schedee_manager::step()
 {
 	TRACE();
 	struct schedee* sch;
@@ -128,12 +138,4 @@ int __displace__()
 
 	sch->sch_op->displace(sch);
 	return 0;
-}
-
-extern "C" int __kill_stack_and_schedule_invoke__()
-{
-	TRACE();
-	RESET_STACK();
-
-	while (1) __schedule__();
 }

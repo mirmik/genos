@@ -2,8 +2,8 @@ from licant.modules import module
 
 licant.execute_recursive("arch", ".g.py")
 licant.execute("board/board.g.py")
-
 licant.execute("src/drivers/drivers.g.py")
+licant.execute("src/sched/sched.g.py")
 
 #module ("genos", include_paths = [".", "src"], sources = [ 
 #	"genos/time/systime.cpp", 

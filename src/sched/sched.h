@@ -12,7 +12,7 @@ void schedee_stop(struct schedee * sch);
 void schedee_final(struct schedee * sch);
 
 void schedee_manager_init();
-void schedee_manager();
+//void schedee_manager_step();
 
 void __schedule__();
 int  __displace__();
@@ -22,5 +22,13 @@ struct schedee * create_cooperative_schedee(void*(*task)(void*), void* arg, int 
 //struct schedee * create_process(int(*task)(void*), void* arg, int heapsize);
 
 __END_DECLS
+
+namespace genos {
+	namespace schedee_manager 
+	{
+		void step();
+		int total_planed();
+	}
+}
 
 #endif
