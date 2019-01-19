@@ -6,6 +6,7 @@
 #include <sys/cdefs.h>
 #include <drivers/gpio/gpio.h>
 #include <drivers/gpio/pin.h>
+#include <drivers/serial/avr_usart.h>
 
 #if defined(BOARD_ARDUINO_UNO)
 #	define RED_LED_GPIO GPIOB
@@ -52,6 +53,7 @@ __END_DECLS
 namespace board 
 {
 	extern gpio_pin sysled;
+	extern avr_usart usart0;
 }
 
 #endif

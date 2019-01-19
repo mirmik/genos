@@ -56,6 +56,7 @@ module("genos.sched", "impl",
 		"src/sched/posix/fcntl_mvfs.cpp",
 		"src/sched/posix/unistd_mvfs.cpp",
 	],
+	default=True,
 )
 
 module("genos.mvfs", 
@@ -89,12 +90,13 @@ module("genos.mvfs.global",
 )
 
 module("genos.mvfs.schedee_support", 
-	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/schedee_support.c" ]
+	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/schedee_support.cpp" ]
 ) 
 
 module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )
 
 module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
+module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
 
 #module("genos.misc", 
 #	sources = [

@@ -20,7 +20,7 @@ struct gpio_pin {
 	void set(int lvl) { gpio_set_level(gpio, mask, lvl); }
 	void toggle() { gpio_toggle(gpio, mask); }
 	uint8_t get() { return !!gpio_get_level(gpio, mask); }
-	int settings(uint32_t mode) { return gpio_settings(gpio, mask, mode); }
+	int mode(uint32_t _mode) { return gpio_settings(gpio, mask, _mode); }
 #endif
 };
 

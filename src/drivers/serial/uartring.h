@@ -37,6 +37,35 @@ struct uartring_device : public char_device {
 	int release (struct file * f) override;
 };
 
+#include <gxx/io/iostorage.h>
+
+struct uartring : public gxx::io::iostorage {
+	struct uart * uart;
+	
+	char* rxbuffer;
+	char* txbuffer;
+	struct ring_head rxring;
+	struct ring_head txring;
+
+	//struct dlist_head txwlst;
+	//struct dlist_head rxwlst;
+
+	int init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz);
+
+	int writeData(const char* data, unsigned int size) override;
+	int readData(char* data, unsigned int size) override;
+	//int waitread() override;
+
+	int room() override;
+	int avail() override;
+
+	//file operations
+	//int write(struct file * f, const char* data, unsigned int size);	
+	//int read(struct file * f, char* data, unsigned int size);	
+	//int open(struct file * f) override;	
+	//int release (struct file * f) override;
+};
+
 __BEGIN_DECLS
 
 __END_DECLS

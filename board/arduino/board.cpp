@@ -2,21 +2,22 @@
 #include <arch/irq.h>
 #include <systime/systime.h>
 
+#include <drivers/gpio/pin.h>
+#include <drivers/serial/avr_usart.h>
+#include <periph/irqdefs.h>
+
 #include <gxx/debug/dprint.h>
 
 namespace board {
 	gpio_pin sysled(SYSLED_GPIO, SYSLED_MASK);
-	//avr_usart usart0(USART0, ATMEGA_IRQ_U0RX);
+	avr_usart usart0(USART0, ATMEGA_IRQ_U0RX);
 }
 
 void board_init() {
 	arch_init();
-
-
-	//arch_uart_init();
-	
-//	board::led.mode(genos::hal::gpio::output);
-//	board::led.set();
+	//arch_uart_init();	
+	board::sysled.mode(GPIO_MODE_OUTPUT);
+	board::sysled.set(1);
 }
 
 void board_shutdown(arch_shutdown_mode_t mode) {

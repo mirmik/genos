@@ -1,5 +1,7 @@
 from licant.modules import module, submodule
 
+module("avr.diag", sources=["src/diag.c"])
+
 module("genos.hal.avr.common",
 	srcdir = "src",
 
@@ -14,20 +16,19 @@ module("genos.hal.avr.common",
 		"end_of_programm.c",
 
 		"arch.c",
-		"diag.c",
-
 		#"drivers_up.c",
 
 		#"periph/gpio.c",
 		"periph/timer.c",
 		"debug_blink.S"
 	],
+	mdepends=["avr.diag"],
 
 	include_paths = ["include"]
 )
 
 module("genos.hal", impl = "atmega2560",
-	include_modules = [submodule("genos.hal.avr.common")],
+	mdepends = ["genos.hal.avr.common"],
 	ldscripts = ["ldscripts/atmega2560.ld"],
 
 	defines = ["CHIP_ATMEGA2560"],
@@ -38,7 +39,7 @@ module("genos.hal", impl = "atmega2560",
 )
 
 module("genos.hal", impl = "atmega328p",
-	include_modules = [submodule("genos.hal.avr.common")],
+	mdepends = ["genos.hal.avr.common"],
 	ldscripts = ["ldscripts/atmega328p.ld"],
 
 	defines = ["CHIP_ATMEGA328P"],

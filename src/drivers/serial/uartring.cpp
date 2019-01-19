@@ -68,7 +68,7 @@ int uartring_device::release (struct file * f)
 	return 0; 
 }
 
-void uartring_irq_handler(void* priv, int code) 
+void uartring_device_irq_handler(void* priv, int code) 
 {
 	struct uartring_device* uring = (struct uartring_device*) priv;
 	switch(code) {
@@ -109,13 +109,13 @@ int uartring_device::init(struct uart * u, const char* name)
 
 	//uart->enable(false);
 
-	uart->handler = uartring_irq_handler;
+	uart->handler = uartring_device_irq_handler;
 	uart->handarg = (void*) this;
 	uart->txirq(false);
 	
 	//uart->enable(true);
 
-	vfs_link_cdev(this, "/dev", name);
+	//vfs_link_cdev(this, "/dev", name);
 
 	return 0;
 }
@@ -133,3 +133,107 @@ int uartring_device::waitread() {
 	system_unlock();
 	return 0;
 } 
+
+
+
+
+
+
+
+
+
+int uartring::writeData(const char* data, unsigned int size) 
+{
+	int curwrited;
+	size_t writed = 0;
+
+	if (uart->cantx() && ring_empty(&txring)) 
+	{
+		writed++;
+		uart->sendbyte(*data);
+	}
+
+	if (size != writed) 
+	{
+		system_lock();
+		writed += ring_write(&txring, txbuffer, data + writed, size - writed);
+		if (writed != 1) 
+			uart->txirq(true);
+		system_unlock();
+	}
+
+	return writed;
+}
+
+int uartring::readData(char* data, unsigned int size) 
+{
+	if (ring_empty(&rxring)) 
+		return 0;
+
+	return ring_read(&rxring, rxbuffer, data, size);
+}
+
+void uartring_irq_handler(void* priv, int code) 
+{
+	struct uartring* uring = (struct uartring*) priv;
+	switch(code) {
+		case UART_IRQCODE_TX: {
+			if ( ring_empty(&uring->txring) ) 
+			{
+				uring->uart->txirq(false);
+			//	unwait_one(&uring->txwlst);
+				return;
+			}
+
+			char c = ring_getc(&uring->txring, uring->txbuffer);
+			uring->uart->sendbyte(c);
+			return;
+		}
+
+		case UART_IRQCODE_RX: {
+			ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->recvbyte());
+			//unwait_one(&uring->rxwlst);
+			return;
+		}
+
+		case UART_IRQCODE_TC: //fallthrow
+			panic("2");
+		default: dprln(code); panic("unrecognized uart irq code");
+	}
+}
+
+int uartring::init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz) 
+{
+	uart = u;
+
+	ring_init(&rxring, rxsz);
+	ring_init(&txring, txsz);
+
+	rxbuffer = rxbuf;
+	txbuffer = txbuf;
+
+	//dlist_init(&txwlst);
+	//dlist_init(&rxwlst);
+
+	//uart->enable(false);
+
+	uart->handler = uartring_irq_handler;
+	uart->handarg = (void*) this;
+	uart->txirq(false);
+	
+	//uart->enable(true);
+
+	//vfs_link_cdev(this, "/dev", name);
+
+	return 0;
+}
+
+int uartring::avail() 
+{
+	return ring_avail(&rxring);
+}
+
+int uartring::room() 
+{
+	return ring_room(&txring);
+}
