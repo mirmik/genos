@@ -17,10 +17,11 @@ struct gpio_pin {
 
 #ifdef __cplusplus
 	gpio_pin(struct gpio * gpio, gpio_mask_t mask) : gpio(gpio), mask(mask) {}
-	void set(int lvl) { gpio_set_level(gpio, mask, lvl); }
-	void toggle() { gpio_toggle(gpio, mask); }
-	uint8_t get() { return !!gpio_get_level(gpio, mask); }
-	int mode(uint32_t _mode) { return gpio_settings(gpio, mask, _mode); }
+	void set(int lvl) const { gpio_set_level(gpio, mask, lvl); }
+	void toggle() const { gpio_toggle(gpio, mask); }
+	void tgl() const { gpio_toggle(gpio, mask); }
+	uint8_t get() const { return !!gpio_get_level(gpio, mask); }
+	int mode(uint32_t _mode) const { return gpio_settings(gpio, mask, _mode); }
 #endif
 };
 
