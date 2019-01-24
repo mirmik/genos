@@ -35,6 +35,45 @@ const struct gpio_pin PINOUT[] =
 	{GPIOA, 1 << 6}, //28
 	{GPIOA, 1 << 7}, //29
 	{GPIOC, 1 << 7}, //30
+	{GPIOC, 1 << 6}, //31
+	{GPIOC, 1 << 5}, //32
+	{GPIOC, 1 << 4}, //33
+	{GPIOC, 1 << 3}, //34
+	{GPIOC, 1 << 2}, //35
+	{GPIOC, 1 << 1}, //36
+	{GPIOC, 1 << 0}, //37
+	{GPIOD, 1 << 7}, //38
+	{GPIOG, 1 << 2}, //39
+	{GPIOG, 1 << 1}, //40
+	{GPIOG, 1 << 0}, //41
+	{GPIOL, 1 << 7}, //42
+	{GPIOL, 1 << 6}, //43
+	{GPIOL, 1 << 5}, //44
+	{GPIOL, 1 << 4}, //45
+	{GPIOL, 1 << 3}, //46
+	{GPIOL, 1 << 2}, //47
+	{GPIOL, 1 << 1}, //48
+	{GPIOL, 1 << 0}, //49
+	{GPIOB, 1 << 3}, //50
+	{GPIOB, 1 << 2}, //51
+	{GPIOB, 1 << 1}, //52
+	{GPIOB, 1 << 0}, //53
+	{GPIOF, 1 << 0}, //54
+	{GPIOF, 1 << 1}, //55
+	{GPIOF, 1 << 2}, //56
+	{GPIOF, 1 << 3}, //57
+	{GPIOF, 1 << 4}, //58
+	{GPIOF, 1 << 5}, //59
+	{GPIOF, 1 << 6}, //60
+	{GPIOF, 1 << 7}, //61
+	{GPIOK, 1 << 0}, //62
+	{GPIOK, 1 << 1}, //63
+	{GPIOK, 1 << 2}, //64
+	{GPIOK, 1 << 3}, //65
+	{GPIOK, 1 << 4}, //66
+	{GPIOK, 1 << 5}, //67
+	{GPIOK, 1 << 6}, //68
+	{GPIOK, 1 << 7}, //69
 };
 #else
 #	error "Uncompatible board"
