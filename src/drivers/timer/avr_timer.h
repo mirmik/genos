@@ -2,11 +2,23 @@
 #define GENOS_DRIVERS_AVR_TIMER_H
 
 #include <periph/regs/timer.h>
+#include <periph/irqdefs.h>
+
+#include <hal/irqtable.h>
+#include <gxx/util/bits.h>
+
+#include <assert.h>
 
 namespace genos
 {
 	namespace avr
 	{
+		enum timer_mode 
+		{
+			disable,
+			fastpwm,
+		};
+
 		struct timer_irqs 
 		{
 			uint8_t ovf;
@@ -38,18 +50,26 @@ namespace genos
 				return regs->tcnt; 
 			}
 			
+			void set_mode(timer_mode mode) 
+			{
+
+			}
+
 			void set_value(T val) 
 			{ 
 				regs->tcnt = val; 
 			}
 
-			int enable(uint8_t div) 
+			void set_compare_a(T val) { regs->ocr_a = val; }
+			void set_compare_b(T val) { regs->ocr_b = val; }
+
+			int enable(uint16_t div) 
 			{
 				int divcode = tc_divider_code(div);
 				if (divcode < 0) 
 					return -1;
 				
-				bits_mask_assign(regs->tccr_b, 7, divcode); 
+				bits_mask_assign(regs->tccr_b, 7, divcode);  //CSX[0:2]
 				return 0;
 			}
 
@@ -57,14 +77,74 @@ namespace genos
 			{
 				bits_mask_assign(*timsk, 0x1, en);	
 			}
+
+			void set_overflow_irq_handler(void(*handler)(void*), void* arg) 
+			{
+				genos::irqtable::set_handler(irqs.ovf, handler, arg);
+			}
 		};
 
 		struct timer8 : public timer<uint8_t, timer_8bit_regs*>
-		{};
+		{
+			using parent = timer<uint8_t, timer_8bit_regs*>;
+			timer8(timer_8bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a,b,c } {}
+		};
 
 		struct timer16 : public timer<uint16_t, timer_16bit_regs*>
-		{};
+		{
+			using parent = timer<uint16_t, timer_16bit_regs*>;
+			timer16(timer_16bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a,b,c } {}
+
+			void set_compare_c(uint16_t val) { regs->ocr_c = val; }
+
+			void set_output_a_mode(uint8_t mode) { assert(mode<=3); bits_mask_assign_bias(regs->tccr_a,0b11,mode,6); }
+			void set_output_b_mode(uint8_t mode) { assert(mode<=3); bits_mask_assign_bias(regs->tccr_a,0b11,mode,4); }
+			void set_output_c_mode(uint8_t mode) { assert(mode<=3); bits_mask_assign_bias(regs->tccr_a,0b11,mode,2); }
+
+			void set_wgm(uint8_t mode) 
+			{
+				uint8_t aval = 0b11 & mode;
+				uint8_t bval = 0b11 & (mode >> 2);
+				bits_mask_assign(		regs->tccr_a, 0b11, aval);	
+				bits_mask_assign_bias(	regs->tccr_b, 0b11, bval, 3);	
+			}
+
+			void fast_pwm_mode() 
+			{
+				set_wgm(0b0101);
+			}
+
+			void irq_overflow_enable(bool en) { bits_lvl(*timsk, 1 << 0, en); }
+
+			void debug_print_regs() 
+			{
+				dpr("TCCR_A: "); dprbinln(regs->tccr_a);
+				dpr("TCCR_B: "); dprbinln(regs->tccr_b);
+				dpr("TCCR_C: "); dprbinln(regs->tccr_c);
+				dpr("TCNT__: "); dprbinln(regs->tcnt);
+				dpr("ICR___: "); dprbinln(regs->icr);
+				dpr("OCR_A_: "); dprbinln(regs->ocr_a);
+				dpr("OCR_B_: "); dprbinln(regs->ocr_b);
+				dpr("OCR_C_: "); dprbinln(regs->ocr_c);
+				dpr("TIMSK_: "); dprbinln(*timsk);
+			}
+		};
 	}
+}
+
+namespace periph {
+#if defined (CHIP_ATMEGA2560)
+	extern genos::avr::timer8 timer0;
+	extern genos::avr::timer8 timer2;
+	extern genos::avr::timer16 timer1;
+	extern genos::avr::timer16 timer3;
+	extern genos::avr::timer16 timer4;
+	extern genos::avr::timer16 timer5;
+#elif defined (CHIP_ATMEGA328P)
+	extern genos::avr::timer8 timer0;
+	extern genos::avr::timer8 timer2;
+	extern genos::avr::timer16 timer1;
+#endif
 }
 
 #endif

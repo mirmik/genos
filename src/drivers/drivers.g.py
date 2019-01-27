@@ -8,11 +8,13 @@ licant.module("genos.drivers.common",
 
 licant.module("genos.drivers.spi.avr", sources = ["spi/avr_spi.cpp"])
 licant.module("genos.drivers.usart.avr", sources = [ "serial/avr_usart.cpp" ])
+licant.module("genos.drivers.timer.avr", sources = [ "timer/avr_timer.cpp" ])
 licant.module("genos.drivers.avr",
 	mdepends = [
 		"genos.drivers.common",
 		"genos.drivers.spi.avr", 
 		"genos.drivers.usart.avr",
+		"genos.drivers.timer.avr",
 		#"genos.drivers.gpio.avr",
 	],
 )

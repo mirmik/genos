@@ -21,4 +21,14 @@ void irq_stub(void* irqno);
 
 __END_DECLS
 
+#ifdef __cplusplus
+namespace genos 
+{
+	namespace irqtable 
+	{
+		void set_handler(int irqno, irq_handler_t handler, void* arg);
+	}
+}
+#endif
+
 #endif

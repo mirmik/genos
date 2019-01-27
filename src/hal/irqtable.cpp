@@ -38,3 +38,17 @@ void irq_set_handler(int irqno, irq_handler_t handler, void* handler_arg) {
 	irqtable[irqno].handler = handler;
 	irqtable[irqno].handler_arg = handler_arg;
 }
+
+#ifdef __cplusplus
+namespace genos 
+{
+	namespace irqtable 
+	{
+		void set_handler(int irqno, irq_handler_t handler, void* arg) 
+		{
+			::irqtable[irqno].handler = handler;
+			::irqtable[irqno].handler_arg = arg;
+		}
+	}
+}
+#endif

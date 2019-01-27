@@ -15,9 +15,9 @@ const struct gpio_pin PINOUT[] =
 	{GPIOH, 1 << 5}, //8
 	{GPIOH, 1 << 6}, //9
 	{GPIOB, 1 << 4}, //10
-	{GPIOB, 1 << 5}, //11
-	{GPIOB, 1 << 6}, //12
-	{GPIOB, 1 << 7}, //13
+	{GPIOB, 1 << 5}, //11 //OC1A
+	{GPIOB, 1 << 6}, //12 //OC1B
+	{GPIOB, 1 << 7}, //13 //OC1C
 	{GPIOJ, 1 << 1}, //14
 	{GPIOJ, 1 << 0}, //15
 	{GPIOH, 1 << 1}, //16

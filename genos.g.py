@@ -13,7 +13,7 @@ licant.execute("src/sched/sched.g.py")
 module ("genos.include", include_paths = [".", "src"] )
 #
 ##Deprecated
-module ("genos.irqtbl", sources = [ "src/hal/irqtable.c" ] )
+module ("genos.irqtbl", sources = [ "src/hal/irqtable.cpp" ] )
 #module ("genos.irqtable", sources = [ "src/hal/irqtable.c" ] )
 #
 #module ("genos.tasklet", srcdir="genos/sched/src", sources = [ "tasklet.cpp" ] )
