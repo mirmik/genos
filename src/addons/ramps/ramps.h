@@ -51,6 +51,11 @@ namespace ramps
 		const gpio_pin& dir_pin;
 		const gpio_pin& step_pin;
 
+		int32_t step_width=10000;
+		int32_t step_counter=0;
+
+		bool enabled;
+
 		impulse_driver(const gpio_pin& enable, const gpio_pin& dir, const gpio_pin& step)
 			: enable_pin(enable), dir_pin(dir), step_pin(step)
 		{
@@ -82,6 +87,27 @@ namespace ramps
 		{
 			step_pin.set(0);
 		}
+
+		void serve_enable(int32_t delta) 
+		{
+			if (enabled) 
+			{
+				step_counter -= delta;
+				if (step_counter < 0) 
+				{
+					step_counter += step_width;
+					step_enable();
+				} 
+			}
+		}
+
+		void serve_disable() 
+		{
+			if (enabled) 
+			{
+				step_disable();
+			}
+		}
 	};
 
 	impulse_driver e_driver { PINOUT[E_ENABLE_PIN], PINOUT[E_DIR_PIN], PINOUT[E_STEP_PIN] };
@@ -92,12 +118,14 @@ namespace ramps
 	template <typename Timer>
 	struct ramps_driver 
 	{
+		int delta;
 		Timer* timer;
 
 		ramps_driver(Timer* timer) : timer(timer) {}
 
 		void init(uint32_t freq)
 		{
+			delta = F_CPU / freq;
 			timer->set_freq(freq);
 			timer->regs->ocr_b = timer->regs->ocr_a / 2;
 			genos::irqtable::set_handler(timer->irqs.compa, &ramps_driver::isr_enabler, this);
@@ -112,12 +140,16 @@ namespace ramps
 
 		void isr_enabler() 
 		{
-			x_driver.step_enable();
+			x_driver.serve_enable(delta);
+			y_driver.serve_enable(delta);
+			z_driver.serve_enable(delta);
 		}
 
 		void isr_disabler() 
 		{
-			x_driver.step_disable();
+			x_driver.serve_disable();
+			y_driver.serve_disable();
+			z_driver.serve_disable();
 		}		
 	};
 }
