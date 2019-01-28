@@ -72,12 +72,54 @@ namespace ramps
 		{
 			step_pin.tgl();
 		}
+		
+		void step_enable() 
+		{
+			step_pin.set(1);
+		}
+		
+		void step_disable() 
+		{
+			step_pin.set(0);
+		}
 	};
 
 	impulse_driver e_driver { PINOUT[E_ENABLE_PIN], PINOUT[E_DIR_PIN], PINOUT[E_STEP_PIN] };
 	impulse_driver x_driver { PINOUT[X_ENABLE_PIN], PINOUT[X_DIR_PIN], PINOUT[X_STEP_PIN] };
 	impulse_driver y_driver { PINOUT[Y_ENABLE_PIN], PINOUT[Y_DIR_PIN], PINOUT[Y_STEP_PIN] };
 	impulse_driver z_driver { PINOUT[Z_ENABLE_PIN], PINOUT[Z_DIR_PIN], PINOUT[Z_STEP_PIN] };
+
+	template <typename Timer>
+	struct ramps_driver 
+	{
+		Timer* timer;
+
+		ramps_driver(Timer* timer) : timer(timer) {}
+
+		void init(uint32_t freq)
+		{
+			timer->set_freq(freq);
+			timer->regs->ocr_b = timer->regs->ocr_a / 2;
+			genos::irqtable::set_handler(timer->irqs.compa, &ramps_driver::isr_enabler, this);
+			genos::irqtable::set_handler(timer->irqs.compb, &ramps_driver::isr_disabler, this);
+			timer->irq_compare_a_enable(true);
+			timer->irq_compare_b_enable(true);
+
+			x_driver.enable();
+			y_driver.enable();
+			z_driver.enable();
+		}
+
+		void isr_enabler() 
+		{
+			x_driver.step_enable();
+		}
+
+		void isr_disabler() 
+		{
+			x_driver.step_disable();
+		}		
+	};
 }
 
 #endif

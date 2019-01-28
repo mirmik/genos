@@ -22,6 +22,9 @@ namespace genos
 		struct timer_irqs 
 		{
 			uint8_t ovf;
+			uint8_t compa;
+			uint8_t compb;
+			uint8_t compc;
 		};
 
 		static uint8_t tc_divider_code(uint16_t divider)
@@ -114,19 +117,34 @@ namespace genos
 				set_wgm(0b0101);
 			}
 
+			void set_ctc_mode(int ocr) 
+			{
+				set_wgm(0b0100);
+				regs->ocr_a = ocr;
+			}
+
+			void set_freq(int32_t freq) 
+			{
+				int32_t ocr = F_CPU / freq;
+				set_ctc_mode(ocr);
+				enable(1);
+			}
+
 			void irq_overflow_enable(bool en) { bits_lvl(*timsk, 1 << 0, en); }
+			void irq_compare_a_enable(bool en) { bits_lvl(*timsk, 1 << 1, en); }
+			void irq_compare_b_enable(bool en) { bits_lvl(*timsk, 1 << 2, en); }
 
 			void debug_print_regs() 
 			{
-				dpr("TCCR_A: "); dprbinln(regs->tccr_a);
-				dpr("TCCR_B: "); dprbinln(regs->tccr_b);
-				dpr("TCCR_C: "); dprbinln(regs->tccr_c);
-				dpr("TCNT__: "); dprbinln(regs->tcnt);
-				dpr("ICR___: "); dprbinln(regs->icr);
-				dpr("OCR_A_: "); dprbinln(regs->ocr_a);
-				dpr("OCR_B_: "); dprbinln(regs->ocr_b);
-				dpr("OCR_C_: "); dprbinln(regs->ocr_c);
-				dpr("TIMSK_: "); dprbinln(*timsk);
+				dpr("TCCR_A: "); dprptr(&regs->tccr_a); dpr(" "); dprbinln(regs->tccr_a);
+				dpr("TCCR_B: "); dprptr(&regs->tccr_b); dpr(" "); dprbinln(regs->tccr_b);
+				dpr("TCCR_C: "); dprptr(&regs->tccr_c); dpr(" "); dprbinln(regs->tccr_c);
+				dpr("TCNT__: "); dprptr(&regs->tcnt); dpr(" "); dprbinln(regs->tcnt);
+				dpr("ICR___: "); dprptr(&regs->icr); dpr(" "); dprbinln(regs->icr);
+				dpr("OCR_A_: "); dprptr(&regs->ocr_a); dpr(" "); dprbinln(regs->ocr_a);
+				dpr("OCR_B_: "); dprptr(&regs->ocr_b); dpr(" "); dprbinln(regs->ocr_b);
+				dpr("OCR_C_: "); dprptr(&regs->ocr_c); dpr(" "); dprbinln(regs->ocr_c);
+				dpr("TIMSK_: "); dprptr(timsk); dpr(" "); dprbinln(*timsk);
 			}
 		};
 	}

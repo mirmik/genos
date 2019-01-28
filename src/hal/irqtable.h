@@ -22,11 +22,20 @@ void irq_stub(void* irqno);
 __END_DECLS
 
 #ifdef __cplusplus
+#include <gxx/event/delegate.h>
+
 namespace genos 
 {
 	namespace irqtable 
 	{
 		void set_handler(int irqno, irq_handler_t handler, void* arg);
+
+		template<class T>
+		void set_handler(int irqno, void(T::* handler)(), T* arg) 
+		{
+			auto dlg = gxx::make_fastdelegate(handler, arg); 
+			set_handler(irqno, dlg.extfunction, dlg.object);
+		}
 	}
 }
 #endif
