@@ -22,7 +22,7 @@ void irq_stub(void* irqno);
 __END_DECLS
 
 #ifdef __cplusplus
-#include <gxx/event/delegate.h>
+#include <igris/event/delegate.h>
 
 namespace genos 
 {
@@ -33,7 +33,7 @@ namespace genos
 		template<class T>
 		void set_handler(int irqno, void(T::* handler)(), T* arg) 
 		{
-			auto dlg = gxx::make_fastdelegate(handler, arg); 
+			auto dlg = igris::make_fastdelegate(handler, arg); 
 			set_handler(irqno, dlg.extfunction, dlg.object);
 		}
 	}

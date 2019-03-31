@@ -3,8 +3,8 @@
 
 #include <assert.h>
 
-#include <gxx/datastruct/dlist.h>
-#include <gxx/syslock.h>
+#include <igris/datastruct/dlist.h>
+#include <igris/sync/syslock.h>
 #include <sched/api.h>
 #include <sched/wait.h>
 

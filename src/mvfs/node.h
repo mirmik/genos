@@ -1,7 +1,7 @@
 #ifndef MVFS_NODE_H
 #define MVFS_NODE_H
 
-#include <gxx/container/dlist.h>
+#include <igris/container/dlist.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -15,7 +15,7 @@ struct file;
 
 struct node {
 	struct dlist_head lnk;
-	gxx::dlist<struct node, &node::lnk> childs;
+	igris::dlist<struct node, &node::lnk> childs;
 
 	struct node * parent;
 	char name[NAME_LENGTH_MAX + 1];

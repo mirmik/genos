@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <drivers/spi/spi.h>
 
-#include <gxx/datastruct/dlist.h>
+#include <igris/datastruct/dlist.h>
 
 struct avr_spi_device : public spi_device {
 //	struct spi_device spi;

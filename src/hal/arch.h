@@ -1,7 +1,7 @@
 #ifndef HAL_ARCH_H_
 #define HAL_ARCH_H_
 
-#include <gxx/util/compiler.h>
+#include <igris/compiler.h>
 #include <sys/cdefs.h>
 #include <arch/arch.h>
 

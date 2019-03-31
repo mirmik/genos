@@ -1,20 +1,16 @@
-#!/usr/bin/env python
-#coding: utf-8
+#!/usr/bin/env python3
 
 import licant
-from licant.cxx_modules import application
-from licant.modules import submodule
-from licant.libs import include
-from licant.cxx_make import make_gcc_binutils
-import licant.routine
-
+import licant.cxx_make
 import os
 
-include("genos")
-include("gxx")
-binutils = make_gcc_binutils("avr")
+licant.include("genos")
+licant.include("igris")
+licant.include("nos")
 
-application("firmware", 
+binutils = licant.cxx_make.make_gcc_binutils("avr")
+
+licant.cxx_application("firmware", 
 	binutils = binutils,
 	sources = ["main.cpp"],
 	target = "firmware.bin",
@@ -22,24 +18,25 @@ application("firmware",
 	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto",
 	cc_flags = "-Os -flto",
 
-	include_modules = [
-		submodule("genos.include"),
-		submodule("genos.board", "arduino_mega"),
-		submodule("genos.irqtbl"),
-		#submodule("genos.tasklet"),
-		#submodule("genos.timer"),
-		#submodule("genos.schedee"),
-		submodule("genos.atomic", "irqs"),
-		#submodule("genos.malloc", "lin"),
+	mdepends = [
+		"genos.include",
+		"genos.irqtbl",
+		"genos.systime",
+		("genos.board", "arduino_mega"),
+
+		"igris.include",
+		"igris.libc",
+		"igris.posix",
+		"igris.std",
+		("igris.syslock", "genos.atomic"),
+		("igris.dprint", "diag"),
 		
-		submodule("gxx.libc"),
-		submodule("gxx.std"),
-		submodule("gxx.include"),
-		
-		submodule("gxx.dprint", "diag"),
-		submodule("gxx.diag", "impl"),
-		submodule("gxx.panic", "abort"),
-		#submodule("gxx.format"),
+		"genos.drivers.common",
+		"genos.drivers.gpio.avr", 
+		"genos.drivers.usart.avr",
+
+		"nos",
+		("nos.current_ostream", "nullptr"),
 	]
 )
 

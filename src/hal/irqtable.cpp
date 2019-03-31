@@ -1,8 +1,10 @@
 #include <hal/do_irq.h>
 #include <hal/irq.h>
 #include <hal/irqtable.h>
+
 #include <periph/irqdefs.h>
-#include <gxx/debug/dprint.h>
+
+#include <igris/dprint.h>
 
 unsigned char __interrupt_context = 0;
 struct irq_record irqtable[NR_IRQS];

@@ -1,7 +1,8 @@
 #include <hal/subst.h>
 #include <string.h>
-#include <gxx/debug/dprint.h>
-#include <util/access.h>
+
+#include <igris/dprint/dprint.h>
+#include <igris/util/access.h>
 
 void context_print(struct context* ctx)
 {

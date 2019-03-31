@@ -4,7 +4,7 @@
 #include <arch/timer.h>
 #include <systime/systime.h>
 
-#include <gxx/diag/diag.h>
+#include <diag/diag.h>
 #include <periph/irqdefs.h>
 
 __BEGIN_DECLS

@@ -3,7 +3,7 @@
 
 #include <avr/io.h>
 #include <drivers/serial/settings.h>
-#include <gxx/util/bits.h>
+#include <igris/util/bits.h>
 
 struct usart_regs {
 	volatile uint8_t ucsr_a;

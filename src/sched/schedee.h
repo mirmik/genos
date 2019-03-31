@@ -4,11 +4,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <gxx/debug/dprint.h>
-#include <gxx/datastruct/dlist.h>
+#include <igris/datastruct/dlist.h>
 
 #ifdef MVFS_INCLUDED
-//#	include <mvfs/mvfs.h>
 struct file;
 #endif
 

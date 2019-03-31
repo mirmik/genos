@@ -7,7 +7,7 @@
  *	В vfs данные объекты работают в тесной связи. Поэтому айноды включены в этот файл. 
  */
 
-#include <gxx/util/member.h>
+//#include <igris/util/member.h>
 
 #include <stdlib.h>
 #include <stdint.h>

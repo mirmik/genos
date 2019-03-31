@@ -1,7 +1,7 @@
 #define NOTRACE 1
 
 #include <sched/sched.h>
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 
 #include <gxx/trace.h>
 

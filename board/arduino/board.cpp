@@ -6,7 +6,7 @@
 #include <drivers/serial/avr_usart.h>
 #include <periph/irqdefs.h>
 
-#include <gxx/debug/dprint.h>
+#include <igris/dprint/dprint.h>
 
 namespace board {
 	gpio_pin sysled(SYSLED_GPIO, SYSLED_MASK);

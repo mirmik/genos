@@ -7,10 +7,10 @@
 #include <avr/interrupt.h>
 #include <stdint.h>
 
-#include <gxx/event/delegate.h>
-#include <gxx/debug/dprint.h>
-#include <gxx/buffer.h>
-#include <gxx/panic.h>
+#include <igris/event/delegate.h>
+#include <igris/dprint.h>
+#include <igris/buffer.h>
+//#include <igris/panic.h>
 
 #include <drivers/i2c/i2c.h>
 
@@ -48,8 +48,8 @@ void i2c_irq_handler(void*);
 
 class avr_i2c_device : public i2c_device {
 public:
-	//gxx::delegate<void> error_handler;
-	//gxx::delegate<void> operation_finish_handler;
+	//igris::delegate<void> error_handler;
+	//igris::delegate<void> operation_finish_handler;
 
 	//void error_handler() { operation_finish_handler(); }
 
@@ -74,8 +74,8 @@ public:
 	//static constexpr uint8_t ERR_NA = 0b01000000;
 
 	uint8_t target_address;
-	gxx::buffer sendbuf;
-	gxx::buffer recvbuf;
+	igris::buffer sendbuf;
+	igris::buffer recvbuf;
 	size_t it;
 	int rbytecount;
 
@@ -133,7 +133,7 @@ public:
 	void write_start(uint8_t target, 
 				const void* data, uint16_t size) override
 	{
-		sendbuf = gxx::buffer(data, size);
+		sendbuf = igris::buffer(data, size);
 		target_address = target << 1;
 		it = 0;
 		type = i2c_sawp;
@@ -145,8 +145,8 @@ public:
 				uint8_t target, const void* out, uint16_t olen, 
 				void* in, uint16_t ilen) override
 	{
-		recvbuf = gxx::buffer(in, ilen);
-		sendbuf = gxx::buffer(out, olen);
+		recvbuf = igris::buffer(in, ilen);
+		sendbuf = igris::buffer(out, olen);
 		rbytecount = ilen;
 		
 		target_address = target << 1;
@@ -193,7 +193,7 @@ void i2c_irq_handler(void* arg) {
 				TWDR = i2c->target_address | 0x01;		// Шлем Addr+R
 			}
 			else {									// Или 
-				gxx::panic("strange if??? TODO");
+				BUG();
 				TWDR = i2c->target_address & 0xFE;		// Шлем Addr+W
 			}
 	
@@ -451,7 +451,7 @@ void i2c_irq_handler(void* arg) {
 			dprhex(code);	
 			dpr(" dec:");
 			dprln(code);	
-			gxx::panic("");
+			BUG();
 			break;
 	}
 }

@@ -1,9 +1,10 @@
 #include <drivers/serial/avr_usart.h>
-#include <gxx/util/member.h>
+//#include </util/member.h>
+
 #include <hal/irqtable.h>
 #include <hal/board.h>
 
-#include <gxx/debug/delay.h>
+#include <util/delay.h>
 
 int avr_usart::enable(bool en) {
 	usart_regs_enable_rx(regs, en);

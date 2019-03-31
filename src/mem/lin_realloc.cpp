@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mem/lin_malloc.h>
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 #include <memory>
 //#include "sectionname.h"
 //#include "stdlib_private.h"

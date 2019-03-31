@@ -1,12 +1,14 @@
 #include <drivers/serial/uartring.h>
 
-#include <gxx/syslock.h>
-#include <gxx/panic.h>
+#include <igris/sync/syslock.h>
+#include <igris/bug.h>
+
+//#include <gxx/panic.h>
 
 #include <sched/api.h>
 #include <sched/wait.h>
 
-int uartring_device::write(const char* data, unsigned int size) 
+int genos::uartring_device::write(const char* data, unsigned int size) 
 {
 	int curwrited;
 	size_t writed = 0;
@@ -50,7 +52,7 @@ int uartring_device::write(const char* data, unsigned int size)
 	return writed;
 }
 
-int uartring_device::read(char* data, unsigned int size) 
+int genos::uartring_device::read(char* data, unsigned int size) 
 {
 	if (ring_empty(&rxring)) 
 		return 0;
@@ -58,19 +60,19 @@ int uartring_device::read(char* data, unsigned int size)
 	return ring_read(&rxring, rxbuffer, data, size);
 }
 
-int uartring_device::open(struct file * f) 
+int genos::uartring_device::open(struct file * f) 
 { 
 	return 0; 
 }
 
-int uartring_device::release (struct file * f) 
+int genos::uartring_device::release (struct file * f) 
 { 
 	return 0; 
 }
 
 void uartring_device_irq_handler(void* priv, int code) 
 {
-	struct uartring_device* uring = (struct uartring_device*) priv;
+	struct genos::uartring_device* uring = (struct genos::uartring_device*) priv;
 	switch(code) {
 		case UART_IRQCODE_TX: {
 			if ( ring_empty(&uring->txring) ) 
@@ -92,12 +94,14 @@ void uartring_device_irq_handler(void* priv, int code)
 		}
 
 		case UART_IRQCODE_TC: //fallthrow
-			panic("2");
-		default: dprln(code); panic("unrecognized uart irq code");
+			BUG();
+		
+		default: 
+			BUG();
 	}
 }
 
-int uartring_device::init(struct uart * u, const char* name) 
+int genos::uartring_device::init(struct uart * u, const char* name) 
 {
 	uart = u;
 
@@ -120,7 +124,7 @@ int uartring_device::init(struct uart * u, const char* name)
 	return 0;
 }
 
-int uartring_device::waitread() {
+int genos::uartring_device::waitread() {
 	system_lock();
 
 	if (ring_avail(&rxring)) 
@@ -142,10 +146,11 @@ int uartring_device::waitread() {
 
 
 
-int uartring::writeData(const char* data, unsigned int size) 
+ssize_t genos::uartring::write(const void* _data, size_t size) 
 {
 	int curwrited;
 	size_t writed = 0;
+	const char* data = (const char*) _data;
 
 	if (uart->cantx() && ring_empty(&txring)) 
 	{
@@ -165,8 +170,9 @@ int uartring::writeData(const char* data, unsigned int size)
 	return writed;
 }
 
-int uartring::readData(char* data, unsigned int size) 
+ssize_t genos::uartring::read(void* _data, size_t size) 
 {
+	char* data = (char*) _data;
 	if (ring_empty(&rxring)) 
 		return 0;
 
@@ -175,7 +181,7 @@ int uartring::readData(char* data, unsigned int size)
 
 void uartring_irq_handler(void* priv, int code) 
 {
-	struct uartring* uring = (struct uartring*) priv;
+	struct genos::uartring* uring = (struct genos::uartring*) priv;
 	switch(code) {
 		case UART_IRQCODE_TX: {
 			if ( ring_empty(&uring->txring) ) 
@@ -197,12 +203,14 @@ void uartring_irq_handler(void* priv, int code)
 		}
 
 		case UART_IRQCODE_TC: //fallthrow
-			panic("2");
-		default: dprln(code); panic("unrecognized uart irq code");
+			BUG();
+		
+		default: 
+			BUG();
 	}
 }
 
-int uartring::init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz) 
+int genos::uartring::init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz) 
 {
 	uart = u;
 
@@ -228,12 +236,12 @@ int uartring::init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz
 	return 0;
 }
 
-int uartring::avail() 
+int genos::uartring::avail() 
 {
 	return ring_avail(&rxring);
 }
 
-int uartring::room() 
+int genos::uartring::room() 
 {
 	return ring_room(&txring);
 }

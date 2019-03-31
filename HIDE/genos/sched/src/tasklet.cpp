@@ -1,5 +1,5 @@
 #include <genos/sched/tasklet.h>
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 
 namespace genos  {
 	genos::tasklet_manager_class tasklet_manager;

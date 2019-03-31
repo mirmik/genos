@@ -8,7 +8,7 @@
  *	Здесь только операции над деревом.
  */
 
-#include <gxx/datastruct/dlist.h>
+#include <igris/datastruct/dlist.h>
 #include <gxx/debug/dprint.h>
 #include <stdint.h>
 #include <string.h>

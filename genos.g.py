@@ -1,9 +1,10 @@
 from licant.modules import module
 
 licant.execute_recursive("arch", ".g.py")
+licant.execute_recursive("src", ".g.py")
 licant.execute("board/board.g.py")
-licant.execute("src/drivers/drivers.g.py")
-licant.execute("src/sched/sched.g.py")
+#licant.execute("src/drivers/drivers.g.py")
+#licant.execute("src/sched/sched.g.py")
 
 #module ("genos", include_paths = [".", "src"], sources = [ 
 #	"genos/time/systime.cpp", 
@@ -98,11 +99,14 @@ module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )
 module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
 
-#module("genos.misc", 
-#	sources = [
-#		"src/mem/misc/pool.c",
-#	]
-#)
-
 module ("genos.utility.getty", sources = ["src/utility/nologin_getty.cpp"])
 module ("genos.utility.sh", sources = ["src/utility/sh.cpp"])
+
+module("genos.diag", "stub", sources = ["src/diag/diag_stub.c"])
+module("genos.diag", "impl", sources = ["src/diag/diag_impl.c"], default=True)
+
+licant.module("igris.dprint", "diag", 
+	srcdir="src/diag",
+	sources = ["dprint_diag.c"],
+	mdepends = [("igris.dprint.common","impl"), "genos.diag"],
+)

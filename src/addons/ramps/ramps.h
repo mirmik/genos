@@ -3,7 +3,7 @@
 
 #include <drivers/gpio/arduino_pinout.h>
 #include <ralgo/servo/impulse_writer.h>
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 
 #define X_STEP_PIN         54
 #define X_DIR_PIN          55

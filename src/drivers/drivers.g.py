@@ -1,6 +1,6 @@
 import licant
 
-licant.execute("gpio/gpio.g.py")
+#licant.execute("gpio/gpio.g.py")
 
 licant.module("genos.drivers.common",
 	sources = ["serial/uartring.cpp"]

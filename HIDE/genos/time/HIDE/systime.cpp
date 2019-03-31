@@ -1,6 +1,6 @@
 #include <genos/time/systime.h>
 #include <gxx/debug/dprint.h>
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 
 volatile uint64_t __jiffies;
 uint32_t systime_frequency;

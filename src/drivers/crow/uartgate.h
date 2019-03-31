@@ -2,8 +2,8 @@
 #define GENOS_DRIVERS_CROW_UARTGATE_H
 
 #include <crow/gateway.h>
-#include <gxx/gstuff/autorecv.h>
-#include <gxx/datastruct/ring.h>
+#include <igris/protocols/gstuff/autorecv.h>
+#include <igris/datastruct/ring.h>
 
 #define PACKET_DATAADDR_SIZE_MAX 64
 

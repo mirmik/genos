@@ -1,77 +1,47 @@
 #!/usr/bin/env python3
-#coding: utf-8
 
 import licant
-from licant.cxx_modules import application
-from licant.modules import submodule
-from licant.libs import include
-from licant.cxx_make import make_gcc_binutils
-
+import licant.cxx_make
 import os
 
-include("genos")
-include("gxx")
-include("crow")
-binutils = make_gcc_binutils("avr")
+licant.include("genos")
+licant.include("igris")
+licant.include("nos")
 
-application("firmware", 
+binutils = licant.cxx_make.make_gcc_binutils("avr")
+
+licant.cxx_application("firmware", 
 	binutils = binutils,
 	sources = ["main.cpp"],
 	target = "firmware.bin",
 
-	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto -pedantic",
-	cc_flags = "-Os -flto --pedantic-error -Werror=all",
+	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto",
+	cc_flags = "-Os -flto",
 
-	include_modules = [
-	#stdlibs
-		submodule("gxx.posix"),
-		submodule("gxx.libc"),
-		submodule("gxx.std"),
-		submodule("gxx.include"),
-		submodule("gxx.c_only"),
+	mdepends = [
+		"genos.include",
+		"genos.irqtbl",
+		"genos.systime",
+		("genos.board", "arduino_mega"),
+
+		"igris.include",
+		"igris.libc",
+		"igris.posix",
+		"igris.std",
+		("igris.syslock", "genos.atomic"),
+		("igris.dprint", "diag"),
 		
-	#gxx support
-		submodule("gxx.dprint", "diag"),
-		submodule("gxx.diag", "impl"),
-		submodule("gxx.syslock", "genos.atomic"),
+		"genos.drivers.common",
+		"genos.drivers.gpio.avr", 
+		"genos.drivers.usart.avr",
 
-	#base and os support
-		submodule("genos.include"),
-		submodule("genos.errno"),
-		submodule("genos.board", "crius_aiop2"),
-		submodule("genos.irqtbl"),
-		submodule("genos.systime"),
-		submodule("genos.sched", "impl"),
-
-		submodule("genos.drivers.avr"),
-		submodule("genos.drivers.gpio.avr"),
-
-		submodule("genos.mvfs"),
-		submodule("genos.mvfs.global"),
-		submodule("genos.malloc", "lin"),
-
-		#submodule("crow"),
-		#submodule("crow.allocator", "malloc"),
+		"nos",
+		("nos.current_ostream", "nullptr"),
 	]
 )
 
-def noexcept(func):
-	def decorator(*argv, **kwargs):
-		try:
-			func(*argv, **kwargs)
-		except:
-			pass
-	return decorator
-
-
 @licant.routine
-def distclean():
-	import shutil
-	noexcept(shutil.rmtree)('build')
-	noexcept(os.remove)('firmware.bin')
-	
-@licant.routine(deps = ["firmware"])
 def install():
-	os.system("avrdude -P/dev/ttyUSB0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")
+	os.execute("sudo avrdude -P/dev/ttyUSB0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")
 
 licant.ex(default = "firmware")

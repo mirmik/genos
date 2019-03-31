@@ -2,7 +2,7 @@
 #include <sched/schedee.h>
 #include <sched/sched.h>
 
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 
 #include <stdlib.h>
 

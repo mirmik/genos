@@ -2,7 +2,7 @@
 #include <hal/irq.h>
 #include <avr/io.h>
 
-#include <gxx/diag/diag.h>
+#include <diag/diag.h>
 
 #include <avr/io.h>
 

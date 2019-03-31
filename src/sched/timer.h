@@ -1,8 +1,8 @@
 #ifndef GENOS_TIMER_TASKLET_H
 #define GENOS_TIMER_TASKLET_H
 
-#include <gxx/datastruct/dlist.h>
-#include <gxx/syslock.h>
+#include <igris/datastruct/dlist.h>
+#include <igris/sync/syslock.h>
 #include <systime/systime.h>
 
 struct ktimer;

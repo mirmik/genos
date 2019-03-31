@@ -4,7 +4,7 @@
 #include <gxx/container/dlist.h>
 #include <gxx/debug/delay.h>
 //#include <genos/atomic.h>
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 #include <assert.h>
 
 #define PRIORITY_TOTAL 3

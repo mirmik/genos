@@ -2,7 +2,7 @@
 #include <arch/timer.h>
 #include <periph/irqdefs.h>
 
-#include <gxx/util/bits.h>
+#include <igris/util/bits.h>
 
 #include <assert.h>
 #include <avr/io.h>

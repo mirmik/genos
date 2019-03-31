@@ -4,7 +4,7 @@
 #include <hal/uart.h>
 #include <crow/gateway.h>
 #include <gxx/gstuff/automate.h>
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 
 #define PACKET_DATAADDR_SIZE_MAX 64
 

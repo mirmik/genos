@@ -7,7 +7,7 @@
 #define GENOS_SCHED_WAIT_H
 
 #include <sys/cdefs.h>
-#include <gxx/datastruct/dlist.h>
+#include <igris/datastruct/dlist.h>
 
 #define WAIT_PRIORITY 1
 

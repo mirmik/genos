@@ -1,7 +1,7 @@
 #ifndef MVFS_VFSMOUNT_H
 #define MVFS_VFSMOUNT_H
 
-#include <gxx/datastruct/dlist.h>
+#include <igris/datastruct/dlist.h>
 
 /**
  *	Описатель точки монтирования.

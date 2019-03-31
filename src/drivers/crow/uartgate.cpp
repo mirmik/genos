@@ -3,7 +3,7 @@
 #include <drivers/crow/uartgate.h>
 #include <crow/tower.h>
 
-#include <gxx/syslock.h>
+#include <igris/sync/syslock.h>
 #include <gxx/panic.h>
 
 #include <gxx/gstuff/gstuff.h>
