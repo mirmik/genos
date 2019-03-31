@@ -1,8 +1,6 @@
 #include <sched/sched.h>
 #include <stdlib.h>
 
-#include <gxx/panic.h>
-
 struct autom_schedee {
 	struct schedee sch;
 

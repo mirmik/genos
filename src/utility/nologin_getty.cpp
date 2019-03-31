@@ -1,9 +1,8 @@
 #include <utility/getty.h>
 #include <drivers/cdev/cdev.h>
 
-#include <gxx/panic.h>
-
 #include <sched/sched.h>
+#include <sched/schedee.h>
 #include <mvfs/file.h>
 #include <mvfs/compat.h>
 

@@ -2,7 +2,7 @@
 #define GENOS_UTILITY_GETTY_H
 
 #include <sys/cdefs.h>
-#include <gxx/datastruct/sline.h>
+#include <igris/datastruct/sline.h>
 
 #define GETTY_LINE_LENGTH 32
 

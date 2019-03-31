@@ -1,6 +1,5 @@
 #include <sched/timer.h>
 #include <stdlib.h>
-#include <gxx/debug/dprint.h>
 
 DLIST_HEAD(ktimer_list);
 

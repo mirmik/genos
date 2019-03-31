@@ -23,6 +23,8 @@ struct schedee * create_cooperative_schedee(void*(*task)(void*), void* arg, int 
 
 __END_DECLS
 
+#ifdef __cplusplus
+
 namespace genos {
 	namespace schedee_manager 
 	{
@@ -30,5 +32,7 @@ namespace genos {
 		int total_planed();
 	}
 }
+
+#endif
 
 #endif

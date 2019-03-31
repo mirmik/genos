@@ -1,15 +1,11 @@
-#define NOTRACE 1
-
-#include <gxx/trace.h>
-
 #include <sched/sched.h>
 #include <sched/api.h>
 #include <stdlib.h>
 
-#include <gxx/panic.h>
+//#include <gxx/panic.h>
 #include <hal/subst.h>
 
-#include <gxx/debug/dprint.h>
+#include <igris/dprint.h>
 
 struct cooperative_schedee
 {
@@ -41,7 +37,7 @@ struct schedee_operations cooperative_schedee_op =
 
 static inline void starter (void * sch)
 {
-	TRACE();
+	//TRACE();
 	struct cooperative_schedee * csch = (struct cooperative_schedee *) sch;
 
 	void* ret = csch->task(csch->arg);
@@ -52,7 +48,7 @@ static inline void starter (void * sch)
 
 struct schedee * create_cooperative_schedee(void* (*task) (void*), void * arg, int heapsize)
 {
-	TRACE();
+	//TRACE();
 	struct cooperative_schedee * sch = (struct cooperative_schedee *)
 	                                   malloc(sizeof(struct cooperative_schedee));
 
@@ -73,14 +69,14 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*), void * arg, i
 
 static void cooperative_schedee_execute(struct schedee* sch)
 {
-	TRACE();
+	//TRACE();
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
 	context_load(&csch->cntxt);
 }
 
 static void cooperative_schedee_displace(struct schedee* sch)
 {
-	TRACE();
+	//TRACE();
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
 	sch->flag.runned = 0;
 	context_save_and_invoke_displace(&csch->cntxt);
@@ -88,7 +84,7 @@ static void cooperative_schedee_displace(struct schedee* sch)
 
 static void cooperative_schedee_finalize(struct schedee* sch)
 {
-	TRACE();
+	//TRACE();
 	struct cooperative_schedee * asch = mcast_out(sch, struct cooperative_schedee, sch);
 	free(asch);
 }

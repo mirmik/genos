@@ -41,7 +41,7 @@
 extern char *__brkval;
 extern struct __freelist *__flp;
 
-static gxx::syslock lock;
+static igris::syslock lock;
 
 extern "C" void * realloc(void *ptr, size_t len) __attribute__((used));
 
@@ -49,7 +49,7 @@ extern "C" void * realloc(void *ptr, size_t len) __attribute__((used));
 void *
 realloc(void *ptr, size_t len)
 {
-	std::lock_guard<gxx::syslock> lguard(lock);
+	std::lock_guard<igris::syslock> lguard(lock);
 	
 	struct __freelist *fp1, *fp2, *fp3, *ofp3;
 	char *cp, *cp1;

@@ -2,17 +2,11 @@
 #include <hal/irq.h>
 #include <drivers/gpio/gpio.h>
 #include <drivers/gpio/pin.h>
-
-#include <gxx/debug/dprint.h>
-#include <gxx/debug/delay.h>
+#include <igris/dprint.h>
 
 #include <sched/sched.h>
 #include <sched/timer.h>
 #include <sched/api.h>
-
-//#include <crow/tower.h>
-
-//#include <drivers/crow/uartgate.h>
 
 #include <periph/irqdefs.h>
 #include <drivers/serial/avr_usart.h>
@@ -21,7 +15,7 @@
 #include <utility/getty.h>
 
 struct avr_usart uart0;
-struct uartring_device serial0;
+genos::uartring_device serial0;
 
 struct getty_context terminal_ttyS0_context(&serial0);
 
@@ -35,9 +29,9 @@ int main() {
 	gpio_set_level(RED_LED_GPIO, RED_LED_MASK, 1);
 	gpio_set_level(GREEN_LED_GPIO, GREEN_LED_MASK, 1);
 
-	struct uart_params uparams = { 115200, UART_PARITY_NONE, 1, 8 };
+	//struct uart_params uparams = { 115200, UART_PARITY_NONE, 1, 8 };
 	uart0.init(USART0, ATMEGA_IRQ_U0RX);
-	uart0.setup(&uparams);
+	uart0.setup(115200);
 	uart0.enable(true);
 
 	serial0.init(&uart0, "ttyS0");
@@ -53,7 +47,7 @@ int main() {
 void __schedule__() {
 	while(1) {
 		timer_manager();
-		schedee_manager();
+		genos::schedee_manager::step();
 	}
 }
 
