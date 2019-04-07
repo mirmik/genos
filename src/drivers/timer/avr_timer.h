@@ -5,7 +5,7 @@
 #include <periph/irqdefs.h>
 
 #include <hal/irqtable.h>
-#include <gxx/util/bits.h>
+#include <igris/util/bits.h>
 
 #include <assert.h>
 
@@ -13,13 +13,7 @@ namespace genos
 {
 	namespace avr
 	{
-		enum timer_mode 
-		{
-			disable,
-			fastpwm,
-		};
-
-		struct timer_irqs 
+		struct timer_irqs
 		{
 			uint8_t ovf;
 			uint8_t compa;
@@ -31,57 +25,78 @@ namespace genos
 		{
 			switch (divider)
 			{
-				case 0 : return 0;
-				case 1 : return 1;
-				case 8 : return 2;
-				case 64 : return 3;
-				case 256 : return 4;
-				//default: BUG("wrong_divider");
+				case 0 :
+					return 0;
+
+				case 1 :
+					return 1;
+
+				case 8 :
+					return 2;
+
+				case 64 :
+					return 3;
+
+				case 256 :
+					return 4;
 			}
+
 			return -1;
 		}
 
 		template<class T, class R>
-		struct timer 
+		struct timer
 		{
 			R  							regs;
 			struct timer_irqs	 		irqs;
 			volatile uint8_t* 			timsk;
 
-			T value() 
-			{ 
-				return regs->tcnt; 
-			}
-			
-			void set_mode(timer_mode mode) 
+			/// Read value
+			T value()
 			{
-
+				return regs->tcnt;
 			}
 
-			void set_value(T val) 
-			{ 
-				regs->tcnt = val; 
+			void set_value(T val)
+			{
+				regs->tcnt = val;
 			}
 
-			void set_compare_a(T val) { regs->ocr_a = val; }
-			void set_compare_b(T val) { regs->ocr_b = val; }
+			void set_compare_a(T val)
+			{
+				regs->ocr_a = val;
+			}
 
-			int enable(uint16_t div) 
+			void set_compare_b(T val)
+			{
+				regs->ocr_b = val;
+			}
+
+			/**
+				Активировать таймер.
+				@param div Устанавливаемый делитель. (см. доступные делители в tc_divider_code)
+				@return Возвращает -1, если делитель неверен. Иначе 0.
+			*/
+			int set_divider(uint16_t div)
 			{
 				int divcode = tc_divider_code(div);
-				if (divcode < 0) 
+
+				if (divcode < 0)
 					return -1;
-				
-				bits_mask_assign(regs->tccr_b, 7, divcode);  //CSX[0:2]
+
+				/// Set divider to CSX[0:2]
+				bits_mask_assign(regs->tccr_b, 7, divcode);
 				return 0;
 			}
 
-			int irq_ovf_enable(bool en) 
+			/// Enable overflow irq.
+			int irq_ovf_enable(bool en)
 			{
-				bits_mask_assign(*timsk, 0x1, en);	
+				bits_mask_assign(*timsk, 0x1, en);
 			}
 
-			void set_overflow_irq_handler(void(*handler)(void*), void* arg) 
+			//Set overflow interrupt handler to irqtable.
+			void set_ovf_handler(void(*handler)(void*), void* arg)
 			{
 				genos::irqtable::set_handler(irqs.ovf, handler, arg);
 			}
@@ -90,51 +105,103 @@ namespace genos
 		struct timer8 : public timer<uint8_t, timer_8bit_regs*>
 		{
 			using parent = timer<uint8_t, timer_8bit_regs*>;
-			timer8(timer_8bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a,b,c } {}
+
+			timer8(timer_8bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a, b, c }
+			{}
 		};
 
 		struct timer16 : public timer<uint16_t, timer_16bit_regs*>
 		{
 			using parent = timer<uint16_t, timer_16bit_regs*>;
-			timer16(timer_16bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a,b,c } {}
 
-			void set_compare_c(uint16_t val) { regs->ocr_c = val; }
+			timer16(timer_16bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a, b, c }
+			{}
 
-			void set_output_a_mode(uint8_t mode) { assert(mode<=3); bits_mask_assign_bias(regs->tccr_a,0b11,mode,6); }
-			void set_output_b_mode(uint8_t mode) { assert(mode<=3); bits_mask_assign_bias(regs->tccr_a,0b11,mode,4); }
-			void set_output_c_mode(uint8_t mode) { assert(mode<=3); bits_mask_assign_bias(regs->tccr_a,0b11,mode,2); }
-
-			void set_wgm(uint8_t mode) 
+			void set_compare_c(uint16_t val)
 			{
-				uint8_t aval = 0b11 & mode;
-				uint8_t bval = 0b11 & (mode >> 2);
-				bits_mask_assign(		regs->tccr_a, 0b11, aval);	
-				bits_mask_assign_bias(	regs->tccr_b, 0b11, bval, 3);	
+				regs->ocr_c = val;
 			}
 
-			void fast_pwm_mode() 
+			/*
+				Output modes:
+				0b00 - disconnect
+				0b01 - toggle
+				0b10 - clear on compare, set on downlevel 
+				0b10 - set on compare, clear on downlevel
+			*/
+
+			void set_output_a_mode(uint8_t mode)
 			{
-				set_wgm(0b0101);
+				assert(mode <= 3);
+				bits_mask_assign_bias(regs->tccr_a, 0b11, mode, 6);
 			}
 
-			void set_ctc_mode(int ocr) 
+			void set_output_b_mode(uint8_t mode)
 			{
-				set_wgm(0b0100);
-				regs->ocr_a = ocr;
+				assert(mode <= 3);
+				bits_mask_assign_bias(regs->tccr_a, 0b11, mode, 4);
 			}
 
-			void set_freq(int32_t freq) 
+			void set_output_c_mode(uint8_t mode)
 			{
-				int32_t ocr = F_CPU / freq;
-				set_ctc_mode(ocr);
-				enable(1);
+				assert(mode <= 3);
+				bits_mask_assign_bias(regs->tccr_a, 0b11, mode, 2);
 			}
 
-			void irq_overflow_enable(bool en) { bits_lvl(*timsk, 1 << 0, en); }
-			void irq_compare_a_enable(bool en) { bits_lvl(*timsk, 1 << 1, en); }
-			void irq_compare_b_enable(bool en) { bits_lvl(*timsk, 1 << 2, en); }
+			/*
+				WGM modes:
 
-			void debug_print_regs() 
+				Value 	Timer mode         TOP
+
+				 0000  	Clock mode         0xFFFF
+				 0001  	PWM  8bit          0x00FF
+				 0010  	PWM  9bit          0x01FF
+				 0011  	PWM 10bit          0x03FF
+				 0100  	CTC                OCRnA
+				 0101  	Fast PWM  8bit     0x00FF
+				 0110  	Fast PWM  9bit     0x01FF
+				 0111  	Fast PWM 10bit     0x03FF
+
+				 1000
+				 #TODO					
+			*/
+
+			enum class TimerMode : uint8_t
+			{
+				Clock     = 0b0000,
+				PWM8      = 0b0001,
+				PWM9      = 0b0010,
+				PWM10     = 0b0011, 
+				CTC       = 0b0100,
+				FastPWM8  = 0b0101,
+				FastPWM9  = 0b0110,
+				FastPWM10 = 0b0111
+			};
+
+			void set_mode(TimerMode mode)
+			{
+				uint8_t aval = 0b11 & (uint8_t)mode;
+				uint8_t bval = 0b11 & ((uint8_t)mode >> 2);
+				bits_mask_assign(		regs->tccr_a, 0b11, aval);
+				bits_mask_assign_bias(	regs->tccr_b, 0b11, bval, 3);
+			}
+
+			void irq_overflow_enable(bool en)
+			{
+				bits_lvl(*timsk, 1 << 0, en); //TOIE
+			}
+
+			void irq_compare_a_enable(bool en)
+			{
+				bits_lvl(*timsk, 1 << 1, en); //OCIEA
+			}
+
+			void irq_compare_b_enable(bool en)
+			{
+				bits_lvl(*timsk, 1 << 2, en); //OCIEB
+			}
+
+			void debug_print_regs()
 			{
 				dpr("TCCR_A: "); dprptr(&regs->tccr_a); dpr(" "); dprbinln(regs->tccr_a);
 				dpr("TCCR_B: "); dprptr(&regs->tccr_b); dpr(" "); dprbinln(regs->tccr_b);
@@ -150,7 +217,8 @@ namespace genos
 	}
 }
 
-namespace periph {
+namespace periph
+{
 #if defined (CHIP_ATMEGA2560)
 	extern genos::avr::timer8 timer0;
 	extern genos::avr::timer8 timer2;

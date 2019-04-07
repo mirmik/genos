@@ -2,7 +2,9 @@
 #define GENOS_AVR_REGS_SPI_H
 
 #include <sys/cdefs.h>
-#include <gxx/util/bits.h>
+
+#include <igris/util/bits.h>
+#include <igris/bug.h>
 
 #ifdef CHIP_ATMEGA2560
 #define MISO_PB   (1<<3)
@@ -75,8 +77,8 @@ static inline uint8_t avr_spi_set_divider(uint8_t div) {
 		case 8:    sp2x = 1; spr1 = 0;  spr0 = 1;   break;
 		case 32:   sp2x = 1; spr1 = 1;  spr0 = 0;   break;
 		//case 64:  sp2x = 1; spr1 = 1;  spr0 = 1;   break;
-		
-		default: panic("a");
+
+		BUG();
 	}
 
 	bits_lvl(SPCR, 1<<SPR0, spr0);

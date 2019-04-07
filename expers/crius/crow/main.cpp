@@ -3,9 +3,6 @@
 #include <drivers/gpio/gpio.h>
 #include <drivers/gpio/pin.h>
 
-#include <gxx/debug/dprint.h>
-#include <gxx/debug/delay.h>
-
 #include <sched/sched.h>
 #include <sched/schedee.h>
 #include <sched/timer.h>
@@ -13,15 +10,11 @@
 #include <crow/tower.h>
 
 #include <drivers/crow/uartgate.h>
-
 #include <drivers/serial/avr_usart.h>
 #include <periph/irqdefs.h>
 
-#include <gxx/util/hexer.h>
-
 #include <sched/api.h>
 
-#include <gxx/trace.h>
 
 //#include <drivers/serial/uartring.h>
 

@@ -3,7 +3,10 @@
 
 #include <drivers/gpio/arduino_pinout.h>
 #include <ralgo/servo/impulse_writer.h>
+#include <ralgo/util/math.h>
 #include <igris/sync/syslock.h>
+
+#include <drivers/timer/avr_timer.h>
 
 #define X_STEP_PIN         54
 #define X_DIR_PIN          55
@@ -45,68 +48,76 @@ namespace ramps
 	const gpio_pin& e_dir = 		PINOUT[E_DIR_PIN];
 	const gpio_pin& e_step = 		PINOUT[E_STEP_PIN];
 
-	struct impulse_driver : public ralgo::impulse_writer<gxx::syslock, int64_t, float>
+	struct impulse_driver : public ralgo::impulse_writer<igris::syslock, int64_t, float>
 	{
 		const gpio_pin& enable_pin;
 		const gpio_pin& dir_pin;
 		const gpio_pin& step_pin;
 
-		int32_t step_width=10000;
-		int32_t step_counter=0;
+		volatile int32_t step_width = 10000;
+		volatile int32_t step_counter = 0;
 
-		bool enabled;
+		volatile uint32_t less_impulses = 0;
+
+		volatile bool enabled = false;
+		
+		volatile uint8_t dirval = 0;
+		volatile int8_t spdsign = 1;
 
 		impulse_driver(const gpio_pin& enable, const gpio_pin& dir, const gpio_pin& step)
 			: enable_pin(enable), dir_pin(dir), step_pin(step)
 		{
 		}
 
-		void start_worker() override {}
-		void stop_worker() override {}
-		void set_speed(float spd) override {}
+		//void start_worker() override {}
+		//void stop_worker() override {}
+		void update_worker() override 
+		{
+			int64_t impulses = target_position - current_position;
+			
+			bool positive = evaluated_speed > 0;
+			less_impulses = impulses > 0 ? impulses : -impulses;
 
-		void enable() { 
-			enable_pin.mode		(GPIO_MODE_OUTPUT); 
-			dir_pin.mode		(GPIO_MODE_OUTPUT); 
-			step_pin.mode		(GPIO_MODE_OUTPUT); 
-			enable_pin.set(0); 
-			dir_pin.set(0); 
-		}
+			spdsign = positive ? 1 : -1;
+			dirval = positive ? 0 : 1;
+			
+			step_width = 1000.0 / (evaluated_speed > 0 ? evaluated_speed : -evaluated_speed);
+			//if (step_width < 200) step_width = 200;
 
-		void step_toggle() 
-		{
-			step_pin.tgl();
-		}
-		
-		void step_enable() 
-		{
-			step_pin.set(1);
-		}
-		
-		void step_disable() 
-		{
-			step_pin.set(0);
+			if (step_width <= 0 || step_counter > step_width) 
+				step_counter = step_width;
 		}
 
-		void serve_enable(int32_t delta) 
+		void enable()
 		{
-			if (enabled) 
+			enable_pin.mode(GPIO_MODE_OUTPUT);
+			dir_pin.mode(GPIO_MODE_OUTPUT);
+			step_pin.mode(GPIO_MODE_OUTPUT);
+			enable_pin.set(0);
+			dir_pin.set(0);
+		}
+
+		void serve(uint16_t delta) __attribute__((always_inline))
+		{
+			if (enabled && 
+				(less_impulses != 0 || target_speed != 0.0))
 			{
 				step_counter -= delta;
-				if (step_counter < 0) 
+
+				if (step_counter < 0)
 				{
 					step_counter += step_width;
-					step_enable();
-				} 
+					dir_pin.set(dirval);
+					step_pin.set(1);
+					less_impulses--;
+					current_position += spdsign;
+				}
 			}
 		}
 
-		void serve_disable() 
+		void print_state() 
 		{
-			if (enabled) 
-			{
-				step_disable();
-			}
+			dprln("tp", target_position, "cp", current_position, "es", evaluated_speed, "ts", target_speed, "sw", step_width, "dv", dirval);
 		}
 	};
 
@@ -115,42 +126,60 @@ namespace ramps
 	impulse_driver y_driver { PINOUT[Y_ENABLE_PIN], PINOUT[Y_DIR_PIN], PINOUT[Y_STEP_PIN] };
 	impulse_driver z_driver { PINOUT[Z_ENABLE_PIN], PINOUT[Z_DIR_PIN], PINOUT[Z_STEP_PIN] };
 
-	template <typename Timer>
-	struct ramps_driver 
+	struct ramps_driver
 	{
-		int delta;
+		using Timer = genos::avr::timer16;
+
+		uint16_t delta;
 		Timer* timer;
 
 		ramps_driver(Timer* timer) : timer(timer) {}
 
-		void init(uint32_t freq)
+		/*
+			Настроить и активировать таймер и прерывания для работы драйвера.
+
+			Устройство начнет работу сразу после запуска перываний.
+		*/
+		int init(uint32_t freq, uint8_t div)
 		{
-			delta = F_CPU / freq;
-			timer->set_freq(freq);
-			timer->regs->ocr_b = timer->regs->ocr_a / 2;
+			int32_t ocr = F_CPU / (freq * div);
+			assert(ocr < 0x03FF);
+			DPRINT(ocr);
+
+			delta = ocr;
+
+			timer->set_mode(Timer::TimerMode::CTC);
+			timer->set_compare_a(ocr);
+			timer->set_compare_b(ocr/2);
+
 			genos::irqtable::set_handler(timer->irqs.compa, &ramps_driver::isr_enabler, this);
 			genos::irqtable::set_handler(timer->irqs.compb, &ramps_driver::isr_disabler, this);
+			
 			timer->irq_compare_a_enable(true);
 			timer->irq_compare_b_enable(true);
 
 			x_driver.enable();
 			y_driver.enable();
 			z_driver.enable();
+		
+			timer->set_divider(div);
+		
+			return 0;
 		}
 
-		void isr_enabler() 
+		void isr_enabler()
 		{
-			x_driver.serve_enable(delta);
-			y_driver.serve_enable(delta);
-			z_driver.serve_enable(delta);
+			x_driver.serve(delta);
+			y_driver.serve(delta);
+			z_driver.serve(delta);
 		}
 
-		void isr_disabler() 
+		void isr_disabler()
 		{
-			x_driver.serve_disable();
-			y_driver.serve_disable();
-			z_driver.serve_disable();
-		}		
+			x_driver.step_pin.set(0);
+			y_driver.step_pin.set(0);
+			z_driver.step_pin.set(0);
+		}
 	};
 }
 

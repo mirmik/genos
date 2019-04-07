@@ -15,7 +15,7 @@ licant.module("genos.drivers.avr",
 		"genos.drivers.spi.avr", 
 		"genos.drivers.usart.avr",
 		"genos.drivers.timer.avr",
-		#"genos.drivers.gpio.avr",
+		"genos.drivers.gpio.avr",
 	],
 )
 

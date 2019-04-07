@@ -4,8 +4,6 @@
 #include <drivers/gpio/pin.h>
 #include <avr/io.h>
 
-#include <gxx/panic.h>
-
 #include <stdint.h>
 #include <errno.h>
 #include <assert.h>
