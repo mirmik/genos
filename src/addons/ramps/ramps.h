@@ -7,6 +7,9 @@
 #include <igris/sync/syslock.h>
 
 #include <drivers/timer/avr_timer.h>
+#include <emergency_stop.h>
+
+#include <limits.h>
 
 #define X_STEP_PIN         54
 #define X_DIR_PIN          55
@@ -81,11 +84,27 @@ namespace ramps
 			spdsign = positive ? 1 : -1;
 			dirval = positive ? 0 : 1;
 			
-			step_width = 1000.0 / (evaluated_speed > 0 ? evaluated_speed : -evaluated_speed);
-			//if (step_width < 200) step_width = 200;
+			if (evaluated_speed != 0) {
+				step_width = 1000.0 / (evaluated_speed > 0 ? evaluated_speed : -evaluated_speed);
+				//if (step_width < 200) step_width = 200;
 
-			if (step_width <= 0 || step_counter > step_width) 
-				step_counter = step_width;
+				//dprln(step_width);
+
+				if (step_width < 50) 
+				{
+					dprln("step_width < 50");
+					emergency_stop();
+					abort();
+				}
+
+				if (step_width <= 0 || step_counter > step_width) 
+					step_counter = step_width;
+			}
+			else 
+			{
+				step_width = LONG_MAX;
+				step_counter = LONG_MAX;
+			}
 		}
 
 		void enable()
@@ -99,6 +118,8 @@ namespace ramps
 
 		void serve(uint16_t delta) __attribute__((always_inline))
 		{
+			assert(delta < step_width);
+
 			if (enabled && 
 				(less_impulses != 0 || target_speed != 0.0))
 			{
