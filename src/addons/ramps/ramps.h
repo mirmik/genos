@@ -173,6 +173,8 @@ namespace ramps
 
 			delta = ocr;
 
+			periph::timer3.set_mode(Timer::TimerMode::Clock);
+			
 			timer->set_mode(Timer::TimerMode::CTC);
 			timer->set_compare_a(ocr);
 			timer->set_compare_b(ocr/2);
@@ -192,11 +194,19 @@ namespace ramps
 			return 0;
 		}
 
+		volatile uint32_t timer3_value;
+
 		void isr_enabler()
 		{
+			//periph::timer3.set_value(0);
+			//periph::timer3.set_divcode(1);
+			
 			x_driver.serve(delta);
 			y_driver.serve(delta);
 			z_driver.serve(delta);
+
+			//periph::timer3.set_divcode(0);
+			//timer3_value = periph::timer3.value();
 		}
 
 		void isr_disabler()

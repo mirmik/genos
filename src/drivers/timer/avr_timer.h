@@ -89,6 +89,12 @@ namespace genos
 				return 0;
 			}
 
+			int set_divcode(uint8_t code) 
+			{
+				bits_mask_assign(regs->tccr_b, 7, code);
+				return 0;
+			}
+
 			/// Enable overflow irq.
 			int irq_ovf_enable(bool en)
 			{
