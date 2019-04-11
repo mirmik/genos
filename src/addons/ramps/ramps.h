@@ -35,6 +35,8 @@
 
 namespace ramps
 {
+	void emergency_stop();
+
 	const gpio_pin& x_enable = 		PINOUT[X_ENABLE_PIN];
 	const gpio_pin& x_dir = 		PINOUT[X_DIR_PIN];
 	const gpio_pin& x_step = 		PINOUT[X_STEP_PIN];
@@ -93,13 +95,13 @@ namespace ramps
 				if (step_width < 50) 
 				{
 					dprln("step_width < 50");
-					emergency_stop();
-					abort();
+					ramps::emergency_stop();
 				}
 
 				if (step_width <= 0 || step_counter > step_width) 
 					step_counter = step_width;
 			}
+			
 			else 
 			{
 				step_width = LONG_MAX;
@@ -119,6 +121,8 @@ namespace ramps
 		void serve(uint16_t delta) __attribute__((always_inline))
 		{
 			assert(delta < step_width);
+
+//			dprln(delta, step_width);
 
 			if (enabled && 
 				(less_impulses != 0 || target_speed != 0.0))
@@ -151,7 +155,7 @@ namespace ramps
 	{
 		using Timer = genos::avr::timer16;
 
-		uint16_t delta;
+		volatile uint16_t delta;
 		Timer* timer;
 
 		ramps_driver(Timer* timer) : timer(timer) {}
