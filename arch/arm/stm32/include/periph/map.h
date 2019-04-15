@@ -145,18 +145,6 @@
 #define HASH_DIGEST_BASE      (AHB2PERIPH_BASE + 0x60710)
 #define RNG_BASE              (AHB2PERIPH_BASE + 0x60800)
 
-#define GPIOA ((struct gpio_regs *) GPIOA_BASE)
-#define GPIOB ((struct gpio_regs *) GPIOB_BASE)
-#define GPIOC ((struct gpio_regs *) GPIOC_BASE)
-#define GPIOD ((struct gpio_regs *) GPIOD_BASE)
-#define GPIOE ((struct gpio_regs *) GPIOE_BASE)
-#define GPIOF ((struct gpio_regs *) GPIOF_BASE)
-#define GPIOG ((struct gpio_regs *) GPIOG_BASE)
-#define GPIOH ((struct gpio_regs *) GPIOH_BASE)
-#define GPIOI ((struct gpio_regs *) GPIOI_BASE)
-#define GPIOJ ((struct gpio_regs *) GPIOJ_BASE)
-#define GPIOK ((struct gpio_regs *) GPIOK_BASE)
-
 //#define RCC_BASE        0x40023800
 #define RCC ((struct rcc_regs *) RCC_BASE)
 //#define RCC_AHB1ENR     (volatile uint32_t*)(RCC_BASE + 0x30) 

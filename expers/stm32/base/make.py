@@ -6,18 +6,26 @@ licant.include("genos")
 licant.include("igris")
 licant.include("nos")
 
-arm_binutils = licant.cxx_make.make_gcc_binutils("arm-none-eabi")
-
-licant.cxx_application("firmware.bin",
-	binutils = arm_binutils,
-	sources = ["src/main.cpp"], 
+licant.cxx_application("firmware",
+	binutils = licant.cxx_make.make_gcc_binutils("arm-none-eabi"),
+	sources = ["main.cpp"], 
 
 	mdepends = [
 		"genos.include",
-		"genos.irqtbl",
+		#"genos.irqtbl",
+
+		"igris.include",
+		"igris.libc",
+		"igris.std",
+		"igris.posix",
+		"igris.bug",
+		("igris.dprint", "diag"),
+
+		("genos.board", "rl_syncro_v2"),
+		"genos.drivers.stm32"
 	],
 
 	cxx_flags = "-O3",
 )
 
-licant.ex("firmware.bin")
+licant.ex("firmware")

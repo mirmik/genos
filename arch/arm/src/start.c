@@ -1,13 +1,13 @@
 /*	STM32 Start Label */
 
-#include <asm/irq.h>
+#include <arch/irq.h>
 #include <string.h>
 
 typedef void (*func_ptr)(void); 
 
-extern unsigned char _data_virtual_address;
-extern unsigned char _data_load_address;
-extern unsigned char _data_size;
+extern unsigned char _sidata;
+extern unsigned char _sdata;
+extern unsigned char _edata;
 
 extern unsigned char _sbss;
 extern unsigned char _ebss;
@@ -30,10 +30,10 @@ void cxx_invoke_fini_array(void) {
 }
 
 void __start(void) {
-	global_irqs_disable();
+	irqs_disable();
 
 	/*data section copy*/
-	memcpy(&_data_virtual_address, &_data_load_address, (unsigned int) &_data_size);
+	memcpy(&_sdata, &_sidata, _edata - _sdata);
 	
 	/*bss section init*/
 	unsigned int bss_size = &_ebss - &_sbss;
@@ -49,6 +49,6 @@ void __start(void) {
 	cxx_invoke_fini_array();
 
 	/*programm end stub*/
-	global_irqs_disable();
+	irqs_disable();
 	for( ; ; );
 }

@@ -1,7 +1,7 @@
 #include <periph/map.h>
 #include <periph/regs/gpio.h>
 #include <periph/regs/usart.h>
-#include <genos/panic.h>
+#include <igris/bug.h>
 
 void rcc_reset() {
 	RCC->CR |= 		(uint32_t)0x00000001;
@@ -16,13 +16,13 @@ void rcc_enable_gpio(struct gpio_regs* g) {
 	switch ((uintptr_t)g) {
 		case (uintptr_t)GPIOD : RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN; break;
 		case (uintptr_t)GPIOA : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; break;
-		default: panic("rcc_enable_gpio");
+		default: BUG();
 	}
 }
 
 void rcc_enable_usart(struct usart_regs* u) {
 	switch ((uintptr_t)u) {
 		case (uintptr_t)USART2 : RCC->APB1ENR |= RCC_APB1ENR_USART2EN; break;
-		default: panic("rcc_enable_usart");
+		default: BUG();
 	}
 }

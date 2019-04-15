@@ -1,6 +1,5 @@
-#include "drivers/gpio.h"
-#include <gxx/debug/dprint.h>
-#include <gxx/util/bits.h>
+#include <drivers/gpio/gpio.h>
+#include <igris/util/bits.h>
 #include <assert.h>
 
 void gpio_set_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {

@@ -1,10 +1,10 @@
 #include <hal/arch.h>
 #include <hal/irq.h>
-#include <hal/systime.h>
-#include <drivers/stm32/rcc.h>
-#include <gxx/debug/dprint.h>
+#include <arch/rcc.h>
 
-#include <kernel/diag.h>
+#include <periph/map.h>
+
+#include <diag/diag.h>
 
 void rcc_reset();
 
@@ -13,7 +13,7 @@ extern struct diag_ops diag_operations;
 //uint32_t generator_frequency;
 
 //int stm32_diag_init();
-int stm32_diag_putchar(char c);
+int stm32_diag_putchar(void*, char c);
 
 void stm32_systime_init();
 
@@ -22,7 +22,7 @@ void arch_diag_init() {
 //	diag_operations.init = stm32_diag_init;
 	diag_operations.putc = stm32_diag_putchar;
 	diag_operations.write = diag_write_stub;
-	current_diag = &diag_operations;
+	diag_setup(&diag_operations, NULL);
 	//diag_init();
 }
 
@@ -100,6 +100,6 @@ void arch_shutdown(arch_shutdown_mode_t mode) {
 		case ARCH_SHUTDOWN_MODE_ABORT:
 		break;
 	};
-	global_irqs_disable();
+	irqs_disable();
 	while(1);
 }
