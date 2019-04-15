@@ -1,8 +1,6 @@
 #ifndef ARCH_CHIP_STM32
 #define ARCH_CHIP_STM32
 
-#include <genos_configure.h>
-
 #define CONFIG_STM32
 
 #if defined CONFIG_ARCH_CHIP_STM32F407 
