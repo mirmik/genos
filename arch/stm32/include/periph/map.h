@@ -7,6 +7,7 @@
 #include <periph/regs/rcc.h>
 #include <periph/regs/pwr.h>
 #include <periph/regs/flash.h>
+#include <periph/regs/systick.h>
 
 #define FLASH_BASE            ((uint32_t)0x08000000) /*!< FLASH(up to 1 MB) base address in the alias region                         */
 #define CCMDATARAM_BASE       ((uint32_t)0x10000000) /*!< CCM(core coupled memory) data RAM(64 KB) base address in the alias region  */
@@ -148,6 +149,38 @@
 //#define RCC_BASE        0x40023800
 #define RCC ((struct rcc_regs *) RCC_BASE)
 //#define RCC_AHB1ENR     (volatile uint32_t*)(RCC_BASE + 0x30) 
+
+/* Memory mapping of Cortex-M4 Hardware */
+#define SCS_BASE            (0xE000E000UL)                            /*!< System Control Space Base Address  */
+#define ITM_BASE            (0xE0000000UL)                            /*!< ITM Base Address                   */
+#define DWT_BASE            (0xE0001000UL)                            /*!< DWT Base Address                   */
+#define TPI_BASE            (0xE0040000UL)                            /*!< TPI Base Address                   */
+#define CoreDebug_BASE      (0xE000EDF0UL)                            /*!< Core Debug Base Address            */
+#define SYSTICK_BASE        (SCS_BASE +  0x0010UL)                    /*!< SysTick Base Address               */
+#define NVIC_BASE           (SCS_BASE +  0x0100UL)                    /*!< NVIC Base Address                  */
+#define SCB_BASE            (SCS_BASE +  0x0D00UL)                    /*!< System Control Block Base Address  */
+
+//#define SCnSCB              ((SCnSCB_Type    *)     SCS_BASE      )   /*!< System control Register not in SCB */
+//#define SCB                 ((SCB_Type       *)     SCB_BASE      )   /*!< SCB configuration struct           */
+#define SYSTICK ((struct systick_regs*) SYSTICK_BASE)
+//#define NVIC                ((NVIC_Type      *)     NVIC_BASE     )   /*!< NVIC configuration struct          */
+//#define ITM                 ((ITM_Type       *)     ITM_BASE      )   /*!< ITM configuration struct           */
+//#define DWT                 ((DWT_Type       *)     DWT_BASE      )   /*!< DWT configuration struct           */
+//#define TPI                 ((TPI_Type       *)     TPI_BASE      )   /*!< TPI configuration struct           */
+//#define CoreDebug           ((CoreDebug_Type *)     CoreDebug_BASE)   /*!< Core Debug configuration struct    */
+
+
+#define GPIOA ((struct gpio_regs *) GPIOA_BASE)
+#define GPIOB ((struct gpio_regs *) GPIOB_BASE)
+#define GPIOC ((struct gpio_regs *) GPIOC_BASE)
+#define GPIOD ((struct gpio_regs *) GPIOD_BASE)
+#define GPIOE ((struct gpio_regs *) GPIOE_BASE)
+#define GPIOF ((struct gpio_regs *) GPIOF_BASE)
+#define GPIOG ((struct gpio_regs *) GPIOG_BASE)
+#define GPIOH ((struct gpio_regs *) GPIOH_BASE)
+#define GPIOI ((struct gpio_regs *) GPIOI_BASE)
+#define GPIOJ ((struct gpio_regs *) GPIOJ_BASE)
+#define GPIOK ((struct gpio_regs *) GPIOK_BASE)
 
 #define USART1 ((struct usart_regs *) USART1_BASE) 
 #define USART2 ((struct usart_regs *) USART2_BASE)

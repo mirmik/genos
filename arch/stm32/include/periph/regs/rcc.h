@@ -3,8 +3,6 @@
 
 #include <inttypes.h>
 
-//typedef uint16_t gpio_mask_t;
-
 struct rcc_regs {
   volatile uint32_t CR;            /*!< RCC clock control register,                                  Address offset: 0x00 */
   volatile uint32_t PLLCFGR;       /*!< RCC PLL configuration register,                              Address offset: 0x04 */

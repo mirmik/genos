@@ -6,11 +6,12 @@
 typedef int64_t time_t;
 
 extern volatile uint64_t __jiffies;
-extern uint32_t systime_frequency;
 
 __BEGIN_DECLS
 
-extern void system_tick();
+void systime_set_frequency(uint32_t freq);
+
+static inline void system_tick() { ++__jiffies; }
 
 time_t jiffies();
 time_t millis();

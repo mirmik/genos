@@ -6,7 +6,9 @@
 
 #include <igris/dprint.h>
 
-unsigned char __interrupt_context = 0;
+volatile unsigned char __interrupt_context = 0;
+
+// Длина таблицы определяется в periph/irqdefs.h
 struct irq_record irqtable[NR_IRQS];
 
 void do_irq(uint8_t irq) {
@@ -20,7 +22,7 @@ unsigned char is_interrupt_context() {
 	return __interrupt_context;
 }
 
-void irq_stub(void* irqno) {
+void irqtable_stub(void* irqno) {
 	irqs_disable();
 	debug_print("IRQ_STUB_");
 	debug_printhex_ptr(irqno);
@@ -30,27 +32,13 @@ void irq_stub(void* irqno) {
 
 void irqtable_init() {
 	for (int i = 0; i < NR_IRQS; ++i) {
-		irqtable[i].handler = irq_stub;
+		irqtable[i].handler = &irqtable_stub;
 		irqtable[i].handler_arg = (void*)i;
 		irqtable[i].count = 0;
 	}
 }
 
-void irq_set_handler(int irqno, irq_handler_t handler, void* handler_arg) {
+void irqtable_set_handler(int irqno, irq_handler_t handler, void* handler_arg) {
 	irqtable[irqno].handler = handler;
 	irqtable[irqno].handler_arg = handler_arg;
 }
-
-#ifdef __cplusplus
-namespace genos 
-{
-	namespace irqtable 
-	{
-		void set_handler(int irqno, irq_handler_t handler, void* arg) 
-		{
-			::irqtable[irqno].handler = handler;
-			::irqtable[irqno].handler_arg = arg;
-		}
-	}
-}
-#endif

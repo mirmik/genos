@@ -1,6 +1,6 @@
 /*	STM32 Start Label */
 
-#include <arch/irq.h>
+#include <asm/irq.h>
 #include <string.h>
 
 typedef void (*func_ptr)(void); 

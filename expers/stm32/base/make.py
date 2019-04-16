@@ -12,13 +12,13 @@ licant.cxx_application("firmware",
 
 	mdepends = [
 		"genos.include",
-		#"genos.irqtbl",
 
 		"igris.include",
 		"igris.libc",
 		"igris.std",
 		"igris.posix",
 		"igris.bug",
+		("igris.syslock", "genos.atomic"),
 		("igris.dprint", "diag"),
 
 		("genos.board", "rl_syncro_v2"),

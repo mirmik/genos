@@ -2,27 +2,26 @@
 #include <igris/sync/syslock.h>
 
 volatile uint64_t __jiffies;
-uint32_t systime_frequency;
+uint32_t system_frequency = 1;
+uint32_t jiffies_to_millis = 1;
 
-void system_tick() { ++__jiffies; }
+#define FREQSHIFT 8
 
-///jiffies
 time_t jiffies() { 
 	system_lock();
 	time_t ret = __jiffies;
 	system_unlock();
 	return ret; 
 }
-/*
-///Перевести число миллисекунд в jiffies.
-systime::time_t systime::milliseconds(uint32_t ms) { return ms * frequency / 1000; }
 
-///Перевести число микросекунд в jiffies.
-systime::time_t systime::microseconds(uint64_t ms) { return ms * frequency / 1000000; }
-*/
+void systime_set_frequency(uint32_t freq) 
+{
+	system_frequency   = freq;	
+	jiffies_to_millis  = (1000 << FREQSHIFT) / freq;
+}
 
 time_t millis() {
-	return jiffies() * 1000 / systime_frequency;
+	return (jiffies() * jiffies_to_millis) >> FREQSHIFT;
 }
 
 void delay(double d) {
@@ -32,5 +31,5 @@ void delay(double d) {
 }
 
 time_t ms2jiffies(uint32_t ms) {
-	return ms * systime_frequency / 1000;
+	return ms / jiffies_to_millis;
 }

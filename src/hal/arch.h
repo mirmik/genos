@@ -3,7 +3,7 @@
 
 #include <igris/compiler.h>
 #include <sys/cdefs.h>
-#include <arch/arch.h>
+#include <asm/arch.h>
 
 typedef enum {
 	ARCH_SHUTDOWN_MODE_HALT,
@@ -15,10 +15,11 @@ __BEGIN_DECLS
 
 void arch_init();
 
-void __NORETURN arch_halt(void);
 void __NORETURN arch_shutdown(arch_shutdown_mode_t mode);
 
-void emergency_stop();
+static inline void arch_halt() { arch_shutdown(ARCH_SHUTDOWN_MODE_HALT); }
+static inline void arch_reboot() { arch_shutdown(ARCH_SHUTDOWN_MODE_REBOOT); }
+static inline void arch_abort() { arch_shutdown(ARCH_SHUTDOWN_MODE_ABORT); }
 
 __END_DECLS
 
