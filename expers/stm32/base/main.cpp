@@ -10,6 +10,7 @@
 #include <systime/systime.h>
 
 #include <asm/arch.h>
+#include <igris/dprint.h>
 
 int main() 
 {
@@ -24,10 +25,12 @@ int main()
 	while(1) 
 	{
 		delay(1000);
+		debug_print("HelloWorld");
 		//cpu_delay(800000);
 		gpio_set_level(GPIOD, 0b1111 << 12, 0);		
 		//cpu_delay(800000);
 		delay(1000);
+		debug_print("HelloWorld");
 		gpio_set_level(GPIOD, 0b1111 << 12, 1);
 	}
 }

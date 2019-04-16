@@ -29,6 +29,13 @@ void arch_init()
 	RCC->APB2RSTR = 0;
 	i = 1000; while (--i);
 
+	//rcc_declare_AHB1RSTR_frequency(8000000);
+	//rcc_declare_APB1RSTR_frequency(8000000);
+	//rcc_declare_APB2RSTR_frequency(8000000);
+
+	//Активируем отладочную консоль на интерфейсе UART2
+	rcc_enable_usart(USART2);
+	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
 	stm32_diag_init(USART2);
 
 	// Настроен на встроенный генератор 8МГц
