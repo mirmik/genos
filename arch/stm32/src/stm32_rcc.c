@@ -3,6 +3,8 @@
 #include <periph/regs/usart.h>
 #include <igris/bug.h>
 
+uint32_t stm32_declared_freq[5];
+
 void rcc_reset() {
 	RCC->CR |= 		(uint32_t)0x00000001;
 	RCC->CFGR = 	(uint32_t)0x00000000;

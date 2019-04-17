@@ -10,6 +10,8 @@
 
 #include <hal/irqtable.h>
 
+#include <string.h>
+
 void rcc_reset();
 
 void arch_init()
@@ -34,9 +36,14 @@ void arch_init()
 	//rcc_declare_APB2RSTR_frequency(8000000);
 
 	//Активируем отладочную консоль на интерфейсе UART2
-	rcc_enable_usart(USART2);
-	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
-	stm32_diag_init(USART2);
+	//Не активно, потому что инициализацию терминала должен
+	//выполнять board, ибо стандартного терминала нет.
+//	rcc_enable_usart(USART2);
+//	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
+//	stm32_diag_init(USART2);
+
+	memset(stm32_declared_freq, 0, sizeof(stm32_declared_freq[0]) * 5);
+	stm32_declared_freq[DECLARED_FREQ_HSI_NO] = 8000000;
 
 	// Настроен на встроенный генератор 8МГц
 	// Период - 1мс.
@@ -83,7 +90,7 @@ int stm32_systick_config(uint32_t ticks)
  *	Q определяет выход 48Mhz, предназначенный для контроля частоты.  48MHzOutput = HSE / Mkoeff * Nkoeff / Pkoeff
  */
 //unsigned stm32_clock_(unsigned Mkoeff, unsigned Nkoeff, unsigned Pkoeff, unsigned Qkoeff, unsigned HSE)
-unsigned stm32_external_generator_setup(struct stm32_pll_settings* s)
+unsigned stm32_init_pll_clocking(struct stm32_pll_settings* s)
 {
 	// Включаем масштабирование регулятора напряжения.
 	// Необходимо для высоких частот ???

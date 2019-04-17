@@ -17,6 +17,7 @@ int main()
 	board_init();
 	
 	rcc_enable_gpio(GPIOD);
+	
 	gpio_settings(GPIOD, 0b1111 << 12, GPIO_MODE_OUTPUT);
 	gpio_set_level(GPIOD, 0b1111 << 12, 0);
 

@@ -19,7 +19,7 @@ struct stm32_pll_settings
 	uint32_t Qkoeff;
 };
 
-unsigned stm32_external_generator_setup(struct stm32_pll_settings*);
+unsigned stm32_init_pll_clocking(struct stm32_pll_settings*);
 int stm32_systick_config(uint32_t ticks);
 
 __END_DECLS
