@@ -30,6 +30,16 @@ int main()
 		dprln("HelloWorld");
 		gpio_write(GPIOD, 0b1111 << 12, 0);		
 		delay(1000);
-		gpio_write(GPIOD, 0b1111 << 12, 1);
+		//gpio_write(GPIOD, 0b1111 << 12, 1);
+		
+		//dprln(board_green_led.mask);
+		//dprln(board_green_led.mask);
+		//dprln(board_yellow_led.mask);
+		//dprln(board_blue_led.mask);
+
+		gpio_pin_write(&board_red_led, 1);
+		gpio_pin_write(&board_green_led, 1);
+		gpio_pin_write(&board_yellow_led, 1);
+		gpio_pin_write(&board_blue_led, 1);
 	}
 }

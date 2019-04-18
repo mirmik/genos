@@ -11,6 +11,11 @@
 
 #include <periph/map.h>
 
+GPIO_PIN(board_red_led, GPIOD, 13);
+GPIO_PIN(board_green_led, GPIOD, 12);
+GPIO_PIN(board_yellow_led, GPIOD, 14);
+GPIO_PIN(board_blue_led, GPIOD, 15);
+
 void board_init() 
 {
 	arch_init();

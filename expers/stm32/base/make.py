@@ -8,7 +8,7 @@ licant.include("nos")
 
 licant.cxx_application("firmware",
 	binutils = licant.cxx_make.make_gcc_binutils("arm-none-eabi"),
-	sources = ["main.cpp"], 
+	sources = ["main.c"], 
 
 	mdepends = [
 		"genos.include",

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <periph/regs/gpio.h>
+#include <asm/gpio.h>
 
 typedef struct gpio_regs gpio_t;
 
