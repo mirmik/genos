@@ -4,11 +4,54 @@
 #include <periph/regs/gpio.h>
 #include <periph/map.h>
 
-#define GPIO_MODE_IN_PULL_UP             	((int32_t)2 << 0)
-#define GPIO_MODE_IN_PULL_DOWN             	((int32_t)4 << 0)
-#define GPIO_MODE_OUT_OPEN_DRAIN            ((int32_t)2 << 16)
-#define GPIO_MODE_ALTERNATE	            	((int32_t)1 << 24)
+#include <igris/util/bits.h>
 
-int gpio_settings_alternate(struct gpio_regs *g, gpio_mask_t mask, int32_t alternate);
+//#define GPIO_MODE_IN_PULL_UP             	((int32_t)2 << 0)
+//#define GPIO_MODE_IN_PULL_DOWN             	((int32_t)4 << 0)
+//#define GPIO_MODE_OUT_OPEN_DRAIN            ((int32_t)2 << 16)
+//#define GPIO_MODE_ALTERNATE	            	((int32_t)1 << 24)
+
+//int gpio_settings_alternate(struct gpio_regs *g, gpio_mask_t mask, int32_t alternate);
+
+enum stm32_gpio_maxspeed_e 
+{
+	STM32_GPIO_2MHZ = 0b10,
+	STM32_GPIO_10MHZ = 0b01,
+	STM32_GPIO_50MHZ = 0b11
+};
+
+
+void stm32_gpio_set_maxspeed(struct gpio_regs* regs, uint16_t map,
+                             enum stm32_gpio_maxspeed_e maxspeed);
+
+static inline
+void stm32_gpio_write(struct gpio_regs* g, uint32_t mask,
+                      unsigned char level)
+{
+	if (level) g->ODR |= mask;
+	else g->ODR &= ~mask;
+}
+
+static inline
+uint32_t stm32_gpio_read(struct gpio_regs* g, uint32_t mask)
+{
+	return g->ODR & mask;
+}
+
+static inline
+void stm32_gpio_toggle(struct gpio_regs* g, uint32_t mask)
+{
+	g->ODR ^= mask;
+}
+
+static inline
+int stm32_gpio_set_alternate(struct gpio_regs *g, uint32_t mask, int32_t alternate)
+{
+	uint16_t lmask = (mask & 0x00FF);
+	uint16_t hmask = (mask & 0xFF00) >> 8;
+	alternate = alternate & 0xF;
+	bits_masked_assign_multimap(g->AFR[0], lmask, 0x7, 4);
+	bits_masked_assign_multimap(g->AFR[1], hmask, 0x7, 4);
+}
 
 #endif

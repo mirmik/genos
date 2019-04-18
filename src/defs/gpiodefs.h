@@ -1,23 +1,16 @@
-#ifndef DRIVERS_GPIO_H
-#define DRIVERS_GPIO_H
+#ifndef DEFS_GPIO_H
+#define DEFS_GPIO_H
 
-//#include <kernel/irq.h>
-#include <__local__/arch_gpio.h>
-#include <sys/cdefs.h>
+/*
+	В этот файл вынесены общие настройки большинства реализуаций gpio
+	с этими настройками работает драйвер gpio_settings.
 
-#include <defs/gpiodefs.h>
-
-//struct gpio;
-
-typedef __gpio_mask_t gpio_mask_t;
+	Более тонкая настройка может производиться в asm заголовках.
+*/
 
 #define GPIO_MODE_IN_SECTION        0x000000FF
 #define GPIO_MODE_OUT_SECTION       0x0000FF00
-#define GPIO_MODE_INT_SECTION       0xFF000000
-
-#ifndef GPIO_MODE_ALTERNATE
-#define GPIO_MODE_ALTERNATE     	0x00010000
-#endif
+//#define GPIO_MODE_INT_SECTION       0xFF000000
 
 #ifndef GPIO_MODE_INPUT
 #define GPIO_MODE_INPUT             0x00000001
@@ -71,24 +64,5 @@ typedef __gpio_mask_t gpio_mask_t;
 #ifndef GPIO_MODE_IN_INT_DIS
 #define GPIO_MODE_IN_INT_DIS        (1 << 25)
 #endif*/
-
-__BEGIN_DECLS
-
-//extern struct gpio *gpio_by_num(int num_port);
-
-extern int gpio_settings(gpio_t *gpio, gpio_mask_t mask, uint32_t mode);
-
-extern void gpio_set_level(gpio_t *gpio, gpio_mask_t mask, uint8_t level);
-extern gpio_mask_t gpio_get_level(gpio_t *gpio, gpio_mask_t mask);
-
-extern void gpio_toggle(gpio_t *gpio, gpio_mask_t mask);
-
-//extern int gpio_pin_irq_attach(struct gpio *gpio, gpio_mask_t mask,
-//		irq_handler_t pin_handler, int mode, void *data);
-
-//extern int gpio_pin_irq_detach(struct gpio *gpio, gpio_mask_t mask,
-//		irq_handler_t pin_handler, int mode);
-
-__END_DECLS
 
 #endif

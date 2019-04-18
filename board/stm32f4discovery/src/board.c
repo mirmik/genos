@@ -35,6 +35,8 @@ void board_init()
 	rcc_enable_gpio(GPIOA);
 	rcc_enable_gpio(GPIOD);
 
+	gpio_settings(GPIOD, (0b1111 << 12), GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
+
 	gpio_settings(GPIOA, (1 << 2 | 1 << 3), GPIO_MODE_ALTERNATE);
 	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_2MHZ);
 	stm32_gpio_set_alternate(GPIOA, (1 << 2 | 1 << 3), 7);

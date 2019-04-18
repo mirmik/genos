@@ -6,6 +6,8 @@
 
 #include <periph/regs/usart.h>
 
+#define HSI_FREQ 8000000
+
 __BEGIN_DECLS
 
 void arch_init();

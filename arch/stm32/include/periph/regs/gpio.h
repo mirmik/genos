@@ -2,8 +2,11 @@
 #define STM32_GPIO_REGS_H
 
 #include <inttypes.h>
+#include <asm/chip.h>
 
 typedef uint16_t __gpio_mask_t;
+
+#if (defined CHIP_STM32F3XX) || (defined CHIP_STM32F4XX)  
 
 struct gpio_regs {
 	volatile uint32_t MODER;    /*!< GPIO port mode register,               Address offset: 0x00      */
@@ -17,5 +20,9 @@ struct gpio_regs {
 	volatile uint32_t LCKR;     /*!< GPIO port configuration lock register, Address offset: 0x1C      */
 	volatile uint32_t AFR[2];   /*!< GPIO alternate function registers,     Address offset: 0x20-0x24 */
 };
+
+#else
+#	error "Wrong chip family"
+#endif
 
 #endif

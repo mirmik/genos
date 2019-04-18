@@ -1,5 +1,5 @@
-#ifndef RL_SYNCRO_V2_BOARD
-#define RL_SYNCRO_V2_BOARD
+#ifndef STM32F4DISCOVERY_V2_BOARD
+#define STM32F4DISCOVERY_V2_BOARD
 
 #include <sys/cdefs.h>
 

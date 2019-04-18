@@ -1,50 +1,22 @@
-#include "drivers/gpio.h"
-#include <gxx/debug/dprint.h>
-#include <gxx/util/bits.h>
-#include <assert.h>
+#include <asm/gpio.h>
+#include <igris/util/bits.h>
 
-void gpio_set_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {
-	if (level) g->ODR |= mask;
-	else g->ODR &= ~mask;	
-}
+void stm32_gpio_set_maxspeed(struct gpio_regs* regs, uint16_t map,
+                             enum stm32_gpio_maxspeed_e maxspeed)
+{
+#if defined CHIP_STM32F1XX || defined CHIP_STM32F2XX
 
-gpio_mask_t gpio_get_level(struct gpio_regs* g, gpio_mask_t mask) {
-	return g->ODR & mask;
-}
+	uint8_t hmap = (map & 0xFF00) >> 8;
+	uint8_t lmap = map & 0x00FF;
 
-void gpio_tgl_level(struct gpio_regs* g, gpio_mask_t mask) {
-	g->ODR ^= mask;	
-}
+	bits_masked_assign_multimap(regs->CRL, lmap, maxspeed, 4);
+	bits_masked_assign_multimap(regs->CRH, hmap, maxspeed, 4);
 
-int gpio_settings(struct gpio_regs * gpio, gpio_mask_t mask, uint32_t mode) {
-	int mode_val = 0;
-	assert(gpio);
+#elif defined CHIP_STM32F3XX || defined CHIP_STM32F4XX
 
-	if ((mode & GPIO_MODE_OUT_SECTION) &&
-		(mode & GPIO_MODE_IN_SECTION)) { /* mode is incorrect */
-		return -1;
-	}
+	bits_masked_assign_multimap(regs->OSPEEDR, map, maxspeed, 2);
 
-	if (mode & GPIO_MODE_INPUT) {
-		mode_val = 0x00;
-
-	} else if (mode & GPIO_MODE_OUTPUT) {
-		mode_val = 0b01;
-	
-	} else if (mode & GPIO_MODE_ALTERNATE) {
-		mode_val = 0b10;
-	}
-
-	bits_mask_assign_multimap_uint32(gpio->MODER, mask, mode_val, 2);
-
-	return 0;
-}
-
-int gpio_settings_alternate(struct gpio_regs *g, gpio_mask_t mask, int32_t alternate) {
-	uint16_t lmask = (mask & 0x0000FFFF);
-	uint16_t hmask = (mask & 0xFFFF0000) >> 16;
-	alternate = alternate & 0xF;
-	g->AFR[1] |= bits_multimap_uint32(hmask, alternate, 4);
-	bits_mask_assign_multimap_uint32(g->AFR[0], lmask, 0x7, 4);
-	bits_mask_assign_multimap_uint32(g->AFR[1], hmask, 0x7, 4);
+#else
+#	error "Wrong family"
+#endif
 }

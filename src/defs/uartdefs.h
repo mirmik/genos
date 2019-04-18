@@ -1,0 +1,12 @@
+#ifndef GENOS_DEFS_UARTDEFS_H
+#define GENOS_DEFS_UARTDEFS_H
+
+enum uart_stopbits_e 
+{	
+	UART_STOPBITS_ONE = 1,
+	UART_STOPBITS_TWO = 2,
+	UART_STOPBITS_HALF,		
+	UART_STOPBITS_ONE_AND_HALF
+};
+
+#endif

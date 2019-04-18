@@ -42,12 +42,9 @@ void arch_init()
 //	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
 //	stm32_diag_init(USART2);
 
-	memset(stm32_declared_freq, 0, sizeof(stm32_declared_freq[0]) * 5);
-	stm32_declared_freq[DECLARED_FREQ_HSI_NO] = 8000000;
-
 	// Настроен на встроенный генератор 8МГц
 	// Период - 1мс.
-	stm32_systick_config(8000);
+	stm32_systick_config(HSI_FREQ / 1000);
 	systime_set_frequency(1000);
 
 	// Инициализируем таблицу прерываний.
@@ -61,7 +58,7 @@ void nvic_set_priority(int irqno, int prio);
 
 int stm32_systick_config(uint32_t ticks)
 {
-	if (ticks >= SYSTICK_VALUE_MASK)  
+	if ((ticks - 1) > SYSTICK_VALUE_MASK)  
 		return 1; // reload value impossible
 	
 	SYSTICK->RVR = ticks - 1; // set reload register

@@ -1,15 +1,11 @@
 #ifndef ARCH_CHIP_STM32
 #define ARCH_CHIP_STM32
 
-#define CONFIG_STM32
-
-#if defined CONFIG_ARCH_CHIP_STM32F407 
-# 	define CONFIG_STM32_STM32F407
-#	define CONFIG_STM32_STM32F40XX
-#	define CONFIG_ARCH_CORTEXM4
-#	define BYTE_ORDER_LITTLE_ENDIAN
+#if (defined CHIP_STM32F407) || (defined CHIP_STM32F401) 
+#	define CHIP_STM32F4XX
+#	define CHIP_STM32F40XX
 #else
-#	error "Need to define any stm32 chip CONFIG_ARCH_CHIP_XXXXXXX"
+#	error "Need to define any stm32 chip CHIP_XXXXXXX"
 #endif
 
 /* NVIC priority levels *************************************************************/

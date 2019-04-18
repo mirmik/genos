@@ -21,7 +21,7 @@ licant.cxx_application("firmware",
 		("igris.syslock", "genos.atomic"),
 		("igris.dprint", "diag"),
 
-		("genos.board", "rl_syncro_v2"),
+		("genos.board", "stm32f4discovery"),
 		"genos.drivers.stm32"
 	],
 

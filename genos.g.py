@@ -1,8 +1,8 @@
 from licant.modules import module
 
-licant.execute_recursive("arch", ".g.py")
 licant.execute_recursive("src", ".g.py")
-licant.execute("board/board.g.py")
+licant.execute_recursive("arch", ".g.py")
+licant.execute_recursive("board", ".g.py")
 #licant.execute("src/drivers/drivers.g.py")
 #licant.execute("src/sched/sched.g.py")
 
