@@ -2390,7 +2390,7 @@ Disassembly of section .text:
  8001522:	2201      	movs	r2, #1
  8001524:	f64f 71ff 	movw	r1, #65535	; 0xffff
  8001528:	4801      	ldr	r0, [pc, #4]	; (8001530 <main+0x28>)
- 800152a:	f000 fbc7 	bl	8001cbc <gpio_set_level>
+ 800152a:	f000 fbc7 	bl	8001cbc <gpio_write>
  800152e:	e7fe      	b.n	800152e <main+0x26>
  8001530:	40020c00 	andmi	r0, r2, r0, lsl #24
 
@@ -3280,7 +3280,7 @@ Disassembly of section .text:
  8001cb4:	08001f20 	stmdaeq	r0, {r5, r8, r9, sl, fp, ip}
  8001cb8:	08001f28 	stmdaeq	r0, {r3, r5, r8, r9, sl, fp, ip}
 
-08001cbc <gpio_set_level>:
+08001cbc <gpio_write>:
  8001cbc:	b480      	push	{r7}
  8001cbe:	b083      	sub	sp, #12
  8001cc0:	af00      	add	r7, sp, #0
@@ -3291,14 +3291,14 @@ Disassembly of section .text:
  8001cca:	707b      	strb	r3, [r7, #1]
  8001ccc:	787b      	ldrb	r3, [r7, #1]
  8001cce:	2b00      	cmp	r3, #0
- 8001cd0:	d006      	beq.n	8001ce0 <gpio_set_level+0x24>
+ 8001cd0:	d006      	beq.n	8001ce0 <gpio_write+0x24>
  8001cd2:	687b      	ldr	r3, [r7, #4]
  8001cd4:	695a      	ldr	r2, [r3, #20]
  8001cd6:	887b      	ldrh	r3, [r7, #2]
  8001cd8:	431a      	orrs	r2, r3
  8001cda:	687b      	ldr	r3, [r7, #4]
  8001cdc:	615a      	str	r2, [r3, #20]
- 8001cde:	e006      	b.n	8001cee <gpio_set_level+0x32>
+ 8001cde:	e006      	b.n	8001cee <gpio_write+0x32>
  8001ce0:	687b      	ldr	r3, [r7, #4]
  8001ce2:	695b      	ldr	r3, [r3, #20]
  8001ce4:	887a      	ldrh	r2, [r7, #2]

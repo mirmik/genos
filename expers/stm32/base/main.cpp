@@ -20,7 +20,7 @@ int main()
 	rcc_enable_gpio(GPIOD);
 	
 	gpio_settings(GPIOD, 0b1111 << 12, GPIO_MODE_OUTPUT);
-	gpio_set_level(GPIOD, 0b1111 << 12, 1);
+	gpio_write(GPIOD, 0b1111 << 12, 1);
 
 	irqs_enable();
 
@@ -28,8 +28,8 @@ int main()
 	{
 		delay(1000);
 		dprln("HelloWorld");
-		gpio_set_level(GPIOD, 0b1111 << 12, 0);		
+		gpio_write(GPIOD, 0b1111 << 12, 0);		
 		delay(1000);
-		gpio_set_level(GPIOD, 0b1111 << 12, 1);
+		gpio_write(GPIOD, 0b1111 << 12, 1);
 	}
 }

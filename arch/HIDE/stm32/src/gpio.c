@@ -3,16 +3,16 @@
 #include <gxx/util/bits.h>
 #include <assert.h>
 
-void gpio_set_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {
+void gpio_write(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {
 	if (level) g->ODR |= mask;
 	else g->ODR &= ~mask;	
 }
 
-gpio_mask_t gpio_get_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {
+gpio_mask_t gpio_read(struct gpio_regs* g, gpio_mask_t mask, unsigned char level) {
 	return g->ODR & mask;
 }
 
-void gpio_tgl_level(struct gpio_regs* g, gpio_mask_t mask) {
+void gpio_toggle(struct gpio_regs* g, gpio_mask_t mask) {
 //	g->pin = mask;
 }
 

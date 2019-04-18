@@ -4,17 +4,17 @@
 
 #include <asm/gpio.h>
 
-void gpio_set_level(struct gpio_regs* g, gpio_mask_t mask, unsigned char level)
+void gpio_write(struct gpio_regs* g, gpio_mask_t mask, unsigned char level)
 {
 	stm32_gpio_write(g, mask, level);
 }
 
-gpio_mask_t gpio_get_level(struct gpio_regs* g, gpio_mask_t mask)
+gpio_mask_t gpio_read(struct gpio_regs* g, gpio_mask_t mask)
 {
 	return stm32_gpio_read(g, mask);
 }
 
-void gpio_tgl_level(struct gpio_regs* g, gpio_mask_t mask)
+void gpio_toggle(struct gpio_regs* g, gpio_mask_t mask)
 {
 	stm32_gpio_toggle(g, mask);
 }

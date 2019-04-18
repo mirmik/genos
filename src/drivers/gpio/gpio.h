@@ -78,8 +78,8 @@ __BEGIN_DECLS
 
 extern int gpio_settings(gpio_t *gpio, gpio_mask_t mask, uint32_t mode);
 
-extern void gpio_set_level(gpio_t *gpio, gpio_mask_t mask, uint8_t level);
-extern gpio_mask_t gpio_get_level(gpio_t *gpio, gpio_mask_t mask);
+extern void gpio_write(gpio_t *gpio, gpio_mask_t mask, uint8_t level);
+extern gpio_mask_t gpio_read(gpio_t *gpio, gpio_mask_t mask);
 
 extern void gpio_toggle(gpio_t *gpio, gpio_mask_t mask);
 

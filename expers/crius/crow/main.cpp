@@ -26,7 +26,7 @@ void* mainproc(void*)
 	uint8_t raddr[1];
 	hexer_s(raddr, 1, "#F4");
 
-	gpio_set_level(GREEN_LED_GPIO, GREEN_LED_MASK, 0);
+	gpio_write(GREEN_LED_GPIO, GREEN_LED_MASK, 0);
 	//msleep(1000);
 	while(1) 
 	{
@@ -56,8 +56,8 @@ int main()
 	gpio_settings(RED_LED_GPIO, RED_LED_MASK, GPIO_MODE_OUTPUT);
 	gpio_settings(GREEN_LED_GPIO, GREEN_LED_MASK, GPIO_MODE_OUTPUT);
 
-	gpio_set_level(RED_LED_GPIO, RED_LED_MASK, 1);
-	gpio_set_level(GREEN_LED_GPIO, GREEN_LED_MASK, 1);
+	gpio_write(RED_LED_GPIO, RED_LED_MASK, 1);
+	gpio_write(GREEN_LED_GPIO, GREEN_LED_MASK, 1);
 
 	uart0.setup(115200, UART_PARITY_NONE, 8, 1);
 	uart0.enable(true);

@@ -1,12 +1,12 @@
 #include <drivers/gpio/gpio.h>
 
-inline void gpio_set_level(struct gpio* g, gpio_mask_t mask, uint8_t level)
+inline void gpio_write(struct gpio* g, gpio_mask_t mask, uint8_t level)
 {
 	if (level) g->port |= mask;
 	else g->port &= ~mask;
 }
 
-inline gpio_mask_t gpio_get_level(struct gpio* g, gpio_mask_t mask)
+inline gpio_mask_t gpio_read(struct gpio* g, gpio_mask_t mask)
 {
 	return g->pin;
 }

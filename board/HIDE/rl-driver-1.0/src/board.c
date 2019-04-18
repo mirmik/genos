@@ -15,7 +15,7 @@ void board_init() {
 
 	rcc_enable_gpio(GPIOD);
 	gpio_settings(GPIOD, (1<<12 | 1<<13 | 1<<14 | 1<<15), GPIO_MODE_OUTPUT);
-	gpio_set_level(GPIOD, (1<<12 | 1<<13 | 1<<14 | 1<<15), 1);
+	gpio_write(GPIOD, (1<<12 | 1<<13 | 1<<14 | 1<<15), 1);
 }
 
 void board_shutdown(arch_shutdown_mode_t mode) {

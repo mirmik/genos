@@ -82,12 +82,12 @@ const struct gpio_pin PINOUT[] =
 
 static inline void digitalWrite(int num, int lvl) 
 {
-	gpio_set_level(PINOUT[num].gpio, PINOUT[num].mask, lvl);
+	gpio_write(PINOUT[num].gpio, PINOUT[num].mask, lvl);
 }
 
 static inline int digitalRead(int num) 
 {
-	return gpio_get_level(PINOUT[num].gpio, PINOUT[num].mask);
+	return gpio_read(PINOUT[num].gpio, PINOUT[num].mask);
 }
 
 static inline void pinMode(int num, int lvl) 

@@ -38,15 +38,15 @@ int avr_spi_device::select (void *slct, int en)
 
 	if (en == 0) {
 		assert(npin == opin);
-		gpio_pin_set_level(opin, 1);
+		gpio_pin_write(opin, 1);
 		current_select = nullptr;
 		return 0;	
 	}
 
 	if (opin != nullptr) {
-		gpio_pin_set_level(opin, 1);
+		gpio_pin_write(opin, 1);
 	}
-	gpio_pin_set_level(npin, 0);
+	gpio_pin_write(npin, 0);
 		
 	current_select = slct;
 	return 0;
@@ -123,15 +123,15 @@ int avr_spi_select (struct spi_device *dev, void *slct, int en) {
 
 	if (en == 0) {
 		assert(npin == opin);
-		gpio_pin_set_level(opin, 0);
+		gpio_pin_write(opin, 0);
 		spi->current_select = NULL;
 		return 0;	
 	}
 
 	if (opin != NULL) {
-		gpio_pin_set_level(opin, 0);
+		gpio_pin_write(opin, 0);
 	}
-	gpio_pin_set_level(npin, 1);
+	gpio_pin_write(npin, 1);
 		
 	spi->current_select = slct;
 	return 0;
