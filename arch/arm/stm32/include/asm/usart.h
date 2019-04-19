@@ -33,6 +33,7 @@ int stm32_usart_setup( struct usart_regs* regs, uint32_t baud,
                        char parity, uint8_t databits, uint8_t stopbits);
 
 void stm32_usart_txirq_enable(struct usart_regs* regs, int en);
+void stm32_usart_tcirq_enable(struct usart_regs* regs, int en);
 void stm32_usart_rxirq_enable(struct usart_regs* regs, int en);
 
 static inline
@@ -58,6 +59,24 @@ static inline
 int stm32_usart_avail(struct usart_regs * usart)
 {
 	return usart->SR & (1 << 5); //RXNE byte
+}
+
+static inline
+int stm32_rxirq_status(struct usart_regs * usart) 
+{
+	return usart->SR & USART_SR_RXNE;
+}
+
+static inline
+int stm32_txirq_status(struct usart_regs * usart) 
+{
+	return usart->SR & USART_SR_TXE;
+}
+
+static inline
+int stm32_tcirq_status(struct usart_regs * usart) 
+{
+	return usart->SR & USART_SR_TC;
 }
 
 __END_DECLS

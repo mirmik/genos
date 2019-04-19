@@ -8,100 +8,107 @@
 #include <sched/api.h>
 #include <sched/wait.h>
 
-int genos::drivers::uartring_device::write(const char* data, unsigned int size) 
+int genos::drivers::uartring_device::write(const char* data, unsigned int size)
 {
 	int curwrited;
 	size_t writed = 0;
 
-	if (uart->cantx() && ring_empty(&txring)) 
+	if (uart->cantx() && ring_empty(&txring))
 	{
 		writed++;
 		uart->sendbyte(*data);
 	}
 
-	while (size != writed) 
+	while (size != writed)
 	{
 		system_lock();
 		curwrited = ring_write(&txring, txbuffer, data + writed, size - writed);
-		if (curwrited) 
-			uart->txirq(true);
+
+		if (curwrited)
+			uart->ctrirqs(UART_CTRIRQS_TXON);
+
 		system_unlock();
 		writed += curwrited;
 
-		if (writed == size) 
+		if (writed == size)
 			break;
 
 		if (flag.noblock)
 			break;
 
-		if (flag.nosched) 
+		if (flag.nosched)
 			continue;
 
-		if (current_schedee() == NULL) 
+		if (current_schedee() == NULL)
 			break;
 
-		else 
+		else
 		{
-			wait_current_schedee(&txwlst, WAIT_PRIORITY);	
+			wait_current_schedee(&txwlst, WAIT_PRIORITY);
 		}
 
-		//if (schedee_can_displace_asserted()) 
+		//if (schedee_can_displace_asserted())
 		//{
 		//}
 	}
+
 	return writed;
 }
 
-int genos::drivers::uartring_device::read(char* data, unsigned int size) 
+int genos::drivers::uartring_device::read(char* data, unsigned int size)
 {
-	if (ring_empty(&rxring)) 
+	if (ring_empty(&rxring))
 		return 0;
 
 	return ring_read(&rxring, rxbuffer, data, size);
 }
 
-int genos::drivers::uartring_device::open(struct file * f) 
-{ 
-	return 0; 
+int genos::drivers::uartring_device::open(struct file * f)
+{
+	return 0;
 }
 
-int genos::drivers::uartring_device::release (struct file * f) 
-{ 
-	return 0; 
+int genos::drivers::uartring_device::release (struct file * f)
+{
+	return 0;
 }
 
-void uartring_device_irq_handler(void* priv, int code) 
+void uartring_device_irq_handler(void* priv, int code)
 {
 	struct genos::drivers::uartring_device* uring = (struct genos::drivers::uartring_device*) priv;
-	switch(code) {
-		case UART_IRQCODE_TX: {
-			if ( ring_empty(&uring->txring) ) 
+
+	switch (code)
+	{
+		case UART_IRQCODE_TX:
 			{
-				uring->uart->txirq(false);
-				unwait_one(&uring->txwlst);
+				if ( ring_empty(&uring->txring) )
+				{
+					uring->uart->ctrirqs(UART_CTRIRQS_TXOFF);
+					unwait_one(&uring->txwlst);
+					return;
+				}
+
+				char c = ring_getc(&uring->txring, uring->txbuffer);
+				uring->uart->sendbyte(c);
 				return;
 			}
 
-			char c = ring_getc(&uring->txring, uring->txbuffer);
-			uring->uart->sendbyte(c);
-			return;
-		}
-
-		case UART_IRQCODE_RX: {
-			ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->recvbyte());
-			unwait_one(&uring->rxwlst);
-			return;
-		}
+		case UART_IRQCODE_RX:
+			{
+				ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->recvbyte());
+				unwait_one(&uring->rxwlst);
+				return;
+			}
 
 		case UART_IRQCODE_TC: //fallthrow
 			BUG();
-		
-		default: 
+
+		default:
 			BUG();
 	}
 }
 
-int genos::drivers::uartring_device::init(struct uart * u, const char* name) 
+int genos::drivers::uartring_device::init(struct uart * u, const char* name)
 {
 	uart = u;
 
@@ -116,8 +123,8 @@ int genos::drivers::uartring_device::init(struct uart * u, const char* name)
 	//uart->handler = uartring_device_irq_handler;
 	//uart->handarg = (void*) this;
 	uart->set_handler(uartring_device_irq_handler, (void*)this);
-	uart->txirq(false);
-	
+	uart->ctrirqs(UART_CTRIRQS_TXOFF);
+
 	//uart->enable(true);
 
 	//vfs_link_cdev(this, "/dev", name);
@@ -125,10 +132,11 @@ int genos::drivers::uartring_device::init(struct uart * u, const char* name)
 	return 0;
 }
 
-int genos::drivers::uartring_device::waitread() {
+int genos::drivers::uartring_device::waitread()
+{
 	system_lock();
 
-	if (ring_avail(&rxring)) 
+	if (ring_avail(&rxring))
 	{
 		system_unlock();
 		return 1;
@@ -137,7 +145,7 @@ int genos::drivers::uartring_device::waitread() {
 	wait_current_schedee(&rxwlst, 0);
 	system_unlock();
 	return 0;
-} 
+}
 
 
 
@@ -147,71 +155,78 @@ int genos::drivers::uartring_device::waitread() {
 
 
 
-ssize_t genos::drivers::uartring::write(const void* _data, size_t size) 
+ssize_t genos::drivers::uartring::write(const void* _data, size_t size)
 {
 	int curwrited;
 	size_t writed = 0;
 	const char* data = (const char*) _data;
 
-	if (uart->cantx() && ring_empty(&txring)) 
+	if (uart->cantx() && ring_empty(&txring))
 	{
 		writed++;
 		uart->sendbyte(*data);
 	}
 
-	if (size != writed) 
+	if (size != writed)
 	{
 		system_lock();
 		writed += ring_write(&txring, txbuffer, data + writed, size - writed);
-		if (writed != 1) 
-			uart->txirq(true);
+
+		if (writed != 1)
+			uart->ctrirqs(UART_CTRIRQS_TXON);
+
 		system_unlock();
 	}
 
 	return writed;
 }
 
-ssize_t genos::drivers::uartring::read(void* _data, size_t size) 
+ssize_t genos::drivers::uartring::read(void* _data, size_t size)
 {
 	char* data = (char*) _data;
-	if (ring_empty(&rxring)) 
+
+	if (ring_empty(&rxring))
 		return 0;
 
 	return ring_read(&rxring, rxbuffer, data, size);
 }
 
-void uartring_irq_handler(void* priv, int code) 
+void uartring_irq_handler(void* priv, int code)
 {
 	struct genos::drivers::uartring* uring = (struct genos::drivers::uartring*) priv;
-	switch(code) {
-		case UART_IRQCODE_TX: {
-			if ( ring_empty(&uring->txring) ) 
+
+	switch (code)
+	{
+		case UART_IRQCODE_TX:
 			{
-				uring->uart->txirq(false);
-			//	unwait_one(&uring->txwlst);
+				if ( ring_empty(&uring->txring) )
+				{
+					uring->uart->ctrirqs(UART_CTRIRQS_TXOFF);
+					//	unwait_one(&uring->txwlst);
+					return;
+				}
+
+				char c = ring_getc(&uring->txring, uring->txbuffer);
+				uring->uart->sendbyte(c);
 				return;
 			}
 
-			char c = ring_getc(&uring->txring, uring->txbuffer);
-			uring->uart->sendbyte(c);
-			return;
-		}
-
-		case UART_IRQCODE_RX: {
-			ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->recvbyte());
-			//unwait_one(&uring->rxwlst);
-			return;
-		}
+		case UART_IRQCODE_RX:
+			{
+				ring_putc(&uring->rxring, uring->rxbuffer, uring->uart->recvbyte());
+				//unwait_one(&uring->rxwlst);
+				return;
+			}
 
 		case UART_IRQCODE_TC: //fallthrow
 			BUG();
-		
-		default: 
+
+		default:
 			BUG();
 	}
 }
 
-int genos::drivers::uartring::init(genos::drivers::uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz) 
+int genos::drivers::uartring::init(genos::drivers::uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz)
 {
 	uart = u;
 
@@ -229,8 +244,9 @@ int genos::drivers::uartring::init(genos::drivers::uart * u, char* rxbuf, int rx
 //	uart->handler = uartring_irq_handler;
 //	uart->handarg = (void*) this;
 	uart->set_handler(uartring_irq_handler, (void*)this);
-	uart->txirq(false);
-	
+
+	uart->ctrirqs(UART_CTRIRQS_TXOFF);
+
 	//uart->enable(true);
 
 	//vfs_link_cdev(this, "/dev", name);
@@ -238,12 +254,12 @@ int genos::drivers::uartring::init(genos::drivers::uart * u, char* rxbuf, int rx
 	return 0;
 }
 
-int genos::drivers::uartring::avail() 
+int genos::drivers::uartring::avail()
 {
 	return ring_avail(&rxring);
 }
 
-int genos::drivers::uartring::room() 
+int genos::drivers::uartring::room()
 {
 	return ring_room(&txring);
 }

@@ -1,10 +1,34 @@
-#ifndef ARM_ASM_IRQ_H
-#define ARM_ASM_IRQ_H
+#ifndef ARCH7E_M_IRQ_H
+#define ARCH7E_M_IRQ_H
 
-#include <asm/chip.h>
+#include <inttypes.h>
 
-#ifdef CHIP_ARMV7E_M
-#	include <armv7e-m/irq.h>
-#endif
+typedef unsigned int irqstate_t;
+
+static inline void irqs_enable(void) {
+	__asm__ __volatile__ (
+		"cpsie i \n\t");
+
+}
+
+static inline irqstate_t irqs_save(void) {
+	register uint32_t r;
+	__asm__ __volatile__ (
+		"mrs %0, PRIMASK;\n\t"
+		"cpsid i \n\t"
+		: "=r"(r));
+	return r;
+}
+
+static inline void irqs_restore(irqstate_t state) {
+	__asm__ __volatile__ (
+		"msr PRIMASK, %0;\n\t"
+		:
+		: "r"(state));
+}
+
+static inline void irqs_disable(void) {
+	(void) irqs_save();
+}
 
 #endif

@@ -11,10 +11,7 @@
 
 #include <periph/map.h>
 
-GPIO_PIN(board_red_led, GPIOD, 13);
-GPIO_PIN(board_green_led, GPIOD, 12);
-GPIO_PIN(board_yellow_led, GPIOD, 14);
-GPIO_PIN(board_blue_led, GPIOD, 15);
+GPIO_PIN(board_led, GPIOA, 5);
 
 void board_init() 
 {
@@ -36,9 +33,9 @@ void board_init()
 	stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 42000000;
 
 	rcc_enable_usart(USART2);
-	rcc_enable_usart(USART6);
+//	rcc_enable_usart(USART6);
 	rcc_enable_gpio(GPIOA);
-	rcc_enable_gpio(GPIOD);
+//	rcc_enable_gpio(GPIOD);
 
 	gpio_settings(GPIOD, (0b1111 << 12), GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 

@@ -1,7 +1,8 @@
 #include <hal/arch.h>
 #include <hal/irq.h>
 
-#include <chip/rcc.h>
+#include <asm/arch.h>
+#include <asm/rcc.h>
 
 #include <periph/map.h>
 #include <periph/irqdefs.h>
