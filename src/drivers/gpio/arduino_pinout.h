@@ -1,6 +1,9 @@
 #ifndef ARDUINO_PINOUT_H
 #define ARDUINO_PINOUT_H
 
+#include <__local__/arch_gpio.h>
+#include <drivers/gpio/pin.h>
+
 #ifdef BOARD_ARDUINO_MEGA
 const struct gpio_pin PINOUT[] = 
 {

@@ -37,21 +37,42 @@ namespace ramps
 {
 	void emergency_stop();
 
-	const gpio_pin& x_enable = 		PINOUT[X_ENABLE_PIN];
-	const gpio_pin& x_dir = 		PINOUT[X_DIR_PIN];
-	const gpio_pin& x_step = 		PINOUT[X_STEP_PIN];
+	extern const gpio_pin& x_enable;
+	extern const gpio_pin& x_dir;
+	extern const gpio_pin& x_step;
 
-	const gpio_pin& y_enable = 		PINOUT[Y_ENABLE_PIN];
-	const gpio_pin& y_dir = 		PINOUT[Y_DIR_PIN];
-	const gpio_pin& y_step = 		PINOUT[Y_STEP_PIN];
+	extern const gpio_pin& y_enable;
+	extern const gpio_pin& y_dir;
+	extern const gpio_pin& y_step;
 
-	const gpio_pin& z_enable = 		PINOUT[Z_ENABLE_PIN];
-	const gpio_pin& z_dir = 		PINOUT[Z_DIR_PIN];
-	const gpio_pin& z_step = 		PINOUT[Z_STEP_PIN];
+	extern const gpio_pin& z_enable;
+	extern const gpio_pin& z_dir;
+	extern const gpio_pin& z_step;
 
-	const gpio_pin& e_enable = 		PINOUT[E_ENABLE_PIN];
-	const gpio_pin& e_dir = 		PINOUT[E_DIR_PIN];
-	const gpio_pin& e_step = 		PINOUT[E_STEP_PIN];
+	extern const gpio_pin& e_enable;
+	extern const gpio_pin& e_dir;
+	extern const gpio_pin& e_step;
+
+	struct ramps_driver
+	{
+		using Timer = genos::avr::timer16;
+
+		volatile uint16_t delta;
+		Timer* timer;
+
+		ramps_driver(Timer* timer);
+
+		/*
+			Настроить и активировать таймер и прерывания для работы драйвера.
+			Устройство начнет работу сразу после запуска перываний.
+		*/
+		int init(uint32_t freq, uint8_t div);
+
+		void isr_enabler();
+		void isr_disabler();
+
+		volatile uint32_t timer3_value;
+	};
 
 	struct impulse_driver : public ralgo::impulse_writer<igris::syslock, int64_t, float>
 	{
@@ -146,76 +167,10 @@ namespace ramps
 		}
 	};
 
-	impulse_driver e_driver { PINOUT[E_ENABLE_PIN], PINOUT[E_DIR_PIN], PINOUT[E_STEP_PIN] };
-	impulse_driver x_driver { PINOUT[X_ENABLE_PIN], PINOUT[X_DIR_PIN], PINOUT[X_STEP_PIN] };
-	impulse_driver y_driver { PINOUT[Y_ENABLE_PIN], PINOUT[Y_DIR_PIN], PINOUT[Y_STEP_PIN] };
-	impulse_driver z_driver { PINOUT[Z_ENABLE_PIN], PINOUT[Z_DIR_PIN], PINOUT[Z_STEP_PIN] };
-
-	struct ramps_driver
-	{
-		using Timer = genos::avr::timer16;
-
-		volatile uint16_t delta;
-		Timer* timer;
-
-		ramps_driver(Timer* timer) : timer(timer) {}
-
-		/*
-			Настроить и активировать таймер и прерывания для работы драйвера.
-
-			Устройство начнет работу сразу после запуска перываний.
-		*/
-		int init(uint32_t freq, uint8_t div)
-		{
-			int32_t ocr = F_CPU / (freq * div);
-			assert(ocr < 0x03FF);
-			DPRINT(ocr);
-
-			delta = ocr;
-
-			periph::timer3.set_mode(Timer::TimerMode::Clock);
-			
-			timer->set_mode(Timer::TimerMode::CTC);
-			timer->set_compare_a(ocr);
-			timer->set_compare_b(ocr/2);
-
-			genos::irqtable::set_handler(timer->irqs.compa, &ramps_driver::isr_enabler, this);
-			genos::irqtable::set_handler(timer->irqs.compb, &ramps_driver::isr_disabler, this);
-			
-			timer->irq_compare_a_enable(true);
-			timer->irq_compare_b_enable(true);
-
-			x_driver.enable();
-			y_driver.enable();
-			z_driver.enable();
-		
-			timer->set_divider(div);
-		
-			return 0;
-		}
-
-		volatile uint32_t timer3_value;
-
-		void isr_enabler()
-		{
-			//periph::timer3.set_value(0);
-			//periph::timer3.set_divcode(1);
-			
-			x_driver.serve(delta);
-			y_driver.serve(delta);
-			z_driver.serve(delta);
-
-			//periph::timer3.set_divcode(0);
-			//timer3_value = periph::timer3.value();
-		}
-
-		void isr_disabler()
-		{
-			x_driver.step_pin.set(0);
-			y_driver.step_pin.set(0);
-			z_driver.step_pin.set(0);
-		}
-	};
+	extern impulse_driver e_driver;
+	extern impulse_driver x_driver;
+	extern impulse_driver y_driver;
+	extern impulse_driver z_driver;
 }
 
 #endif
