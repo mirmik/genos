@@ -1,6 +1,6 @@
 module("genos.hal.stm32.common", 
 	include_paths=["include"],
-	srcdir = "src/stm32",
+	srcdir = "src",
 
 	sources = [
 		"stm32_vectors.S",
@@ -27,7 +27,7 @@ module("genos.hal.stm32.common",
 module("genos.hal.stm32f4xx", 
 	mdepends = [
 		"hal.arm.armv7e-m",
-		"hal.arm"
+		#"hal.arm"
 	]
 )
 

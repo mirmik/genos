@@ -1,9 +1,9 @@
 #ifndef HAL_ARCH_H_
 #define HAL_ARCH_H_
 
-#include <igris/compiler.h>
+#include <igris/compiler.h> // For __NORETURN
 #include <sys/cdefs.h>
-#include <asm/arch.h>
+//#include <asm/arch.h>
 
 typedef enum {
 	ARCH_SHUTDOWN_MODE_HALT,

@@ -5,5 +5,5 @@ module("hal.arm.armv7e-m",
 )
 
 module("hal.arm.armv7e-m.include",
-	include_paths = ["."]
+	include_paths = ["include"]
 )

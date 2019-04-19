@@ -54,17 +54,17 @@ _vectors:
 #define UNUSED(i) .word stm32_reserved
 
 #if defined(CHIP_STM32L15XX)
-#  include "stm32/vectors/stm32l15xxx_vectors.h"
+#  include "chip//stm32l15xxx_vectors.h"
 #elif defined(CHIP_STM32F10XX)
-#  include "stm32/vectors/stm32f10xxx_vectors.h"
+#  include "chip//stm32f10xxx_vectors.h"
 #elif defined(CHIP_STM32F20XX)
-#  include "stm32/vectors/stm32f20xxx_vectors.h"
+#  include "chip//stm32f20xxx_vectors.h"
 #elif defined(CHIP_STM32F30XX)
-#  include "stm32/vectors/stm32f30xxx_vectors.h"
+#  include "chip//stm32f30xxx_vectors.h"
 #elif defined(CHIP_STM32F37XX)
-#  include "stm32/vectors/stm32f37xxx_vectors.h"
+#  include "chip//stm32f37xxx_vectors.h"
 #elif defined(CHIP_STM32F40XX)
-#  include "stm32/vectors/stm32f40xxx_vectors.h"
+#  include "chip//stm32f40xxx_vectors.h"
 #else
 #  error "No vectors for STM32 chip"
 #endif
@@ -99,17 +99,17 @@ handlers:
 #define UNUSED(i)
 
 #if defined(CHIP_STM32L15XX)
-#  include "stm32/vectors/stm32l15xxx_vectors.h"
+#  include "chip//stm32l15xxx_vectors.h"
 #elif defined(CHIP_STM32F10XX)
-#  include "stm32/vectors/stm32f10xxx_vectors.h"
+#  include "chip//stm32f10xxx_vectors.h"
 #elif defined(CHIP_STM32F20XX)
-#  include "stm32/vectors/stm32f20xxx_vectors.h"
+#  include "chip//stm32f20xxx_vectors.h"
 #elif defined(CHIP_STM32F30XX)
-#  include "stm32/vectors/stm32f30xxx_vectors.h"
+#  include "chip//stm32f30xxx_vectors.h"
 #elif defined(CHIP_STM32F37XX)
-#  include "stm32/vectors/stm32f37xxx_vectors.h"
+#  include "chip//stm32f37xxx_vectors.h"
 #elif defined(CHIP_STM32F40XX)
-#  include "stm32/vectors/stm32f40xxx_vectors.h"
+#  include "chip//stm32f40xxx_vectors.h"
 #else
 #  error "No handlers for STM32 chip"
 #endif
