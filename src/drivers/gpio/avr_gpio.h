@@ -9,6 +9,7 @@ struct gpio {
 	volatile uint8_t port;
 } __attribute__((packed));
 
+typedef struct gpio gpio_t;
 typedef unsigned char __gpio_mask_t;
 
 #if defined (CHIP_ATMEGA2560)

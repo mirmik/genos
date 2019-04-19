@@ -22,7 +22,7 @@ licant.cxx_application("firmware",
 		"genos.include",
 		"genos.irqtbl",
 		"genos.systime",
-		("genos.board", "arduino_mega"),
+		("genos.board", "crius_aiop2"),
 
 		"igris.include",
 		"igris.libc",

@@ -2,7 +2,6 @@
 #define AVR2560_USART_H
 
 #include <avr/io.h>
-#include <drivers/serial/settings.h>
 #include <igris/util/bits.h>
 
 struct usart_regs {
@@ -66,7 +65,7 @@ static inline void usart_regs_setup(
 	struct usart_regs* regs, 
 //	const struct uart_params * s
 	int32_t baud, 
-	enum uart_parity_e parity, 
+	char parity, 
 	uint8_t stopBits, 
 	uint8_t dataBits
 ) {	

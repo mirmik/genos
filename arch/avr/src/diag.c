@@ -45,7 +45,7 @@ int usart0_diag_init() {
 const struct diag_ops usart0_diag = {
 	.putc = usart0_diag_putchar,
 	.getc = NULL,
-	.write = diag_write_stub,
+	.write = diag_write_common,
 	.read = NULL
 };
 

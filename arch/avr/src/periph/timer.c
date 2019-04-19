@@ -1,5 +1,5 @@
 #include <periph/regs/timer.h>
-#include <arch/timer.h>
+#include <asm/timer.h>
 #include <periph/irqdefs.h>
 
 #include <igris/util/bits.h>
@@ -35,11 +35,11 @@ uint8_t tc_divider_code(uint16_t divider) {
 }
 
 void tc_8bit_divider(struct TimerDevice_8bit* timer, uint16_t divider) {	
-	bits_mask_assign(timer->regs->tccr_b, 7, tc_divider_code(divider)); 
+	bits_assign(timer->regs->tccr_b, 7, tc_divider_code(divider)); 
 }
 
 void tc_16bit_divider(struct TimerDevice_16bit* timer, uint16_t divider) {
-	bits_mask_assign(timer->regs->tccr_b, 7, tc_divider_code(divider)); 
+	bits_assign(timer->regs->tccr_b, 7, tc_divider_code(divider)); 
 }
 
 uint8_t tc_8bit_value(struct TimerDevice_8bit* timer) {
@@ -72,11 +72,11 @@ void TimerDevice_16bit::setLimit(uint16_t limit) {
 */
 
 void tc_8bit_interruptOverflowEnable(struct TimerDevice_8bit* timer, uint8_t en) {
-	bits_mask_assign(*timer->timsk, 0x1, en);	
+	bits_assign(*timer->timsk, 0x1, en);	
 }
 
 void tc_16bit_interruptOverflowEnable(struct TimerDevice_16bit* timer, uint8_t en){
-	bits_mask_assign(*timer->timsk, 0x1, en);	
+	bits_assign(*timer->timsk, 0x1, en);	
 }
 
 /*void tc_start(uint8_t channel, uint32_t divider) {

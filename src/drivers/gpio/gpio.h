@@ -1,13 +1,10 @@
 #ifndef DRIVERS_GPIO_H
 #define DRIVERS_GPIO_H
 
-//#include <kernel/irq.h>
 #include <__local__/arch_gpio.h>
 #include <sys/cdefs.h>
 
 #include <defs/gpiodefs.h>
-
-//struct gpio;
 
 typedef __gpio_mask_t gpio_mask_t;
 

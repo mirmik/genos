@@ -4,7 +4,7 @@
 #define GENOS_SUBST_H
 	
 #include "sys/cdefs.h"
-#include "arch/context.h"
+#include "asm/context.h"
 
 struct context;
 

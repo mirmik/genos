@@ -1,5 +1,5 @@
 #include <avr/io.h>
-#include <arch/startup.h>
+#include <asm/startup.h>
 
 .global context_switch
 context_switch:

@@ -1,4 +1,4 @@
-#include <arch/startup.h>
+#include <asm/startup.h>
 #include <avr/io.h>
 #include <avr/common.h>
 #include <avr/sfr_defs.h>

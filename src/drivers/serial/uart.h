@@ -3,6 +3,8 @@
 
 #include <sys/cdefs.h>
 #include <defs/uartdefs.h>
+
+#include <stdint.h>
 #include <stdbool.h>
 
 #define UART_IRQCODE_RX 0

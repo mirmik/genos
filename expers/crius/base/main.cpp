@@ -6,7 +6,7 @@ int main() {
 
 	while(1) 
 	{
-		board::sysled.toggle();
+		gpio_pin_toggle(&board::sysled);
 		cpu_delay(100000);
 	}
 }
