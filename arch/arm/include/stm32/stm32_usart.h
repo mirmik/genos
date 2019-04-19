@@ -32,10 +32,32 @@ void stm32_usart_set_stopbits(struct usart_regs* regs,
 int stm32_usart_setup( struct usart_regs* regs, uint32_t baud,
                        char parity, uint8_t databits, uint8_t stopbits);
 
-static inline
-void stm32_usart_rxirq_enable(struct usart_regs* regs, int en)
-{
+void stm32_usart_txirq_enable(struct usart_regs* regs, int en);
+void stm32_usart_rxirq_enable(struct usart_regs* regs, int en);
 
+static inline
+int stm32_usart_putc(struct usart_regs * usart, char c)
+{
+	usart->DR = c;
+	return 1;
+}
+
+static inline
+int stm32_usart_getc(struct usart_regs * usart)
+{
+	return usart->DR;
+}
+
+static inline
+int stm32_usart_room(struct usart_regs * usart)
+{
+	return usart->SR & (1 << 7); //TXNE byte
+}
+
+static inline
+int stm32_usart_avail(struct usart_regs * usart)
+{
+	return usart->SR & (1 << 5); //RXNE byte
 }
 
 __END_DECLS

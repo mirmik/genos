@@ -3,7 +3,7 @@
 
 #include <asm/arch.h>
 #include <asm/rcc.h>
-#include <asm/usart.h>
+#include <asm/stm32_usart.h>
 #include <asm/gpio.h>
 
 #include <drivers/gpio/gpio.h>

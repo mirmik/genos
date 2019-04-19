@@ -1,5 +1,7 @@
-#include <asm/gpio.h>
+#include <stm32/gpio.h>
 #include <igris/util/bits.h>
+
+#include <asm/chip.h>
 
 void stm32_gpio_set_maxspeed(struct gpio_regs* regs, uint16_t map,
                              enum stm32_gpio_maxspeed_e maxspeed)

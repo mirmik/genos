@@ -8,21 +8,29 @@ licant.include("nos")
 
 licant.cxx_application("firmware",
 	binutils = licant.cxx_make.make_gcc_binutils("arm-none-eabi"),
-	sources = ["main.c"], 
+	sources = ["main.cpp"], 
 
 	mdepends = [
 		"genos.include",
 
 		"igris.include",
 		"igris.libc",
+
 		"igris.std",
 		"igris.posix",
 		"igris.bug",
+		
 		("igris.syslock", "genos.atomic"),
 		("igris.dprint", "diag"),
 
 		("genos.board", "stm32f4discovery"),
-		"genos.drivers.stm32"
+		"genos.drivers.stm32",
+
+		"nos.include",
+		"nos.print",
+		("nos.current_ostream", "nullptr"),
+
+		#"igris.cxx_support",
 	],
 
 	cxx_flags = "-O3",

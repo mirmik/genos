@@ -1,11 +1,11 @@
 #include <hal/arch.h>
 #include <hal/irq.h>
 
-#include <asm/rcc.h>
-#include <asm/arch.h>
+#include <stm32/rcc.h>
 
 #include <periph/map.h>
 #include <periph/irqdefs.h>
+
 #include <systime/systime.h>
 
 #include <hal/irqtable.h>

@@ -1,6 +1,6 @@
 #include <periph/map.h>
 #include <asm/rcc.h>
-#include <asm/usart.h>
+#include <asm/stm32_usart.h>
 
 #include <defs/uartdefs.h>
 
@@ -125,6 +125,14 @@ void stm32_usart_enable_tx(struct usart_regs* regs, int en)
 		bits_clr(regs->CR1, USART_CR1_TE);
 }
 
+void stm32_usart_txirq_enable(struct usart_regs* regs, int en)
+{
+	if (en)
+		bits_set(regs->CR1, USART_CR1_TXEIE)
+	else
+		bits_clr(regs->CR1, USART_CR1_TXEIE);
+}
+
 int stm32_usart_setup(
     struct usart_regs* regs,
     uint32_t baud,
@@ -140,26 +148,4 @@ int stm32_usart_setup(
 	stm32_usart_set_stopbits(regs, stopbits);
 
 	regs->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE; 
-}
-
-
-int stm32_usart_putc(struct usart_regs * usart, char c)
-{
-	usart->DR = c;
-	return 1;
-}
-
-int stm32_usart_getc(struct usart_regs * usart)
-{
-	return usart->DR;
-}
-
-int stm32_usart_room(struct usart_regs * usart)
-{
-	return usart->SR & (1 << 7); //TXNE byte
-}
-
-int stm32_usart_avail(struct usart_regs * usart)
-{
-	return usart->SR & (1 << 5); //RXNE byte
 }

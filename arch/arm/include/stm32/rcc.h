@@ -2,6 +2,7 @@
 #define STM32_RCC_FUNCTONS_H
 
 #include <sys/cdefs.h>
+#include <stdint.h>
 
 struct gpio_regs;
 struct usart_regs;

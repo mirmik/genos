@@ -22,6 +22,7 @@ licant.module("genos.drivers.avr",
 licant.module("genos.drivers.stm32_gpio", sources = ["gpio/stm32_gpio.c"], local_headers = [("__local__/arch_gpio.h", "gpio/stm32_gpio.h")])
 licant.module("genos.drivers.stm32", 
 	mdepends = [
+		"genos.drivers.common",
 		"genos.drivers.stm32_gpio"
 	]
 )

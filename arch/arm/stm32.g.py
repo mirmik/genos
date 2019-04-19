@@ -1,6 +1,6 @@
 module("genos.hal.stm32.common", 
 	include_paths=["include"],
-	srcdir = "src",
+	srcdir = "src/stm32",
 
 	sources = [
 		"stm32_vectors.S",
@@ -17,19 +17,25 @@ module("genos.hal.stm32.common",
 		"genos.systime"
 	],
 
-	cc_flags = "-nostdlib -nostdinc -lgcc -lm -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
-	cxx_flags = "-nostdlib -nostdinc -lgcc -lm -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
-	ld_flags = "-nostdlib -lgcc -lm -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections"
+	defines = ["CHIP_STM32"],
+
+	cc_flags = "-nostdlib -nostdinc -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
+	cxx_flags = "-nostdlib -nostdinc -fno-rtti -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
+	ld_flags = "-mthumb -mcpu=cortex-m4 -nostdlib -static -fdata-sections -ffunction-sections -Wl,--gc-sections"
 )
 
-#module("genos.hal.stm32f4xx",
-#	defines = ["CHIP_STM32F4XX"]
-#)
+module("genos.hal.stm32f4xx", 
+	mdepends = [
+		"hal.arm.armv7e-m",
+		"hal.arm"
+	]
+)
 
 module("genos.hal", impl = "stm32f407", 
 	defines = ["CHIP_STM32F407"],
 	mdepends = [
-		#"genos.hal.stm32f4xx",	
+		"genos.hal.stm32f4xx",	
+		"hal.arm32.include",
 		"genos.hal.stm32.common",
 	],
 	ldscripts = "ldscripts/stm32f401vc.ld",
@@ -38,7 +44,7 @@ module("genos.hal", impl = "stm32f407",
 module("genos.hal", impl = "stm32f401", 
 	defines = ["CHIP_STM32F401"],
 	mdepends = [
-		#"genos.hal.stm32f4xx",	
+		"genos.hal.stm32f4xx",	
 		"genos.hal.stm32.common",
 	],
 	ldscripts = "ldscripts/stm32f401vc.ld",
