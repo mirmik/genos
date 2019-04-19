@@ -1,4 +1,5 @@
 #ifndef STM32_PWR_REGS
+#define STM32_PWR_REGS
 
 struct pwr_regs{
   volatile uint32_t CR;   /*!< PWR power control register,        Address offset: 0x00 */

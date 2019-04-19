@@ -49,11 +49,11 @@ int main() {
 	gpio_settings(RED_LED_GPIO, RED_LED_MASK, GPIO_MODE_OUTPUT);
 	gpio_settings(GREEN_LED_GPIO, GREEN_LED_MASK, GPIO_MODE_OUTPUT);
 
-	gpio_set_level(RED_LED_GPIO, RED_LED_MASK, 1);
-	gpio_set_level(GREEN_LED_GPIO, GREEN_LED_MASK, 1);
+	gpio_write(RED_LED_GPIO, RED_LED_MASK, 1);
+	gpio_write(GREEN_LED_GPIO, GREEN_LED_MASK, 1);
 
 	gpio_pin_settings(&dataflash_select, GPIO_MODE_OUTPUT);
-	gpio_pin_set_level(&dataflash_select, 1);
+	gpio_pin_write(&dataflash_select, 1);
 
 	struct uart_params uparams = { 115200, UART_PARITY_NONE, 1, 8 };
 

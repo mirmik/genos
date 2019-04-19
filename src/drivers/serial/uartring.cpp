@@ -1,14 +1,14 @@
 #include <drivers/serial/uartring.h>
 
 #include <igris/sync/syslock.h>
-#include <igris/bug.h>
+#include <igris/util/bug.h>
 
 //#include <gxx/panic.h>
 
 #include <sched/api.h>
 #include <sched/wait.h>
 
-int genos::uartring_device::write(const char* data, unsigned int size) 
+int genos::drivers::uartring_device::write(const char* data, unsigned int size) 
 {
 	int curwrited;
 	size_t writed = 0;
@@ -52,7 +52,7 @@ int genos::uartring_device::write(const char* data, unsigned int size)
 	return writed;
 }
 
-int genos::uartring_device::read(char* data, unsigned int size) 
+int genos::drivers::uartring_device::read(char* data, unsigned int size) 
 {
 	if (ring_empty(&rxring)) 
 		return 0;
@@ -60,19 +60,19 @@ int genos::uartring_device::read(char* data, unsigned int size)
 	return ring_read(&rxring, rxbuffer, data, size);
 }
 
-int genos::uartring_device::open(struct file * f) 
+int genos::drivers::uartring_device::open(struct file * f) 
 { 
 	return 0; 
 }
 
-int genos::uartring_device::release (struct file * f) 
+int genos::drivers::uartring_device::release (struct file * f) 
 { 
 	return 0; 
 }
 
 void uartring_device_irq_handler(void* priv, int code) 
 {
-	struct genos::uartring_device* uring = (struct genos::uartring_device*) priv;
+	struct genos::drivers::uartring_device* uring = (struct genos::drivers::uartring_device*) priv;
 	switch(code) {
 		case UART_IRQCODE_TX: {
 			if ( ring_empty(&uring->txring) ) 
@@ -101,7 +101,7 @@ void uartring_device_irq_handler(void* priv, int code)
 	}
 }
 
-int genos::uartring_device::init(struct uart * u, const char* name) 
+int genos::drivers::uartring_device::init(struct uart * u, const char* name) 
 {
 	uart = u;
 
@@ -113,8 +113,9 @@ int genos::uartring_device::init(struct uart * u, const char* name)
 
 	//uart->enable(false);
 
-	uart->handler = uartring_device_irq_handler;
-	uart->handarg = (void*) this;
+	//uart->handler = uartring_device_irq_handler;
+	//uart->handarg = (void*) this;
+	uart->set_handler(uartring_device_irq_handler, (void*)this);
 	uart->txirq(false);
 	
 	//uart->enable(true);
@@ -124,7 +125,7 @@ int genos::uartring_device::init(struct uart * u, const char* name)
 	return 0;
 }
 
-int genos::uartring_device::waitread() {
+int genos::drivers::uartring_device::waitread() {
 	system_lock();
 
 	if (ring_avail(&rxring)) 
@@ -146,7 +147,7 @@ int genos::uartring_device::waitread() {
 
 
 
-ssize_t genos::uartring::write(const void* _data, size_t size) 
+ssize_t genos::drivers::uartring::write(const void* _data, size_t size) 
 {
 	int curwrited;
 	size_t writed = 0;
@@ -170,7 +171,7 @@ ssize_t genos::uartring::write(const void* _data, size_t size)
 	return writed;
 }
 
-ssize_t genos::uartring::read(void* _data, size_t size) 
+ssize_t genos::drivers::uartring::read(void* _data, size_t size) 
 {
 	char* data = (char*) _data;
 	if (ring_empty(&rxring)) 
@@ -181,7 +182,7 @@ ssize_t genos::uartring::read(void* _data, size_t size)
 
 void uartring_irq_handler(void* priv, int code) 
 {
-	struct genos::uartring* uring = (struct genos::uartring*) priv;
+	struct genos::drivers::uartring* uring = (struct genos::drivers::uartring*) priv;
 	switch(code) {
 		case UART_IRQCODE_TX: {
 			if ( ring_empty(&uring->txring) ) 
@@ -210,7 +211,7 @@ void uartring_irq_handler(void* priv, int code)
 	}
 }
 
-int genos::uartring::init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz) 
+int genos::drivers::uartring::init(genos::drivers::uart * u, char* rxbuf, int rxsz, char* txbuf, int txsz) 
 {
 	uart = u;
 
@@ -225,8 +226,9 @@ int genos::uartring::init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, i
 
 	//uart->enable(false);
 
-	uart->handler = uartring_irq_handler;
-	uart->handarg = (void*) this;
+//	uart->handler = uartring_irq_handler;
+//	uart->handarg = (void*) this;
+	uart->set_handler(uartring_irq_handler, (void*)this);
 	uart->txirq(false);
 	
 	//uart->enable(true);
@@ -236,12 +238,12 @@ int genos::uartring::init(struct uart * u, char* rxbuf, int rxsz, char* txbuf, i
 	return 0;
 }
 
-int genos::uartring::avail() 
+int genos::drivers::uartring::avail() 
 {
 	return ring_avail(&rxring);
 }
 
-int genos::uartring::room() 
+int genos::drivers::uartring::room() 
 {
 	return ring_room(&txring);
 }

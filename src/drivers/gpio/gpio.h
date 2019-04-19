@@ -3,8 +3,11 @@
 
 //#include <kernel/irq.h>
 #include <__local__/arch_gpio.h>
+#include <sys/cdefs.h>
 
-struct gpio;
+#include <defs/gpiodefs.h>
+
+//struct gpio;
 
 typedef __gpio_mask_t gpio_mask_t;
 
@@ -12,10 +15,14 @@ typedef __gpio_mask_t gpio_mask_t;
 #define GPIO_MODE_OUT_SECTION       0x0000FF00
 #define GPIO_MODE_INT_SECTION       0xFF000000
 
+#ifndef GPIO_MODE_ALTERNATE
+#define GPIO_MODE_ALTERNATE     	0x00010000
+#endif
+
 #ifndef GPIO_MODE_INPUT
 #define GPIO_MODE_INPUT             0x00000001
 #endif
-/*
+
 #ifndef GPIO_MODE_IN_PULL_UP
 #define GPIO_MODE_IN_PULL_UP        (1 << 1)
 #endif
@@ -27,11 +34,11 @@ typedef __gpio_mask_t gpio_mask_t;
 #ifndef GPIO_MODE_IN_SCHMITT
 #define GPIO_MODE_IN_SCHMITT        (1 << 3)
 #endif
-*/
+
 #ifndef GPIO_MODE_OUTPUT
 #define GPIO_MODE_OUTPUT            0x00000100
 #endif
-/*
+
 #ifndef GPIO_MODE_OUT_PUSH_PULL
 #define GPIO_MODE_OUT_PUSH_PULL     (1 << 15)
 #endif
@@ -40,10 +47,7 @@ typedef __gpio_mask_t gpio_mask_t;
 #define GPIO_MODE_OUT_OPEN_DRAIN    (1 << 14)
 #endif
 
-#ifndef GPIO_MODE_OUT_ALTERNATE
-#define GPIO_MODE_OUT_ALTERNATE     (1 << 13)
-#endif
-
+/*
 #ifndef GPIO_MODE_IN_INT_EN
 #define GPIO_MODE_IN_INT_EN         (1 << 31)
 #endif
@@ -72,12 +76,12 @@ __BEGIN_DECLS
 
 //extern struct gpio *gpio_by_num(int num_port);
 
-extern int gpio_settings(struct gpio *gpio, gpio_mask_t mask, uint32_t mode);
+extern int gpio_settings(gpio_t *gpio, gpio_mask_t mask, uint32_t mode);
 
-extern void gpio_set_level(struct gpio *gpio, gpio_mask_t mask, uint8_t level);
-extern gpio_mask_t gpio_get_level(struct gpio *gpio, gpio_mask_t mask);
+extern void gpio_write(gpio_t *gpio, gpio_mask_t mask, uint8_t level);
+extern gpio_mask_t gpio_read(gpio_t *gpio, gpio_mask_t mask);
 
-extern void gpio_toggle(struct gpio *gpio, gpio_mask_t mask);
+extern void gpio_toggle(gpio_t *gpio, gpio_mask_t mask);
 
 //extern int gpio_pin_irq_attach(struct gpio *gpio, gpio_mask_t mask,
 //		irq_handler_t pin_handler, int mode, void *data);

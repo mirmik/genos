@@ -11,25 +11,24 @@ module("genos.hal.arm.common",
 
 module("genos.hal.arm.arch", impl = "armv6-m",
 	include_paths = ["arch/armv6-m/include"],
-	include_modules = [submodule("genos.hal.arm.common")]	
+	mdepends = [("genos.hal.arm.common")]	
 )
 
 module("genos.hal.arm.arch", impl = "armv7-m",
 	include_paths = ["arch/armv6-m/include"],	
-	include_modules = [submodule("genos.hal.arm.common")]	
+	mdepends = [("genos.hal.arm.common")]	
 )
 
 module("genos.hal.arm.family", impl = "cortex-m0+",
-	include_modules = [submodule("genos.hal.arm.arch", "armv6-m")]	
+	mdepends = [("genos.hal.arm.arch", "armv6-m")]	
 )
 
 module("genos.hal.chip", impl = "samd21g18", 
 	include_paths = ["chip/samd21g18/include"],
-	include_modules = [submodule("genos.hal.arm.family", "cortex-m0+")],
+	mdepends = [("genos.hal.arm.family", "cortex-m0+")],
 	ldscripts = "chip/samd21g18/ldscript.ld",
-
-
 )
+
 
 #module("genos.hal.avr.common",
 #	sources = [
@@ -46,7 +45,7 @@ module("genos.hal.chip", impl = "samd21g18",
 
 #module("genos.hal.chip", impl = "arm_m0",
 #	include_paths = ["atmega2560/include"],
-#	include_modules = [submodule("genos.hal.avr.common")],
+#	mdepends = [submodule("genos.hal.avr.common")],
 #	ldscripts = ["atmega2560/ldscripts/flash.ld"],
 
 #	defines = ["CHIP_ATMEGA2560"],

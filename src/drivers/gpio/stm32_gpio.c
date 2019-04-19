@@ -1,0 +1,50 @@
+#include <drivers/gpio/gpio.h>
+#include <igris/util/bits.h>
+#include <assert.h>
+
+#include <asm/gpio.h>
+
+void gpio_write(struct gpio_regs* g, gpio_mask_t mask, unsigned char level)
+{
+	stm32_gpio_write(g, mask, level);
+}
+
+gpio_mask_t gpio_read(struct gpio_regs* g, gpio_mask_t mask)
+{
+	return stm32_gpio_read(g, mask);
+}
+
+void gpio_toggle(struct gpio_regs* g, gpio_mask_t mask)
+{
+	stm32_gpio_toggle(g, mask);
+}
+
+int gpio_settings(struct gpio_regs * gpio, gpio_mask_t mask, uint32_t mode)
+{
+	int mode_val = 0;
+
+	if ((mode & GPIO_MODE_OUT_SECTION) &&
+	        (mode & GPIO_MODE_IN_SECTION))   /* mode is incorrect */
+	{
+		return -1;
+	}
+
+	if (mode & GPIO_MODE_INPUT)
+	{
+		mode_val = 0x00;
+
+	}
+	else if (mode & GPIO_MODE_OUTPUT)
+	{
+		mode_val = 0b01;
+
+	}
+	else if (mode & GPIO_MODE_ALTERNATE)
+	{
+		mode_val = 0b10;
+	}
+
+	bits_masked_assign_multimap(gpio->MODER, mask, mode_val, 2);
+
+	return 0;
+}
