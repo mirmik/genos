@@ -11,6 +11,12 @@
 
 #include <periph/map.h>
 
+STM32_USART_DEVICE_DECLARE(usart2, USART2, STM32_IRQ_USART2);
+STM32_USART_DEVICE_DECLARE(usart6, USART6, STM32_IRQ_USART6);
+
+genos::drivers::xpin board::sysled0(GPIOD, 14);
+genos::drivers::xpin board::sysled1(GPIOD, 15);
+
 void board_init() 
 {
 	arch_init();
@@ -41,4 +47,7 @@ void board_init()
 
 	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
 	stm32_diag_init(USART2);	
+
+	board::sysled0.settings(GPIO_MODE_OUTPUT);
+	board::sysled1.settings(GPIO_MODE_OUTPUT);
 }

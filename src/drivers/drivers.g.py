@@ -3,7 +3,7 @@ import licant
 #licant.execute("gpio/gpio.g.py")
 
 licant.module("genos.drivers.common",
-	sources = ["serial/uartring.cpp"]
+	sources = ["serial/uartring.cpp", "serial/uartring2.c"]
 )
 
 licant.module("genos.drivers.spi.avr", sources = ["spi/avr_spi.cpp"])
@@ -20,10 +20,12 @@ licant.module("genos.drivers.avr",
 )
 
 licant.module("genos.drivers.stm32_gpio", sources = ["gpio/stm32_gpio.c"], local_headers = [("__local__/arch_gpio.h", "gpio/stm32_gpio.h")])
+licant.module("genos.drivers.stm32_usart", sources = ["serial/stm32_usart.c"])
 licant.module("genos.drivers.stm32", 
 	mdepends = [
 		"genos.drivers.common",
-		"genos.drivers.stm32_gpio"
+		"genos.drivers.stm32_gpio",
+		"genos.drivers.stm32_usart"
 	]
 )
 

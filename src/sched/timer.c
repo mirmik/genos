@@ -82,13 +82,15 @@ void timer_manager() {
 	while(!dlist_empty(&ktimer_list)) 
 	{
 		struct ktimer * it = dlist_first_entry(&ktimer_list, struct ktimer, lnk);
-		
+		system_unlock();
+
 		if (ktimer_check(it, now)) 
 		{			
 			dlist_del(&it->lnk);
 			it->act(it->arg, it);
 		} 
 		else break;
+		system_lock();
 	}
 	system_unlock();
 }

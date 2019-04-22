@@ -1,11 +1,9 @@
 #include <mvfs/fstype.h>
 #include <string.h>
 
-#include <gxx/container/slist.h>
+#include <igris/container/slist.h>
 
-#include <gxx/debug/dprint.h>
-
-gxx::slist<file_system_type, &file_system_type::fs_list> vfs_fslist;
+igris::slist<file_system_type, &file_system_type::fs_list> vfs_fslist;
 
 struct file_system_type * vfs_get_fs(const char* name) 
 {

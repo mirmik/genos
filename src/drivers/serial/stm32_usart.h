@@ -2,11 +2,14 @@
 #define GENOS_DRIVERS_STM32_USART_H
 
 #include <drivers/serial/uart.h>
+#include <periph/irqdefs.h>
 #include <asm/usart.h>
 #include <asm/nvic.h>
 
 #include <hal/irqtable.h>
 
+/*
+#ifdef __cplusplus
 namespace genos
 {
 	namespace drivers
@@ -30,15 +33,10 @@ namespace genos
 				switch (cmd)
 				{
 					case UART_CTRIRQS_TXON: stm32_usart_txirq_enable(regs, true); return 0;
-
 					case UART_CTRIRQS_TXOFF: stm32_usart_txirq_enable(regs, false); return 0;
-
 					case UART_CTRIRQS_RXON: stm32_usart_rxirq_enable(regs, true); return 0;
-
 					case UART_CTRIRQS_RXOFF: stm32_usart_rxirq_enable(regs, false); return 0;
-
 					case UART_CTRIRQS_TCON: stm32_usart_tcirq_enable(regs, true); return 0;
-
 					case UART_CTRIRQS_TCOFF: stm32_usart_tcirq_enable(regs, false); return 0;
 				}
 
@@ -71,6 +69,10 @@ namespace genos
 			          uint8_t stopbits = 1
 			         ) override
 			{
+				//STM32 count parity bit as one of databit.
+				if (parity != 'n')
+					databits += 1;
+
 				stm32_usart_setup(regs, baud, parity, databits, stopbits);
 				irqinit();
 				nvic_enable_irq(irqno - STM32_IRQ_FIRST);
@@ -104,5 +106,42 @@ namespace genos
 		};
 	}
 }
+#endif
+*/
+__BEGIN_DECLS
+
+int stm32_usart_device_enable(struct uart_device * u, int en);
+int stm32_usart_device_ctrirqs(struct uart_device * u, uint8_t cmd);
+int stm32_usart_device_recvbyte(struct uart_device * u);
+int stm32_usart_device_sendbyte(struct uart_device * u, int b);
+int stm32_usart_device_cantx(struct uart_device * u);
+int stm32_usart_device_hasrx(struct uart_device * u);
+int stm32_usart_device_setup(struct uart_device * u,
+                             int32_t baud, char parity,
+                             uint8_t databits, uint8_t stopbits);
+
+__END_DECLS
+
+const struct uart_device_operations stm32_usart_device_operations =
+{
+	.enable = stm32_usart_device_enable,
+	.ctrirqs = stm32_usart_device_ctrirqs,
+	.recvbyte = stm32_usart_device_recvbyte,
+	.sendbyte = stm32_usart_device_sendbyte,
+	.cantx = stm32_usart_device_cantx,
+	.hasrx = stm32_usart_device_hasrx,
+	.setup = stm32_usart_device_setup
+};
+
+struct stm32_usart_device
+{
+	struct uart_device dev;
+	
+	struct usart_regs * regs;
+	uint8_t irqno;
+};
+
+#define STM32_USART_DEVICE_DECLARE(name, regs, irqno)	\
+struct stm32_usart_device name = {{&stm32_usart_device_operations}, regs, irqno}
 
 #endif

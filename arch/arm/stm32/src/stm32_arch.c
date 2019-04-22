@@ -32,10 +32,6 @@ void arch_init()
 	RCC->APB2RSTR = 0;
 	i = 1000; while (--i);
 
-	//rcc_declare_AHB1RSTR_frequency(8000000);
-	//rcc_declare_APB1RSTR_frequency(8000000);
-	//rcc_declare_APB2RSTR_frequency(8000000);
-
 	//Активируем отладочную консоль на интерфейсе UART2
 	//Не активно, потому что инициализацию терминала должен
 	//выполнять board, ибо стандартного терминала нет.

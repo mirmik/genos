@@ -4,12 +4,10 @@
 #include <mvfs/file.h>
 #include <mvfs/mvfs.h>
 
-#include <gxx/panic.h>
-
 #include <stdio.h>
 #include <string.h>
 
-#include <gxx/debug/dprint.h>
+#include <igris/dprint.h>
 
 struct debug_device_class : public char_device {
 	int open(struct file * f) override {

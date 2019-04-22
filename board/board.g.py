@@ -28,7 +28,7 @@ module("genos.board", impl = "arduino_uno",
 )
 
 module("genos.board", impl = "rl_syncro_v2",
-	sources = ["rl/syncro_v2/board.c"],
+	sources = ["rl/syncro_v2/board.cpp"],
 	include_paths = "rl/syncro_v2",
 	mdepends = [
 		("genos.hal", "stm32f407"),

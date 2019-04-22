@@ -20,6 +20,7 @@ enum stm32_gpio_maxspeed_e
 	STM32_GPIO_50MHZ = 0b11
 };
 
+__BEGIN_DECLS
 
 void stm32_gpio_set_maxspeed(struct gpio_regs* regs, uint16_t map,
                              enum stm32_gpio_maxspeed_e maxspeed);
@@ -53,5 +54,7 @@ int stm32_gpio_set_alternate(struct gpio_regs *g, uint32_t mask, int32_t alterna
 	bits_masked_assign_multimap(g->AFR[0], lmask, 0x7, 4);
 	bits_masked_assign_multimap(g->AFR[1], hmask, 0x7, 4);
 }
+
+__END_DECLS
 
 #endif

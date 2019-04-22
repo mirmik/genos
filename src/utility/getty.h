@@ -14,8 +14,6 @@ struct getty_context {
 	char last;
 
 	char buffer[GETTY_LINE_LENGTH];
-
-	getty_context(struct char_device * cdev) : cdev(cdev) {}
 };
 
 __BEGIN_DECLS

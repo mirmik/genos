@@ -11,7 +11,9 @@ licant.execute_recursive("board", ".g.py")
 #	"genos/impls/proclib.cpp" 
 #])
 #
-module ("genos.include", include_paths = [".", "src"] )
+module ("genos.include", 
+	include_paths = [".", "src"],
+	mdepends = ["igris.include"] )
 #
 ##Deprecated
 module ("genos.irqtbl", sources = [ "src/hal/irqtable.cpp" ] )
@@ -51,7 +53,7 @@ module("genos.sched", "impl",
 		"src/sched/schedee_mvfs.cpp",
 		"src/sched/timer.c",
 		"src/sched/api.c",
-		"src/sched/schedee/autom.cpp",
+		"src/sched/schedee/autom.c",
 		"src/sched/schedee/cooperative.cpp",
 
 		"src/sched/posix/fcntl_mvfs.cpp",
@@ -100,6 +102,7 @@ module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
 
 module ("genos.utility.getty", sources = ["src/utility/nologin_getty.cpp"])
+module ("genos.utility.contty", sources = ["src/utility/contty.c"])
 module ("genos.utility.sh", sources = ["src/utility/sh.cpp"])
 
 module("genos.diag", "stub", sources = ["src/diag/diag_stub.c"])

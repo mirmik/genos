@@ -1,7 +1,7 @@
 #ifndef MVFS_FSTYPE_H
 #define MVFS_FSTYPE_H
 
-#include <gxx/datastruct/slist.h>
+#include <igris/datastruct/slist.h>
 
 #define FILESYSTEM_NAME_MAX 4
 

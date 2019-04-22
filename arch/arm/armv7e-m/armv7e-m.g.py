@@ -1,9 +1,9 @@
-module("hal.arm.armv7e-m",
-	mdepends = [
-		"hal.arm.armv7e-m.include"
-	]
-)
+import licant
 
-module("hal.arm.armv7e-m.include",
-	include_paths = ["include"]
+module("hal.arm.armv7e-m",
+	sources = ["src/nvic.c"],
+	include_paths = ["include"],
+	mdepends = [
+		"hal.arm"
+	]
 )

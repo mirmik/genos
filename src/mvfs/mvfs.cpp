@@ -6,8 +6,8 @@
 #include <mvfs/pathops.h>
 #include <mvfs/variant/global_root.h>
 
-#include <gxx/panic.h>
-#include <gxx/debug/dprint.h>
+#include <igris/dprint.h>
+#include <igris/util/bug.h>
 
 #include <errno.h>
 #include <stdbool.h>
@@ -42,7 +42,7 @@ int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *da
 int vfs_mount(const char *source, const char *target, 
 	const char* fstype, unsigned long mountflags, const void *data
 ) {
-	panic("TODO");
+	BUG();
 	return 0;
 }
 
@@ -205,7 +205,7 @@ int vfs_pwd(char* buf)
 	for (struct node * d = vfs_get_pwd();; d = d->parent) {
 		if (d->parent == NULL) {
 			if (d->flag.mount_point) {
-				panic("TODO");
+				BUG();
 			}
 			break;
 		}

@@ -1,13 +1,12 @@
 #include <mvfs/super.h>
 #include <mvfs/file.h>
 #include <mvfs/compat.h>
-#include <gxx/panic.h>
 
 #include <errno.h>
 #include <stdio.h>
 
 #include <assert.h>
-#include <gxx/debug/dprint.h>
+#include <igris/dprint.h>
 
 int vfs_open_node(struct node * i, struct file ** filpp) {
 	int sts;

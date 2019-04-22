@@ -4,8 +4,6 @@
 #include <mvfs/mvfs.h>
 #include <mvfs/node.h>
 
-#include <gxx/panic.h>
-
 int vfs_link_cdev(struct char_device * cdev, const char * dir,
 	const char* name
 ) {

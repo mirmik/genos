@@ -7,7 +7,7 @@
 
 #include <sched/api.h>
 #include <sched/wait.h>
-
+/*
 int genos::drivers::uartring_device::write(const char* data, unsigned int size)
 {
 	int curwrited;
@@ -262,4 +262,4 @@ int genos::drivers::uartring::avail()
 int genos::drivers::uartring::room()
 {
 	return ring_room(&txring);
-}
+}*/

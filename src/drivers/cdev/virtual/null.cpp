@@ -4,8 +4,6 @@
 #include <mvfs/file.h>
 #include <mvfs/mvfs.h>
 
-#include <gxx/panic.h>
-
 #include <stdio.h>
 
 struct null_device_class : public char_device {

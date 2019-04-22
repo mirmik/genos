@@ -1,6 +1,8 @@
 #include <utility/getty.h>
 #include <drivers/cdev/cdev.h>
 
+#include <igris/util/bug.h>
+
 #include <sched/sched.h>
 #include <sched/schedee.h>
 #include <mvfs/file.h>
@@ -73,7 +75,7 @@ void * nologin_getty(void * arg, int * state)
 			break;
 
 		default:
-			panic("state");
+			BUG();
 	}
 
 	return NULL;

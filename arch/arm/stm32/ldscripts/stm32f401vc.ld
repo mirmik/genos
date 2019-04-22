@@ -166,6 +166,7 @@ SECTIONS
   ._user_heap_stack :
   {
     . = ALIGN(4);
+    _heap_start = .;
     _heap = .;
     PROVIDE ( end = . );
     PROVIDE ( _end = . );

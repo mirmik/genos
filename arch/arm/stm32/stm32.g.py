@@ -20,8 +20,8 @@ module("genos.hal.stm32.common",
 	defines = ["CHIP_STM32"],
 
 	cc_flags = "-nostdlib -nostdinc -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
-	cxx_flags = "-nostdlib -nostdinc -fno-rtti -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
-	ld_flags = "-mthumb -mcpu=cortex-m4 -nostdlib -static -fdata-sections -ffunction-sections -Wl,--gc-sections"
+	cxx_flags = "-nostdlib -nostdinc -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
+	ld_flags = "-mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -nostdlib -static -fdata-sections -ffunction-sections -Wl,--gc-sections"
 )
 
 module("genos.hal.stm32f4xx", 
@@ -35,7 +35,6 @@ module("genos.hal", impl = "stm32f407",
 	defines = ["CHIP_STM32F407"],
 	mdepends = [
 		"genos.hal.stm32f4xx",	
-		"hal.arm32.include",
 		"genos.hal.stm32.common",
 	],
 	ldscripts = "ldscripts/stm32f401vc.ld",
