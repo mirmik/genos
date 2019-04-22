@@ -122,16 +122,7 @@ int stm32_usart_device_setup(struct uart_device * u,
 
 __END_DECLS
 
-const struct uart_device_operations stm32_usart_device_operations =
-{
-	.enable = stm32_usart_device_enable,
-	.ctrirqs = stm32_usart_device_ctrirqs,
-	.recvbyte = stm32_usart_device_recvbyte,
-	.sendbyte = stm32_usart_device_sendbyte,
-	.cantx = stm32_usart_device_cantx,
-	.hasrx = stm32_usart_device_hasrx,
-	.setup = stm32_usart_device_setup
-};
+extern const struct uart_device_operations stm32_usart_device_operations;
 
 struct stm32_usart_device
 {

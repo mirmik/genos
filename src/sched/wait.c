@@ -105,8 +105,10 @@ void unwait_one(struct dlist_head * head)
 
 	system_lock();
 
-	if (dlist_empty(head)) 
+	if (dlist_empty(head)) {
+		system_unlock();
 		return;
+	}
 	
 	it = dlist_first_entry(head, struct waiter, wait_lnk);
 	__unwait(it);

@@ -136,3 +136,12 @@ void uartring_begin(struct uartring_device * dev, struct uart_device * uart)
 	uart -> handler = uartring_ddevice_irq_handler;
 	uart -> handarg = (void*)dev;
 }
+
+const struct char_device_operations uartring_dev_ops = 
+{
+	.write = 		uartring_device_write,
+	.read = 		uartring_device_read,
+	.room = 		uartring_device_room,
+	.avail = 		uartring_device_avail,
+	.waitread = 	uartring_device_waitread
+};

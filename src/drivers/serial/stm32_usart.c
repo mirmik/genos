@@ -107,3 +107,14 @@ int stm32_usart_device_setup(struct uart_device * u,
 	irqinit(dev);
 	nvic_enable_irq(dev->irqno - STM32_IRQ_FIRST);
 }
+
+const struct uart_device_operations stm32_usart_device_operations =
+{
+	.enable = stm32_usart_device_enable,
+	.ctrirqs = stm32_usart_device_ctrirqs,
+	.recvbyte = stm32_usart_device_recvbyte,
+	.sendbyte = stm32_usart_device_sendbyte,
+	.cantx = stm32_usart_device_cantx,
+	.hasrx = stm32_usart_device_hasrx,
+	.setup = stm32_usart_device_setup
+};
