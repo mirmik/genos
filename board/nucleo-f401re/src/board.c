@@ -37,9 +37,9 @@ void board_init()
 	rcc_enable_usart(USART2);
 //	rcc_enable_usart(USART6);
 	rcc_enable_gpio(GPIOA);
-//	rcc_enable_gpio(GPIOD);
+	//rcc_enable_gpio(GPIOD);
 
-	gpio_settings(GPIOD, (0b1111 << 12), GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
+	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 
 	gpio_settings(GPIOA, (1 << 2 | 1 << 3), GPIO_MODE_ALTERNATE);
 	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_2MHZ);

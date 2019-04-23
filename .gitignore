@@ -47,5 +47,6 @@ CTestTestfile.cmake
 
 #Firmware
 *.bin
+firmware
 
 build

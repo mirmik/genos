@@ -34,6 +34,9 @@ licant.cxx_application("firmware",
 		("genos.malloc", "lin"),
 
 		#"igris.cxx_support",
+
+		"genos.utility.contty",
+		"genos.utility.mshell"
 	],
 
 	cxx_flags = "-O3",

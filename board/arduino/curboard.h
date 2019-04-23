@@ -6,7 +6,7 @@
 #include <sys/cdefs.h>
 #include <drivers/gpio/gpio.h>
 #include <drivers/gpio/pin.h>
-#include <drivers/serial/avr_usart.h>
+//#include <drivers/serial/avr_usart.h>
 
 #if defined(BOARD_ARDUINO_UNO)
 #	define RED_LED_GPIO GPIOB
@@ -39,6 +39,8 @@
 #define SYSLED_MASK RED_LED_MASK
 #define SYSLED_PIN  RED_LED_PIN
 
+extern struct gpio_pin board_led;
+
 __BEGIN_DECLS
 
 //void board_init();
@@ -53,7 +55,7 @@ __END_DECLS
 namespace board 
 {
 	extern gpio_pin sysled;
-	extern genos::drivers::avr_usart usart0;
+//	extern genos::drivers::avr_usart usart0;
 }
 
 #endif

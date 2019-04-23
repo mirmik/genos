@@ -15,22 +15,7 @@ struct autom_schedee
 	int state;
 };
 
-
-__BEGIN_DECLS
-
-extern void autom_schedee_execute(struct schedee* sch);
-extern void autom_schedee_displace(struct schedee* sch);
-extern void autom_schedee_finalize(struct schedee* sch);
-
-__END_DECLS
-
-const struct schedee_operations autom_schedee_op =
-{
-	.execute = autom_schedee_execute,
-	.displace = autom_schedee_displace,
-	.finalize = autom_schedee_finalize,
-};
-
+extern const struct schedee_operations autom_schedee_op;
 
 __BEGIN_DECLS
 static inline 

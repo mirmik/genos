@@ -3,14 +3,16 @@
 #include <systime/systime.h>
 
 #include <drivers/gpio/pin.h>
-#include <drivers/serial/avr_usart.h>
+//#include <drivers/serial/avr_usart.h>
 #include <periph/irqdefs.h>
 
 #include <igris/dprint/dprint.h>
 
+GPIO_PIN(board_led, SYSLED_GPIO, SYSLED_PIN);
+
 namespace board {
 	gpio_pin sysled { SYSLED_GPIO, SYSLED_MASK };
-	genos::drivers::avr_usart usart0(USART0, ATMEGA_IRQ_U0RX);
+//	genos::drivers::avr_usart usart0(USART0, ATMEGA_IRQ_U0RX);
 }
 
 void board_init() {

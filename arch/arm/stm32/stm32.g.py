@@ -13,7 +13,7 @@ module("genos.hal.stm32.common",
 	],
 
 	mdepends = [
-		"genos.irqtbl",
+		"genos.irqtable",
 		"genos.systime"
 	],
 

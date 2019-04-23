@@ -1,5 +1,6 @@
 #include <sched/timer.h>
 #include <stdlib.h>
+#include <igris/dprint.h>
 
 DLIST_HEAD(ktimer_list);
 
@@ -53,14 +54,17 @@ void ktimer_plan(struct ktimer * t)
 	time_t it_final;
 	time_t final;
 
-	system_lock();
-
 	final = t->start + t->interval;
 	sit = NULL;
+
+	system_lock();
 
 	dlist_for_each_entry(it, &ktimer_list, lnk) 
 	{
 		it_final = it->start + it->interval;
+		
+		while(1);
+
 		if (final - it_final < 0) 
 		{ 
 			sit = &it->lnk; 
@@ -73,7 +77,7 @@ void ktimer_plan(struct ktimer * t)
 	system_unlock();
 }
 
-void timer_manager() {
+void timer_manager_step() {
 	time_t now;
 
 	now = jiffies();

@@ -13,11 +13,13 @@ struct contty_context {
 	struct char_device * cdev;
 	char last;
 	char buffer[CONTTY_LINE_LENGTH];
+	unsigned char debug_mode;
 };
 
 __BEGIN_DECLS
 
 void * contty_automate(void * arg, int * state);
+void contty_debug_mode(struct contty_context * cntxt, int en);
 
 __END_DECLS
 

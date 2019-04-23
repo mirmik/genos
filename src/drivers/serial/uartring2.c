@@ -135,6 +135,7 @@ void uartring_begin(struct uartring_device * dev, struct uart_device * uart)
 	dev -> uart = uart;
 	uart -> handler = uartring_ddevice_irq_handler;
 	uart -> handarg = (void*)dev;
+	uart_device_ctrirqs(dev->uart, UART_CTRIRQS_RXON);
 }
 
 const struct char_device_operations uartring_dev_ops = 

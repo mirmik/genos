@@ -16,7 +16,7 @@ module ("genos.include",
 	mdepends = ["igris.include"] )
 #
 ##Deprecated
-module ("genos.irqtbl", sources = [ "src/hal/irqtable.cpp" ] )
+module ("genos.irqtable", sources = [ "src/hal/irqtable.cpp" ] )
 #module ("genos.irqtable", sources = [ "src/hal/irqtable.c" ] )
 #
 #module ("genos.tasklet", srcdir="genos/sched/src", sources = [ "tasklet.cpp" ] )
@@ -49,12 +49,13 @@ module("genos.sched", "impl",
 	sources = [
 		"src/sched/wait.c",
 		"src/sched/sched.cpp",
+		"src/sched/displace.cpp",
 		"src/sched/schedee.c",
 		"src/sched/schedee_mvfs.cpp",
 		"src/sched/timer.c",
 		"src/sched/api.c",
 		"src/sched/schedee/autom.c",
-		"src/sched/schedee/cooperative.cpp",
+		"src/sched/schedee/cooperative.c",
 
 		"src/sched/posix/fcntl_mvfs.cpp",
 		"src/sched/posix/unistd_mvfs.cpp",
@@ -101,9 +102,8 @@ module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )
 module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
 
-module ("genos.utility.getty", sources = ["src/utility/nologin_getty.cpp"])
 module ("genos.utility.contty", sources = ["src/utility/contty.c"])
-module ("genos.utility.sh", sources = ["src/utility/sh.cpp"])
+module ("genos.utility.mshell", sources = ["src/utility/mshell.c"])
 
 module("genos.diag", "stub", sources = ["src/diag/diag_stub.c"])
 module("genos.diag", "impl", sources = ["src/diag/diag_impl.c"], default=True)

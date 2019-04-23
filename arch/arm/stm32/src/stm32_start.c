@@ -29,11 +29,12 @@ void cxx_invoke_fini_array(void) {
 	}
 }
 
-void __start(void) {
+void __start(void) 
+{
 	irqs_disable();
 
 	/*data section copy*/
-	memcpy(&_sdata, &_sidata, (unsigned int) (_edata - _sdata));
+	memcpy(&_sdata, &_sidata, (unsigned int) (&_edata - &_sdata));
 	
 	/*bss section init*/
 	unsigned int bss_size = &_ebss - &_sbss;

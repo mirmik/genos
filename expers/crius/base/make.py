@@ -31,12 +31,12 @@ licant.cxx_application("firmware",
 		("igris.syslock", "genos.atomic"),
 		("igris.dprint", "diag"),
 		
-		"genos.drivers.common",
+#		"genos.drivers.common",
 		"genos.drivers.gpio.avr", 
-		"genos.drivers.usart.avr",
+#		"genos.drivers.usart.avr",
 
-		"nos",
-		("nos.current_ostream", "nullptr"),
+#		"nos",
+#		("nos.current_ostream", "nullptr"),
 	]
 )
 

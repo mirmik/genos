@@ -12,7 +12,9 @@ void schedee_stop(struct schedee * sch);
 void schedee_final(struct schedee * sch);
 
 void schedee_manager_init();
-//void schedee_manager_step();
+void scheduler_init();
+
+void schedee_manager_step();
 
 void __schedule__();
 int  __displace__();
@@ -21,6 +23,8 @@ struct schedee * create_autom_schedee(void*(*task)(void*, int*), void* arg);
 struct schedee * create_cooperative_schedee(void*(*task)(void*), void* arg, int heapsize);
 //struct schedee * create_process(int(*task)(void*), void* arg, int heapsize);
 
+int schedee_manager_total_planed();
+	
 __END_DECLS
 
 #ifdef __cplusplus
@@ -39,11 +43,10 @@ namespace genos {
 		return ::create_autom_schedee(fdlg.extfunction, fdlg.object);
 	}
 
-	namespace schedee_manager 
-	{
-		void step();
-		int total_planed();
-	}
+	//namespace schedee_manager 
+	//{
+	//	void step();
+	//}
 }
 
 #endif

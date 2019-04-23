@@ -202,8 +202,8 @@ ret
 
 
 .global __kill_stack_and_schedule_invoke__
-.global context_save_and_invoke_displace
-context_save_and_invoke_displace:
+.global context_save_and_displace
+context_save_and_displace:
 
 push r28
 push r29
@@ -267,11 +267,9 @@ st y+, r0
 in r0, AVR_STATUS_ADDR
 st y+, r0
 
-jmp __kill_stack_and_schedule_invoke__
+jmp __context_displace_vector__
 
-
-.global genos_context_displace
-genos_context_displace:
-
-call context_save_and_invoke_displace
-ret
+//.global genos_context_displace
+//genos_context_displace:
+//call context_save_and_displace
+//ret

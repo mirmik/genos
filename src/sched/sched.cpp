@@ -80,7 +80,7 @@ void __schedee_execute(struct schedee * sch)
 	sch->sch_op->execute(sch);
 }
 
-int genos::schedee_manager::total_planed() 
+int schedee_manager_total_planed() 
 {
 	int sum = 0;
 	struct dlist_head* sch;
@@ -91,7 +91,7 @@ int genos::schedee_manager::total_planed()
 	return sum;
 }
 
-void genos::schedee_manager::step()
+void schedee_manager_step()
 {
 	//TRACE();
 	struct schedee* sch;
@@ -138,4 +138,9 @@ int __displace__()
 
 	sch->sch_op->displace(sch);
 	return 0;
+}
+
+void scheduler_init() 
+{
+	schedee_manager_init();
 }

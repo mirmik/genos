@@ -22,7 +22,10 @@ module("genos.hal.avr.common",
 		"periph/timer.c",
 		"debug_blink.S"
 	],
-	mdepends=["avr.diag"],
+	mdepends=["avr.diag",
+		"genos.irqtable",
+		"genos.systime"
+	],
 
 	include_paths = ["include"]
 )

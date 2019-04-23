@@ -30,3 +30,11 @@ void autom_schedee_finalize(struct schedee* sch) {
 	free(asch);	
 	BUG();
 }
+
+const struct schedee_operations autom_schedee_op =
+{
+	.execute = autom_schedee_execute,
+	.displace = autom_schedee_displace,
+	.finalize = autom_schedee_finalize,
+};
+
