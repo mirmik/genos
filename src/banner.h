@@ -1,6 +1,8 @@
 #ifndef GENOS_BANNER_H
 #define GENOS_BANNER_H
 
+#include <igris/dprint.h>
+
 //#include <genos/iolib.h>
 
 //#define GENOS_VERSION "0.10.1"	
