@@ -25,17 +25,12 @@ int pipe_read(struct char_device * cdev,
 
 int pipe_waitread(struct char_device * cdev);
 
-const struct char_device_operations pipe_ops = 
-{
-	.write = pipe_write,
-	.read = pipe_read,
-	.waitread = pipe_waitread
-}
+const struct char_device_operations pipe_ops;
 
 static inline
 void pipe_init(struct pipe * p, char * buf, int len)
 {
-	char_device_init(p->cdev, pipe_operations);
+	char_device_init(&p->cdev, &pipe_ops);
 	ring_init(&p->ring, len);
 }
 
