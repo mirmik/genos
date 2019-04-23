@@ -32,5 +32,6 @@ module("genos.board", impl = "rl_syncro_v2",
 	include_paths = "rl/syncro_v2",
 	mdepends = [
 		("genos.hal", "stm32f407"),
-	]	
+	],
+	defines=["BOARD_RL_SYNCRO_V2"]
 )

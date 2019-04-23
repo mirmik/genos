@@ -17,9 +17,10 @@ struct mshell_command
 	const char* name;
 	int (*func) (int, char**);
 	uint8_t type;
+	const char* help;
 };
 
-#define MSHELL_TBLFIN { NULL, NULL, 0 }
+#define MSHELL_TBLFIN { NULL, NULL, 0, NULL }
 
 //struct mshell_command mshell_command_table[N];
 

@@ -19,11 +19,29 @@ void rcc_enable_gpio(struct gpio_regs* g)
 {
 	switch ((uintptr_t)g)
 	{
+		case GPIOA_BASE :
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; break;
+
+		case GPIOB_BASE :
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN; break;
+
+		case GPIOC_BASE :
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN; break;
+
 		case GPIOD_BASE :
 			RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN; break;
 
-		case GPIOA_BASE :
-			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; break;
+		case GPIOE_BASE :
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN; break;
+
+		case GPIOF_BASE :
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN; break;
+
+		case GPIOG_BASE :
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN; break;
+
+		case GPIOH_BASE :
+			RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN; break;
 
 		default: BUG();
 	}
@@ -35,7 +53,7 @@ void rcc_enable_afio(struct gpio_regs* g)
 	switch ((uintptr_t)g)
 	{
 		case GPIOA_BASE :
-		case GPIOD_BASE : 
+		case GPIOD_BASE :
 			RCC->AHB1ENR |= RCC_AHB1ENR_AFIOEN;
 			break;
 

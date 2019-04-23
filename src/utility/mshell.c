@@ -15,7 +15,7 @@ extern struct mshell_command mshell_commands_table[];
 
 int mshell_execn(char* str, int len, int flags, int * retptr)
 {
-	int flen;
+	int flen=0;
 	int argc;
 	int res;
 	char * argv[10];
@@ -30,14 +30,33 @@ int mshell_execn(char* str, int len, int flags, int * retptr)
 	//int argc;
 	//int res;
 
+	//dprln("inwork:");
+	//debug_write(str, len); dln();
+
 	if (len == 0)
 	{
 		return MSHELL_OK;
 	}
 
-	flen = argvc_length_of_first(str);
+	//flen = argvc_length_of_first(str, len);
+	while (flen != len && str[flen] != '\0' && str[flen] != ' ') 
+		flen++;
 
 	it = mshell_commands_table;
+	
+	if (flen == 4 && !strncmp(str, "help", 4)) 
+	{
+		for (; it->func != NULL; ++it) 
+		{
+			if (it->help)
+			 	dprln(it->name, "-", it->help);
+			else
+				dprln(it->name);
+		}
+		
+		return 0;
+	}
+
 	for (; it->func != NULL; ++it)
 	{
 		if ((strlen(it->name) == flen) && !strncmp(str, it->name, flen))

@@ -16,17 +16,21 @@
 
 static int newline(struct contty_context * cntxt)
 {
+	int ret;
+
 //	struct schedee * sch = create_autom_schedee(sh_utility, NULL);
 //	schedee_run(sch);
 //	__schedee_wait_for(current_schedee(), sch);
 //	__displace__();
-	int ret = mshell_execn(cntxt->line.buf, cntxt->line.len, SH_INTERNAL_SPLIT, NULL);
+	ret = mshell_execn(cntxt->line.buf, cntxt->line.len, SH_INTERNAL_SPLIT, NULL);
 
 	switch (ret)
 	{
 		case ENOENT: cntxt->cdev->c_ops->write(
 			    cntxt->cdev, "Entry not found\n\r", 17, 0);
 	}
+
+	return ret;
 }
 
 void contty_debug_mode(struct contty_context * cntxt, int en)
