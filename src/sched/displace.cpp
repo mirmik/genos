@@ -10,7 +10,7 @@
 	while (1) __schedule__();
 }*/
 
-extern "C" int __context_drop__()
+extern "C" int __context_displace_vector__()
 {
 	dprln("__context_drop__");
 	RESET_STACK();
