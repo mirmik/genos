@@ -11,7 +11,7 @@
 #include <mvfs/file.h>
 #include <errno.h>
 
-struct file_operations;
+//struct file_operations; < Реализовано в теле inode
 
 struct file {
 	int pos;

@@ -7,17 +7,6 @@
 
 #include <igris/dprint.h>
 
-static void cooperative_schedee_execute(struct schedee* sch);
-static void cooperative_schedee_displace(struct schedee* sch);
-static void cooperative_schedee_finalize(struct schedee* sch);
-
-const struct schedee_operations cooperative_schedee_op =
-{
-	.execute = cooperative_schedee_execute,
-	.displace = cooperative_schedee_displace,
-	.finalize = cooperative_schedee_finalize,
-};
-
 static inline void starter (void * sch)
 {
 	struct cooperative_schedee * csch = (struct cooperative_schedee *) sch;
@@ -64,12 +53,13 @@ static void cooperative_schedee_execute(struct schedee* sch)
 	context_load(&csch->cntxt);
 }
 
-static void cooperative_schedee_displace(struct schedee* sch)
+static int cooperative_schedee_displace(struct schedee* sch)
 {
 	//TRACE();
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
 	sch->flag.runned = 0;
 	context_save_and_displace(&csch->cntxt);
+	return DISPLACE_REAL;
 }
 
 static void cooperative_schedee_finalize(struct schedee* sch)
@@ -78,3 +68,10 @@ static void cooperative_schedee_finalize(struct schedee* sch)
 	struct cooperative_schedee * asch = mcast_out(sch, struct cooperative_schedee, sch);
 	free(asch);
 }
+
+const struct schedee_operations cooperative_schedee_op =
+{
+	.execute = cooperative_schedee_execute,
+	.displace = cooperative_schedee_displace,
+	.finalize = cooperative_schedee_finalize,
+};

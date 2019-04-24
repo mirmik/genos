@@ -3,6 +3,10 @@
 
 #include <sched/schedee.h>
 
+#define DISPLACE_REAL 0
+#define DISPLACE_VIRTUAL 1
+#define DISPLACE_ERROR -1
+
 __BEGIN_DECLS
 
 void schedee_run(struct schedee * sch);

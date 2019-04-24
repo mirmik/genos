@@ -9,31 +9,46 @@
 #include <string.h>
 #include <errno.h>
 
+#include <igris/dprint.h>
+
 int main() {
 	int sts;
 
 	
-	vfs_register_fs(&joke_fstype);
+	vfs_register_fs(&joke_fstype.fs);
+
+	dprln("step 1");
 	sts = vfs_mount_first("joke", 0, NULL);
-		if (sts) dprf("%s\n", strerror(sts));
+		if (sts) dprln(strerror(sts));
 
+	vfs_debug_pwd();
+	//vfs_debug_ls(NULL);
+	vfs_debug_tree(NULL);
+
+	dprln("step 2");
 	sts = vfs_mkdir("/dev");
-		if (sts) dprf("%s\n", strerror(sts));
+		if (sts) dprln(strerror(sts));
 
+	dprln("step 3");
 	sts =link_null_device("/dev");
-		if (sts) dprf("%s\n", strerror(sts));
+		if (sts) dprln(strerror(sts));
 
+	dprln("step 4");
 	sts =link_zero_device("/dev");
-		if (sts) dprf("%s\n", strerror(sts));
+		if (sts) dprln(strerror(sts));
 
+	dprln("step 5");
 	sts =link_debug_device("/dev");
-		if (sts) dprf("%s\n", strerror(sts));
+		if (sts) dprln(strerror(sts));
 
+	dprln("step 6");
 	vfs_dpr_node_tree(NULL);
 
+	dprln("step 7");
 	struct file * filp; 
 	sts = vfs_open("/dev/debug", 0, &filp);
-		if (sts) dprf("%s\n", strerror(sts));
+		if (sts) dprln(strerror(sts));
 
+	dprln("step 8");
 	vfs_write(filp, "HelloWorld\n", 11);
 }

@@ -23,7 +23,7 @@ int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *da
 	if (fs == NULL) 
 		return ENOENT;
 
-	struct super_block * sb = fs->get_sb(mountflags, data);
+	struct super_block * sb = fs->fs_ops->get_sb(fs, mountflags, data);
 	vfs_set_global_root(sb->root);
 
 	return 0;
@@ -50,7 +50,10 @@ int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f)
 {
 	int sts;
 
-	sts = parent->mkdir(name, nlen, 0);
+	if (parent->n_ops->mkdir == NULL) 
+		return ENOTSUP;
+
+	sts = parent->n_ops->mkdir(parent, name, nlen, 0);
 		if (sts)
 			return sts;
 
@@ -84,10 +87,10 @@ int vfs_rmdir_do(struct node * dir)
 {
 	int sts;
 
-	if (!dir->childs.empty()) 
+	if (!dlist_empty(&dir->childs)) 
 		return ENOTEMPTY;
 
-	sts = dir->rmdir();
+	sts = dir->n_ops->rmdir(dir);
 		if (sts)
 			return sts;
 
@@ -171,7 +174,7 @@ int vfs_open(const char* path, int flags, struct file** filp) {
 int vfs_close(struct file* filp) {
 	int sts;
 
-	sts = filp->node->release(filp);
+	sts = filp->node->n_ops->release(filp->node, filp);
 		if (sts) 
 			return sts;
 
@@ -181,12 +184,12 @@ int vfs_close(struct file* filp) {
 int vfs_write(struct file * filp, const char* data, unsigned int size) 
 {
 	errno = 0;
-	return filp->node->write(filp, data, size);
+	return filp->node->n_ops->write(filp->node, filp, data, size);
 }
 
 int vfs_read(struct file * filp, char* data, unsigned int size) {
 	errno = 0;
-	return filp->node->read(filp, data, size);
+	return filp->node->n_ops->read(filp->node, filp, data, size);
 }
 
 int vfs_pwd(char* buf) 
@@ -258,7 +261,7 @@ int vfs_common_release (struct node * i, struct file * f) {
 }
 
 int vfs_iterate(struct file * filp, struct dirent * de) {
-	return filp->node->iterate(filp, de);
+	return filp->node->n_ops->iterate(filp->node, filp, de);
 }
 
 int vfs_debug_ls(const char* path) {

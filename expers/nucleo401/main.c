@@ -53,14 +53,14 @@ int banner(int argc, char** argv)
 }
 
 struct mshell_command mshell_commands_table [] = {
-	{"hello", hello, MSHELL_FUNCTION},
-	{"banner", banner, MSHELL_FUNCTION},
+	{"hello", hello, MSHELL_FUNCTION, "Print helloworld"},
+	{"banner", banner, MSHELL_FUNCTION, "Print banner"},
 	MSHELL_TBLFIN
 };
 
 void* mainproc(void* arg) 
 {
-
+	dprln("mainproc");
 } 
 
 int main() 
@@ -81,6 +81,7 @@ int main()
 	autom_schedee_init(&contty_schedee, contty_automate, &contty_cntxt);
 	cooperative_schedee_init(&init_schedee, mainproc, NULL, init_schedee_heap, 512);
 	schedee_run(&contty_schedee.sch);
+	schedee_run(&init_schedee.sch);
 
 	irqs_enable();
 

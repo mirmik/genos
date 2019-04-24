@@ -21,8 +21,9 @@ void autom_schedee_execute(struct schedee* sch) {
 	asch->task(asch->arg, &asch->state);
 } 
 
-void autom_schedee_displace(struct schedee* sch) {
+int autom_schedee_displace(struct schedee* sch) {
 	sch->flag.runned = 0;
+	return DISPLACE_VIRTUAL;
 }
 
 void autom_schedee_finalize(struct schedee* sch) {

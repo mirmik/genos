@@ -1,7 +1,7 @@
 #ifndef MVFS_NODE_H
 #define MVFS_NODE_H
 
-#include <igris/container/dlist.h>
+#include <igris/datastruct/dlist.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -9,17 +9,38 @@
 
 #define NAME_LENGTH_MAX 7
 
+#define NODE_NEGATIVE 0x01
+#define NODE_DIRECTORY 0x02
+#define NODE_SPECIAL 0x04
+
 struct super_block;
 struct file_operations;
 struct file;
 
+struct node;
+struct node_operations 
+{
+	//file operations
+	int (*open) (struct node *, struct file*); ///< заполнить структуру файла по inode.
+	int (*release) (struct node *, struct file*); ///< вернуть структуру файла в распределитель.
+	int (*write) (struct node *, struct file*, const char* data, unsigned int size); ///< запись данных
+	int (*read) (struct node *, struct file*, char* data, unsigned int size); ///< чтение данных
+	int (*iterate) (struct node *, struct file*, void*); ///< чтение директории
+
+	//inode operations
+    int (*mkdir)(struct node *, const char * name, size_t nlen, int flags); ///< создать подчинённую директорию
+    int (*rmdir)(struct node *); ///< Удалить данную директорию.
+};
+
 struct node {
 	struct dlist_head lnk;
-	igris::dlist<struct node, &node::lnk> childs;
+	struct dlist_head childs;
 
 	struct node * parent;
 	char name[NAME_LENGTH_MAX + 1];
 	struct super_block * sb;
+
+	const struct node_operations * n_ops;
 
 	union {
 		uint8_t flags;
@@ -32,28 +53,20 @@ struct node {
 			uint8_t nosched : 1;
 		} flag;
 	};
-
-	//file operations
-	virtual int open (struct file*) { return ENOTSUP; } ///< заполнить структуру файла по inode.
-	virtual int release (struct file*) { return ENOTSUP; }	
-	virtual int write (struct file*, const char* data, unsigned int size) { return ENOTSUP; }
-	virtual int read (struct file*, char* data, unsigned int size) { return ENOTSUP; }
-	virtual int iterate (struct file*, void*) { return ENOTSUP; }
-
-	//inode operations
-    virtual int mkdir(const char * name, size_t nlen, int flags) { return ENOTSUP; }
-    virtual int rmdir() { return ENOTSUP; }
 };
 
-struct special_node {
+#define NODE_INIT(name, cname, sb, ops, flags) 					\
+	{ DLIST_HEAD_INIT(name.lnk), DLIST_HEAD_INIT(name.childs),	\
+	NULL, cname, sb, ops, flags }
+
+/*struct special_node {
 	struct node node;
 	const struct file_operations * f_op;
 };
 
 struct node_operations {
 	struct node * (*lookup) (struct node * dir, const char * name, size_t nlen);
-
-};
+};*/
 
 __BEGIN_DECLS
 
@@ -62,7 +75,8 @@ extern int vfs_open_node(struct node * i, struct file ** filpp);
 //struct node * virtual_node_alloc();
 //void virtual_node_dealloc(struct node *);
 
-static inline void node_init(struct node * node, const char * name, size_t nlen) {
+static inline 
+void node_init(struct node * node, const char * name, size_t nlen) {
 	int len;
 
 	len = nlen < NAME_LENGTH_MAX ? nlen : NAME_LENGTH_MAX;
@@ -72,30 +86,11 @@ static inline void node_init(struct node * node, const char * name, size_t nlen)
 	node->flags = 0;
 }
 
-static inline void node_add_child(struct node * node, struct node * parent) {
-	parent->childs.add_last(*node);
-	//dlist_add(&node->lnk, &parent->childrens);
+static inline 
+void node_add_child(struct node * node, struct node * parent) {
+	dlist_add_tail(&node->lnk, &parent->childs);
 	node->parent = parent;
 }
-
-/*static inline struct node * virtual_node_create(const char * name, size_t nlen) {
-	struct node * ret = virtual_node_alloc();
-	node_init(ret, name, nlen);
-	return ret;
-}*/
-
-/*static inline struct node * virtual_node_create_as_child(const char * name, size_t nlen,
-	struct node * parent
-) {
-	struct node * ret = virtual_node_create(name, nlen);
-	node_add_child(ret, parent);
-	return ret;
-}
-
-static inline void virtual_node_release(struct node * node) {
-	dlist_del(&node->lnk);
-	virtual_node_dealloc(node);
-}*/
 
 extern void vfs_dpr_node_tree(struct node * root);
 

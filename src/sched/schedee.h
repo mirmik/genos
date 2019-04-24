@@ -46,7 +46,7 @@ struct schedee {
 
 struct schedee_operations {
 	void (*execute) (struct schedee * sch);
-	void (*displace) (struct schedee * sch);
+	int (*displace) (struct schedee * sch);
 	void (*finalize) (struct schedee * sch);
 };
 

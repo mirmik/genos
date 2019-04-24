@@ -134,10 +134,9 @@ int __displace__()
 	struct schedee * sch = current_schedee();
 
 	if (sch->flag.can_displace == 0)
-		return -1;
+		return DISPLACE_ERROR;
 
-	sch->sch_op->displace(sch);
-	return 0;
+	return sch->sch_op->displace(sch);
 }
 
 void scheduler_init() 

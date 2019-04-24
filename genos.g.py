@@ -65,23 +65,25 @@ module("genos.sched", "impl",
 
 module("genos.mvfs", 
 	sources = [
-		"src/mvfs/mvfs.cpp",
-		"src/mvfs/fstype.cpp",
-		"src/mvfs/super.cpp",
-		"src/mvfs/variant/other.cpp",
-		"src/mvfs/node.cpp",
-		"src/mvfs/pathops.cpp",
-		"src/mvfs/vfsmount.cpp",
-		"src/mvfs/lookup.cpp",
-		"src/mvfs/file.cpp",
+		"src/mvfs/mvfs.c",
+		"src/mvfs/fstype.c",
+		"src/mvfs/super.c",
+		"src/mvfs/variant/other.c",
+		"src/mvfs/node.c",
+		"src/mvfs/pathops.c",
+		"src/mvfs/vfsmount.c",
+		"src/mvfs/lookup.c",
+		"src/mvfs/file.c",
 		
-		"src/drivers/cdev/cdev.cpp",
-		"src/drivers/cdev/virtual/null.cpp",
-		"src/drivers/cdev/virtual/zero.cpp",
-		"src/drivers/cdev/virtual/debug.cpp",
+		"src/drivers/cdev/cdev.c",
+		"src/drivers/cdev/virtual/null.c",
+		"src/drivers/cdev/virtual/zero.c",
+		"src/drivers/cdev/virtual/debug.c",
 
 		#"src/drivers/bdev/bdev.cpp",
 		#"src/drivers/bdev/virtual/nullb.cpp",
+
+		"src/mvfs/fs/joke/joke.c"
 	],
 
 	defines = [
@@ -90,11 +92,11 @@ module("genos.mvfs",
 )
 
 module("genos.mvfs.global", 
-	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/global_pwd.cpp" ]
+	sources = [ "src/mvfs/variant/global_root.c", "src/mvfs/variant/global_pwd.c" ]
 )
 
 module("genos.mvfs.schedee_support", 
-	sources = [ "src/mvfs/variant/global_root.cpp", "src/mvfs/variant/schedee_support.cpp" ]
+	sources = [ "src/mvfs/variant/global_root.c", "src/mvfs/variant/schedee_support.c" ]
 ) 
 
 module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )

@@ -6,24 +6,24 @@ import licant.libs
 from licant.cxx_modules import application
 
 licant.libs.include("genos")
-licant.libs.include("gxx")
+licant.libs.include("igris")
 
 application("target",
-	sources = ["main.cpp"],
+	sources = ["main.c"],
 
-	include_modules = [
+	mdepends = [
 		"genos.include", 
-		("gxx", "posix"),
-		("gxx.print", "cout"),
-		("gxx.dprint", "cout"),
+		"igris.include", 
+
+		("igris.dprint", "stdout"),
+		"igris.bug",
 
 		"genos.mvfs",
 		"genos.mvfs.global",
 		
 		("genos.sched", "stub"),
 		("genos.errno"),
-		#"genos.misc",
-		#"genos.chardev"
+
 	],
 )
 

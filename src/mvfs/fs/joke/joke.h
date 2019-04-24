@@ -7,12 +7,50 @@
 #include <mvfs/file.h>
 #include <mvfs/dirent.h>
 
-#include <gxx/panic.h>
 #include <errno.h>
 #include <string.h>
 
-#include <gxx/debug/dprint.h>
+struct joke_fstype_class
+{
+	struct file_system_type fs;
+};
 
+struct joke_super_block
+{
+	struct super_block sb;
+};
+
+struct joke_node
+{
+	struct node node;
+};
+
+extern struct joke_fstype_class joke_fstype;
+extern struct joke_super_block joke_sb;
+
+__BEGIN_DECLS
+__END_DECLS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 struct joke_node * 	joke_node_create(const char * name, size_t nlen);
 struct joke_node * 	joke_node_create_as_child(const char * name, size_t nlen, struct node * parent);
 void 				joke_node_release(struct joke_node * node);
@@ -22,8 +60,8 @@ struct joke_super_block : public super_block {};
 struct joke_fstype_class : public file_system_type  
 {
 	joke_fstype_class() : file_system_type("joke") {};
-	struct super_block * get_sb(int flags, const void * data) override;
-	void kill_sb(struct super_block * sb) override;
+	struct super_block * get_sb(int flags, const void * data);
+	void kill_sb(struct super_block * sb);
 };
 
 struct joke_super_block joke_sb;
@@ -102,6 +140,6 @@ void
 joke_fstype_class::kill_sb(struct super_block * sb) 
 {
 	panic("joke sb deallocated");
-}
+}*/
 
 #endif

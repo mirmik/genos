@@ -58,8 +58,7 @@ static int waiter_to_list_and_displace(struct dlist_head * head, int priority,
 
 	system_unlock();
 
-	__displace__();
-	return 0;
+	return __displace__();
 }
 
 
@@ -81,8 +80,7 @@ int wait_current_schedee(struct dlist_head * head, int priority)
 	struct waiter * w = waiter_get(__unwait_schedee, (void*)cur);
 	schedee_wait(cur);
 
-	waiter_to_list_and_displace(head, priority, w);
-	return 0;
+	return waiter_to_list_and_displace(head, priority, w);
 }
 
 void __unwait(struct waiter * w)

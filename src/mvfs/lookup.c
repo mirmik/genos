@@ -24,6 +24,7 @@ struct node * vfs_virtual_lookup(struct node * i, const char * name, size_t nlen
 int vfs_lookup_child(struct node** pos, 
 	const char* name, unsigned int nlen) 
 {
+	struct node* it;
 	struct node * p = *pos;
 
 	if (p->flag.negative || p->flag.directory == 0) {
@@ -45,11 +46,10 @@ int vfs_lookup_child(struct node** pos,
 	}
 
 	vfs_lock();
-	//dlist_for_each_entry(it, &p->childs.list, lnk) {
-	for ( auto& it : p->childs ) {
-		int node_nlen = strlen(it.name);
-		if (node_nlen == nlen && strncmp(name, it.name, nlen) == 0) {
-			*pos = &it;
+	dlist_for_each_entry(it, &p->childs, lnk) {
+		int node_nlen = strlen(it->name);
+		if (node_nlen == nlen && strncmp(name, it->name, nlen) == 0) {
+			*pos = it;
 			return 0;
 		}
 	}
@@ -79,12 +79,12 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 		if (pend) 
 			*pend = str;
 
-		//Обходим дерево dentry.
+		// Обходим дерево dentry.
 		sts = vfs_lookup_child(&pos, str, nlen);
 			if (sts)
 				return sts;
 
-		//Если он смог, переходим на него.
+		// Если он смог, переходим на него.
 		// Если дентри в дереве, надо проверить, не является ли он точкой монтирования.
 		if (pos->flag.mount_point) 
 		{

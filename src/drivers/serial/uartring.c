@@ -46,7 +46,7 @@ int uartring_device_write(struct char_device* dev,
 
 		else
 		{
-			wait_current_schedee(&dev->node.txwlst, WAIT_PRIORITY);
+			wait_current_schedee(&udev->txwait, WAIT_PRIORITY);
 		}
 	}
 
@@ -59,7 +59,16 @@ int uartring_device_read(struct char_device* dev, char* data,
 {
 	RETYPE(struct uartring_device *, udev, dev);
 
-	if (ring_empty(&udev->rxring))
+	while (ring_empty(&udev->rxring)) 
+	{
+		if (flags & IO_NOBLOCK) 
+			return 0;
+
+		if (wait_current_schedee(&udev->rxwait, 0) == DISPLACE_VIRTUAL) 
+			return 0; 
+	}
+
+	if (flags & IO_ONLYWAIT) 
 		return 0;
 
 	return ring_read(&udev->rxring, udev->rxbuffer, data, size);
@@ -77,7 +86,7 @@ int uartring_device_avail(struct char_device* dev)
 	return ring_avail(&udev->rxring);
 }
 
-int uartring_device_waitread(struct char_device* dev)
+/*int uartring_device_waitread(struct char_device* dev)
 {
 	RETYPE(struct uartring_device *, udev, dev);
 	system_lock();
@@ -91,7 +100,7 @@ int uartring_device_waitread(struct char_device* dev)
 	wait_current_schedee(&dev->node.rxwlst, 0);
 	system_unlock();
 	return 0;
-}
+}*/
 
 void uartring_ddevice_irq_handler(void* priv, int code)
 {
@@ -104,7 +113,7 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 			if ( ring_empty(&uring->txring) )
 			{
 				uart_device_ctrirqs(uring->uart, UART_CTRIRQS_TXOFF);
-				unwait_one(&uring->cdev.node.txwlst);
+				unwait_one(&uring->txwait);
 				return;
 			}
 
@@ -116,7 +125,7 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 		case UART_IRQCODE_RX:
 		{
 			ring_putc(&uring->rxring, uring->rxbuffer, uart_device_recvbyte(uring->uart));
-			unwait_one(&uring->cdev.node.rxwlst);
+			unwait_one(&uring->rxwait);
 			return;
 		}
 
@@ -144,5 +153,5 @@ const struct char_device_operations uartring_dev_ops =
 	.read = 		uartring_device_read,
 	.room = 		uartring_device_room,
 	.avail = 		uartring_device_avail,
-	.waitread = 	uartring_device_waitread
+	//.waitread = 	uartring_device_waitread
 };

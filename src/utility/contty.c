@@ -77,7 +77,7 @@ void * contty_automate(void * arg, int * state)
 				dprln("contty: state 2");
 
 			//dpr("line_state: "); debug_write(line->buf, line->len); dprln();
-			cdev->c_ops->waitread(cdev); //Неблокирующий wait для автомата.
+			cdev->c_ops->read(cdev, &c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
 			*state = 3;
 			break;
 
@@ -85,7 +85,7 @@ void * contty_automate(void * arg, int * state)
 			if (cntxt->debug_mode)
 				dprln("contty: state 3");
 
-			while ((ret = cdev->c_ops->read(cdev, &c, 1, 0)))
+			while ((ret = cdev->c_ops->read(cdev, &c, 1, IO_NOBLOCK)))
 			{
 				if (cntxt->debug_mode)
 				{
