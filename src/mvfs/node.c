@@ -1,6 +1,8 @@
 #include <mvfs/node.h>
 #include <mvfs/mvfs.h>
+#include <mvfs/file.h>
 #include <igris/dprint.h>
+#include <mvfs/trace.h>
 
 static inline void __vfs_dpr_node_tree(struct node * d, const int t) {
 	struct node * it;
@@ -15,4 +17,50 @@ static inline void __vfs_dpr_node_tree(struct node * d, const int t) {
 
 void vfs_dpr_node_tree(struct node * d) {
 	__vfs_dpr_node_tree(d ? d : vfs_get_pwd(), 0);
+}
+
+void node_init(struct node * node, const char * name, size_t nlen)
+{
+	DTRACE();
+	int len;
+
+	len = nlen < NAME_LENGTH_MAX ? nlen : NAME_LENGTH_MAX;
+
+	strncpy(node->name, name, len);
+	node->name[len] = '\0';
+	node->flags = 0;
+
+	dlist_init(&node->childs);
+}
+
+void node_add_child(struct node * node, struct node * parent)
+{
+	DTRACE();
+	dlist_add_tail(&node->lnk, &parent->childs);
+	node->parent = parent;
+}
+
+int vfs_open_node(struct node * i, struct file ** filpp)
+{
+	DTRACE();
+	int sts;
+	struct file * filp;
+
+	filp = vfs_file_alloc();
+	filp->node = i;
+
+	if (i->n_ops->open == NULL)
+		return ENOTSUP;
+
+	sts = i->n_ops->open(i, filp);
+
+	if (sts)
+	{
+		vfs_file_dealloc(filp);
+		return sts;
+	}
+
+	*filpp = filp;
+
+	return 0;
 }

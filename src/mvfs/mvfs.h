@@ -53,8 +53,8 @@ extern int vfs_mkdir_do(struct node* dir, const char * name, size_t nlen, int fl
  */
 extern int vfs_rmdir_do(struct node* dir);
 
-extern int vfs_write(struct file * filp, const char* data, unsigned int size);
-extern int vfs_read(struct file * filp, char* data, unsigned int size);
+extern int vfs_write(struct file * filp, const char* data, unsigned int size, int flags);
+extern int vfs_read(struct file * filp, char* data, unsigned int size, int flags);
 extern int vfs_open(const char* path, int flags, struct file** filpp);
 extern int vfs_close(struct file* filpp);
 

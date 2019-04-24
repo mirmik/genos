@@ -50,5 +50,6 @@ int main() {
 		if (sts) dprln(strerror(sts));
 
 	dprln("step 8");
-	vfs_write(filp, "HelloWorld\n", 11);
+	sts = vfs_write(filp, "HelloWorld\n", 11, 0);
+		if (sts < 0) dprln(strerror(sts));
 }

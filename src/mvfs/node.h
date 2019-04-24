@@ -18,21 +18,22 @@ struct file_operations;
 struct file;
 
 struct node;
-struct node_operations 
+struct node_operations
 {
 	//file operations
 	int (*open) (struct node *, struct file*); ///< заполнить структуру файла по inode.
 	int (*release) (struct node *, struct file*); ///< вернуть структуру файла в распределитель.
-	int (*write) (struct node *, struct file*, const char* data, unsigned int size); ///< запись данных
-	int (*read) (struct node *, struct file*, char* data, unsigned int size); ///< чтение данных
+	int (*write) (struct node *, struct file*, const char* data, unsigned int size, int flags); ///< запись данных
+	int (*read) (struct node *, struct file*, char* data, unsigned int size, int flags); ///< чтение данных
 	int (*iterate) (struct node *, struct file*, void*); ///< чтение директории
 
 	//inode operations
-    int (*mkdir)(struct node *, const char * name, size_t nlen, int flags); ///< создать подчинённую директорию
-    int (*rmdir)(struct node *); ///< Удалить данную директорию.
+	int (*mkdir)(struct node *, const char * name, size_t nlen, int flags); ///< создать подчинённую директорию
+	int (*rmdir)(struct node *); ///< Удалить данную директорию.
 };
 
-struct node {
+struct node
+{
 	struct dlist_head lnk;
 	struct dlist_head childs;
 
@@ -42,9 +43,11 @@ struct node {
 
 	const struct node_operations * n_ops;
 
-	union {
+	union
+	{
 		uint8_t flags;
-		struct {
+		struct
+		{
 			uint8_t negative : 1;
 			uint8_t directory : 1;
 			uint8_t special_node : 1;
@@ -75,22 +78,9 @@ extern int vfs_open_node(struct node * i, struct file ** filpp);
 //struct node * virtual_node_alloc();
 //void virtual_node_dealloc(struct node *);
 
-static inline 
-void node_init(struct node * node, const char * name, size_t nlen) {
-	int len;
+void node_init(struct node * node, const char * name, size_t nlen);
 
-	len = nlen < NAME_LENGTH_MAX ? nlen : NAME_LENGTH_MAX;
-
-	strncpy(node->name, name, len);
-	node->name[len] = '\0';
-	node->flags = 0;
-}
-
-static inline 
-void node_add_child(struct node * node, struct node * parent) {
-	dlist_add_tail(&node->lnk, &parent->childs);
-	node->parent = parent;
-}
+void node_add_child(struct node * node, struct node * parent);
 
 extern void vfs_dpr_node_tree(struct node * root);
 
