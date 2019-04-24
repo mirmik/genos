@@ -9,38 +9,6 @@
 #include <mvfs/nodestub.h>
 #endif
 
-#ifdef __cplusplus
-/*#include <mvfs/node.h>
-
-namespace genos
-{
-	struct char_device : public node
-	{
-		virtual int write(const char * data, unsigned int size) = 0;
-		virtual int read(char * data, unsigned int size) = 0;
-
-		int write(struct file * filp, const char * data, unsigned int size) override
-		{
-			return write(data, size);
-		}
-
-		int read(struct file * filp, char * data, unsigned int size) override
-		{
-			return read(data, size);
-		}
-
-		virtual int waitread() {}
-	};
-}*/
-
-#endif
-
-/*#ifdef MVFS_INCLUDED
-# include <mvfs/node.h>
-#else
-# include <mvfs/nodestub.h>
-#endif*/
-
 struct char_device;
 
 typedef int(*char_write_t)(struct char_device *, const char* data,
@@ -83,7 +51,17 @@ struct char_device
 
 __BEGIN_DECLS
 
-//extern void char_device_init(struct char_device * cdev);
+extern void char_device_init(struct char_device * cdev, 
+	const struct char_device_operations* ops) 
+{
+	cdev -> c_ops = ops;
+
+#ifdef MVFS_INCLUDED
+	node_init(&cdev->node);
+#else	
+	nodestub_init(&cdev->node);
+#endif
+}
 
 extern int vfs_link_cdev(struct char_device * cdev, const char * dir,
                          const char* name);

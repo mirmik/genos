@@ -30,7 +30,7 @@ const struct char_device_operations pipe_ops;
 
 void pipe_init(struct pipe * p, char * buf, int len)
 {
-	char_device_init(p->cdev, pipe_operations);
+	char_device_init(&p->cdev, &pipe_ops);
 	ring_init(&p->ring, len);
 }
 

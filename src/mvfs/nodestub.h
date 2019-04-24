@@ -12,4 +12,15 @@ struct nodestub
 #define NODESTUB_INIT(name) 		\
 { DLIST_HEAD_INIT(name.txwlst), DLIST_HEAD_INIT(name.rxwlst) }
 
+__BEGIN_DECLS
+
+static inline
+void nodestub_init(struct nodestub * node) 
+{
+	dlist_init(&node->txwlst);
+	dlist_init(&node->rxwlst);
+}
+
+__END_DECLS
+
 #endif
