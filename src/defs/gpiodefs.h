@@ -16,6 +16,10 @@
 #define GPIO_MODE_INPUT             0x00000001
 #endif
 
+#ifndef GPIO_MODE_IN_NOPULL
+#define GPIO_MODE_IN_NOPULL         (1 << 4)
+#endif
+
 #ifndef GPIO_MODE_IN_PULL_UP
 #define GPIO_MODE_IN_PULL_UP        (1 << 1)
 #endif

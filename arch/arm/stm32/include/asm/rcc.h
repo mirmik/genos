@@ -4,8 +4,11 @@
 #include <sys/cdefs.h>
 #include <stdint.h>
 
+//#include <asm/core/rcc.h>
+
 struct gpio_regs;
 struct usart_regs;
+struct timer_regs;
 
 #define CLOCKBUS_NO_PLL 0
 #define CLOCKBUS_NO_APB1 1
@@ -20,12 +23,13 @@ __BEGIN_DECLS
 
 void rcc_reset();
 void rcc_enable_gpio(struct gpio_regs* g);
+void rcc_enable_usart(struct usart_regs* u);
+void rcc_enable_timer(struct timer_regs* u);
+void rcc_enable_syscfg();
 
 #ifdef CHIP_STM32F1XX
 void rcc_enable_afio(struct gpio_regs* g);
 #endif
-
-void rcc_enable_usart(struct usart_regs* u);
 
 __END_DECLS
 

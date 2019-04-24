@@ -13,12 +13,22 @@
 
 //int gpio_settings_alternate(struct gpio_regs *g, gpio_mask_t mask, int32_t alternate);
 
+#if defined CHIP_STM32F1XX || defined CHIP_STM32F2XX
 enum stm32_gpio_maxspeed_e 
 {
 	STM32_GPIO_2MHZ = 0b10,
 	STM32_GPIO_10MHZ = 0b01,
 	STM32_GPIO_50MHZ = 0b11
 };
+#elif defined CHIP_STM32F3XX || defined CHIP_STM32F4XX
+enum stm32_gpio_maxspeed_e 
+{
+	STM32_GPIO_SPEED_LEVEL_0 = 0b00,
+	STM32_GPIO_SPEED_LEVEL_1 = 0b01,
+	STM32_GPIO_SPEED_LEVEL_2 = 0b10,
+	STM32_GPIO_SPEED_LEVEL_3 = 0b11,
+};
+#endif
 
 __BEGIN_DECLS
 

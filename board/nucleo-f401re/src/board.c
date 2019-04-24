@@ -42,7 +42,7 @@ void board_init()
 	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 
 	gpio_settings(GPIOA, (1 << 2 | 1 << 3), GPIO_MODE_ALTERNATE);
-	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_2MHZ);
+	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_SPEED_LEVEL_0);
 	stm32_gpio_set_alternate(GPIOA, (1 << 2 | 1 << 3), 7);
 
 	stm32_usart_setup(USART2, 115200, 'n', 8, 1);

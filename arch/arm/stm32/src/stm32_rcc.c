@@ -47,6 +47,57 @@ void rcc_enable_gpio(struct gpio_regs* g)
 	}
 }
 
+void rcc_enable_timer(struct timer_regs* t)
+{
+	switch ((uintptr_t)t)
+	{
+		case TIM1_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM1EN; break;
+
+		case TIM2_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; break;
+
+		case TIM3_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; break;
+
+		case TIM4_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM4EN; break;
+
+		case TIM5_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM5EN; break;
+
+		case TIM6_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM6EN; break;
+
+		case TIM7_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM7EN; break;
+
+		case TIM8_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM8EN; break;
+
+		case TIM9_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM9EN; break;
+
+		case TIM10_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM10EN; break;
+
+		case TIM11_BASE:
+			RCC->APB2ENR |= RCC_APB2ENR_TIM11EN; break;
+
+		case TIM12_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM12EN; break;
+
+		case TIM13_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM13EN; break;
+
+		case TIM14_BASE:
+			RCC->APB1ENR |= RCC_APB1ENR_TIM14EN; break;
+
+		default: BUG();
+	}
+}
+
+
 #ifdef CHIP_STM32F1XX
 void rcc_enable_afio(struct gpio_regs* g)
 {
@@ -70,4 +121,9 @@ void rcc_enable_usart(struct usart_regs* u)
 		case USART6_BASE : RCC->APB2ENR |= RCC_APB2ENR_USART6EN; break;
 		default: BUG();
 	}
+}
+
+void rcc_enable_syscfg() 
+{
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 }

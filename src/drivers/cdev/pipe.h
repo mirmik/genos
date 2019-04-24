@@ -1,6 +1,7 @@
 #ifndef GENOS_DRIVERS_PIPE_H
 #define GENOS_DRIVERS_PIPE_H
 
+#include <sys/cdefs.h>
 #include <drivers/cdev/cdev.h>
 #include <igris/datastruct/ring.h>
 
@@ -25,14 +26,8 @@ int pipe_read(struct char_device * cdev,
 
 int pipe_waitread(struct char_device * cdev);
 
-const struct char_device_operations pipe_ops = 
-{
-	.write = pipe_write,
-	.read = pipe_read,
-	.waitread = pipe_waitread
-}
+const struct char_device_operations pipe_ops;
 
-static inline
 void pipe_init(struct pipe * p, char * buf, int len)
 {
 	char_device_init(p->cdev, pipe_operations);

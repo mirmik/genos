@@ -1,4 +1,5 @@
 #include <drivers/gpio/gpio.h>
+#include <defs/gpiodefs.h>
 #include <igris/util/bits.h>
 #include <assert.h>
 
@@ -31,14 +32,39 @@ int gpio_settings(struct gpio_regs * gpio, gpio_mask_t mask, uint32_t mode)
 
 	if (mode & GPIO_MODE_INPUT)
 	{
-		mode_val = 0x00;
+		mode_val = 0b00;
 
+		if (mode & GPIO_MODE_IN_NOPULL)
+		{
+			bits_masked_assign_multimap(gpio->PUPDR, mask, 0b00, 2);
+		}
+
+		else if (mode & GPIO_MODE_IN_PULL_UP)
+		{
+			bits_masked_assign_multimap(gpio->PUPDR, mask, 0b01, 2);
+		}
+
+		else if (mode & GPIO_MODE_IN_PULL_DOWN)
+		{
+			bits_masked_assign_multimap(gpio->PUPDR, mask, 0b10, 2);
+		}
 	}
+	
 	else if (mode & GPIO_MODE_OUTPUT)
 	{
 		mode_val = 0b01;
 
+		if (mode & GPIO_MODE_OUT_PUSH_PULL)
+		{
+			bits_clr(gpio->OTYPER, mask);
+		}
+
+		else if (mode & GPIO_MODE_OUT_OPEN_DRAIN)
+		{
+			bits_set(gpio->OTYPER, mask);
+		}
 	}
+	
 	else if (mode & GPIO_MODE_ALTERNATE)
 	{
 		mode_val = 0b10;

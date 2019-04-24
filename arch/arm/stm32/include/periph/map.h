@@ -7,6 +7,8 @@
 #include <periph/regs/rcc.h>
 #include <periph/regs/pwr.h>
 #include <periph/regs/flash.h>
+#include <periph/regs/syscfg.h>
+#include <periph/regs/exti.h>
 
 #include <periph/coremap.h>
 
@@ -174,11 +176,16 @@
 #define TIM6 ((struct timer_regs *) TIM6_BASE)
 #define TIM7 ((struct timer_regs *) TIM7_BASE)
 #define TIM8 ((struct timer_regs *) TIM8_BASE)
+#define TIM9 ((struct timer_regs *) TIM9_BASE)
+#define TIM10 ((struct timer_regs *) TIM10_BASE)
+#define TIM11 ((struct timer_regs *) TIM11_BASE)
 #define TIM12 ((struct timer_regs *) TIM12_BASE)
 #define TIM13 ((struct timer_regs *) TIM13_BASE)
 #define TIM14 ((struct timer_regs *) TIM14_BASE)
 
 #define FLASH ((struct flash_regs *) FLASH_R_BASE)
 #define PWR ((struct pwr_regs *) PWR_BASE)
+#define SYSCFG ((struct syscfg_regs *) SYSCFG_BASE)
+#define EXTI ((struct exti_regs *) EXTI_BASE)
 
 #endif
