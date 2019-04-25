@@ -6,9 +6,10 @@
 __BEGIN_DECLS
 
 extern void schedee_exit();
-extern int schedee_sleep_for_milliseconds(int ms); 
+extern int schedee_sleep_for_milliseconds(int ms);
 
-static inline unsigned int msleep(unsigned int milliseconds) {
+static inline unsigned int msleep(unsigned int milliseconds)
+{
 	return schedee_sleep_for_milliseconds(milliseconds);
 }
 

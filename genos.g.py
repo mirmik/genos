@@ -54,6 +54,7 @@ module("genos.sched", "impl",
 		"src/sched/schedee_mvfs.cpp",
 		"src/sched/timer.c",
 		"src/sched/api.c",
+		"src/sched/apitime.c",
 		"src/sched/schedee/autom.c",
 		"src/sched/schedee/cooperative.c",
 
@@ -102,6 +103,7 @@ module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )
 module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
 
+module ("genos.utility.numcmd", sources = ["src/utility/numcmd.c"], mdepends=["igris.protocols.numcmd"])
 module ("genos.utility.contty", sources = ["src/utility/contty.c"])
 module ("genos.utility.mshell", sources = ["src/utility/mshell.c"])
 

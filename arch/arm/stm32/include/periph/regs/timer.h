@@ -1,6 +1,8 @@
 #ifndef STM32_PERIPH_TIMER_H
 #define STM32_PERIPH_TIMER_H
 
+#include <stdint.h>
+
 struct timer_regs
 {
 	volatile uint16_t CR1;         /*!< TIM control register 1,              Address offset: 0x00 */

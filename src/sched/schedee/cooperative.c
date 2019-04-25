@@ -36,15 +36,18 @@ void cooperative_schedee_init(struct cooperative_schedee * sch,
 	sch -> sch.flag.can_displace = 1;
 }
 
-/*struct schedee * create_cooperative_schedee(void* (*task) (void*),
+struct schedee * create_cooperative_schedee(void* (*task) (void*),
         void * arg,
         int heapsize)
 {
 	struct cooperative_schedee * sch = (struct cooperative_schedee *)
 	                                   malloc(sizeof(struct cooperative_schedee));
-	cooperative_schedee_init(sch, task, arg, heapsize);
+	
+	char* heap = (char*) malloc(heapsize);
+
+	cooperative_schedee_init(sch, task, arg, heap, heapsize);
 	return &sch->sch;
-}*/
+}
 
 static void cooperative_schedee_execute(struct schedee* sch)
 {

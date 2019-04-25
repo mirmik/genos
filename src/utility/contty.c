@@ -1,15 +1,8 @@
 #include <utility/contty.h>
 
 #include <drivers/cdev/cdev.h>
-
 #include <igris/util/bug.h>
-
 #include <igris/dprint.h>
-
-//#include <sched/sched.h>
-//#include <sched/schedee.h>
-//#include <mvfs/file.h>
-//#include <mvfs/compat.h>
 
 #include <errno.h>
 #include <utility/mshell.h>

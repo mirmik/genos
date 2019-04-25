@@ -13,7 +13,7 @@ struct nvic_regs
 	volatile uint32_t RESERVED3[24];
 	volatile uint32_t IABR[8]; //0xE000E300- 0xE000E31F
 	volatile uint32_t RESERVED5[56];
-	volatile uint32_t IPR[60]; //0xE000E400- 0xE000E4EF
+	volatile uint8_t  IP[240]; //0xE000E400- 0xE000E4EF
 	volatile uint32_t RESERVED6[644];
 	volatile uint32_t STIR; //0xE000EF00
 };

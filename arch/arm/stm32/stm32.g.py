@@ -1,3 +1,5 @@
+import licant
+
 module("genos.hal.stm32.common", 
 	include_paths=["include"],
 	srcdir = "src",
@@ -47,4 +49,19 @@ module("genos.hal", impl = "stm32f401",
 		"genos.hal.stm32.common",
 	],
 	ldscripts = "ldscripts/stm32f401vc.ld",
+)
+
+module("genos.stm32.spl.stm32f4xx", 
+	srcdir = "./src/spl",
+	sources = [
+		"stm32f4xx_tim.c"
+	]
+
+	#os.listdir(os.path.join(licant.directory(), "src/spl")),
+	#sources = licant.util.find_recursive(
+	#	root=os.path.join(licant.directory(), "src/spl"),
+	#	pattern=".c",
+	#	hide="HIDE",
+	#	debug=True
+	#)
 )

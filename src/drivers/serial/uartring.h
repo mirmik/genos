@@ -21,6 +21,9 @@ int uartring_device_avail(struct char_device*);
 
 void uartring_begin(struct uartring_device * dev, struct uart_device * uart);
 
+void uartring_emulate_read(struct uartring_device * dev,
+                           const char*, unsigned int len);
+
 __END_DECLS
 
 extern const struct char_device_operations uartring_dev_ops;
@@ -45,7 +48,7 @@ struct uartring_device name = { CHAR_DEVICE_INIT(name.cdev, &uartring_dev_ops), 
 				(struct uart_device*)uart, 							 			\
 				name##_rxbuffer, name##_txbuffer,					 			\
 				RING_HEAD_INIT(rxsz), RING_HEAD_INIT(txsz), 					\
-				DLIST_HEAD_INIT(name.txwait), DLIST_HEAD_INIT(name.rxwait)}			
+				DLIST_HEAD_INIT(name.txwait), DLIST_HEAD_INIT(name.rxwait)}
 
 
 

@@ -2,6 +2,7 @@
 #define GENOS_COOPERATIVE_SCHEDEE_H
 
 #include <hal/subst.h>
+#include <sched/schedee.h>
 
 struct cooperative_schedee
 {
@@ -16,7 +17,7 @@ struct cooperative_schedee
 	void * ret;
 };
 
-const struct schedee_operations cooperative_schedee_op;
+extern const struct schedee_operations cooperative_schedee_op;
 
 __BEGIN_DECLS
 void cooperative_schedee_init(struct cooperative_schedee *,

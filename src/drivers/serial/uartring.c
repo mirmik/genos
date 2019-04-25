@@ -138,6 +138,16 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 	}
 }
 
+void uartring_emulate_read(struct uartring_device * dev,
+                           const char* data, unsigned int len) 
+{
+	system_lock();
+
+	ring_write(&dev->rxring, dev->rxbuffer, data, len);
+	unwait_one(&dev->rxwait);
+
+	system_unlock();
+}
 
 void uartring_begin(struct uartring_device * dev, struct uart_device * uart)
 {

@@ -15,14 +15,14 @@ void dprint_dump_nvic()
 
 	for (int i = 0; i < 8; ++i)
 	{
-		dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->ISER[i]); dln();
+		dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->ICER[i]); dln();
 	}
 
 	dpr("\tISPR: "); dprptr((void*)&NVIC->ISPR[0]); dln();
 
 	for (int i = 0; i < 8; ++i)
 	{
-		dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->ISER[i]); dln();
+		dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->ISPR[i]); dln();
 	}
 
 	dpr("\tICPR: "); dprptr((void*)&NVIC->ICPR[0]); dln();
@@ -36,15 +36,15 @@ void dprint_dump_nvic()
 
 	for (int i = 0; i < 8; ++i)
 	{
-		dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->ISER[i]); dln();
+		dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->IABR[i]); dln();
 	}
 
-	dpr("\tIPR:  "); dprptr((void*)&NVIC->IPR[0]); dln();
+	dpr("\tIP:  "); dprptr((void*)&NVIC->IP[0]); dln();
 
-	for (int i = 0; i < 8; ++i)
-	{
-		dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->ISER[i]); dln();
-	}
+	//for (int i = 0; i < 8; ++i)
+	//{
+	//	dpr("\t\t"); dpr(i); dpr(": "); dprhex(NVIC->IP[i]); dln();
+	//}
 
 	dpr("\tSTIR: "); dprptr((void*)&NVIC->STIR); dln();
 }
