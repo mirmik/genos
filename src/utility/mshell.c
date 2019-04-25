@@ -13,6 +13,13 @@
 
 extern struct mshell_command mshell_commands_table[];
 
+int mshell_make_process(int(*func)(int,char**), int argc, char** argv) 
+{
+	
+	
+	BUG();
+}
+
 int mshell_execn(char* str, int len, int flags, int * retptr)
 {
 	int flen=0;
@@ -26,19 +33,11 @@ int mshell_execn(char* str, int len, int flags, int * retptr)
 		BUG();
 	}
 
-	//char* argv[SSHELL_ARGCMAX];
-	//int argc;
-	//int res;
-
-	//dprln("inwork:");
-	//debug_write(str, len); dln();
-
 	if (len == 0)
 	{
 		return MSHELL_OK;
 	}
 
-	//flen = argvc_length_of_first(str, len);
 	while (flen != len && str[flen] != '\0' && str[flen] != ' ') 
 		flen++;
 
@@ -70,8 +69,10 @@ int mshell_execn(char* str, int len, int flags, int * retptr)
 					return MSHELL_OK;
 
 				case MSHELL_AUTOMATE:
-				case MSHELL_PROCESS:
 					BUG();
+
+				case MSHELL_PROCESS:
+					return mshell_make_process(it->func, argc, argv);
 			}
 		}
 	}

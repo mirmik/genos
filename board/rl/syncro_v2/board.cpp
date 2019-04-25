@@ -17,6 +17,11 @@ STM32_USART_DEVICE_DECLARE(usart6, USART6, STM32_IRQ_USART6);
 genos::drivers::xpin board::sysled0(GPIOD, 14);
 genos::drivers::xpin board::sysled1(GPIOD, 15);
 
+GPIO_PIN(board_extpin0, GPIOC, 1<<10);
+GPIO_PIN(board_extpin1, GPIOC, 1<<11);
+GPIO_PIN(board_extpin2, GPIOC, 1<<12);
+GPIO_PIN(board_extpin3, GPIOA, 1<<15);
+
 void board_init() 
 {
 	arch_init();

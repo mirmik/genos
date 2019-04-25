@@ -29,9 +29,11 @@ struct schedee {
 	union {
 		uint8_t flags;
 		struct {
-			uint8_t runned : 1;
-			uint8_t can_displace : 1;
-			uint8_t has_context : 1;
+			uint8_t runned 			: 1;
+			uint8_t can_displace 	: 1;
+			uint8_t has_context 	: 1;
+			uint8_t dynamic 		: 1;
+			uint8_t dynamic_heap 	: 1;
 		} flag;
 	};
 

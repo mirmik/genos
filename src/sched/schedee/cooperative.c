@@ -46,6 +46,10 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*),
 	char* heap = (char*) malloc(heapsize);
 
 	cooperative_schedee_init(sch, task, arg, heap, heapsize);
+
+	sch->sch.flag.dynamic = true;
+	sch->sch.flag.dynamic_heap = true;
+
 	return &sch->sch;
 }
 
@@ -69,7 +73,12 @@ static void cooperative_schedee_finalize(struct schedee* sch)
 {
 	//TRACE();
 	struct cooperative_schedee * asch = mcast_out(sch, struct cooperative_schedee, sch);
-	free(asch);
+
+	if (asch->sch.flag.dynamic_heap)
+		free(asch->heap);
+
+	if (asch->sch.flag.dynamic)
+		free(asch);
 }
 
 const struct schedee_operations cooperative_schedee_op =
