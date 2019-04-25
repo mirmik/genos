@@ -1,7 +1,6 @@
 #ifndef JOKE_FSTYPE_H
 #define JOKE_FSTYPE_H
 
-#include <mvfs/fsops.h>
 #include <mvfs/fstype.h>
 #include <mvfs/super.h>
 #include <mvfs/file.h>

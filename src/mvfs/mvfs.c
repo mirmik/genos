@@ -1,10 +1,9 @@
-#include <mvfs/fsops.h>
+#include <mvfs/mvfs.h>
 #include <mvfs/fstype.h>
 #include <mvfs/super.h>
 #include <mvfs/file.h>
 #include <mvfs/dirent.h>
 #include <mvfs/pathops.h>
-#include <mvfs/variant/global_root.h>
 
 #include <igris/dprint.h>
 #include <igris/util/bug.h>
@@ -21,10 +20,10 @@ void vfs_init()
 	//stable_init(&vfs_vfsmount_hashtable);
 }
 
-int vfs_mount_first(const char* fstype, unsigned long mountflags, const void *data)
+int vfs_mount_first(const char* fsname, unsigned long mountflags, const void *data)
 {
 	DTRACE();
-	struct file_system_type * fs = vfs_get_fs(fstype);
+	struct file_system_type * fs = vfs_get_fs(fsname);
 
 	if (fs == NULL)
 		return ENOENT;

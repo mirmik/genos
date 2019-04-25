@@ -1,4 +1,4 @@
-#include <mvfs/node.h>
+/*#include <mvfs/node.h>
 #include <stdlib.h>
 
 struct node * virtual_node_alloc() {
@@ -7,4 +7,4 @@ struct node * virtual_node_alloc() {
 
 void virtual_node_dealloc(struct node * node) {
 	free(node);
-}
+}*/
