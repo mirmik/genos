@@ -1,6 +1,7 @@
 #include <sched/timer.h>
 #include <stdlib.h>
 #include <igris/dprint.h>
+#include <assert.h>
 
 DLIST_HEAD(ktimer_list);
 
@@ -16,11 +17,18 @@ void ktimer_dealloc(struct ktimer * ptr)
 
 struct ktimer * ktimer_create(ktimer_callback_t act, void* arg, time_t start, time_t interval) 
 {
-	struct ktimer * tim = ktimer_alloc();
+	struct ktimer * tim;
+
+	assert(interval != 0);
+
+	tim = ktimer_alloc();
 	tim->act = act;
 	tim->arg = arg;
 	tim->start = start;
 	tim->interval = interval;
+
+	DPRINT(tim->start);
+	DPRINT(tim->interval);
 
 	ktimer_plan(tim);
 
@@ -62,8 +70,6 @@ void ktimer_plan(struct ktimer * t)
 	dlist_for_each_entry(it, &ktimer_list, lnk) 
 	{
 		it_final = it->start + it->interval;
-		
-		while(1);
 
 		if (final - it_final < 0) 
 		{ 

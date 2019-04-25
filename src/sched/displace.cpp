@@ -12,7 +12,7 @@
 
 extern "C" int __context_displace_vector__()
 {
-	dprln("__context_drop__");
+	//dprln("__context_drop__");
 	RESET_STACK();
 	while (1) __schedule__();
 }

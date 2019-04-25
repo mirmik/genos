@@ -1,6 +1,8 @@
 #include <systime/systime.h>
 #include <igris/sync/syslock.h>
 
+#include <igris/dprint.h>
+
 volatile uint64_t __jiffies;
 uint32_t system_frequency = 1;
 uint32_t jiffies_to_millis = 1;
@@ -31,5 +33,5 @@ void delay(double d) {
 }
 
 time_t ms2jiffies(uint32_t ms) {
-	return ms / jiffies_to_millis;
+	return (ms << FREQSHIFT) / jiffies_to_millis;
 }
