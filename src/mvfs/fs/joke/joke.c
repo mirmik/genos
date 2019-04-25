@@ -31,6 +31,13 @@ void joke_dealloc(struct node * node)
 struct super_block * joke_get_sb(struct file_system_type * fs, int flags, const void * data)
 {
 	DTRACE();
+	static int inited = 0;
+
+	if (!inited) 
+	{
+		super_block_add_to_list(&joke_sb.sb);
+	}
+
 	return &joke_sb.sb;
 }
 

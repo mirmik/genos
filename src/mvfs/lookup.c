@@ -1,10 +1,8 @@
 #include <mvfs/mvfs.h>
 #include <mvfs/pathops.h>
 #include <mvfs/super.h>
-#include <mvfs/vfsmount.h>
 
 #include <igris/dprint.h>
-//#include <igris/util/iteration_counter.h>
 
 #include "string.h"
 #include "stdio.h"
@@ -64,7 +62,7 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 	unsigned int nlen;
 	const char* str;
 	struct node * pos;
-	struct vfsmount* mount;
+	struct super_block * mountsb;
 
 	str = str_path;
 	pos = *current;
@@ -87,10 +85,9 @@ int vfs_lookup_relative(const char* str_path, const char** pend,
 		// Если дентри в дереве, надо проверить, не является ли он точкой монтирования.
 		if (pos->flag.mount_point)
 		{
-			mount = vfs_vfsmount_get(pos);
-			assert(mount != NULL);
-			//if (!mount) return -ENOKEY;
-			pos = mount->root;
+			mountsb = vfs_vfsmount_get(pos);
+			assert(mountsb != NULL);
+			pos = mountsb->root;
 		}
 
 		//Готовимся к следующей итерации алгоритма.

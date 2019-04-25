@@ -27,28 +27,6 @@ struct joke_node
 extern struct joke_fstype_class joke_fstype;
 extern struct joke_super_block joke_sb;
 
-__BEGIN_DECLS
-__END_DECLS
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 struct joke_node * 	joke_node_create(const char * name, size_t nlen);
 struct joke_node * 	joke_node_create_as_child(const char * name, size_t nlen, struct node * parent);
