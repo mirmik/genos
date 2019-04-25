@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <gxx/debug/dprint.h>
 
 static int idle_errno = 0;
 static int * ____errno_location = &idle_errno;
