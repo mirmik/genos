@@ -4,22 +4,27 @@
 #include <igris/dprint.h>
 #include <mvfs/trace.h>
 
-static inline void __vfs_dpr_node_tree(struct node * d, const int t) {
+static inline void __vfs_dpr_node_tree(struct node * d, const int t)
+{
 	struct node * it;
 
 	int tt = t;
+
 	while (tt--) dpr("  "); dprln(d->name);
-	
-	dlist_for_each_entry(it, &d->childs, lnk) {
-		__vfs_dpr_node_tree(it, t+1);
+
+	dlist_for_each_entry(it, &d->childs, lnk)
+	{
+		__vfs_dpr_node_tree(it, t + 1);
 	}
 }
 
-void vfs_dpr_node_tree(struct node * d) {
+void vfs_dpr_node_tree(struct node * d)
+{
 	__vfs_dpr_node_tree(d ? d : vfs_get_pwd(), 0);
 }
 
-void node_init(struct node * node, const char * name, size_t nlen)
+void node_init(struct node * node, const char * name, size_t nlen,
+               const struct node_operations * n_ops)
 {
 	DTRACE();
 	int len;
@@ -29,6 +34,7 @@ void node_init(struct node * node, const char * name, size_t nlen)
 	strncpy(node->name, name, len);
 	node->name[len] = '\0';
 	node->flags = 0;
+	node->n_ops = n_ops;
 
 	dlist_init(&node->childs);
 }

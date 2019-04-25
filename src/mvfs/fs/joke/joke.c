@@ -3,11 +3,13 @@
 
 #include <mvfs/trace.h>
 
+const struct node_operations joke_node_ops;
+
 struct joke_node * joke_node_create(const char * name, size_t nlen)
 {
 	DTRACE();
 	struct joke_node * ret = (struct joke_node *) malloc(sizeof(struct joke_node));;
-	node_init(&ret->node, name, nlen);
+	node_init(&ret->node, name, nlen, &joke_node_ops);
 	return ret;
 }
 
@@ -19,6 +21,11 @@ struct joke_node * joke_node_create_as_child(const char * name, size_t nlen,
 	struct joke_node * ret = joke_node_create(name, nlen);
 	node_add_child(&ret->node, parent);
 	return ret;
+}
+
+void joke_dealloc(struct node * node) 
+{
+	free(node);
 }
 
 struct super_block * joke_get_sb(struct file_system_type * fs, int flags, const void * data)
@@ -49,9 +56,18 @@ int joke_mkdir(struct node * parent, const char * name, size_t nlen, int flags)
 	return 0;
 }
 
+static
+int joke_rmdir(struct node * node)
+{
+	dlist_del(&node->lnk);
+	joke_dealloc(node);
+	return 0;
+}
+
 const struct node_operations joke_node_ops =
 {
-	.mkdir = joke_mkdir
+	.mkdir = joke_mkdir,
+	.rmdir = joke_rmdir
 };
 
 struct joke_node joke_root = { NODE_INIT(joke_root.node, "/", &joke_sb.sb, &joke_node_ops, NODE_DIRECTORY) };

@@ -4,7 +4,6 @@
 #include <igris/datastruct/dlist.h>
 #include <stdint.h>
 #include <string.h>
-
 #include <errno.h>
 
 #define NAME_LENGTH_MAX 7
@@ -62,23 +61,12 @@ struct node
 	{ DLIST_HEAD_INIT(name.lnk), DLIST_HEAD_INIT(name.childs),	\
 	NULL, cname, sb, ops, flags }
 
-/*struct special_node {
-	struct node node;
-	const struct file_operations * f_op;
-};
-
-struct node_operations {
-	struct node * (*lookup) (struct node * dir, const char * name, size_t nlen);
-};*/
-
 __BEGIN_DECLS
 
 extern int vfs_open_node(struct node * i, struct file ** filpp);
 
-//struct node * virtual_node_alloc();
-//void virtual_node_dealloc(struct node *);
-
-void node_init(struct node * node, const char * name, size_t nlen);
+void node_init(struct node * node, const char * name, size_t nlen,
+               const struct node_operations * n_ops);
 
 void node_add_child(struct node * node, struct node * parent);
 

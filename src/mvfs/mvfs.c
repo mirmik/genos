@@ -54,7 +54,7 @@ int vfs_mount(const char *source, const char *target,
 	return 0;
 }
 
-int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f)
+int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int flags)
 {
 	DTRACE();
 	int sts;
@@ -62,7 +62,7 @@ int vfs_mkdir_do(struct node * parent, const char * name, size_t nlen, int f)
 	if (parent->n_ops->mkdir == NULL)
 		return ENOTSUP;
 
-	sts = parent->n_ops->mkdir(parent, name, nlen, 0);
+	sts = parent->n_ops->mkdir(parent, name, nlen, flags);
 
 	if (sts)
 		return sts;

@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 
+#include <igris/dprint.h>
+
 int main()
 {
 	struct file * dfile;
@@ -15,33 +17,38 @@ int main()
 	int sts;
 
 	dprln("registry fs:");
-	vfs_register_fs(&joke_fstype);
+	vfs_register_fs(&joke_fstype.fs);
 	vfs_mount_first("joke", 0, NULL);
 
 
-	dprln("mkdir:");
+	dprln("mkdir /dev");
 	if (sts = vfs_mkdir("dev"))
-		dprf("error: %s\n", strerror(sts));
+		dprln("error: ", strerror(sts));
 	
+	dprln("mkdir /home");
 	sts = vfs_mkdir("/home");
 	if (sts)
-		dprf("error: %s\n", strerror(sts));
+		dprln("error: ", strerror(sts));
 
+	dprln("mkdir /home/mirmik");
 	sts = vfs_mkdir("/home/mirmik");
 	if (sts)
-		dprf("error: %s\n", strerror(sts));
+		dprln("error: ", strerror(sts));
 
+	dprln("mkdir /home/mirmik/project");
 	sts = vfs_mkdir("/home/mirmik/project");
 	if (sts)
-		dprf("error: %s\n", strerror(sts));
+		dprln("error: ", strerror(sts));
 
+	dprln("mkdir /home/mirmik/project/genos");
 	sts = vfs_mkdir("/home/mirmik/project/genos");
 	if (sts)
-		dprf("error: %s\n", strerror(sts));
+		dprln("error: ", strerror(sts));
 
+	dprln("rmdir /home/mirmik/project/genos");
 	if (sts = vfs_rmdir("/home/mirmik/project/genos"))
 	{
-		dprf("error: %s\n", strerror(sts));
+		dprln("error: ", strerror(sts));
 	}
 
 	vfs_debug_tree("/");
@@ -55,11 +62,11 @@ int main()
 
 	dprln("open:");
 	sts = vfs_open("/dev/debug", 0, &dfile);
-	if (sts) dprf("error: %s\n", strerror(sts));
+	if (sts) dprln("error: ", strerror(sts));
 
 	dprln("write:");
-	sts = vfs_write(dfile, "HelloWorld\n", 11);
-	if (sts < 0) dprf("error: %s\n", strerror(errno));
+	sts = vfs_write(dfile, "HelloWorld\n", 11, 0);
+	if (sts < 0) dprln("error: ", strerror(sts));
 
 	dprln("chdir && pwd");
 	vfs_chdir("/home/mirmik");

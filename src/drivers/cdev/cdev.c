@@ -18,7 +18,7 @@ int vfs_link_cdev(struct char_device * cdev, const char * dir,
 			return sts;
 	
 	
-	node_init(&cdev->node, name, strlen(name));
+	//node_init(&cdev->node, name, strlen(name));
 	node_add_child(&cdev->node, parent);
 
 	return 0;
