@@ -14,13 +14,18 @@
 STM32_USART_DEVICE_DECLARE(usart2, USART2, STM32_IRQ_USART2);
 STM32_USART_DEVICE_DECLARE(usart6, USART6, STM32_IRQ_USART6);
 
+struct gpio_pin board_led;
+
 genos::drivers::xpin board::sysled0(GPIOD, 14);
 genos::drivers::xpin board::sysled1(GPIOD, 15);
 
-GPIO_PIN(board_extpin0, GPIOC, 1<<10);
-GPIO_PIN(board_extpin1, GPIOC, 1<<11);
-GPIO_PIN(board_extpin2, GPIOC, 1<<12);
-GPIO_PIN(board_extpin3, GPIOA, 1<<15);
+struct gpio_pin extpin[4] = 
+{
+	{GPIOC, 1<<10},
+	{GPIOC, 1<<11},
+	{GPIOC, 1<<12},
+	{GPIOA, 1<<15}
+};
 
 void board_init() 
 {
@@ -47,7 +52,7 @@ void board_init()
 	rcc_enable_gpio(GPIOD);
 
 	gpio_settings(GPIOA, (1 << 2 | 1 << 3), GPIO_MODE_ALTERNATE);
-	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_2MHZ);
+	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_SPEED_LEVEL_0);
 	stm32_gpio_set_alternate(GPIOA, (1 << 2 | 1 << 3), 7);
 
 	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
