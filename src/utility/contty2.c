@@ -97,8 +97,13 @@ void * contty2_automate(void * arg, int * state)
 						return NULL;
 
 					case READLINE_BACKSPACE:
+{
+char buf[10];
 						cdev->c_ops->write(cdev, VT100_LEFT, 3, 0);
 						cdev->c_ops->write(cdev, VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
+						cdev->c_ops->write(cdev, readline_rightpart(rl), readline_rightpart_size(rl));
+vt100_left(buf, readline_rightpart(rl));
+}						
 						return NULL;
 
 					case READLINE_RIGHT:
