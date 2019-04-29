@@ -73,7 +73,7 @@ malloc(size_t len)
 
 	struct __freelist *fp1, *fp2, *sfp1, *sfp2;
 	char *cp;
-	size_t s, avail;
+	size_t s;//, avail;
 
 	/*
 	 * Our minimum chunk size is the size of a pointer (plus the

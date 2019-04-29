@@ -63,6 +63,7 @@ int stm32_gpio_set_alternate(struct gpio_regs *g, uint32_t mask, int32_t alterna
 	alternate = alternate & 0xF;
 	bits_masked_assign_multimap(g->AFR[0], lmask, 0x7, 4);
 	bits_masked_assign_multimap(g->AFR[1], hmask, 0x7, 4);
+	return 0;
 }
 
 __END_DECLS

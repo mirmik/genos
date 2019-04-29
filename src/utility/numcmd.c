@@ -204,4 +204,5 @@ void* numcmd_automate(void* arg, int* state)
 		default:
 			BUG();
 	}
+	return 0;
 }

@@ -72,6 +72,8 @@ int mshell_execn(char* str, int len, int flags, int * retptr)
 					BUG();
 
 				case MSHELL_PROCESS:
+					BUG();
+					argc = 0;
 					return mshell_make_process(it->func, argc, argv);
 			}
 		}

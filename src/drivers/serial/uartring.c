@@ -38,10 +38,10 @@ int uartring_device_write(struct char_device* dev,
 		if (writed == size)
 			break;
 
-		if (flags && IO_HOTLOOP)
+		if (flags & IO_HOTLOOP)
 			continue;
 
-		if (flags && IO_NOBLOCK || current_schedee() == NULL)
+		if ((flags & IO_NOBLOCK) || current_schedee() == NULL)
 			break;
 
 		else

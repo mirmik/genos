@@ -164,4 +164,6 @@ int stm32_usart_setup(
 	stm32_usart_set_stopbits(regs, stopbits);
 
 	regs->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE; 
+
+	return 0;
 }

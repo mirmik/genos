@@ -119,6 +119,8 @@ unsigned stm32_init_pll_clocking(struct stm32_pll_settings* s)
 	RCC->CFGR &= ~(RCC_CFGR_SW);
 	RCC->CFGR |= (RCC_CFGR_SW_PLL);
 	while ((RCC->CFGR & RCC_CFGR_SWS_PLL) != RCC_CFGR_SWS_PLL);
+
+	return 0;
 }
 
 void arch_shutdown(arch_shutdown_mode_t mode)

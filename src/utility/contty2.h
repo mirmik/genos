@@ -5,6 +5,7 @@
 #include <igris/shell/readline.h>
 
 #define CONTTY2_LINE_LENGTH 32
+#define CONTTY2_HISTORY_SIZE 5
 
 struct char_device;
 
@@ -12,7 +13,7 @@ struct contty2_context {
 	struct readline rl;
 	struct char_device * cdev;
 	char buffer[CONTTY2_LINE_LENGTH];
-	char hbuffer[CONTTY2_LINE_LENGTH * 5];
+	char hbuffer[CONTTY2_LINE_LENGTH * CONTTY2_HISTORY_SIZE];
 	unsigned char debug_mode;
 };
 

@@ -7,9 +7,11 @@ int stm32_diag_putchar(void* priv_usart, char c)
 {
 	struct usart_regs* usart = (struct usart_regs*) priv_usart;
 	
-	while (!(USART2->SR & (1 << 7)));
-	USART2->DR = c;
-	while (!(USART2->SR & (1 << 7)));
+	while (!(usart->SR & (1 << 7)));
+	usart->DR = c;
+	while (!(usart->SR & (1 << 7)));
+
+	return 1;
 }
 
 void stm32_diag_init(void) 

@@ -15,7 +15,7 @@ static int newline(struct contty2_context * cntxt)
 
 	switch (ret)
 	{
-		case ENOENT: 
+		case ENOENT:
 			cntxt->cdev->c_ops->write(
 			    cntxt->cdev, "Entry not found\n\r", 17, 0);
 			cntxt->cdev->c_ops->write(cntxt->cdev, "message: ", 9, 0);
@@ -35,7 +35,7 @@ void contty2_debug_mode(struct contty2_context * cntxt, int en)
 
 void * contty2_automate(void * arg, int * state)
 {
-	struct file * filp;
+	//struct file * filp;
 	char c;
 	int ret;
 
@@ -50,6 +50,7 @@ void * contty2_automate(void * arg, int * state)
 				dprln("contty: state 0");
 
 			readline_init(rl, cntxt->buffer, CONTTY2_LINE_LENGTH);
+			readline_history_init(rl, cntxt->hbuffer, CONTTY2_HISTORY_SIZE);
 			*state = 1;
 
 		case 1:
@@ -84,11 +85,22 @@ void * contty2_automate(void * arg, int * state)
 
 				ret = readline_putchar(rl, c);
 
-				switch (ret) 
+				switch (ret)
 				{
 					case READLINE_ECHOCHAR:
+					{
 						cdev->c_ops->write(cdev, &c, 1, 0);
-						break;
+
+						if (!sline_in_rightpos(&rl->line))
+						{
+							char buf[16];
+
+							cdev->c_ops->write(cdev, sline_rightpart(&rl->line), sline_rightsize(&rl->line), 0);
+							ret = vt100_left(buf, sline_rightsize(&rl->line));
+							cdev->c_ops->write(cdev, buf, ret, 0);
+						}
+					}
+					break;
 
 					case READLINE_NEWLINE:
 						*state = 1;
@@ -97,25 +109,47 @@ void * contty2_automate(void * arg, int * state)
 						return NULL;
 
 					case READLINE_BACKSPACE:
-{
-char buf[10];
+					{
 						cdev->c_ops->write(cdev, VT100_LEFT, 3, 0);
 						cdev->c_ops->write(cdev, VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
-						cdev->c_ops->write(cdev, readline_rightpart(rl), readline_rightpart_size(rl));
-vt100_left(buf, readline_rightpart(rl));
-}						
-						return NULL;
+
+						if (!sline_in_rightpos(&rl->line))
+						{
+							char buf[16];
+
+							cdev->c_ops->write(cdev, sline_rightpart(&rl->line), sline_rightsize(&rl->line), 0);
+							ret = vt100_left(buf, sline_rightsize(&rl->line));
+							cdev->c_ops->write(cdev, buf, ret, 0);
+						}
+						break;
+					}
+					
 
 					case READLINE_RIGHT:
 						cdev->c_ops->write(cdev, VT100_RIGHT, 3, 0);
-						return NULL;
+						break;
 
 					case READLINE_LEFT:
 						cdev->c_ops->write(cdev, VT100_LEFT, 3, 0);
-						return NULL;
+						break;
 
 					case READLINE_NOTHING:
 						break;
+
+					case READLINE_UPDATELINE:
+					{
+						char buf[16];
+
+						if (rl->lastsize)
+						{
+							ret = vt100_left(buf, rl->lastsize);
+							cdev->c_ops->write(cdev, buf, ret, 0);
+							cdev->c_ops->write(cdev, VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
+						}
+						if (rl->line.len)
+							cdev->c_ops->write(cdev, rl->line.buf, rl->line.len, 0);
+						break;
+					}
 
 					default:
 						dprln("retcode:", ret);

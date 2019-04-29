@@ -33,7 +33,7 @@ void contty_debug_mode(struct contty_context * cntxt, int en)
 
 void * contty_automate(void * arg, int * state)
 {
-	struct file * filp;
+	//struct file * filp;
 	char c;
 	int ret;
 
