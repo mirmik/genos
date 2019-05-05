@@ -116,3 +116,17 @@ licant.module("igris.dprint", "diag",
 	sources = ["dprint_diag.c"],
 	mdepends = [("igris.dprint.common","impl"), "genos.diag"],
 )
+
+module("genos",
+	mdepends = 
+	[
+		"igris.include",
+		"genos.include",
+		
+		"igris.stdlibs",
+
+		"genos.irqtable",
+		("igris.dprint", "diag"),
+		("igris.syslock", "genos.atomic")
+	]
+)

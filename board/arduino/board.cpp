@@ -10,16 +10,11 @@
 
 GPIO_PIN(board_led, SYSLED_GPIO, SYSLED_PIN);
 
-namespace board {
-	gpio_pin sysled { SYSLED_GPIO, SYSLED_MASK };
-//	genos::drivers::avr_usart usart0(USART0, ATMEGA_IRQ_U0RX);
-}
-
 void board_init() {
 	arch_init();
 	//arch_uart_init();	
-	gpio_pin_settings(&board::sysled, GPIO_MODE_OUTPUT);
-	gpio_pin_write(&board::sysled, 1);
+	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT);
+	gpio_pin_write(&board_led, 1);
 }
 
 void board_shutdown(arch_shutdown_mode_t mode) {

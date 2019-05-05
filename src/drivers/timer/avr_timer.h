@@ -1,4 +1,4 @@
-#ifndef GENOS_DRIVERS_AVR_TIMER_H
+/*#ifndef GENOS_DRIVERS_AVR_TIMER_H
 #define GENOS_DRIVERS_AVR_TIMER_H
 
 #include <periph/regs/timer.h>
@@ -77,7 +77,7 @@ namespace genos
 				@param div Устанавливаемый делитель. (см. доступные делители в tc_divider_code)
 				@return Возвращает -1, если делитель неверен. Иначе 0.
 			*/
-			int set_divider(uint16_t div)
+	/*		int set_divider(uint16_t div)
 			{
 				int divcode = tc_divider_code(div);
 
@@ -85,20 +85,20 @@ namespace genos
 					return -1;
 
 				/// Set divider to CSX[0:2]
-				bits_mask_assign(regs->tccr_b, 7, divcode);
+				bits_assign(regs->tccr_b, 7, divcode);
 				return 0;
 			}
 
 			int set_divcode(uint8_t code) 
 			{
-				bits_mask_assign(regs->tccr_b, 7, code);
+				bits_assign(regs->tccr_b, 7, code);
 				return 0;
 			}
 
 			/// Enable overflow irq.
 			int irq_ovf_enable(bool en)
 			{
-				bits_mask_assign(*timsk, 0x1, en);
+				bits_assign(*timsk, 0x1, en);
 			}
 
 			//Set overflow interrupt handler to irqtable.
@@ -136,22 +136,22 @@ namespace genos
 				0b10 - set on compare, clear on downlevel
 			*/
 
-			void set_output_a_mode(uint8_t mode)
+/*			void set_output_a_mode(uint8_t mode)
 			{
 				assert(mode <= 3);
-				bits_mask_assign_bias(regs->tccr_a, 0b11, mode, 6);
+				bits_assign_bias(regs->tccr_a, 0b11, mode, 6);
 			}
 
 			void set_output_b_mode(uint8_t mode)
 			{
 				assert(mode <= 3);
-				bits_mask_assign_bias(regs->tccr_a, 0b11, mode, 4);
+				bits_assign_bias(regs->tccr_a, 0b11, mode, 4);
 			}
 
 			void set_output_c_mode(uint8_t mode)
 			{
 				assert(mode <= 3);
-				bits_mask_assign_bias(regs->tccr_a, 0b11, mode, 2);
+				bits_assign_bias(regs->tccr_a, 0b11, mode, 2);
 			}
 
 			/*
@@ -171,7 +171,7 @@ namespace genos
 				 1000
 				 #TODO					
 			*/
-
+/*
 			enum class TimerMode : uint8_t
 			{
 				Clock     = 0b0000,
@@ -188,8 +188,8 @@ namespace genos
 			{
 				uint8_t aval = 0b11 & (uint8_t)mode;
 				uint8_t bval = 0b11 & ((uint8_t)mode >> 2);
-				bits_mask_assign(		regs->tccr_a, 0b11, aval);
-				bits_mask_assign_bias(	regs->tccr_b, 0b11, bval, 3);
+				bits_assign(		regs->tccr_a, 0b11, aval);
+				bits_assign_bias(	regs->tccr_b, 0b11, bval, 3);
 			}
 
 			void irq_overflow_enable(bool en)
@@ -239,4 +239,4 @@ namespace periph
 #endif
 }
 
-#endif
+#endif*/

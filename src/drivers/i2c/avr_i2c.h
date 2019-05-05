@@ -17,6 +17,8 @@
 #include <hal/irqtable.h>
 #include <periph/irqdefs.h>
 
+#include <igris/util/bug.h>
+
 //0x00 Bus Fail Автобус сломался… эээ в смысле аппаратная ошибка шины. Например, внезапный старт посреди передачи бита.
 //0x08 Start Был сделан старт. Теперь мы решаем что делать дальше, например послать адрес ведомого
 //0x10 ReStart Был обнаружен повторный старт. Можно переключиться с записи на чтение или наоборот. От логики зависит.
@@ -122,7 +124,7 @@ public:
 		It is 72 for a 16mhz Wiring board with 100kHz TWI */
 		TWBR = ((F_CPU / scl_freq_hz) - 16) / 2;
 		TWSR = 0x00;
-		irq_set_handler(ATMEGA_IRQ_TWI, i2c_irq_handler, this);
+		irqtable_set_handler(ATMEGA_IRQ_TWI, i2c_irq_handler, this);
 		//dprln("i2c init for master mode with TWBR:", TWBR, "(freq:", (uint32_t)scl_freq_hz, ')');
 	}
 

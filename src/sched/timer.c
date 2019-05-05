@@ -27,8 +27,8 @@ struct ktimer * ktimer_create(ktimer_callback_t act, void* arg, time_t start, ti
 	tim->start = start;
 	tim->interval = interval;
 
-	DPRINT(tim->start);
-	DPRINT(tim->interval);
+	//DPRINT(tim->start);
+	//DPRINT(tim->interval);
 
 	ktimer_plan(tim);
 

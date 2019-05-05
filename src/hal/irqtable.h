@@ -32,7 +32,7 @@ void irqtable_stub(void* irqno);
 
 __END_DECLS
 
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 #include <igris/event/delegate.h>
 
 namespace genos 
@@ -53,5 +53,5 @@ namespace genos
 	}
 }
 #endif
-
+*/
 #endif

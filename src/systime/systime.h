@@ -3,23 +3,22 @@
 
 #include <inttypes.h>
 
-typedef int64_t time_t;
+typedef int64_t clock_t;
 
-extern volatile uint64_t __jiffies;
+extern volatile clock_t __jiffies;
 
 __BEGIN_DECLS
 
 void systime_set_frequency(uint32_t freq);
+void system_tick();
 
-static inline void system_tick() { ++__jiffies; }
-
-time_t jiffies();
-time_t millis();
-time_t micros();
+clock_t jiffies();
+clock_t millis();
+clock_t micros();
 
 void delay(double d);
 	
-time_t ms2jiffies(uint32_t ms);
+clock_t ms2jiffies(uint32_t ms);
 
 __END_DECLS
 

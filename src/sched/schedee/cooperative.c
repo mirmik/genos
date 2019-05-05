@@ -5,7 +5,10 @@
 
 //#include <gxx/panic.h>
 
+#define NODTRACE 1
+
 #include <igris/dprint.h>
+#include <igris/dtrace.h>
 
 static inline void starter (void * sch)
 {
@@ -23,6 +26,7 @@ void cooperative_schedee_init(struct cooperative_schedee * sch,
                               void * heap,
                               int heapsize)
 {
+	DTRACE();
 	//void* heap = malloc(heapsize);
 	
 	schedee_init(&sch->sch, 0, &cooperative_schedee_op);
@@ -40,6 +44,7 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*),
         void * arg,
         int heapsize)
 {
+	DTRACE();
 	struct cooperative_schedee * sch = (struct cooperative_schedee *)
 	                                   malloc(sizeof(struct cooperative_schedee));
 	
@@ -55,6 +60,7 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*),
 
 static void cooperative_schedee_execute(struct schedee* sch)
 {
+	DTRACE();
 	//TRACE();
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
 	context_load(&csch->cntxt);
@@ -62,6 +68,7 @@ static void cooperative_schedee_execute(struct schedee* sch)
 
 static int cooperative_schedee_displace(struct schedee* sch)
 {
+	DTRACE();
 	//TRACE();
 	struct cooperative_schedee * csch = mcast_out(sch, struct cooperative_schedee, sch);
 	sch->flag.runned = 0;
@@ -71,6 +78,7 @@ static int cooperative_schedee_displace(struct schedee* sch)
 
 static void cooperative_schedee_finalize(struct schedee* sch)
 {
+	DTRACE();
 	//TRACE();
 	struct cooperative_schedee * asch = mcast_out(sch, struct cooperative_schedee, sch);
 

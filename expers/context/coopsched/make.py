@@ -23,18 +23,9 @@ licant.cxx_application("firmware",
 	sources = ["main.c"], 
 
 	mdepends = [
-		"genos.include",
-
-		"igris.include",
-		"igris.stdlibs",
-
-		"igris.bug",
-		
-		("igris.syslock", "genos.atomic"),
-		("igris.dprint", "diag"),
-
-		"genos.irqtable",
-		"genos.systime",
+		"genos",
+		"genos.sched",
+		("genos.malloc", "lin"),
 
 		("genos.board", boardname),
 		gpiodrivers
@@ -47,7 +38,7 @@ licant.cxx_application("firmware",
 def install():
 	#os.system("arm-none-eabi-objcopy -O binary firmware firmware.bin")
 	#os.system("sudo st-flash write firmware.bin 0x8000000")
-	#os.system("avrdude -P/dev/ttyACM0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware -u")
+	#os.system("avrdude -P/dev/ttyACM0 -v -carduino -patmega2560 -b115200 -D -Uflash:w:./firmware -u")
 	os.system("avrdude -P/dev/ttyACM0 -v -carduino -patmega328p -b115200 -D -Uflash:w:./firmware -u")
 
 @licant.routine

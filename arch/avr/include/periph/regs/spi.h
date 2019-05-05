@@ -4,15 +4,15 @@
 #include <sys/cdefs.h>
 
 #include <igris/util/bits.h>
-#include <igris/bug.h>
+#include <igris/util/bug.h>
 
 #ifdef CHIP_ATMEGA2560
 #define MISO_PB   (1<<3)
 #define MOSI_PB   (1<<2)
 #define SCK_PB    (1<<1)
-#define SS_PB     (1<<0)
+//#define SS_PB     (1<<0)
 #else
-#error "Unrecognized chip"
+#warning "Unrecognized chip"
 #endif
 
 //#define RESET_PB 1
@@ -20,10 +20,12 @@
 __BEGIN_DECLS
 
 static inline void avr_spi_init_master() {
+
+#ifdef CHIP_ATMEGA2560
 	SPCR = 0;
 
 	// Set MOSI, SCK as Output
-    DDRB |= MOSI_PB | SCK_PB | SS_PB;
+    DDRB |= MOSI_PB | SCK_PB;
     
     // MISO as input
     DDRB &= ~(MISO_PB);
@@ -34,6 +36,9 @@ static inline void avr_spi_init_master() {
     //SPCR=(1<<SPE)|(1<<MSTR)|(1<<SPR0);//|(1<<SPIE);
     SPCR = (1<<SPE) | (1<<MSTR) | (1<<CPHA) | (1<<CPOL);
     SPSR = (1<<SPI2X);
+#else
+#warning "Unrecognized chip"
+#endif
 }
 
 static inline void avr_spi_sendbyte(uint8_t tx) 

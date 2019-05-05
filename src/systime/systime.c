@@ -3,15 +3,15 @@
 
 #include <igris/dprint.h>
 
-volatile uint64_t __jiffies;
+volatile clock_t __jiffies = 0;
 uint32_t system_frequency = 1;
 uint32_t jiffies_to_millis = 1;
 
 #define FREQSHIFT 8
 
-time_t jiffies() { 
+clock_t jiffies() { 
 	system_lock();
-	time_t ret = __jiffies;
+	clock_t ret = __jiffies;
 	system_unlock();
 	return ret; 
 }
@@ -19,19 +19,24 @@ time_t jiffies() {
 void systime_set_frequency(uint32_t freq) 
 {
 	system_frequency   = freq;	
-	jiffies_to_millis  = (1000 << FREQSHIFT) / freq;
+	jiffies_to_millis  = ((uint32_t)1000 << FREQSHIFT) / freq;
 }
 
-time_t millis() {
+clock_t millis() {
 	return (jiffies() * jiffies_to_millis) >> FREQSHIFT;
 }
 
 void delay(double d) {
-	time_t n = millis();
-	time_t f = n + d;
+	clock_t n = millis();
+	clock_t f = n + d;
 	while(f - millis() > 0);
 }
 
-time_t ms2jiffies(uint32_t ms) {
+clock_t ms2jiffies(uint32_t ms) {
 	return (ms << FREQSHIFT) / jiffies_to_millis;
+}
+
+void system_tick()
+{ 
+	++__jiffies; 
 }

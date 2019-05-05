@@ -46,9 +46,9 @@ module("genos.hal", impl = "atmega328p",
 	ldscripts = ["ldscripts/atmega328p.ld"],
 
 	defines = ["CHIP_ATMEGA328P"],
-	cxx_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti",
-	cc_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
-	ld_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections",
+	cxx_flags = "-nostdlib -Os -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections -fno-rtti -flto",
+	cc_flags = "-nostdlib -Os -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -ffunction-sections -flto",
+	ld_flags = "-nostdlib -Os -mmcu=atmega328p -fdata-sections -ffunction-sections -flto -Wl,--strip-all -Wl,--gc-sections ",
 	libs = ["m", "gcc"],
 )
 

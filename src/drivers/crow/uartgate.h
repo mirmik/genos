@@ -11,7 +11,7 @@ void uartgate_rx_handler(void*);
 void uartgate_tx_handler(void*);
 
 struct crow_uartgate : public crow::gateway {
-	struct uart * u;
+	struct uart_device * u;
 
 	struct dlist_head to_send;
 	struct crow::packet * insend;
@@ -29,7 +29,7 @@ struct crow_uartgate : public crow::gateway {
 
 	void nblock_onestep() override;
 	void send(crow::packet* pack) override;
-	void init(struct uart * uart);
+	void init(struct uart_device * uart);
 	
 public:
 	void newline_handler(); 

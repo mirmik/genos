@@ -1,16 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 #coding: utf-8
 
-from licant.cxx_modules import application, doit
-from licant.modules import submodule
+import licant
+from licant.cxx_modules import application
 from licant.libs import include
 from licant.cxx_make import make_gcc_binutils
-import licant.routine
+from licant.modules import submodule
 
+import time
 import os
 
 include("genos")
-include("gxx")
+include("igris")
 binutils = make_gcc_binutils("avr")
 
 application("main", 
@@ -18,23 +19,24 @@ application("main",
 	sources = ["main.cpp"],
 	target = "firmware.bin",
 
-	cxx_flags = "-Og",
-	cc_flags = "-Og",
+	cxx_flags = "-Os -fpermissive -fno-threadsafe-statics -flto -DNDEBUG",
+	cc_flags = "-Os -flto -DNDEBUG",
 
-	include_modules = [
-		submodule("genos.include"),
-		submodule("genos.board", "arduino_mega"),
-		submodule("genos.irqtbl"),
-		
-		submodule("gxx.libc"),
-		submodule("gxx.include"),
-		submodule("gxx.dprint", "diag"),
-		submodule("gxx.diag", "impl"),
+	mdepends = 
+	[
+		("genos.board", "arduino_mega"),
+		"genos",
 
-		submodule("gxx.std"),
+		"genos.drivers.avr"
 	]
 )
 
-licant.routine.add_routine("install", lambda x: os.system("./install.sh"))
+@licant.routine(deps=["main"])
+def install():
+	os.system("avrdude -P/dev/ttyACM0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.bin -u")
 
-doit("main")
+@licant.routine
+def terminal():
+	os.system("sudo gtkterm -p /dev/ttyACM0 -s 115200")
+
+licant.ex("main")

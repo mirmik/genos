@@ -1,23 +1,25 @@
 #include <hal/board.h>
-#include <hal/irqs.h>
+#include <hal/irq.h>
 
-#include <genos/systime.h>
-#include <drivers/uartring.h>
+#include <systime/systime.h>
 
-int main() {
+#include <igris/dprint.h>
+
+#include <util/delay.h>
+
+int main()
+{
 	board_init();
-	arch::irqs::enable();
 
-	dprln("HelloWorld");	
-	board::i2c.init();
-	board::i2c.enable();
+	dprln("HelloWorld");
 
-	char _buf[48] = "1234"; 
-	gxx::buffer buf(_buf, 4);
-	board::i2c.write(0x47, buf);
+	irqs_enable();
 
-	while(1) {
-		systime::delay(1000);
-		board::led.tgl();
+	gpio_pin_write(&board_led, 0);
+
+	while (1)
+	{
+		delay(500);
+		gpio_pin_toggle(&board_led);
 	}
 }

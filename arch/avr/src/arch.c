@@ -12,7 +12,8 @@ __BEGIN_DECLS
 extern struct diag_ops usart0_diag;
 int usart0_diag_init();	
 
-void arch_init() {	
+void arch_init() 
+{	
 	irqtable_init();
 
 	usart0_diag_init();
