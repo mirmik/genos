@@ -3,6 +3,7 @@
 
 #include <sched/api.h>
 
+#include <sched/schedee/cooperative.h>
 #include <sched/sched.h>
 #include <sched/timer.h>
 
@@ -28,6 +29,9 @@ void* autom_task(void* arg, int* state)
 	msleep(1000);
 }
 
+struct cooperative_schedee sch;
+char sch_heap[128];
+
 int main() 
 {
 	board_init();
@@ -35,11 +39,11 @@ int main()
 	dprln("init scheduler");
 	scheduler_init();
 	
-	//struct schedee* sch = create_cooperative_schedee(task, NULL, 128);
-	//schedee_run(sch);
+	cooperative_schedee_init(&sch, task, NULL, sch_heap, 128);
+	schedee_run(&sch.sch);
 
-	struct schedee* asch = create_autom_schedee(autom_task, NULL);
-	schedee_run(asch);
+	//struct schedee* asch = create_autom_schedee(autom_task, NULL);
+	//schedee_run(asch);
 
 	irqs_enable();
 

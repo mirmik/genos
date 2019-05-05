@@ -14,8 +14,8 @@ struct ktimer
 	struct dlist_head lnk;
 	ktimer_callback_t act;
 	void * arg;
-	time_t start;
-	time_t interval;
+	clock_t start;
+	clock_t interval;
 };
 
 #define KTIMER_DECLARE(name, act, arg, interval) \
@@ -26,12 +26,15 @@ __BEGIN_DECLS
 void timer_manager_step();
 
 struct ktimer * ktimer_create(ktimer_callback_t act, void* arg,
-                              time_t start, time_t interval);
+                              clock_t start, clock_t interval);
 
 struct ktimer * ktimer_create_for(ktimer_callback_t act, void* arg,
-                                  time_t interval);
+                                  clock_t interval);
 
 struct ktimer * ktimer_create_for_milliseconds(ktimer_callback_t act, void* arg,
+        uint32_t ms);
+
+void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg,
         uint32_t ms);
 
 void ktimer_dealloc(struct ktimer * ptr);

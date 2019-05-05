@@ -4,7 +4,7 @@
 #include <igris/dprint/dprint.h>
 #include <igris/util/access.h>
 
-void context_print(struct context* ctx)
+/*void context_print(struct context* ctx)
 {
 	debug_print("fixed_r0_tmp:\t");debug_printhex_uint8(ctx->regs[0]);dln();
 	debug_print("fixed_r1_null:\t");debug_printhex_uint8(ctx->regs[1]);dln();
@@ -41,7 +41,7 @@ void context_print(struct context* ctx)
 	debug_print("pc:\t\t");debug_printhex_uint16(ctx->pc);dln();
 	debug_print("sp:\t\t");debug_printhex_uint16(ctx->sp);dln();
 	debug_print("sreg:\t\t");debug_printhex_uint8(ctx->control);dln();
-}
+}*/
 
 void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void* param, uint8_t irqen) {
 	memset(ctx, 0, sizeof(struct context));
@@ -51,6 +51,6 @@ void context_init (struct context* ctx, uintptr_t stck, void(*func)(void*), void
 	ctx->pc = (uintptr_t)func;
 	//*(void**)&ctx->regs[24] = param;
 	uintptr_t aparam = (uintptr_t) param;
-	ctx->regs[24] = UINT16_HI(aparam);
-	ctx->regs[25] = UINT16_LO(aparam);
+	ctx->regs[24] = UINT16_LO(aparam);
+	ctx->regs[25] = UINT16_HI(aparam);
 }

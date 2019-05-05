@@ -10,6 +10,8 @@
 
 #include <periph/regs/spi.h>
 
+#if 0
+
 void avr_spi_device::init(const char * name) {
 	avr_spi_init_master();
 	//avr_spi_set_divider(2);
@@ -209,3 +211,5 @@ struct spi_device * get_avr_spi_device() {
 
 	return &avr_spi.spi;
 }*/
+
+#endif

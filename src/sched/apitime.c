@@ -7,7 +7,7 @@ void __unsleep(void * priv, struct ktimer * tim)
 {
 	struct schedee * sch = (struct schedee *) priv;
 	schedee_run(sch);
-	ktimer_dealloc(tim);
+	//ktimer_dealloc(tim);
 }
 
 int schedee_sleep_for_milliseconds(int ms)
@@ -22,7 +22,11 @@ int schedee_sleep_for_milliseconds(int ms)
 		return 0;
 	}
 
-	ktimer_create_for_milliseconds(__unsleep, sch, ms);
+	struct ktimer timer;
+
+	//ktimer_create_for_milliseconds(__unsleep, sch, ms);
+	
+	ktimer_init_for_milliseconds(&timer, __unsleep, sch, ms);
 	schedee_wait(sch);
 
 	return __displace__();

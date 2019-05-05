@@ -15,7 +15,7 @@ void ktimer_dealloc(struct ktimer * ptr)
 	free(ptr);
 }
 
-struct ktimer * ktimer_create(ktimer_callback_t act, void* arg, time_t start, time_t interval) 
+struct ktimer * ktimer_create(ktimer_callback_t act, void* arg, clock_t start, clock_t interval) 
 {
 	struct ktimer * tim;
 
@@ -35,7 +35,22 @@ struct ktimer * ktimer_create(ktimer_callback_t act, void* arg, time_t start, ti
 	return tim;
 } 
 
-struct ktimer * ktimer_create_for(ktimer_callback_t act, void* arg, time_t interval) 
+void ktimer_init(struct ktimer * tim, ktimer_callback_t act, void* arg, clock_t start, clock_t interval) 
+{
+	assert(interval != 0);
+
+	tim->act = act;
+	tim->arg = arg;
+	tim->start = start;
+	tim->interval = interval;
+
+	//DPRINT(tim->start);
+	//DPRINT(tim->interval);
+
+	ktimer_plan(tim);
+} 
+
+struct ktimer * ktimer_create_for(ktimer_callback_t act, void* arg, clock_t interval) 
 {
 	return ktimer_create(act, arg, jiffies(), interval);
 } 
@@ -45,7 +60,12 @@ struct ktimer * ktimer_create_for_milliseconds(ktimer_callback_t act, void* arg,
 	return ktimer_create(act, arg, jiffies(), ms2jiffies(interval));
 } 
 
-static inline uint8_t ktimer_check(struct ktimer * tim, time_t now) 
+void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg, uint32_t interval) 
+{
+	return ktimer_init(tim, act, arg, jiffies(), ms2jiffies(interval));
+} 
+
+static inline uint8_t ktimer_check(struct ktimer * tim, clock_t now) 
 {
 	return now - tim->start >= tim->interval;
 }
@@ -59,8 +79,8 @@ void ktimer_plan(struct ktimer * t)
 {
 	struct ktimer * it;
 	struct dlist_head * sit;
-	time_t it_final;
-	time_t final;
+	clock_t it_final;
+	clock_t final;
 
 	final = t->start + t->interval;
 	sit = NULL;
@@ -84,7 +104,7 @@ void ktimer_plan(struct ktimer * t)
 }
 
 void timer_manager_step() {
-	time_t now;
+	clock_t now;
 
 	now = jiffies();
 	

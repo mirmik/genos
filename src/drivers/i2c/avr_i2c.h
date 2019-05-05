@@ -195,7 +195,8 @@ void i2c_irq_handler(void* arg) {
 				TWDR = i2c->target_address | 0x01;		// Шлем Addr+R
 			}
 			else {									// Или 
-				BUG();
+				//BUG();
+
 				TWDR = i2c->target_address & 0xFE;		// Шлем Addr+W
 			}
 	
@@ -449,11 +450,11 @@ void i2c_irq_handler(void* arg) {
 				}
 	*/
 		default:
-			dpr("unresolved i2c code hex: ");
-			dprhex(code);	
-			dpr(" dec:");
-			dprln(code);	
-			BUG();
+			//dpr("unresolved i2c code hex: ");
+			//dprhex(code);	
+			//dpr(" dec:");
+			//dprln(code);	
+			//BUG();
 			break;
 	}
 }

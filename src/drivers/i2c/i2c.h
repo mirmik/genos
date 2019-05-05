@@ -23,11 +23,11 @@ struct i2c_device
 		write_start(target, data, size);
 
 		ret = wait_current_schedee(&wlnk, 1);
-		if (ret == -1) 
+		/*if (ret == -1) 
 		{
 			volatile uint8_t flag = 0;
 			wait_flag_setted(&wlnk, 1);
-		}
+		}*/
 		
 		return status();
 	}
@@ -38,11 +38,11 @@ struct i2c_device
 		writeread_start(target, out, olen, in, ilen);
 		
 		ret = wait_current_schedee(&wlnk, 1);
-		if (ret == -1) 
+		/*if (ret == -1) 
 		{
 			volatile uint8_t flag = 0;
 			wait_flag_setted(&wlnk, 1);
-		}
+		}*/
 
 		return status();
 	}

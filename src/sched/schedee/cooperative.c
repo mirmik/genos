@@ -3,16 +3,21 @@
 #include <sched/api.h>
 #include <stdlib.h>
 
-//#include <gxx/panic.h>
+#include <igris/util/bug.h>
 
 #define NODTRACE 1
 
 #include <igris/dprint.h>
 #include <igris/dtrace.h>
 
-static inline void starter (void * sch)
+static void starter (void * sch)
 {
 	struct cooperative_schedee * csch = (struct cooperative_schedee *) sch;
+
+	//dprln("STARTER");
+	//dpr("csch");dprptrln((void*)sch);
+	//dpr("csch->task");dprptrln((void*)csch->task);
+	///dpr("csch->arg");dprptrln((void*)csch->arg);
 
 	void* ret = csch->task(csch->arg);
 	csch->ret = ret;
@@ -28,6 +33,8 @@ void cooperative_schedee_init(struct cooperative_schedee * sch,
 {
 	DTRACE();
 	//void* heap = malloc(heapsize);
+
+	//dpr("csch");dprptrln((void*)sch);
 	
 	schedee_init(&sch->sch, 0, &cooperative_schedee_op);
 	context_init(&sch->cntxt, (uintptr_t) heap + heapsize - 1, starter, sch, 1);
@@ -40,7 +47,7 @@ void cooperative_schedee_init(struct cooperative_schedee * sch,
 	sch -> sch.flag.can_displace = 1;
 }
 
-struct schedee * create_cooperative_schedee(void* (*task) (void*),
+/*struct schedee * create_cooperative_schedee(void* (*task) (void*),
         void * arg,
         int heapsize)
 {
@@ -56,7 +63,7 @@ struct schedee * create_cooperative_schedee(void* (*task) (void*),
 	sch->sch.flag.dynamic_heap = true;
 
 	return &sch->sch;
-}
+}*/
 
 static void cooperative_schedee_execute(struct schedee* sch)
 {
@@ -83,10 +90,12 @@ static void cooperative_schedee_finalize(struct schedee* sch)
 	struct cooperative_schedee * asch = mcast_out(sch, struct cooperative_schedee, sch);
 
 	if (asch->sch.flag.dynamic_heap)
-		free(asch->heap);
+		BUG();
+		//free(asch->heap);
 
 	if (asch->sch.flag.dynamic)
-		free(asch);
+		BUG();
+		//free(asch);
 }
 
 const struct schedee_operations cooperative_schedee_op =

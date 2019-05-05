@@ -27,6 +27,8 @@ licant.cxx_application("firmware",
 		"genos.sched",
 		("genos.malloc", "lin"),
 
+		"igris.bug",
+
 		("genos.board", boardname),
 		gpiodrivers
 	],
@@ -39,10 +41,10 @@ def install():
 	#os.system("arm-none-eabi-objcopy -O binary firmware firmware.bin")
 	#os.system("sudo st-flash write firmware.bin 0x8000000")
 	#os.system("avrdude -P/dev/ttyACM0 -v -carduino -patmega2560 -b115200 -D -Uflash:w:./firmware -u")
-	os.system("avrdude -P/dev/ttyACM0 -v -carduino -patmega328p -b115200 -D -Uflash:w:./firmware -u")
+	os.system("avrdude -P/dev/ttyUSB0 -v -carduino -patmega328p -b57600 -D -Uflash:w:./firmware -u")
 
 @licant.routine
 def terminal():
-	os.system("sudo gtkterm -p /dev/ttyACM0 -s 115200 --parity none")
+	os.system("sudo gtkterm -p /dev/ttyUSB0 -s 115200 --parity none")
 
 licant.ex("firmware")

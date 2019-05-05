@@ -6,6 +6,8 @@
 #include <igris/util/bits.h>
 #include <igris/util/bug.h>
 
+#if 0
+
 #ifdef CHIP_ATMEGA2560
 #define MISO_PB   (1<<3)
 #define MOSI_PB   (1<<2)
@@ -92,5 +94,7 @@ static inline uint8_t avr_spi_set_divider(uint8_t div) {
 } 
 
 __END_DECLS
+
+#endif
 
 #endif

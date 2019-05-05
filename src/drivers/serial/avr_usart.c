@@ -1,6 +1,6 @@
 #include <drivers/serial/avr_usart.h>
-//#include </util/member.h>
 
+#include <igris/dprint.h>
 #include <hal/irqtable.h>
 #include <hal/board.h>
 
@@ -119,8 +119,13 @@ int avr_usart_device_setup(struct uart_device* u, int32_t baud,
 {
 	RETYPE(struct avr_usart_device *, dev, u);
 
+	usart_regs_enable_tx(dev->regs, 1);
+	usart_regs_enable_rx(dev->regs, 1);
+
 	usart_regs_setup(dev->regs, baud, parity, databits, stopbits);
 	avr_usart_device_irqinit(u);
+
+	usart_regs_rxirq(dev->regs, true);
 
 	return 0;
 }
