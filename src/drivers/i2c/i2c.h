@@ -22,7 +22,9 @@ struct i2c_device
 		int ret;
 		write_start(target, data, size);
 
+		dprln("WAIT");
 		ret = wait_current_schedee(&wlnk, 1);
+		dprln("UNWAIT");
 		/*if (ret == -1) 
 		{
 			volatile uint8_t flag = 0;

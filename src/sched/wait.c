@@ -61,6 +61,7 @@ static int waiter_to_list_and_displace(struct dlist_head * head, int priority,
 		dlist_add_tail(&wp->wait_lnk, head);
 
 	system_unlock();
+		dprln("Displace");
 
 	return __displace__();
 }
@@ -91,6 +92,7 @@ int wait_current_schedee(struct dlist_head * head, int priority)
 	}
 	else 
 	{
+		dprln("DOWAITER");
 		struct waiter w;
 		schedee_wait(cur);
 		return waiter_to_list_and_displace(head, priority, &w);
@@ -114,6 +116,7 @@ void __unwait(struct waiter * w)
 
 void unwait_one(struct dlist_head * head)
 {
+	dprln("unwait");
 	struct waiter * it;
 
 	system_lock();
