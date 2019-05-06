@@ -15,7 +15,7 @@ static int newline(struct contty_context * cntxt)
 //	schedee_run(sch);
 //	__schedee_wait_for(current_schedee(), sch);
 //	__displace__();
-	ret = mshell_execn(cntxt->line.buf, cntxt->line.len, SH_INTERNAL_SPLIT, NULL);
+	ret = mshell_execn(cntxt->line.buf, cntxt->line.len, SH_INTERNAL_SPLIT, NULL, 1);
 
 	switch (ret)
 	{

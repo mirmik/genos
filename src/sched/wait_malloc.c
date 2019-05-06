@@ -6,14 +6,11 @@
 
 #include <stdlib.h>
 
-#include <igris/util/bug.h>
-
 struct waiter 
 {
 	struct dlist_head wait_lnk;
 	void(*handler)(void*);
 	void* handarg;
-	bool dynamic;
 };
 
 void init_waiter(struct waiter * w, void(*handler)(void*), void * handarg)
@@ -22,18 +19,17 @@ void init_waiter(struct waiter * w, void(*handler)(void*), void * handarg)
 	w->handler = handler;
 }
 
-/*struct waiter * waiter_get(void(*handler)(void*), void* handarg) 
+struct waiter * waiter_get(void(*handler)(void*), void* handarg) 
 {
 	struct waiter * w = malloc(sizeof(struct waiter));
 	init_waiter(w, handler, handarg);
-	w->dynamic = true;
 	return w;
 }
 
 void waiter_put(struct waiter * w) 
 {
 	free(w);
-}*/
+}
 
 static int waiter_to_list(struct dlist_head * head, int priority, 
 	struct waiter * wp
@@ -61,7 +57,6 @@ static int waiter_to_list_and_displace(struct dlist_head * head, int priority,
 		dlist_add_tail(&wp->wait_lnk, head);
 
 	system_unlock();
-		dprln("Displace");
 
 	return __displace__();
 }
@@ -82,21 +77,10 @@ int wait_current_schedee(struct dlist_head * head, int priority)
 	if (cur == NULL || !cur->flag.can_displace)
 		return -1;
 
+	struct waiter * w = waiter_get(__unwait_schedee, (void*)cur);
+	schedee_wait(cur);
 
-	if (!cur->flag.has_context) 
-	{
-		BUG();
-	//	struct waiter * w = waiter_get(__unwait_schedee, (void*)cur);
-	//	schedee_wait(cur);
-	//	return waiter_to_list_and_displace(head, priority, w);
-	}
-	else 
-	{
-		dprln("DOWAITER");
-		struct waiter w;
-		schedee_wait(cur);
-		return waiter_to_list_and_displace(head, priority, &w);
-	}
+	return waiter_to_list_and_displace(head, priority, w);
 }
 
 void __unwait(struct waiter * w)
@@ -108,15 +92,13 @@ void __unwait(struct waiter * w)
 	dlist_del(&w->wait_lnk);
 	system_unlock();
 	
-	//if (w->dynamic)
-	//	waiter_put(w);
+	waiter_put(w);
 
 	handler( handarg );
 }
 
 void unwait_one(struct dlist_head * head)
 {
-	dprln("unwait");
 	struct waiter * it;
 
 	system_lock();
@@ -151,28 +133,14 @@ void __unwait_flag(void* priv)
 	*flag = 1;
 }
 
-/*int wait_flag_setted(struct dlist_head * head, int priority) 
+int wait_flag_setted(struct dlist_head * head, int priority) 
 {
 	//struct schedee * cur;
 	volatile uint8_t flag = 0;
 
-//	struct waiter * w = waiter_get(__unwait_flag, (void*)&flag);
-//	waiter_to_list(head, priority, w);
-
-	if (!cur->flag.has_context) 
-	{
-		BUG();
-	//	struct waiter * w = waiter_get(__unwait_schedee, (void*)cur);
-	//	schedee_wait(cur);
-	//	return waiter_to_list_and_displace(head, priority, w);
-	}
-	else 
-	{
-		struct waiter w;
-		schedee_wait(cur);
-		return waiter_to_list_and_displace(head, priority, &w);
-	}
+	struct waiter * w = waiter_get(__unwait_flag, (void*)&flag);
+	waiter_to_list(head, priority, w);
 
 	while(flag == 0);
 	return 0;
-}*/
+}

@@ -11,19 +11,8 @@ extern struct stm32_usart_device usart2;
 extern struct stm32_usart_device usart6;
 
 extern struct gpio_pin board_led;
+extern struct gpio_pin board_led2;
 extern struct gpio_pin extpin[4];
-
-#ifdef __cplusplus
-
-#include <drivers/gpio/xpin.h>
-
-namespace board 
-{
-	extern genos::drivers::xpin sysled0;
-	extern genos::drivers::xpin sysled1;
-}
-
-#endif
 
 __BEGIN_DECLS
 

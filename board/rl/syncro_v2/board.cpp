@@ -14,17 +14,15 @@
 STM32_USART_DEVICE_DECLARE(usart2, USART2, STM32_IRQ_USART2);
 STM32_USART_DEVICE_DECLARE(usart6, USART6, STM32_IRQ_USART6);
 
-struct gpio_pin board_led;
-
-genos::drivers::xpin board::sysled0(GPIOD, 14);
-genos::drivers::xpin board::sysled1(GPIOD, 15);
+GPIO_PIN(board_led, GPIOD, 14);
+GPIO_PIN(board_led2, GPIOD, 15);
 
 struct gpio_pin extpin[4] = 
 {
-	{GPIOC, 1<<10},
-	{GPIOC, 1<<11},
-	{GPIOC, 1<<12},
-	{GPIOA, 1<<15}
+	{GPIOB, 1<<12},
+	{GPIOB, 1<<13},
+	{GPIOB, 1<<14},
+	{GPIOB, 1<<15}
 };
 
 void board_init() 
@@ -58,6 +56,9 @@ void board_init()
 	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
 	stm32_diag_init(USART2);	
 
-	board::sysled0.settings(GPIO_MODE_OUTPUT);
-	board::sysled1.settings(GPIO_MODE_OUTPUT);
+	//board::sysled0.settings(GPIO_MODE_OUTPUT);
+	//board::sysled1.settings(GPIO_MODE_OUTPUT);
+
+	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT);
+	gpio_pin_settings(&board_led2, GPIO_MODE_OUTPUT);
 }

@@ -47,7 +47,6 @@ module("genos.sched", "stub",
 
 module("genos.sched", "impl",
 	sources = [
-		"src/sched/wait.c",
 		"src/sched/sched.cpp",
 		"src/sched/displace.cpp",
 		"src/sched/schedee.c",
@@ -61,8 +60,12 @@ module("genos.sched", "impl",
 		"src/sched/posix/fcntl_mvfs.cpp",
 		"src/sched/posix/unistd_mvfs.cpp",
 	],
+	mdepends=["genos.wait"],
 	default=True,
 )
+
+module("genos.wait", "static", sources=["src/sched/wait_static.c"], default=True)
+module("genos.wait", "malloc", sources=["src/sched/wait_malloc.c"])
 
 module("genos.mvfs", 
 	sources = [
@@ -132,8 +135,6 @@ module("genos",
 		("igris.syslock", "genos.atomic")
 	]
 )
-
-
 
 
 

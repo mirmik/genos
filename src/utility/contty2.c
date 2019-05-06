@@ -11,7 +11,8 @@
 static int newline(struct contty2_context * cntxt)
 {
 	int ret;
-	ret = mshell_execn(cntxt->rl.line.buf, cntxt->rl.line.len, SH_INTERNAL_SPLIT, NULL);
+	cntxt->rl.line.buf[cntxt->rl.line.len] = 0;
+	ret = mshell_execn(cntxt->rl.line.buf, cntxt->rl.line.len, SH_INTERNAL_SPLIT, NULL, 1);
 
 	switch (ret)
 	{

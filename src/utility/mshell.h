@@ -28,7 +28,7 @@ __BEGIN_DECLS
 
 //void * mshell_utility(void * arg, int * state);
 int mshell_execute(char* str, int flags, int * retptr);
-int mshell_execn(char* str, int len, int flags, int * retptr);
+int mshell_execn(char* str, int len, int flags, int * retptr, int debug_mode);
 
 __END_DECLS
 

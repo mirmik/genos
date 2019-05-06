@@ -13,16 +13,15 @@
 
 extern struct mshell_command mshell_commands_table[];
 
-int mshell_make_process(int(*func)(int,char**), int argc, char** argv) 
+int mshell_make_process(int(*func)(int, char**), int argc, char** argv)
 {
-	
-	
 	BUG();
+	return 0;
 }
 
-int mshell_execn(char* str, int len, int flags, int * retptr)
+int mshell_execn(char* str, int len, int flags, int * retptr, int debug_mode)
 {
-	int flen=0;
+	int flen = 0;
 	int argc;
 	int res;
 	char * argv[10];
@@ -38,21 +37,21 @@ int mshell_execn(char* str, int len, int flags, int * retptr)
 		return MSHELL_OK;
 	}
 
-	while (flen != len && str[flen] != '\0' && str[flen] != ' ') 
+	while (flen != len && str[flen] != '\0' && str[flen] != ' ')
 		flen++;
 
 	it = mshell_commands_table;
-	
-	if (flen == 4 && !strncmp(str, "help", 4)) 
+
+	if (flen == 4 && !strncmp(str, "help", 4))
 	{
-		for (; it->func != NULL; ++it) 
+		for (; it->func != NULL; ++it)
 		{
 			if (it->help)
-			 	dprln(it->name, "-", it->help);
+				dprln(it->name, "-", it->help);
 			else
 				dprln(it->name);
 		}
-		
+
 		return 0;
 	}
 
@@ -64,6 +63,15 @@ int mshell_execn(char* str, int len, int flags, int * retptr)
 			{
 				case MSHELL_FUNCTION:
 					argc = argvc_internal_split(str, argv, 10);
+
+					if (debug_mode)
+					{
+						for (int i = 0; i < argc; i++)
+						{
+							dpr("argv ", i); dpr(":"); dprln(argv[i]);
+						}
+					}
+
 					res = it->func(argc, argv);
 					if (retptr) *retptr = res;
 					return MSHELL_OK;
