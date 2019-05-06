@@ -51,3 +51,5 @@ firmware
 
 build
 jjj
+
+__configure__.py

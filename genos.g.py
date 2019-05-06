@@ -124,9 +124,68 @@ module("genos",
 		"genos.include",
 		
 		"igris.stdlibs",
-
 		"genos.irqtable",
+
+		"igris.util",
+		"igris.bug",
 		("igris.dprint", "diag"),
 		("igris.syslock", "genos.atomic")
 	]
 )
+
+
+
+
+
+
+
+def genos_firmware(sources):
+	import shutil
+	import licant.modules
+
+	if os.path.exists("__configure__.py"):
+		try:
+			import __configure__
+		except:
+			print("Error in configuration file.")		
+
+	dir_path = licant.modules.mlibrary.get("genos").opts["__dir__"]
+
+	@licant.routine
+	def configure(board):
+		print("load configuration script for {}".format(board))
+
+		confpath = os.path.join(dir_path, "conf", "conf-" + board + ".py")
+
+
+		shutil.copy(
+			confpath,
+			"__configure__.py"
+		)
+
+	if not os.path.exists("__configure__.py"):
+		@licant.routine
+		def firmware(*args, **kwargs):
+			print("Enougth of configuration file")
+	else:
+		try:
+			licant.include("igris")
+
+			modules = ["genos"]
+			modules.extend(__configure__.modules)
+			
+			licant.cxx_application("firmware",
+				binutils=__configure__.binutils,
+				sources=sources,
+				mdepends=modules
+			)
+		except Exception as e:
+			print(e)
+			print("Error in firmware module. Configuration problem?")
+
+	licant.ex("firmware")
+
+licant.global_function(genos_firmware)
+
+
+
