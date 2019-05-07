@@ -49,3 +49,18 @@ void irqtable_set_handler(int irqno, irq_handler_t handler, void* handler_arg)
 	irqtable[irqno].handler = handler;
 	irqtable[irqno].handler_arg = handler_arg;
 }
+
+void irqtable_debug_print() 
+{
+	dprln("irqtable:");
+	for (int i = 0; i < NR_IRQS; ++i)
+	{
+		dpr(i); 
+		dpr(": "); 
+		dprptr((void*)irqtable[i].handler);
+		dpr(" ");
+		dprptr(irqtable[i].handler_arg);
+		dpr(" ");
+		dprln(irqtable[i].count);		
+	}	
+}

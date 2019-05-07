@@ -6,6 +6,8 @@
 
 #include <igris/util/bits.h>
 
+#include <igris/dprint.h>
+
 //#define GPIO_MODE_IN_PULL_UP             	((int32_t)2 << 0)
 //#define GPIO_MODE_IN_PULL_DOWN             	((int32_t)4 << 0)
 //#define GPIO_MODE_OUT_OPEN_DRAIN            ((int32_t)2 << 16)
@@ -61,9 +63,16 @@ int stm32_gpio_set_alternate(struct gpio_regs *g, uint32_t mask, int32_t alterna
 	uint16_t lmask = (mask & 0x00FF);
 	uint16_t hmask = (mask & 0xFF00) >> 8;
 	alternate = alternate & 0xF;
-	bits_masked_assign_multimap(g->AFR[0], lmask, 0x7, 4);
-	bits_masked_assign_multimap(g->AFR[1], hmask, 0x7, 4);
+	bits_masked_assign_multimap(g->AFR[0], lmask, alternate, 4);
+	bits_masked_assign_multimap(g->AFR[1], hmask, alternate, 4);
+
 	return 0;
+}
+
+static inline void stm32_afr_debug_print(struct gpio_regs *g) 
+{
+	DPRINTHEX(g->AFR[0]);
+	DPRINTHEX(g->AFR[1]);
 }
 
 __END_DECLS

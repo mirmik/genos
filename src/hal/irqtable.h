@@ -30,6 +30,8 @@ void irqtable_set_handler(int irqno, irq_handler_t handler, void* arg);
 // Обработчик заглушка для отлова неинициализированных прерываний. 
 void irqtable_stub(void* irqno);
 
+void irqtable_debug_print();
+
 __END_DECLS
 
 /*#ifdef __cplusplus

@@ -96,7 +96,7 @@ unsigned stm32_init_pll_clocking(struct stm32_pll_settings* s)
 
 	// Настраиваем делители в цепочках тактирования
 	RCC->CFGR |= RCC_CFGR_HPRE_DIV1
-	             | RCC_CFGR_PPRE1_DIV1
+	             | RCC_CFGR_PPRE1_DIV2
 	             | RCC_CFGR_PPRE2_DIV1;
 
 	// Запуск HSE и ожидание включения

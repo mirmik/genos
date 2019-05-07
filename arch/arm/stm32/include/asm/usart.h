@@ -79,6 +79,8 @@ int stm32_tcirq_status(struct usart_regs * usart)
 	return usart->SR & USART_SR_TC;
 }
 
+void stm32_usart_debug_print(struct usart_regs * usart);
+
 __END_DECLS
 
 #endif
