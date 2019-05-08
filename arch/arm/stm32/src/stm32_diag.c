@@ -14,9 +14,9 @@ int stm32_diag_putchar(void* priv_usart, char c)
 	return 1;
 }
 
-void stm32_diag_init(void) 
+void stm32_diag_init(struct usart_regs* regs) 
 {
 	diag_operations.putc = stm32_diag_putchar;
 	diag_operations.write = diag_write_common;
-	diag_setup(&diag_operations, USART2);
+	diag_setup(&diag_operations, regs);
 }

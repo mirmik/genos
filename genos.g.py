@@ -1,4 +1,5 @@
 from licant.modules import module
+import traceback
 
 licant.execute_recursive("src", ".g.py")
 licant.execute_recursive("arch", ".g.py")
@@ -47,7 +48,7 @@ module("genos.sched", "stub",
 
 module("genos.sched", "impl",
 	sources = [
-		"src/sched/sched.cpp",
+		"src/sched/sched.c",
 		"src/sched/displace.cpp",
 		"src/sched/schedee.c",
 		"src/sched/schedee_mvfs.cpp",
@@ -140,7 +141,7 @@ module("genos",
 
 
 
-def genos_firmware(sources):
+def genos_firmware(sources = [], mdepends = []):
 	import shutil
 	import licant.modules
 
@@ -172,16 +173,27 @@ def genos_firmware(sources):
 		try:
 			licant.include("igris")
 
-			modules = ["genos"]
-			modules.extend(__configure__.modules)
-			
+			all_modules = ["genos"]
+			all_modules.extend(__configure__.mdepends)
+			all_modules.extend(mdepends)
+
 			licant.cxx_application("firmware",
 				binutils=__configure__.binutils,
 				sources=sources,
-				mdepends=modules
+				mdepends=all_modules
 			)
+
+			@licant.routine(deps=["firmware"])
+			def install(*args):
+				__configure__.install("firmware", *args)
+
+			@licant.routine
+			def terminal(*args):
+				__configure__.terminal(*args)
+
 		except Exception as e:
 			print(e)
+			traceback.print_exc()
 			print("Error in firmware module. Configuration problem?")
 
 	licant.ex("firmware")

@@ -16,6 +16,8 @@ void irq_disable(int irqno);
 //void irqs_restore(irqstate_t state);
 //void irqs_disable(void);
 
+unsigned char is_interrupt_context();
+
 __END_DECLS
 
 #include <asm/irq.h>

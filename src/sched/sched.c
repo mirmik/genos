@@ -5,11 +5,13 @@
 
 #include <igris/dtrace.h>
 #include <igris/util/stub.h>
-#include <util/delay.h>
+#include <util/cpu_delay.h>
+
+#include <hal/irq.h>
 
 #define PRIORITY_TOTAL 4
 
-static struct dlist_head runlist[PRIORITY_TOTAL];
+struct dlist_head runlist[PRIORITY_TOTAL];
 DLIST_HEAD(waitlist);
 DLIST_HEAD(finallist);
 //struct dlist_head zombie_list;
@@ -81,7 +83,7 @@ void __schedee_execute(struct schedee * sch)
 	__current_schedee = sch;
 	sch->flag.runned = 1;
 	++sch->execcounter;
-	system_unlock();
+	irqs_enable();
 	sch->sch_op->execute(sch);
 }
 
@@ -101,7 +103,8 @@ void schedee_manager_step()
 	DTRACE();
 	struct schedee* sch;
 
-	system_lock();
+	irqs_disable();
+
 	while (!dlist_empty(&finallist))
 	{
 
@@ -135,18 +138,12 @@ void schedee_manager_step()
 		schedee_notify_finalize(sch);
 		
 		sch->state = SCHEDEE_STATE_ZOMBIE;
-
-		system_unlock();
 		sch->sch_op->finalize(sch);
-
-		system_lock();
 	}
-	system_unlock();
 
 	//atomic_section_enter();
 	//schedee_manager_debug_info();
 
-	system_lock();
 	for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++)
 	{
 		if (!dlist_empty(&runlist[priolvl]))
@@ -177,7 +174,7 @@ void schedee_manager_step()
 		}
 	}
 
-	system_unlock();
+	irqs_enable();
 
 	//Nobody to run
 	return;

@@ -62,22 +62,26 @@ int uartring_device_read(struct char_device* dev, char* data,
 	RETYPE(struct uartring_device *, udev, dev);
 
 	system_lock();
+	
 	while (ring_empty(&udev->rxring)) 
 	{
-		system_unlock();
 
 		if (flags & IO_NOBLOCK) 
 			return 0;
 
-		if (wait_current_schedee(&udev->rxwait, 0) == DISPLACE_VIRTUAL) 
+		//dprln("WAIT");
+		if (wait_current_schedee(&udev->rxwait, 0) == DISPLACE_VIRTUAL) {
+			//dprln("AFTERWAIT");
 			return 0; 
-
-		system_lock();
+		}
 	}
+
 	system_unlock();
 	
 	if (flags & IO_ONLYWAIT) 
 		return 0;
+
+		//dprln("READ");
 
 	system_lock();
 	ret = ring_read(&udev->rxring, udev->rxbuffer, data, size);

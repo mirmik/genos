@@ -60,9 +60,5 @@ void nvic_enable_irq(uint32_t irqno)
 
 	assert(regno < 8);
 
-	dprln("nvic enble irq");
-	DPRINT(regno);
-	DPRINT(bitno);
-
 	NVIC->ISER[regno] |= 1 << bitno;
 };

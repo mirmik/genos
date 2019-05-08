@@ -21,9 +21,10 @@ module("genos.hal.stm32.common",
 
 	defines = ["CHIP_STM32"],
 
-	cc_flags = "-nostdlib -nostdinc -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
-	cxx_flags = "-nostdlib -nostdinc -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4 -static -fdata-sections -ffunction-sections -Wl,--gc-sections",
-	ld_flags = "-mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -nostdlib -static -fdata-sections -ffunction-sections -Wl,--gc-sections"
+	cc_flags = "-Os -nostdlib -nostdinc -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4",
+	cxx_flags = "-Os -nostdlib -nostdinc -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4",
+	ld_flags = "-Os -nostdlib -static -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections",
+	libs = ["m", "gcc"],
 )
 
 module("genos.hal.stm32f4xx", 

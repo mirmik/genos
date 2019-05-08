@@ -141,7 +141,8 @@ void arch_shutdown(arch_shutdown_mode_t mode)
 }
 
 
-void hardfault_handler( void ) __attribute__( ( naked ) );
+void hardfault_handler( void ) __attribute__(( naked ));
+void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress ) __attribute__((used));
 
 /* The fault handler implementation calls a function called
 prvGetRegistersFromStack(). */

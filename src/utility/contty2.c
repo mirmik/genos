@@ -59,15 +59,15 @@ void * contty2_automate(void * arg, int * state)
 				dprln("contty: state 1");
 
 			readline_newline_do(rl);
-			cdev->c_ops->write(cdev, "$ ", 2, 0);
 			*state = 2;
+			cdev->c_ops->write(cdev, "$ ", 2, 0);
 
 		case 2:
 			if (cntxt->debug_mode)
 				dprln("contty: state 2");
 
-			cdev->c_ops->read(cdev, &c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
 			*state = 3;
+			cdev->c_ops->read(cdev, &c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
 			break;
 
 		case 3:

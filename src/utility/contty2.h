@@ -12,9 +12,9 @@ struct char_device;
 struct contty2_context {
 	struct readline rl;
 	struct char_device * cdev;
+	unsigned char debug_mode;
 	char buffer[CONTTY2_LINE_LENGTH];
 	char hbuffer[CONTTY2_LINE_LENGTH * CONTTY2_HISTORY_SIZE];
-	unsigned char debug_mode;
 };
 
 __BEGIN_DECLS
@@ -24,8 +24,8 @@ void contty2_debug_mode(struct contty2_context * cntxt, int en);
 
 __END_DECLS
 
-#define CONTTY2_CONTEXT(name, cdev) \
-struct contty2_context name = { {}, cdev } 
+#define CONTTY2_DECLARE(name, cdev) \
+struct contty2_context name = { {}, cdev, 0 } 
 
 
 #endif
