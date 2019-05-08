@@ -1,6 +1,8 @@
 #include <asm/nvic.h>
 #include <periph/regs/nvic.h>
 
+#include <periph/irqdefs.h>
+
 void dprint_dump_nvic()
 {
 	dprln("NVIC_DUMP:");
@@ -51,10 +53,16 @@ void dprint_dump_nvic()
 
 void nvic_enable_irq(uint32_t irqno) 
 {
-	uint32_t regno = irqno / 32;
-	uint32_t bitno = irqno % 32;
+	irqno = irqno - STM32_IRQ_FIRST;
+
+	uint32_t regno = irqno >> 5;
+	uint32_t bitno = irqno & 0x1F;
 
 	assert(regno < 8);
+
+	dprln("nvic enble irq");
+	DPRINT(regno);
+	DPRINT(bitno);
 
 	NVIC->ISER[regno] |= 1 << bitno;
 };

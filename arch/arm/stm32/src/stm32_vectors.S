@@ -30,7 +30,7 @@ _vectors:
 	.word	IDLE_STACK			/* Vector  0: Reset stack pointer */
 	.word	__start				/* Vector  1: Reset vector */
 	.word	stm32_nmi			/* Vector  2: Non-Maskable Interrupt (NMI) */
-	.word	stm32_hardfault		/* Vector  3: Hard fault */
+	.word	hardfault_handler	/* Vector  3: Hard fault */
 	.word	stm32_mpu			/* Vector  4: Memory management (MPU) */
 	.word	stm32_busfault		/* Vector  5: Bus fault */
 	.word	stm32_usagefault	/* Vector  6: Usage fault */

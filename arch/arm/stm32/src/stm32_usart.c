@@ -170,11 +170,11 @@ int stm32_usart_setup(
 
 void stm32_usart_debug_print(struct usart_regs * usart) 
 {
-	DPRINT(usart->SR);
-	DPRINT(usart->DR);
-	DPRINT(usart->BRR);
-	DPRINT(usart->CR1);
-	DPRINT(usart->CR2);
-	DPRINT(usart->CR3);
-	DPRINT(usart->GTPR);
+	DPRINTHEX(usart->SR);
+	DPRINTHEX(usart->DR);
+	DPRINTHEX(usart->BRR);
+	DPRINTHEX(usart->CR1);
+	DPRINTHEX(usart->CR2);
+	DPRINTHEX(usart->CR3);
+	DPRINTHEX(usart->GTPR);
 }

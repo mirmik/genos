@@ -89,6 +89,8 @@ static void cooperative_schedee_finalize(struct schedee* sch)
 	//TRACE();
 	struct cooperative_schedee * asch = mcast_out(sch, struct cooperative_schedee, sch);
 
+	dprln("cooperative_schedee_finalize");
+
 	if (asch->sch.flag.dynamic_heap)
 		BUG();
 		//free(asch->heap);

@@ -28,31 +28,9 @@ struct schedee * create_cooperative_schedee(void*(*task)(void*), void* arg, int 
 //struct schedee * create_process(int(*task)(void*), void* arg, int heapsize);
 
 int schedee_manager_total_planed();
+
+void schedee_manager_debug_info(); 
 	
 __END_DECLS
-
-#ifdef __cplusplus
-#include <igris/event/delegate.h>
-
-namespace genos {
-	static inline
-	struct schedee * create_autom_schedee(void*(*task)(void*, int*), void* arg) 
-	{
-		return ::create_autom_schedee(task, arg);
-	}
-
-	static inline
-	struct schedee * create_autom_schedee(igris::fastdelegate<void*,int*> fdlg) 
-	{
-		return ::create_autom_schedee(fdlg.extfunction, fdlg.object);
-	}
-
-	//namespace schedee_manager 
-	//{
-	//	void step();
-	//}
-}
-
-#endif
 
 #endif

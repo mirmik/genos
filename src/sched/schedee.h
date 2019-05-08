@@ -21,14 +21,22 @@ struct file;
 
 struct schedee_opertions;
 
-struct schedee {
+extern struct dlist_head schedee_list;
+
+struct schedee
+{
 	struct schedee * parent;
 	struct dlist_head lnk;
+	struct dlist_head schedee_list_lnk;
 	uint8_t prio;
 	uint8_t state;
-	union {
+	uint16_t dispcounter;
+	uint16_t execcounter;
+	union
+	{
 		uint8_t flags;
-		struct {
+		struct
+		{
 			uint8_t runned 			: 1;
 			uint8_t can_displace 	: 1;
 			uint8_t has_context 	: 1;
@@ -46,7 +54,8 @@ struct schedee {
 	const struct schedee_operations * sch_op;
 };
 
-struct schedee_operations {
+struct schedee_operations
+{
 	void (*execute) (struct schedee * sch);
 	int (*displace) (struct schedee * sch);
 	void (*finalize) (struct schedee * sch);
@@ -56,7 +65,7 @@ __BEGIN_DECLS
 
 struct schedee * current_schedee();
 
-/// Уведомить родителя (если он есть), что процесс завершен. 
+/// Уведомить родителя (если он есть), что процесс завершен.
 void schedee_notify_finalize(struct schedee * sch);
 
 /// Проинициализировать структуры данных поддержки файловой системы.
@@ -68,14 +77,31 @@ void schedee_copy_parent_files(struct schedee* sch);
 void schedee_debug_print_fds(struct schedee* sch);
 
 /// Проинициализировать основные поля процесса.
-static inline void schedee_init(struct schedee* sch, int prio, const struct schedee_operations * op) {
-	dlist_init(&sch->lnk);
+static inline 
+void schedee_init(struct schedee* sch, int prio, const struct schedee_operations * op)
+{
+	
+	// В дальнейшем эту провеку следует убрать, так как нод 
+	// должен отстыковываться от списка по завершению работы. 
+	if (!dlist_in(&sch->schedee_list_lnk, &schedee_list))
+	{
+		dlist_init(&sch->lnk);
+		dlist_add(&sch->schedee_list_lnk, &schedee_list);
+	}
+
+	else 
+	{
+		dlist_del_init(&sch->lnk);
+	}
+	
 	sch->prio = prio;
 	sch->state = SCHEDEE_STATE_STOP;
 	sch->flags = 0;
 	sch->sch_op = op;
+	sch->dispcounter = 0;
+	sch->execcounter = 0;
 
-	sch->parent = current_schedee(); 
+	sch->parent = current_schedee();
 
 #ifdef MVFS_INCLUDED
 	schedee_mvfs_support_init(sch);
@@ -84,12 +110,14 @@ static inline void schedee_init(struct schedee* sch, int prio, const struct sche
 #endif //MVFS_INCLUDED
 
 	sch->local_errno = 0;
-} 
+}
 
 #ifdef MVFS_INCLUDED
 int schedee_setfd(struct schedee * sch, struct file * node, int fd);
 int schedee_get_free_fd(struct schedee * sch);
 #endif //MVFS_INCLUDED
+
+void schedee_list_debug_info();
 
 __END_DECLS
 

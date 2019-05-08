@@ -11,9 +11,6 @@ void numcmd_send_answer(struct numcmd_context * cntxt, int32_t ret)
 	buf[0] = '\002';
 	buf[13] = '\003';
 
-	dprptr(cntxt);
-	dprln(ret);
-
 	uint8_to_hex(buf + 1, 255);
 	uint32_to_hex(buf + 3, ret);
 
@@ -21,10 +18,12 @@ void numcmd_send_answer(struct numcmd_context * cntxt, int32_t ret)
 
 	cdev_write(cntxt->cdev, buf, 14, 0);
 	
-	if (cntxt->debug_mode)
+	if (cntxt->debug_mode) 
+	{
 		dpr("numcmd: answer:");
 		debug_write(buf, 14);
 		dln();	
+	}
 }
 
 void numcmd_parse_answer(struct numcmd_context * cntxt, const char* str)
@@ -109,8 +108,11 @@ void numcmd_resend(struct numcmd_context * cntxt)
 	numcmd_error(cntxt);
 }
 
+int i = 0;
 void* numcmd_automate(void* arg, int* state)
 {
+	//dprln("a", i++);
+
 	RETYPE(struct numcmd_context *, cntxt, arg);
 
 	char c;
@@ -118,14 +120,14 @@ void* numcmd_automate(void* arg, int* state)
 	struct char_device * cdev = cntxt->cdev;
 	struct sline * line = &cntxt->line;
 
-	switch (*state)
+	switch (cntxt->state)
 	{
 		case 0:
 			if (cntxt->debug_mode)
 				dprln("numcmd: state 0");
 
 			sline_setbuf(line, cntxt->buffer, NUMCMD_LINE_LENGTH);
-			*state = 1;
+			cntxt->state = 1;
 			break;
 
 		case 1:
@@ -133,7 +135,7 @@ void* numcmd_automate(void* arg, int* state)
 				dprln("numcmd: state 1");
 
 			sline_reset(line);
-			*state = 2;
+			cntxt->state = 2;
 
 			break;
 
@@ -143,7 +145,7 @@ void* numcmd_automate(void* arg, int* state)
 
 			//dpr("line_state: "); debug_write(line->buf, line->len); dprln();
 			cdev->c_ops->read(cdev, &c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
-			*state = 3;
+			cntxt->state = 3;
 			break;
 
 		case 3:
@@ -198,11 +200,21 @@ void* numcmd_automate(void* arg, int* state)
 						break;
 				}
 			}
-			*state = 2;
+			cntxt->state = 2;
 			break;
 
 		default:
 			BUG();
 	}
 	return 0;
+}
+
+void numcmd_debug_info(struct numcmd_context * cntxt) 
+{
+	DPRINTPTR(cntxt->numcmd_table);
+	sline_debug_info(&cntxt->line);
+	DPRINTPTR(cntxt->cdev);
+	DPRINT(cntxt->state);
+	DPRINTHEX(cntxt->last);
+	DPRINT(cntxt->debug_mode);
 }

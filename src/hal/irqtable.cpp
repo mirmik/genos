@@ -27,10 +27,9 @@ unsigned char is_interrupt_context()
 void irqtable_stub(void* irqno)
 {
 	irqs_disable();
-	debug_print("IRQ_STUB_");
-	debug_printhex_ptr(irqno);
-	debug_print_line("");
-
+	dpr("IRQ_STUB_");
+	dprln((uintptr_t)irqno);
+	
 	while (1);
 }
 

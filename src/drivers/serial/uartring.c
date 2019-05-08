@@ -16,15 +16,15 @@ int uartring_device_write(struct char_device* dev,
 	int curwrited;
 	size_t writed = 0;
 
+	system_lock();
 	if (uart_device_cantx(udev->uart) && ring_empty(&udev->txring))
 	{
 		writed++;
 		uart_device_sendbyte(udev->uart, *data);
 	}
-
+	
 	while (size != writed)
 	{
-		system_lock();
 		curwrited = ring_write(&udev->txring,
 		                       udev->txbuffer,
 		                       data + writed, size - writed);
@@ -32,7 +32,6 @@ int uartring_device_write(struct char_device* dev,
 		if (curwrited)
 			uart_device_ctrirqs(udev->uart, UART_CTRIRQS_TXON);
 
-		system_unlock();
 		writed += curwrited;
 
 		if (writed == size)
@@ -41,14 +40,16 @@ int uartring_device_write(struct char_device* dev,
 		if (flags & IO_HOTLOOP)
 			continue;
 
-		if ((flags & IO_NOBLOCK) || current_schedee() == NULL)
+		if ((flags & IO_NOBLOCK) || current_schedee() == NULL) {
 			break;
-
-		else
-		{
-			wait_current_schedee(&udev->txwait, WAIT_PRIORITY);
 		}
+
+		system_unlock();
+		wait_current_schedee(&udev->txwait, WAIT_PRIORITY);
+		system_lock();
 	}
+
+	system_unlock();
 
 	return writed;
 
@@ -57,21 +58,32 @@ int uartring_device_write(struct char_device* dev,
 int uartring_device_read(struct char_device* dev, char* data,
                          unsigned int size, int flags)
 {
+	int ret;
 	RETYPE(struct uartring_device *, udev, dev);
 
+	system_lock();
 	while (ring_empty(&udev->rxring)) 
 	{
+		system_unlock();
+
 		if (flags & IO_NOBLOCK) 
 			return 0;
 
 		if (wait_current_schedee(&udev->rxwait, 0) == DISPLACE_VIRTUAL) 
 			return 0; 
-	}
 
+		system_lock();
+	}
+	system_unlock();
+	
 	if (flags & IO_ONLYWAIT) 
 		return 0;
 
-	return ring_read(&udev->rxring, udev->rxbuffer, data, size);
+	system_lock();
+	ret = ring_read(&udev->rxring, udev->rxbuffer, data, size);
+	system_unlock();
+
+	return ret;
 }
 
 int uartring_device_room(struct char_device* dev)
@@ -124,7 +136,15 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 
 		case UART_IRQCODE_RX:
 		{
-			ring_putc(&uring->rxring, uring->rxbuffer, uart_device_recvbyte(uring->uart));
+			char c;
+
+			c = uart_device_recvbyte(uring->uart);
+			if (uring->debug_mode) 
+			{
+				dpr("i recv: "); dprhexln(c); 
+			}
+
+			ring_putc(&uring->rxring, uring->rxbuffer, c);
 			unwait_one(&uring->rxwait);
 			return;
 		}

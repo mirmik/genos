@@ -105,7 +105,7 @@ int stm32_usart_device_setup(struct uart_device * u,
 
 	stm32_usart_setup(dev->regs, baud, parity, databits, stopbits);
 	irqinit(dev);
-	nvic_enable_irq(dev->irqno - STM32_IRQ_FIRST);
+	nvic_enable_irq(dev->irqno);
 
 	return 0;
 }

@@ -39,6 +39,8 @@ struct uartring_device
 
 	struct dlist_head txwait;
 	struct dlist_head rxwait;
+
+	uint8_t debug_mode;
 };
 
 #define UARTRING_DECLARE(name, uart, rxsz, txsz) 					 			\
@@ -48,8 +50,6 @@ struct uartring_device name = { CHAR_DEVICE_INIT(name.cdev, &uartring_dev_ops), 
 				(struct uart_device*)uart, 							 			\
 				name##_rxbuffer, name##_txbuffer,					 			\
 				RING_HEAD_INIT(rxsz), RING_HEAD_INIT(txsz), 					\
-				DLIST_HEAD_INIT(name.txwait), DLIST_HEAD_INIT(name.rxwait)}
-
-
+				DLIST_HEAD_INIT(name.txwait), DLIST_HEAD_INIT(name.rxwait), 0}
 
 #endif

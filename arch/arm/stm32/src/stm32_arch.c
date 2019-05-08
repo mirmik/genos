@@ -13,6 +13,8 @@
 
 #include <string.h>
 
+#include <igris/dprint.h>
+
 void rcc_reset();
 
 void arch_init()
@@ -45,7 +47,7 @@ void arch_init()
 	systime_set_frequency(1000);
 
 	// Инициализируем таблицу прерываний.
-	// Возможно, прерывание системного таймера не должно идти 
+	// Возможно, прерывание системного таймера не должно идти
 	// через таблицу прерываний
 	irqtable_init();
 	irqtable_set_handler(STM32_IRQ_SYSTICK, system_tick, NULL);
@@ -55,21 +57,21 @@ void nvic_set_priority(int irqno, int prio);
 
 int stm32_systick_config(uint32_t ticks)
 {
-	if ((ticks - 1) > SYSTICK_VALUE_MASK)  
+	if ((ticks - 1) > SYSTICK_VALUE_MASK)
 		return 1; // reload value impossible
-	
+
 	SYSTICK->RVR = ticks - 1; // set reload register
 	SYSTICK->CVR = 0; // reset current value
-	
+
 	// set max priority for systick interrupt
-	//nvic_set_priority(STM32_IRQ_SYSTICK, (1 << NVIC_PRIO_BITS) - 1); 
-	
+	//nvic_set_priority(STM32_IRQ_SYSTICK, (1 << NVIC_PRIO_BITS) - 1);
+
 	// enable systick irq and systick timer
 	SYSTICK->CSR  = SYSTICK_CTRL_CLKSOURCE |
 	                SYSTICK_CTRL_TICKINT |
 	                SYSTICK_CTRL_ENABLE;
-	
-	// Success 
+
+	// Success
 	return 0;
 }
 
@@ -136,4 +138,63 @@ void arch_shutdown(arch_shutdown_mode_t mode)
 	};
 	irqs_disable();
 	while (1);
+}
+
+
+void hardfault_handler( void ) __attribute__( ( naked ) );
+
+/* The fault handler implementation calls a function called
+prvGetRegistersFromStack(). */
+void hardfault_handler(void)
+{
+	__asm volatile
+	(
+	    " tst lr, #4                                                \n"
+	    " ite eq                                                    \n"
+	    " mrseq r0, msp                                             \n"
+	    " mrsne r0, psp                                             \n"
+	    " ldr r1, [r0, #24]                                         \n"
+	    " ldr r2, handler2_address_const                            \n"
+	    " bx r2                                                     \n"
+	    " handler2_address_const: .word prvGetRegistersFromStack    \n"
+	);
+}
+
+void prvGetRegistersFromStack( uint32_t *pulFaultStackAddress )
+{
+	/* These are volatile to try and prevent the compiler/linker optimising them
+	away as the variables never actually get used.  If the debugger won't show the
+	values of the variables, make them global my moving their declaration outside
+	of this function. */
+	volatile uint32_t r0;
+	volatile uint32_t r1;
+	volatile uint32_t r2;
+	volatile uint32_t r3;
+	volatile uint32_t r12;
+	volatile uint32_t lr; /* Link register. */
+	volatile uint32_t pc; /* Program counter. */
+	volatile uint32_t psr;/* Program status register. */
+
+	r0 = pulFaultStackAddress[ 0 ];
+	r1 = pulFaultStackAddress[ 1 ];
+	r2 = pulFaultStackAddress[ 2 ];
+	r3 = pulFaultStackAddress[ 3 ];
+
+	r12 = pulFaultStackAddress[ 4 ];
+	lr = pulFaultStackAddress[ 5 ];
+	pc = pulFaultStackAddress[ 6 ];
+	psr = pulFaultStackAddress[ 7 ];
+
+	dprln("HARDFAULT:");
+	DPRINTHEX(r0);
+	DPRINTHEX(r1);
+	DPRINTHEX(r2);
+	DPRINTHEX(r3);
+	DPRINTHEX(r12);
+	DPRINTHEX(lr);
+	DPRINTHEX(pc);
+	DPRINTHEX(psr);
+
+	/* When the following line is hit, the variables contain the register values. */
+	for ( ;; );
 }

@@ -9,6 +9,8 @@
 #include <drivers/gpio/gpio.h>
 #include <systime/systime.h>
 
+#include <util/delay.h>
+
 #include <periph/map.h>
 
 STM32_USART_DEVICE_DECLARE(usart2, USART2, STM32_IRQ_USART2);
@@ -52,6 +54,8 @@ void board_init()
 	rcc_enable_gpio(GPIOA);
 	rcc_enable_gpio(GPIOC);
 	rcc_enable_gpio(GPIOD);
+
+	cpu_delay(100);
 
 	gpio_settings(GPIOA, (1 << 2 | 1 << 3), GPIO_MODE_ALTERNATE);
 	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_SPEED_LEVEL_0);
