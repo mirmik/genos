@@ -12,6 +12,7 @@
 #define PRIORITY_TOTAL 4
 
 struct dlist_head runlist[PRIORITY_TOTAL];
+DLIST_HEAD(unstoplist);
 DLIST_HEAD(waitlist);
 DLIST_HEAD(finallist);
 //struct dlist_head zombie_list;
@@ -30,13 +31,18 @@ void schedee_manager_init()
 		dlist_init(&runlist[i]);
 }
 
-void schedee_run(struct schedee * sch)
+void __schedee_run(struct schedee * sch)
+{
+	DTRACE();
+	dlist_move_tail(&sch->lnk, &runlist[sch->prio]);
+}
+
+void schedee_run(struct schedee * sch) 
 {
 	DTRACE();
 	system_lock();
-	//dprln("a"); 
 	sch->state = SCHEDEE_STATE_RUN;
-	dlist_move_tail(&sch->lnk, &runlist[sch->prio]);
+	dlist_move_tail(&sch->lnk, &unstoplist);
 	system_unlock();
 }
 
@@ -83,7 +89,6 @@ void __schedee_execute(struct schedee * sch)
 	__current_schedee = sch;
 	sch->flag.runned = 1;
 	++sch->execcounter;
-	irqs_enable();
 	sch->sch_op->execute(sch);
 }
 
@@ -103,78 +108,45 @@ void schedee_manager_step()
 	DTRACE();
 	struct schedee* sch;
 
+	// Отрабатываем логику завершения процессов.
 	irqs_disable();
-
 	while (!dlist_empty(&finallist))
 	{
-
-		//dprln("finallist is not empty");
-		
-		if (!dlist_check(&finallist, 5)) 
-		{
-			dprln("Inconsistent final list. TODO");
-
-			dprptrln(&finallist);
-			dprptrln(finallist.next);
-			dprptrln(finallist.next->next);
-			dprptrln(finallist.next->next->next);
-
-			struct dlist_head * it;
-			int i = 0;
-			dlist_for_each(it, &finallist) 
-			{
-				i++;
-				dprptrln(it);
-
-				if (i == 20) while(1);
-			}
-
-			while(1);
-		}
-
 		sch = dlist_first_entry(&finallist, struct schedee, lnk);
-
 		dlist_del_init(&sch->lnk);
+
+		irqs_enable();
+
 		schedee_notify_finalize(sch);
-		
 		sch->state = SCHEDEE_STATE_ZOMBIE;
 		sch->sch_op->finalize(sch);
-	}
 
-	//atomic_section_enter();
-	//schedee_manager_debug_info();
+		irqs_disable();
+	}
+	irqs_enable();
+
+	// Перемещаем процессы, объявленные запущенными в основные листы.
+	irqs_disable();
+	while (!dlist_empty(&unstoplist))
+	{
+		sch = dlist_first_entry(&unstoplist, struct schedee, lnk);
+		__schedee_run(sch);
+	}
+	irqs_enable();
+	
 
 	for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++)
 	{
 		if (!dlist_empty(&runlist[priolvl]))
 		{
 			sch = dlist_first_entry(&runlist[priolvl], struct schedee, lnk);
-
-			//static int t = 0;
-
-			//	t++;
-
-			//if (t > 100)
-			//if (dlist_size(&runlist[priolvl]) == 2) 
-			//{
-			//	dprln("start scheduling");
-			//	dlist_debug_print(&runlist[priolvl]);
-			//}
-
 			dlist_move_tail(&sch->lnk, &runlist[priolvl]);
 
-			//if (t > 5)
-			//if (dlist_size(&runlist[priolvl]) == 2) 
-			//{
-			//	dlist_debug_print(&runlist[priolvl]);
-			//}
+			__schedee_execute(sch);
 
-			__schedee_execute(sch); //unlock here
 			return;
 		}
 	}
-
-	irqs_enable();
 
 	//Nobody to run
 	return;
