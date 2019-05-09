@@ -42,6 +42,7 @@ struct schedee
 			uint8_t has_context 	: 1;
 			uint8_t dynamic 		: 1;
 			uint8_t dynamic_heap 	: 1;
+			uint8_t killed			: 1;
 		} flag;
 	};
 

@@ -83,6 +83,16 @@ void schedee_stop(struct schedee * sch)
 	system_unlock();
 }
 
+void schedee_exit()
+{
+	struct schedee * sch;
+
+	sch = current_schedee();
+	schedee_final(sch);
+
+	__displace__();
+}
+
 void __schedee_execute(struct schedee * sch)
 {
 	DTRACE();
@@ -140,8 +150,14 @@ void schedee_manager_step()
 		if (!dlist_empty(&runlist[priolvl]))
 		{
 			sch = dlist_first_entry(&runlist[priolvl], struct schedee, lnk);
-			dlist_move_tail(&sch->lnk, &runlist[priolvl]);
+			
+			if (sch->flag.killed) 
+			{
+				schedee_final(sch);
+				return;
+			}
 
+			dlist_move_tail(&sch->lnk, &runlist[priolvl]);
 			__schedee_execute(sch);
 
 			return;
