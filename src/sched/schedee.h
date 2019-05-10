@@ -25,7 +25,6 @@ extern struct dlist_head schedee_list;
 struct schedee
 {
 	struct schedee * parent;
-	//struct dlist_head lnk;
 	
 	union 
 	{
