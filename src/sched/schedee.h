@@ -1,10 +1,9 @@
 #ifndef GENOS_SCHEDEE_H
 #define GENOS_SCHEDEE_H
 
-#include <stdint.h>
-#include <stdbool.h>
-
-#include <igris/datastruct/dlist.h>
+#include <genos/ctrobj.h>
+#include <genos/wait.h>
+#include <genos/ktimer.h>
 
 #ifdef MVFS_INCLUDED
 struct file;
@@ -26,7 +25,15 @@ extern struct dlist_head schedee_list;
 struct schedee
 {
 	struct schedee * parent;
-	struct dlist_head lnk;
+	//struct dlist_head lnk;
+	
+	union 
+	{
+		struct ctrobj ctr;
+		struct waiter waiter;
+		struct ktimer ktimer;
+	};
+
 	struct dlist_head schedee_list_lnk;
 	uint8_t prio;
 	uint8_t state;
@@ -86,13 +93,14 @@ void schedee_init(struct schedee* sch, int prio, const struct schedee_operations
 	// должен отстыковываться от списка по завершению работы. 
 	if (!dlist_in(&sch->schedee_list_lnk, &schedee_list))
 	{
-		dlist_init(&sch->lnk);
+		ctrobj_init(&sch->ctr, CTROBJ_SCHEDEE_LIST);
+		//dlist_init(&sch->lnk);
 		dlist_add(&sch->schedee_list_lnk, &schedee_list);
 	}
 
 	else 
 	{
-		dlist_del_init(&sch->lnk);
+		dlist_del_init(&sch->ctr.lnk);
 	}
 	
 	sch->prio = prio;

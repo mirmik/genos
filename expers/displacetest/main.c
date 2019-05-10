@@ -4,8 +4,9 @@
 #include <hal/irq.h>
 #include <util/cpu_delay.h>
 
+#include <genos/ktimer.h>
+
 #include <sched/sched.h>
-#include <sched/timer.h>
 #include <sched/schedee/autom.h>
 #include <sched/schedee/cooperative.h>
 #include <sched/api.h>
@@ -76,9 +77,9 @@ int main()
 	//schedee_run(&sch1.sch);
 	schedee_run(&contty_schedee.sch);
 
-	DPRINTPTR(&sch0.sch.lnk);
-	DPRINTPTR(&sch1.sch.lnk);
-	DPRINTPTR(&contty_schedee.sch.lnk);
+	//DPRINTPTR(&sch0.sch.lnk);
+	//DPRINTPTR(&sch1.sch.lnk);
+	//DPRINTPTR(&contty_schedee.sch.lnk);
 
 	irqs_enable();
 

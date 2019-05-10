@@ -52,7 +52,6 @@ module("genos.sched", "impl",
 		"src/sched/displace.cpp",
 		"src/sched/schedee.c",
 		"src/sched/schedee_mvfs.cpp",
-		"src/sched/timer.c",
 		"src/sched/api.c",
 		"src/sched/apitime.c",
 		"src/sched/schedee/autom.c",
@@ -60,13 +59,15 @@ module("genos.sched", "impl",
 
 		"src/sched/posix/fcntl_mvfs.cpp",
 		"src/sched/posix/unistd_mvfs.cpp",
+
+		"src/genos/wait.c",
+		"src/genos/ktimer.c",
 	],
-	mdepends=["genos.wait"],
 	default=True,
 )
 
-module("genos.wait", "static", sources=["src/sched/wait_static.c"], default=True)
-module("genos.wait", "malloc", sources=["src/sched/wait_malloc.c"])
+#module("genos.wait", "static", sources=["src/sched/wait_static.c"], default=True)
+#module("genos.wait", "malloc", sources=["src/sched/wait_malloc.c"])
 
 module("genos.mvfs", 
 	sources = [
@@ -133,7 +134,7 @@ module("genos",
 		"igris.util",
 		"igris.bug",
 		("igris.dprint", "diag"),
-		("igris.syslock", "genos.atomic")
+		("igris.syslock", "genos.atomic"),
 	]
 )
 

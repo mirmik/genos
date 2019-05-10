@@ -1,40 +1,64 @@
 #include <genos/wait.h>
+#include <sched/sched.h>
 
-static int waiter_to_list_and_displace(struct wait_head * head, int priority, 
-	struct waiter * wp
-) {
+#include <igris/util/macro.h>
+#include <igris/sync/syslock.h>
+
+int waiter_unwait(struct dlist_head * lnk)
+{
+	struct ctrobj * ctr = mcast_out(lnk, struct ctrobj, lnk);
+
+	switch (ctr->type)
+	{
+		case CTROBJ_WAITER_SCHEDEE:
+			{
+				struct waiter * w = mcast_out(ctr, struct waiter, ctr);
+				struct schedee * sch = mcast_out(w, struct schedee, waiter);
+				// извлечение из списка произойдёт при запуске, т.к. waiter использует поле schedee листа.
+				schedee_run(sch);
+			}
+			return 0;
+
+		case CTROBJ_WAITER_DELEGATE:
+			{
+				struct waiter_delegate * w = mcast_out(ctr, struct waiter_delegate, ctr);
+				dlist_del(lnk);
+				w->func(w->obj);
+			}
+			return 0;
+
+		default:
+			return -1;
+	}
+}
+
+int wait_current_schedee(struct dlist_head * head, int priority) 
+{
+	struct schedee * sch;
+
+	sch = current_schedee();
+
+	if (sch == NULL || !sch->flag.can_displace)
+		return -1;
+
+	sch->ctr.type = CTROBJ_WAITER_SCHEDEE;
+	sch->state = SCHEDEE_STATE_WAIT;
+
 	system_lock();
 
 	if (priority) 
-		dlist_add(&wp->wait_lnk, head);
+		dlist_move(&sch->ctr.lnk, head);
 	else 
-		dlist_add_tail(&wp->wait_lnk, head);
+		dlist_move_tail(&sch->ctr.lnk, head);
 
 	system_unlock();
 
-	__displace__();
-	return 0;
+	return __displace__();
 }
 
-int wait_current_schedee(struct wait_head * head, int priority) 
+void unwait_one(struct dlist_head * head)
 {
-	struct schedee * cur;
-
-	cur = current_schedee();
-
-	if (cur == NULL || !cur->flag.can_displace)
-		return -1;
-
-	struct waiter * w = waiter_get(__unwait_schedee, (void*)cur);
-	schedee_wait(cur);
-
-	waiter_to_list_and_displace(head, priority, w);
-	return 0;
-}
-
-void unwait_one(struct wait_head * head)
-{
-	struct waiter * it;
+	struct dlist_head * it;
 
 	system_lock();
 
@@ -43,21 +67,22 @@ void unwait_one(struct wait_head * head)
 		return;
 	}
 	
-	it = dlist_first_entry(head, struct waiter, wait_lnk);
-	__unwait(it);
+	it = head->next;
+	waiter_unwait(it);
 
 	system_unlock();
 }
 
-void unwait_all(struct wait_head * head)
+void unwait_all(struct dlist_head * head)
 {
-	struct waiter * it;
+	struct dlist_head * it;
 
 	system_lock();
 
-	dlist_for_each_entry(it, head, wait_lnk) {
-		__unwait(it);
+	dlist_for_each(it, head) 
+	{
+		waiter_unwait(it);
+	}
 
 	system_unlock();
-	} 
 }

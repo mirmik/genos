@@ -1,5 +1,5 @@
 #include <sched/api.h>
-#include <sched/timer.h>
+#include <genos/ktimer.h>
 
 //#include <igris/dprint.h>
 

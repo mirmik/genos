@@ -64,13 +64,13 @@ int mshell_execn(char* str, int len, int flags, int * retptr, int debug_mode)
 				case MSHELL_FUNCTION:
 					argc = argvc_internal_split(str, argv, 10);
 
-					if (debug_mode)
+					/*if (debug_mode)
 					{
 						for (int i = 0; i < argc; i++)
 						{
 							dpr("argv ", i); dpr(":"); dprln(argv[i]);
 						}
-					}
+					}*/
 
 					res = it->func(argc, argv);
 					if (retptr) *retptr = res;

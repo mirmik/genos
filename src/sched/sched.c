@@ -34,7 +34,7 @@ void schedee_manager_init()
 void __schedee_run(struct schedee * sch)
 {
 	DTRACE();
-	dlist_move_tail(&sch->lnk, &runlist[sch->prio]);
+	dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
 }
 
 void schedee_run(struct schedee * sch) 
@@ -42,7 +42,12 @@ void schedee_run(struct schedee * sch)
 	DTRACE();
 	system_lock();
 	sch->state = SCHEDEE_STATE_RUN;
-	dlist_move_tail(&sch->lnk, &unstoplist);
+	sch->ctr.type = CTROBJ_SCHEDEE_LIST;
+
+	// detail: Если это объект отличный от schedee_list, благодаря бинарной совместимости перемещение
+	// будет работать корректно. 
+	dlist_move_tail(&sch->ctr.lnk, &unstoplist);
+
 	system_unlock();
 }
 
@@ -51,26 +56,17 @@ void __schedee_wait_for(struct schedee * parent, struct schedee * child)
 	DTRACE();
 	system_lock();
 	parent->state = SCHEDEE_STATE_WAIT_SCHEDEE;
-	dlist_move_tail(&parent->lnk, &waitlist);
+	dlist_move_tail(&parent->ctr.lnk, &waitlist);
 	system_unlock();
 }
 
-void schedee_wait(struct schedee * sch)
-{
-	DTRACE();
-	system_lock();
-	sch->state = SCHEDEE_STATE_WAIT;
-	dlist_move_tail(&sch->lnk, &waitlist);
-	system_unlock();
-}
-
-void schedee_final(struct schedee * sch)
+void __schedee_final(struct schedee * sch)
 {
 	DTRACE();
 
 	system_lock();
 	sch->state = SCHEDEE_STATE_FINAL;
-	dlist_move_tail(&sch->lnk, &finallist);
+	dlist_move_tail(&sch->ctr.lnk, &finallist);
 	system_unlock();
 }
 
@@ -79,7 +75,7 @@ void schedee_stop(struct schedee * sch)
 	DTRACE();
 	system_lock();
 	sch->state = SCHEDEE_STATE_STOP;
-	dlist_del_init(&sch->lnk);
+	dlist_del_init(&sch->ctr.lnk);
 	system_unlock();
 }
 
@@ -88,7 +84,7 @@ void schedee_exit()
 	struct schedee * sch;
 
 	sch = current_schedee();
-	schedee_final(sch);
+	__schedee_final(sch);
 
 	__displace__();
 }
@@ -122,8 +118,8 @@ void schedee_manager_step()
 	irqs_disable();
 	while (!dlist_empty(&finallist))
 	{
-		sch = dlist_first_entry(&finallist, struct schedee, lnk);
-		dlist_del_init(&sch->lnk);
+		sch = dlist_first_entry(&finallist, struct schedee, ctr.lnk);
+		dlist_del_init(&sch->ctr.lnk);
 
 		irqs_enable();
 
@@ -139,7 +135,7 @@ void schedee_manager_step()
 	irqs_disable();
 	while (!dlist_empty(&unstoplist))
 	{
-		sch = dlist_first_entry(&unstoplist, struct schedee, lnk);
+		sch = dlist_first_entry(&unstoplist, struct schedee, ctr.lnk);
 		__schedee_run(sch);
 	}
 	irqs_enable();
@@ -149,15 +145,15 @@ void schedee_manager_step()
 	{
 		if (!dlist_empty(&runlist[priolvl]))
 		{
-			sch = dlist_first_entry(&runlist[priolvl], struct schedee, lnk);
+			sch = dlist_first_entry(&runlist[priolvl], struct schedee, ctr.lnk);
 			
 			if (sch->flag.killed) 
 			{
-				schedee_final(sch);
+				__schedee_final(sch);
 				return;
 			}
 
-			dlist_move_tail(&sch->lnk, &runlist[priolvl]);
+			dlist_move_tail(&sch->ctr.lnk, &runlist[priolvl]);
 			__schedee_execute(sch);
 
 			return;
@@ -194,7 +190,7 @@ void schedee_manager_debug_info()
 		struct schedee * it;
 
 		dprln("priolvl:", priolvl);
-		dlist_for_each_entry(it, &runlist[priolvl], lnk) 
+		dlist_for_each_entry(it, &runlist[priolvl], ctr.lnk) 
 		{
 			dpr("\t"); dprptrln(it);
 		}

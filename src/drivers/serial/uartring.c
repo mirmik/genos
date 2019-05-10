@@ -1,10 +1,10 @@
 #include <drivers/serial/uartring.h>
-#include <sched/wait.h>
+
 #include <igris/sync/syslock.h>
+#include <igris/util/bug.h>
 
 #include <sched/sched.h>
-
-#include <igris/util/bug.h>
+#include <genos/wait.h>
 
 int uartring_device_write(struct char_device* dev,
                           const char* data,

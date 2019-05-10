@@ -1,43 +1,48 @@
 #ifndef GENOS_TIMER_TASKLET_H
 #define GENOS_TIMER_TASKLET_H
 
-#include <igris/datastruct/dlist.h>
 #include <igris/sync/syslock.h>
+
 #include <systime/systime.h>
+#include <genos/ctrobj.h>
 
 struct ktimer;
 
 typedef void(* ktimer_callback_t)(void* arg, struct ktimer * tim);
 
-struct ktimer
+struct ktimer_base
 {
-	struct dlist_head lnk;
-	ktimer_callback_t act;
-	void * arg;
+	struct ctrobj ctr;
+	
 	clock_t start;
 	clock_t interval;
 };
 
-#define KTIMER_DECLARE(name, act, arg, interval) \
-struct ktimer name = { DLIST_HEAD_INIT(name.lnk), act, arg, 0, interval }
+struct ktimer
+{
+	struct ktimer_base tim;
+
+	ktimer_callback_t act;
+	void * arg;
+};
+
+#define KTIMER_DECLARE(name, act, arg, interval) 				\
+struct ktimer name = { 											\
+	{ 															\
+		CTROBJ_DECLARE(name.tim.ctr, CTROBJ_KTIMER_DELEGATE), 	\
+		0, 														\
+		interval 												\
+	}, 															\
+	act, 														\
+	arg 														\
+}
 
 __BEGIN_DECLS
 
 void timer_manager_step();
 
-struct ktimer * ktimer_create(ktimer_callback_t act, void* arg,
-                              clock_t start, clock_t interval);
-
-struct ktimer * ktimer_create_for(ktimer_callback_t act, void* arg,
-                                  clock_t interval);
-
-struct ktimer * ktimer_create_for_milliseconds(ktimer_callback_t act, void* arg,
-        uint32_t ms);
-
 void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg,
         uint32_t ms);
-
-void ktimer_dealloc(struct ktimer * ptr);
 
 void ktimer_plan(struct ktimer * t);
 

@@ -9,7 +9,6 @@ licant.glbfunc.genos_firmware(
 	sources=["main.c"],
 	mdepends=[
 		"genos.sched",
-		("genos.wait", "static"),
 		"genos.utility.contty2",
 		"genos.utility.mshell"
 	] 
