@@ -94,7 +94,11 @@ void __schedee_execute(struct schedee * sch)
 	DTRACE();
 	__current_schedee = sch;
 	sch->flag.runned = 1;
+
+#if SCHEDEE_DEBUG_STRUCT
 	++sch->execcounter;
+#endif
+
 	sch->sch_op->execute(sch);
 }
 
@@ -172,7 +176,10 @@ int __displace__()
 	if (sch->flag.can_displace == 0)
 		return DISPLACE_ERROR;
 
+#if SCHEDEE_DEBUG_STRUCT
 	++sch->dispcounter;
+#endif
+
 	return sch->sch_op->displace(sch);
 }
 

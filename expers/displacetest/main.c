@@ -65,23 +65,17 @@ int main()
 	uartring_begin(&serial2, &usart2.dev);
 
 	ktimer_plan(&blink_timer);
-	//ktimer_plan(&infor_timer);
 
 	cooperative_schedee_init(&sch0, task0, NULL, sch0_heap, 512);	
 	cooperative_schedee_init(&sch1, task1, NULL, sch1_heap, 512);
 	autom_schedee_init(&contty_schedee, contty2_automate, &contty_cntxt);
 
-	//contty_cntxt.debug_mode = 1;
-
 	schedee_run(&sch0.sch);
-	//schedee_run(&sch1.sch);
 	schedee_run(&contty_schedee.sch);
 
-	//DPRINTPTR(&sch0.sch.lnk);
-	//DPRINTPTR(&sch1.sch.lnk);
-	//DPRINTPTR(&contty_schedee.sch.lnk);
-
 	irqs_enable();
+
+	dprln(sizeof(struct schedee));
 
 	while(1) 
 		__schedule__();
@@ -93,17 +87,23 @@ int hello(int argc, char** argv)
 	return 0;
 }
 
+#if SCHEDEE_DEBUG_STRUCT
 int schinfo(int argc, char** argv) 
 {
 	schedee_list_debug_info();
 	schedee_manager_debug_info();
 	return 0;
 }
+#endif
 
 struct mshell_command mshell_commands_table[] = 
 {
 	{ "hello", hello, MSHELL_FUNCTION, "Print 'helloworld'" },
+
+#if SCHEDEE_DEBUG_STRUCT
 	{ "schinfo", schinfo, MSHELL_FUNCTION, "scheduler information" },
+#endif
+
 	MSHELL_TBLFIN,
 };
 

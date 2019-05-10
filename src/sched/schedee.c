@@ -32,6 +32,7 @@ void schedee_notify_finalize(struct schedee * sch) {
 	}
 }
 
+#if SCHEDEE_DEBUG_STRUCT
 void schedee_list_debug_info() 
 {
 	struct dlist_head * it;
@@ -50,3 +51,4 @@ void schedee_list_debug_info()
 		dprln("");
 	}
 }
+#endif

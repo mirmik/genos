@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-typedef uint64_t clock_t;
+typedef uint32_t clock_t;
 
 extern volatile clock_t __jiffies;
 

@@ -12,12 +12,12 @@
 
 struct ctrobj 
 {
-	uint8_t type;
 	struct dlist_head lnk;
+	uint8_t type;
 };
 
 #define CTROBJ_DECLARE(name, type) \
-	{ type, DLIST_HEAD_INIT(name.lnk) } 
+	{ DLIST_HEAD_INIT(name.lnk), type } 
 
 __BEGIN_DECLS
 

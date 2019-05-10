@@ -5,6 +5,8 @@
 #include <genos/wait.h>
 #include <genos/ktimer.h>
 
+#define SCHEDEE_DEBUG_STRUCT 0
+
 #ifdef MVFS_INCLUDED
 struct file;
 #endif
@@ -24,20 +26,25 @@ extern struct dlist_head schedee_list;
 
 struct schedee
 {
+	const struct schedee_operations * sch_op;
 	struct schedee * parent;
-	
-	union 
+
+	union
 	{
 		struct ctrobj ctr;
 		struct waiter waiter;
-		struct ktimer ktimer;
+		struct ktimer_base ktimer;
 	};
 
-	struct dlist_head schedee_list_lnk;
 	uint8_t prio;
 	uint8_t state;
+
+#if SCHEDEE_DEBUG_STRUCT
+	struct dlist_head schedee_list_lnk;
 	uint16_t dispcounter;
 	uint16_t execcounter;
+#endif
+
 	union
 	{
 		uint8_t flags;
@@ -52,13 +59,11 @@ struct schedee
 		} flag;
 	};
 
-	int local_errno;
+	int16_t local_errno;
 #ifdef MVFS_INCLUDED
 	struct node * pwd;
 	struct file * fds [SCHEDEE_FDMAX]; //массив файловых дескрипторов
 #endif
-
-	const struct schedee_operations * sch_op;
 };
 
 struct schedee_operations
@@ -84,37 +89,43 @@ void schedee_copy_parent_files(struct schedee* sch);
 void schedee_debug_print_fds(struct schedee* sch);
 
 /// Проинициализировать основные поля процесса.
-static inline 
+static inline
 void schedee_init(struct schedee* sch, int prio, const struct schedee_operations * op)
 {
-	
-	// В дальнейшем эту провеку следует убрать, так как нод 
-	// должен отстыковываться от списка по завершению работы. 
+
+#if SCHEDEE_DEBUG_STRUCT
+	// В дальнейшем эту провеку следует убрать, так как нод
+	// должен отстыковываться от списка по завершению работы.
 	if (!dlist_in(&sch->schedee_list_lnk, &schedee_list))
 	{
 		ctrobj_init(&sch->ctr, CTROBJ_SCHEDEE_LIST);
-		//dlist_init(&sch->lnk);
 		dlist_add(&sch->schedee_list_lnk, &schedee_list);
 	}
 
-	else 
+	else
 	{
 		dlist_del_init(&sch->ctr.lnk);
 	}
-	
+
+	sch->dispcounter = 0;
+	sch->execcounter = 0;
+#else
+	ctrobj_init(&sch->ctr, CTROBJ_SCHEDEE_LIST);
+#endif
+
 	sch->prio = prio;
 	sch->state = SCHEDEE_STATE_STOP;
 	sch->flags = 0;
 	sch->sch_op = op;
-	sch->dispcounter = 0;
-	sch->execcounter = 0;
 
 	sch->parent = current_schedee();
 
 #ifdef MVFS_INCLUDED
 	schedee_mvfs_support_init(sch);
+
 	if (sch->parent)
 		schedee_copy_parent_files(sch);
+
 #endif //MVFS_INCLUDED
 
 	sch->local_errno = 0;
@@ -125,7 +136,9 @@ int schedee_setfd(struct schedee * sch, struct file * node, int fd);
 int schedee_get_free_fd(struct schedee * sch);
 #endif //MVFS_INCLUDED
 
+#if SCHEDEE_DEBUG_STRUCT
 void schedee_list_debug_info();
+#endif
 
 __END_DECLS
 
