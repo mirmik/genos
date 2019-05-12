@@ -67,13 +67,13 @@ Adafruit_MotorShield::Adafruit_MotorShield(uint8_t addr) {
 /**************************************************************************/
 void Adafruit_MotorShield::begin(i2c_device *theWire, uint16_t freq) {
 	_i2c = theWire;
-	dprln("pwm.begin");
+	//dprln("pwm.begin");
 	_pwm.begin(_i2c);
 	_freq = freq;
-	dprln("pwm.setpwmfreq");
+	//dprln("pwm.setpwmfreq");
 	_pwm.setPWMFreq(_freq);  // This is the maximum PWM frequency
 	for (uint8_t i=0; i<16; i++) {
-		dprln("pwm.setpwm"); 
+		//dprln("pwm.setpwm"); 
 		_pwm.setPWM(i, 0, 0);
 	}
 }

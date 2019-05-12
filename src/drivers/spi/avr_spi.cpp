@@ -1,5 +1,5 @@
 #include <drivers/spi/avr_spi.h>
-#include <sched/wait.h>
+#include <genos/wait.h>
 
 #include <drivers/gpio/pin.h>
 #include <avr/io.h>

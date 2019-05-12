@@ -43,12 +43,20 @@ void timer_manager_step();
 
 void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg,
         uint32_t ms);
+void ktimer_base_init_for_milliseconds(struct ktimer_base * tim, uint32_t interval, uint8_t ctrtype);
 
-void ktimer_plan(struct ktimer * t);
+
+void ktimer_base_plan(struct ktimer_base * t);
 
 // Сместить временную отметку начала отсчета с тем, чтобы обеспечить
 // срабатывание таймера через равные периоды времени.
 void ktimer_swift(struct ktimer * t);
+
+static inline
+void ktimer_plan(struct ktimer * t) 
+{
+	ktimer_base_plan(&t->tim);
+}
 
 // Сместить временную отметку и перепланировать таймер.
 static inline

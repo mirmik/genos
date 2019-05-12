@@ -67,22 +67,26 @@ void ktimer_swift(struct ktimer * tim)
 }
 
 
+void ktimer_base_init_for_milliseconds(struct ktimer_base * tim, uint32_t interval, uint8_t ctrtype)
+{
+	ktimer_base_init(tim, jiffies(), ms2jiffies(interval), ctrtype);
+}
 
 void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg, uint32_t interval)
 {
-	return ktimer_init(tim, act, arg, jiffies(), ms2jiffies(interval));
+	ktimer_init(tim, act, arg, jiffies(), ms2jiffies(interval));
 }
 
 
 
-void ktimer_plan(struct ktimer * t)
+void ktimer_base_plan(struct ktimer_base * t)
 {
 	struct ktimer_base * it;
 	struct dlist_head * sit;
 	clock_t it_final;
 	clock_t final;
 
-	final = t->tim.start + t->tim.interval;
+	final = t->start + t->interval;
 	sit = NULL;
 
 	system_lock();
@@ -98,7 +102,7 @@ void ktimer_plan(struct ktimer * t)
 		}
 	}
 
-	dlist_add_tail(&t->tim.ctr.lnk, sit ? sit : &ktimer_list);
+	dlist_add_tail(&t->ctr.lnk, sit ? sit : &ktimer_list);
 
 	system_unlock();
 }

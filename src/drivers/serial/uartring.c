@@ -6,7 +6,7 @@
 #include <sched/sched.h>
 #include <genos/wait.h>
 
-int uartring_device_write(struct char_device* dev,
+int uartring_device_write(struct serial_device* dev,
                           const char* data,
                           unsigned int size,
                           int flags)
@@ -55,7 +55,7 @@ int uartring_device_write(struct char_device* dev,
 
 }
 
-int uartring_device_read(struct char_device* dev, char* data,
+int uartring_device_read(struct serial_device* dev, char* data,
                          unsigned int size, int flags)
 {
 	int ret;
@@ -90,19 +90,19 @@ int uartring_device_read(struct char_device* dev, char* data,
 	return ret;
 }
 
-int uartring_device_room(struct char_device* dev)
+int uartring_device_room(struct serial_device* dev)
 {
 	RETYPE(struct uartring_device *, udev, dev);
 	return ring_room(&udev->txring);
 }
 
-int uartring_device_avail(struct char_device* dev)
+int uartring_device_avail(struct serial_device* dev)
 {
 	RETYPE(struct uartring_device *, udev, dev);
 	return ring_avail(&udev->rxring);
 }
 
-/*int uartring_device_waitread(struct char_device* dev)
+/*int uartring_device_waitread(struct serial_device* dev)
 {
 	RETYPE(struct uartring_device *, udev, dev);
 	system_lock();
@@ -181,7 +181,7 @@ void uartring_begin(struct uartring_device * dev, struct uart_device * uart)
 	uart_device_ctrirqs(dev->uart, UART_CTRIRQS_RXON);
 }
 
-const struct char_device_operations uartring_dev_ops = 
+const struct serial_device_operations uartring_dev_ops = 
 {
 	.write = 		uartring_device_write,
 	.read = 		uartring_device_read,

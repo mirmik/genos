@@ -6,7 +6,7 @@
 #include <igris/datastruct/dlist.h>
 #include <igris/sync/syslock.h>
 #include <sched/api.h>
-#include <sched/wait.h>
+#include <genos/wait.h>
 
 struct i2c_device
 {
@@ -22,9 +22,9 @@ struct i2c_device
 		int ret;
 		write_start(target, data, size);
 
-		dprln("WAIT");
+		//dprln("WAIT");
 		ret = wait_current_schedee(&wlnk, 1);
-		dprln("UNWAIT");
+		//dprln("UNWAIT");
 		/*if (ret == -1) 
 		{
 			volatile uint8_t flag = 0;

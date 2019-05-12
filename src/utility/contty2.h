@@ -7,11 +7,11 @@
 #define CONTTY2_LINE_LENGTH 32
 #define CONTTY2_HISTORY_SIZE 5
 
-struct char_device;
+struct serial_device;
 
 struct contty2_context {
 	struct readline rl;
-	struct char_device * cdev;
+	struct serial_device * cdev;
 	unsigned char debug_mode;
 	char buffer[CONTTY2_LINE_LENGTH];
 	char hbuffer[CONTTY2_LINE_LENGTH * CONTTY2_HISTORY_SIZE];

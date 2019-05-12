@@ -135,7 +135,7 @@ public:
 	void write_start(uint8_t target, 
 				const void* data, uint16_t size) override
 	{
-		dprln("WRITE_START");
+		//dprln("WRITE_START");
 
 		sendbuf = igris::buffer(data, size);
 		target_address = target << 1;
@@ -168,8 +168,8 @@ void i2c_irq_handler(void* arg) {
 	avr_i2c_device* i2c = (avr_i2c_device*) arg;
 	uint8_t code = TWSR;
 	
-	dpr("i2c handler "); 
-	dprhexln(code);
+	//dpr("i2c handler "); 
+	//dprhexln(code);
 	
 	switch(code & 0xF8)	{ // Отсекаем биты прескалера
 		case 0x00: {	// Bus Fail (автобус сломался)

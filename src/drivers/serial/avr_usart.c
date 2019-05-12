@@ -4,7 +4,7 @@
 #include <hal/irqtable.h>
 #include <hal/board.h>
 
-#include <util/delay.h>
+#include <util/cpu_delay.h>
 
 int avr_usart_device_enable(struct uart_device* u, int en)
 {

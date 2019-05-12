@@ -1,6 +1,6 @@
 #include <utility/contty2.h>
 
-#include <drivers/cdev/cdev.h>
+#include <drivers/cdev/serdev.h>
 #include <igris/util/bug.h>
 #include <igris/dprint.h>
 #include <igris/defs/vt100.h>
@@ -41,7 +41,7 @@ void * contty2_automate(void * arg, int * state)
 	int ret;
 
 	struct contty2_context * cntxt = (struct contty2_context *) arg;
-	struct char_device * cdev = cntxt->cdev;
+	struct serial_device * cdev = cntxt->cdev;
 	struct readline * rl = &cntxt->rl;
 
 	switch (*state)
