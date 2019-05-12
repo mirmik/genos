@@ -2,7 +2,7 @@
 #include <systime/systime.h>
 
 #include <hal/irq.h>
-#include <util/delay.h>
+#include <util/cpu_delay.h>
 
 int main() 
 {
