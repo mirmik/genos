@@ -5,8 +5,6 @@
 #include <genos/wait.h>
 #include <genos/ktimer.h>
 
-#define SCHEDEE_DEBUG_STRUCT 0
-
 #ifdef MVFS_INCLUDED
 struct file;
 #endif

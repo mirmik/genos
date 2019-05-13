@@ -1,5 +1,7 @@
 #define NODTRACE 1
 
+#include <asm/startup.h> // for RESET_STACK
+
 #include <sched/sched.h>
 #include <igris/sync/syslock.h>
 
@@ -204,4 +206,12 @@ void schedee_manager_debug_info()
 	}
 
 	system_unlock();
+}
+
+void __context_displace_vector__()
+{
+	RESET_STACK();
+	irqs_enable();
+	syslock_reset();
+	while (1) __schedule__();
 }

@@ -4,6 +4,6 @@
 extern unsigned char _estack;
 #define IDLE_STACK &_estack;
 
-#define RESET_STACK() asm("ldr sp, =_estack");
+#define RESET_STACK() __asm__("ldr sp, =_estack");
 
 #endif

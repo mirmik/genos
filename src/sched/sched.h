@@ -22,6 +22,7 @@ void scheduler_init();
 
 void schedee_manager_step();
 
+void __context_displace_vector__() __attribute__((noreturn));
 void __schedule__();
 int  __displace__();
 

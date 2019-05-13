@@ -2,6 +2,7 @@
 #define MVFS_CDEV_H
 
 #include <defs/ioflags.h>
+#include <string.h>
 
 #ifdef MVFS_INCLUDED
 #include <mvfs/node.h>
@@ -70,6 +71,13 @@ int serdev_read(struct serial_device * dev, char* data,
               unsigned int len, int flags)
 {
 	return dev->c_ops->read(dev, data, len, flags);
+}
+
+static inline 
+int serdev_print(struct serial_device * dev, const char* data,
+               int flags) 
+{
+	return serdev_write(dev, data, strlen(data), flags);
 }
 
 /*static inline

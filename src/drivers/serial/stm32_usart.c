@@ -82,11 +82,9 @@ static void _irqhandler(void* priv)
 
 	else if (stm32_tcirq_status(dev->regs)) {
 		//dev->dev.handler(dev->dev.handarg, UART_IRQCODE_TC);
+		stm32_usart_debug_print(dev->regs);
 		BUG();
 	}
-
-	else
-		BUG();
 }
 
 static inline void irqinit(struct stm32_usart_device * u)

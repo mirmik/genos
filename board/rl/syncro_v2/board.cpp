@@ -9,7 +9,7 @@
 #include <drivers/gpio/gpio.h>
 #include <systime/systime.h>
 
-#include <util/delay.h>
+#include <util/cpu_delay.h>
 
 #include <periph/map.h>
 

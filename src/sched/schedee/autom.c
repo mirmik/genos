@@ -24,12 +24,8 @@ void autom_schedee_execute(struct schedee* sch)
 	asch->task(asch->arg, &asch->state);
 }
 
-int __context_displace_vector__();
 int autom_schedee_displace(struct schedee* sch)
 {
-	//sch->flag.runned = 0;
-	//return DISPLACE_VIRTUAL;
-
 	sch->flag.runned = 0;
 	__context_displace_vector__();
 }
