@@ -1,4 +1,4 @@
-/*#ifndef GENOS_DRIVERS_AVR_TIMER_H
+#ifndef GENOS_DRIVERS_AVR_TIMER_H
 #define GENOS_DRIVERS_AVR_TIMER_H
 
 #include <periph/regs/timer.h>
@@ -77,7 +77,7 @@ namespace genos
 				@param div Устанавливаемый делитель. (см. доступные делители в tc_divider_code)
 				@return Возвращает -1, если делитель неверен. Иначе 0.
 			*/
-	/*		int set_divider(uint16_t div)
+			int set_divider(uint16_t div)
 			{
 				int divcode = tc_divider_code(div);
 
@@ -104,23 +104,23 @@ namespace genos
 			//Set overflow interrupt handler to irqtable.
 			void set_ovf_handler(void(*handler)(void*), void* arg)
 			{
-				genos::irqtable::set_handler(irqs.ovf, handler, arg);
+				irqtable_set_handler(irqs.ovf, handler, arg);
 			}
 		};
 
-		struct timer8 : public timer<uint8_t, timer_8bit_regs*>
+		struct timer8 : public timer<uint8_t, timer8_regs*>
 		{
-			using parent = timer<uint8_t, timer_8bit_regs*>;
+			using parent = timer<uint8_t, timer8_regs*>;
 
-			timer8(timer_8bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a, b, c }
+			timer8(timer8_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a, b, c }
 			{}
 		};
 
-		struct timer16 : public timer<uint16_t, timer_16bit_regs*>
+		struct timer16 : public timer<uint16_t, timer16_regs*>
 		{
-			using parent = timer<uint16_t, timer_16bit_regs*>;
+			using parent = timer<uint16_t, timer16_regs*>;
 
-			timer16(timer_16bit_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a, b, c }
+			timer16(timer16_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a, b, c }
 			{}
 
 			void set_compare_c(uint16_t val)
@@ -136,7 +136,7 @@ namespace genos
 				0b10 - set on compare, clear on downlevel
 			*/
 
-/*			void set_output_a_mode(uint8_t mode)
+			void set_output_a_mode(uint8_t mode)
 			{
 				assert(mode <= 3);
 				bits_assign_bias(regs->tccr_a, 0b11, mode, 6);
@@ -171,7 +171,7 @@ namespace genos
 				 1000
 				 #TODO					
 			*/
-/*
+
 			enum class TimerMode : uint8_t
 			{
 				Clock     = 0b0000,
@@ -187,9 +187,9 @@ namespace genos
 			void set_mode(TimerMode mode)
 			{
 				uint8_t aval = 0b11 & (uint8_t)mode;
-				uint8_t bval = 0b11 & ((uint8_t)mode >> 2);
+				uint8_t bval = 0b1 & ((uint8_t)mode >> 2);
 				bits_assign(		regs->tccr_a, 0b11, aval);
-				bits_assign_bias(	regs->tccr_b, 0b11, bval, 3);
+				bits_assign_bias(	regs->tccr_b, 0b1, bval, 3);
 			}
 
 			void irq_overflow_enable(bool en)
@@ -239,4 +239,4 @@ namespace periph
 #endif
 }
 
-#endif*/
+#endif

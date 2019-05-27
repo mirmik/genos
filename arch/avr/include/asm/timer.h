@@ -10,13 +10,13 @@ struct timer_irqs {
 };
 
 struct TimerDevice_8bit {
-	struct timer_8bit_regs*	regs;
+	struct timer8_regs*	regs;
 	struct timer_irqs	 		irqs;
 	volatile uint8_t* 	timsk;
 };
 
 struct TimerDevice_16bit {
-	struct timer_16bit_regs*	regs;
+	struct timer16_regs*	regs;
 	struct timer_irqs	 		irqs;
 	volatile uint8_t* 	timsk;
 };
@@ -41,51 +41,9 @@ __BEGIN_DECLS
 void tc_8bit_divider(struct TimerDevice_8bit* timer, uint16_t div);
 void tc_8bit_interruptOverflowEnable(struct TimerDevice_8bit* timer, uint8_t en);
 
+//void avr_timer8_set_divider(struct timer8_regs* regs, uint16_t div);
+//void avr_timer16_set_divider(struct timer16_regs* regs, uint16_t div);
+
 __END_DECLS
-
-/*class TimerDevice_8bit : public TimerDevice<uint8_t> {
-	timer_8bit_regs* regs;
-	timer_irqs irqs;
-	volatile reg_t* timsk;
-
-public:
-
-	TimerDevice_8bit(timer_8bit_regs* _regs, timer_irqs _irqs, volatile reg_t* _timsk) 
-		: regs(_regs), irqs(_irqs), timsk(_timsk) {};
-
-	uint8_t value();
-
-	void start();
-	void stop();
-
-	void setLimit(uint8_t limit);
-	void setDivider(uint16_t limit);
-
-	void setHandlerOverflow(Kernel::IRQHandler handler);
-	void interruptEnableOverflow(bool b);
-};
-
-class TimerDevice_16bit : public TimerDevice<uint16_t> {
-	timer_16bit_regs* regs;
-	timer_irqs irqs;
-	volatile reg_t* timsk;
-
-public:
-
-	TimerDevice_16bit(timer_16bit_regs* _regs, timer_irqs _irqs, volatile reg_t* _timsk) 
-		: regs(_regs), irqs(_irqs), timsk(_timsk) {};
-
-	uint16_t value();
-
-	void start();
-	void stop();
-
-	void setLimit(uint16_t limit);
-	void setDivider(uint16_t divider);
-
-	void setHandlerOverflow(Kernel::IRQHandler handler);
-	void interruptEnableOverflow(bool b);
-};
-*/
 
 #endif

@@ -13,7 +13,7 @@ struct timsk_array {
 #endif
 }; 
 
-struct timer_8bit_regs {
+struct timer8_regs {
 	volatile uint8_t tccr_a;
 	volatile uint8_t tccr_b;
 	volatile uint8_t tcnt;
@@ -22,7 +22,7 @@ struct timer_8bit_regs {
 } __attribute__((packed));
 
 
-struct timer_16bit_regs {
+struct timer16_regs {
 	 volatile uint8_t tccr_a;
 	 volatile uint8_t tccr_b;	
 	 volatile uint8_t tccr_c;
@@ -52,16 +52,16 @@ struct timer_16bit_regs {
 #define TIMER_BASE_0 0x44
 
 #if defined (CHIP_ATMEGA2560)
-#define TIMER0 ((struct timer_8bit_regs *)(TIMER_BASE_0))
-#define TIMER2 ((struct timer_8bit_regs *)(TIMER_BASE_2))
-#define TIMER1 ((struct timer_16bit_regs *)(TIMER_BASE_1))
-#define TIMER3 ((struct timer_16bit_regs *)(TIMER_BASE_3))
-#define TIMER4 ((struct timer_16bit_regs *)(TIMER_BASE_4))
-#define TIMER5 ((struct timer_16bit_regs *)(TIMER_BASE_5))
+#define TIMER0 ((struct timer8_regs *)(TIMER_BASE_0))
+#define TIMER2 ((struct timer8_regs *)(TIMER_BASE_2))
+#define TIMER1 ((struct timer16_regs *)(TIMER_BASE_1))
+#define TIMER3 ((struct timer16_regs *)(TIMER_BASE_3))
+#define TIMER4 ((struct timer16_regs *)(TIMER_BASE_4))
+#define TIMER5 ((struct timer16_regs *)(TIMER_BASE_5))
 #elif defined (CHIP_ATMEGA328P)
-#define TIMER0 ((struct timer_8bit_regs *)(TIMER_BASE_0))
-#define TIMER2 ((struct timer_8bit_regs *)(TIMER_BASE_2))
-#define TIMER1 ((struct timer_16bit_regs *)(TIMER_BASE_1))
+#define TIMER0 ((struct timer8_regs *)(TIMER_BASE_0))
+#define TIMER2 ((struct timer8_regs *)(TIMER_BASE_2))
+#define TIMER1 ((struct timer16_regs *)(TIMER_BASE_1))
 #else 
 #	error "unrecognized chip"
 #endif

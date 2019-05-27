@@ -1,4 +1,4 @@
-/*#include <drivers/timer/avr_timer.h>
+#include <drivers/timer/avr_timer.h>
 
 namespace periph {
 #if defined (CHIP_ATMEGA2560)
@@ -15,4 +15,4 @@ namespace periph {
 #else
 #	error "Undefined CHIP"
 #endif
-}*/
+}
