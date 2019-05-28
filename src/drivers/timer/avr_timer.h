@@ -114,6 +114,55 @@ namespace genos
 
 			timer8(timer8_regs* a, struct timer_irqs b, volatile uint8_t* c) : parent { a, b, c }
 			{}
+
+			/*
+				WGM modes:
+
+				Value 	Timer mode         TOP
+
+				 000  	Clock mode         0xFF
+				 001  	PWM                0xFF
+				 010  	CTC                OCRA
+				 011  	Fast PWM           0xFF
+				 100  	RESERVED
+				 101  	PWM                OCRA
+				 110  	RESERVED
+				 111  	Fast PWM           OCRA
+
+				 (ATMEGA2560)
+			*/
+
+			enum class TimerMode : uint8_t
+			{
+				Clock        = 0b000,
+				PWM          = 0b001,
+				CTC          = 0b010,
+				FastPWM      = 0b011,
+				PWM_OCRA     = 0b101,
+				FastPWM_OCRA = 0b111
+			};
+
+			void set_mode(TimerMode mode)
+			{
+				uint8_t aval = 0b11 & (uint8_t)mode;
+				uint8_t bval = 0b1 & ((uint8_t)mode >> 2);
+				bits_assign(		regs->tccr_a, 0b11, aval);
+				bits_assign_bias(	regs->tccr_b, 0b1, bval, 3);
+			}
+
+			/*
+				Output modes:
+				0b00 - disconnect
+				0b01 - toggle
+				0b10 - clear on compare, set on downlevel 
+				0b10 - set on compare, clear on downlevel
+			*/
+			
+			void set_output_a_mode(uint8_t mode)
+			{
+				assert(mode <= 3);
+				bits_assign_bias(regs->tccr_a, 0b11, mode, 6);
+			}
 		};
 
 		struct timer16 : public timer<uint16_t, timer16_regs*>
@@ -187,9 +236,9 @@ namespace genos
 			void set_mode(TimerMode mode)
 			{
 				uint8_t aval = 0b11 & (uint8_t)mode;
-				uint8_t bval = 0b1 & ((uint8_t)mode >> 2);
+				uint8_t bval = 0b11 & ((uint8_t)mode >> 2);
 				bits_assign(		regs->tccr_a, 0b11, aval);
-				bits_assign_bias(	regs->tccr_b, 0b1, bval, 3);
+				bits_assign_bias(	regs->tccr_b, 0b11, bval, 3);
 			}
 
 			void irq_overflow_enable(bool en)

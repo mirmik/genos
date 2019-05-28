@@ -3,20 +3,27 @@
 
 #include <systime/systime.h>
 
-//#include <drivers/timer/avr_timer.h>
+#include <drivers/timer/avr_timer.h>
 #include <igris/dprint.h>
 
 int main() 
 {
 	board_init();
 
-	irqs_enable();
+	periph::timer1.set_divider(64);
+	periph::timer1.set_mode(decltype(periph::timer1)::TimerMode::PWM8);
 
-	//periph::timer1.set_divider
+	periph::timer1.set_compare_b(0xFF / 4);
+	periph::timer1.set_output_b_mode(0b10);
+
+	gpio_settings(GPIOB, (1<<2), GPIO_MODE_OUTPUT);
+
+	irqs_enable();
 
 	while(1) 
 	{
-		delay(500);
-		gpio_pin_toggle(&board_led);
+		dprln(periph::timer1.value());
+		//delay(500);
+		//gpio_pin_toggle(&board_led);
 	}
 }
