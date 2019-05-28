@@ -54,7 +54,7 @@ __END_DECLS
 
 namespace board 
 {
-	extern gpio_pin sysled;
+	//extern gpio_pin sysled;
 //	extern genos::drivers::avr_usart usart0;
 }
 

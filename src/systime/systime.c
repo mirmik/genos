@@ -29,6 +29,7 @@ clock_t millis() {
 void delay(double d) {
 	clock_t n = millis();
 	clock_t f = n + d;
+
 	while(f - millis() > 0);
 }
 
