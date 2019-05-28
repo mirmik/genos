@@ -5,7 +5,7 @@
 
 #include <sched/schedee/cooperative.h>
 #include <sched/sched.h>
-#include <sched/timer.h>
+#include <genos/ktimer.h>
 
 #include <igris/dprint.h>
 

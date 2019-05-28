@@ -3,13 +3,7 @@
 
 //#include <igris/dprint.h>
 
-/*void __unsleep(void * priv, struct ktimer * tim)
-{
-	struct schedee * sch = (struct schedee *) priv;
-	schedee_run(sch);
-}*/
-
-int schedee_sleep_for_milliseconds(int ms)
+int msleep(unsigned int ms)
 {
 	struct schedee * sch;
 	struct ktimer_base * timer;

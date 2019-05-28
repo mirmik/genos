@@ -5,12 +5,7 @@
 
 __BEGIN_DECLS
 
-extern int schedee_sleep_for_milliseconds(int ms);
-
-static inline unsigned int msleep(unsigned int milliseconds)
-{
-	return schedee_sleep_for_milliseconds(milliseconds);
-}
+int msleep(unsigned int milliseconds);
 
 __END_DECLS
 
