@@ -3,7 +3,7 @@ import licant
 #licant.execute("gpio/gpio.g.py")
 
 licant.module("genos.drivers.common",
-	sources = ["serial/uartring.c"]
+	sources = ["serial/uartring.cpp"]
 )
 
 licant.module("genos.drivers.avr.gpio", sources = [ "gpio/avr_gpio.c" ], 

@@ -52,3 +52,8 @@ void schedee_list_debug_info()
 	}
 }
 #endif
+
+int* __errno_location() 
+{
+	return &current_schedee()->local_errno;
+}

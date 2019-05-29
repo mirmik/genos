@@ -6,29 +6,39 @@
 
 typedef void* (*autom_schedee_task_t) (void*, int*);
 
-struct autom_schedee
-{
-	struct schedee sch;
+extern const struct schedee_operations autom_schedee_op;
 
+struct autom_schedee : public schedee
+{
 	void* (*task) (void*, int*);
 	void * arg;
 	int state;
+
+	void init(autom_schedee_task_t task, void* arg)
+	{
+		this -> task = task;
+		this -> arg = arg;
+		this -> state = 0;
+		schedee_init(this, 0, &autom_schedee_op);
+
+		this->flag.can_displace = 1;
+	}
 };
 
-extern const struct schedee_operations autom_schedee_op;
-
 __BEGIN_DECLS
-static inline 
+
+__attribute__((deprecated))
+static inline
 void autom_schedee_init(struct autom_schedee* asch,
-                                 autom_schedee_task_t task,
-                                 void* arg)
+                        autom_schedee_task_t task,
+                        void* arg)
 {
 	asch -> task = task;
 	asch -> arg = arg;
 	asch -> state = 0;
-	schedee_init(&asch->sch, 0, &autom_schedee_op);
-	
-	asch->sch.flag.can_displace = 1;
+	schedee_init(asch, 0, &autom_schedee_op);
+
+	asch->flag.can_displace = 1;
 }
 __END_DECLS
 

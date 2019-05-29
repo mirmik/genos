@@ -39,7 +39,7 @@ struct ktimer name = { 											\
 
 __BEGIN_DECLS
 
-void timer_manager_step();
+void ktimer_manager_step();
 
 void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg,
         uint32_t ms);

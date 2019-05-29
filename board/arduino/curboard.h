@@ -6,7 +6,7 @@
 #include <sys/cdefs.h>
 #include <drivers/gpio/gpio.h>
 #include <drivers/gpio/pin.h>
-//#include <drivers/serial/avr_usart.h>
+#include <drivers/serial/avr_usart.h>
 
 #if defined(BOARD_ARDUINO_UNO)
 #	define RED_LED_GPIO GPIOB
@@ -40,6 +40,7 @@
 #define SYSLED_PIN  RED_LED_PIN
 
 extern struct gpio_pin board_led;
+extern struct avr_usart_device usart0;
 
 __BEGIN_DECLS
 

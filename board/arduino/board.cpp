@@ -10,6 +10,8 @@
 
 GPIO_PIN(board_led, SYSLED_GPIO, SYSLED_PIN);
 
+AVR_USART_DEVICE_DECLARE(usart0, USART0, ATMEGA_IRQ_U0RX);
+
 void board_init() {
 	arch_init();
 	//arch_uart_init();	

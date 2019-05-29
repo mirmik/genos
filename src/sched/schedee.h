@@ -5,6 +5,8 @@
 #include <genos/wait.h>
 #include <genos/ktimer.h>
 
+#include <genos/resource.h>
+
 #ifdef MVFS_INCLUDED
 struct file;
 #endif
@@ -58,10 +60,16 @@ struct schedee
 	};
 
 	int16_t local_errno;
+
+	genos::resource_table restbl;
+
 #ifdef MVFS_INCLUDED
 	struct node * pwd;
 	struct file * fds [SCHEDEE_FDMAX]; //массив файловых дескрипторов
 #endif
+
+	void set_resource_table(genos::opened_resource* tbl, size_t tblsize) 
+	{ restbl.set_table(tbl, tblsize); }
 };
 
 struct schedee_operations

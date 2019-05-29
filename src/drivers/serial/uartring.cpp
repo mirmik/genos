@@ -6,31 +6,28 @@
 #include <sched/sched.h>
 #include <genos/wait.h>
 
-int uartring_device_write(struct serial_device* dev,
-                          const char* data,
+int uartring_device::write(const void* data,
                           unsigned int size,
                           int flags)
 {
-	RETYPE(struct uartring_device *, udev, dev);
-
 	int curwrited;
 	size_t writed = 0;
 
 	system_lock();
-	if (uart_device_cantx(udev->uart) && ring_empty(&udev->txring))
+	if (uart_device_cantx(udev) && ring_empty(&txring))
 	{
 		writed++;
-		uart_device_sendbyte(udev->uart, *data);
+		uart_device_sendbyte(udev, *(char*)data);
 	}
 	
 	while (size != writed)
 	{
-		curwrited = ring_write(&udev->txring,
-		                       udev->txbuffer,
-		                       data + writed, size - writed);
+		curwrited = ring_write(&txring,
+		                       txbuffer,
+		                       (char*)data + writed, size - writed);
 
 		if (curwrited)
-			uart_device_ctrirqs(udev->uart, UART_CTRIRQS_TXON);
+			uart_device_ctrirqs(udev, UART_CTRIRQS_TXON);
 
 		writed += curwrited;
 
@@ -45,7 +42,7 @@ int uartring_device_write(struct serial_device* dev,
 		}
 
 		system_unlock();
-		wait_current_schedee(&udev->txwait, WAIT_PRIORITY);
+		wait_current_schedee(&txwait, WAIT_PRIORITY);
 		system_lock();
 	}
 
@@ -55,22 +52,21 @@ int uartring_device_write(struct serial_device* dev,
 
 }
 
-int uartring_device_read(struct serial_device* dev, char* data,
+int uartring_device::read(void* data,
                          unsigned int size, int flags)
 {
 	int ret;
-	RETYPE(struct uartring_device *, udev, dev);
 
 	system_lock();
 	
-	while (ring_empty(&udev->rxring)) 
+	while (ring_empty(&rxring)) 
 	{
 
 		if (flags & IO_NOBLOCK) 
 			return 0;
 
 		//dprln("WAIT");
-		if (wait_current_schedee(&udev->rxwait, 0) == DISPLACE_VIRTUAL) {
+		if (wait_current_schedee(&rxwait, 0) == DISPLACE_VIRTUAL) {
 			//dprln("AFTERWAIT");
 			return 0; 
 		}
@@ -84,10 +80,26 @@ int uartring_device_read(struct serial_device* dev, char* data,
 		//dprln("READ");
 
 	system_lock();
-	ret = ring_read(&udev->rxring, udev->rxbuffer, data, size);
+	ret = ring_read(&rxring, rxbuffer, (char*)data, size);
 	system_unlock();
 
 	return ret;
+}
+
+void uartring_device::release() 
+{
+	uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
+	ring_clean(&rxring);
+	ring_clean(&txring);
+}
+
+int uartring_device::open(genos::opened_resource* ores) 
+{
+	ores->res = this;
+
+	uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
+	ring_clean(&rxring);
+	ring_clean(&txring);
 }
 
 int uartring_device_room(struct serial_device* dev)
@@ -128,13 +140,13 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 		{
 			if ( ring_empty(&uring->txring) )
 			{
-				uart_device_ctrirqs(uring->uart, UART_CTRIRQS_TXOFF);
+				uart_device_ctrirqs(uring->udev, UART_CTRIRQS_TXOFF);
 				unwait_one(&uring->txwait);
 				return;
 			}
 
 			char c = ring_getc(&uring->txring, uring->txbuffer);
-			uart_device_sendbyte(uring->uart, c);
+			uart_device_sendbyte(uring->udev, c);
 			return;
 		}
 
@@ -142,7 +154,7 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 		{
 			char c;
 
-			c = uart_device_recvbyte(uring->uart);
+			c = uart_device_recvbyte(uring->udev);
 			if (uring->debug_mode) 
 			{
 				dpr("i recv: "); dprhexln(c); 
@@ -175,17 +187,8 @@ void uartring_emulate_read(struct uartring_device * dev,
 
 void uartring_begin(struct uartring_device * dev, struct uart_device * uart)
 {
-	dev -> uart = uart;
+	dev -> udev = uart;
 	uart -> handler = uartring_ddevice_irq_handler;
 	uart -> handarg = (void*)dev;
-	uart_device_ctrirqs(dev->uart, UART_CTRIRQS_RXON);
+	uart_device_ctrirqs(dev->udev, UART_CTRIRQS_RXON);
 }
-
-const struct serial_device_operations uartring_dev_ops = 
-{
-	.write = 		uartring_device_write,
-	.read = 		uartring_device_read,
-	.room = 		uartring_device_room,
-	.avail = 		uartring_device_avail,
-	//.waitread = 	uartring_device_waitread
-};

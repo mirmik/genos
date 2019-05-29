@@ -20,7 +20,7 @@ gpiodrivers = "genos.drivers.avr.gpio"
 
 licant.cxx_application("firmware",
 	binutils = licant.cxx_make.make_gcc_binutils(gccprefix),
-	sources = ["main.c"], 
+	sources = ["main.cpp"], 
 
 	mdepends = [
 		"genos",

@@ -4,6 +4,8 @@
 #include <sys/cdefs.h>
 
 #include <drivers/cdev/serdev.h>
+
+#include <genos/cdev.h>
 #include <drivers/serial/uart.h>
 
 #include <igris/datastruct/dlist.h>
@@ -28,28 +30,38 @@ __END_DECLS
 
 extern const struct serial_device_operations uartring_dev_ops;
 
-struct uartring_device
+struct uartring_device : public genos::char_device
 {
-	struct serial_device cdev;
-	struct uart_device * uart;
+	//struct serial_device cdev;
+	struct uart_device * udev;
 	char* rxbuffer;
 	char* txbuffer;
 	struct ring_head rxring;
 	struct ring_head txring;
 
-	struct dlist_head txwait;
-	struct dlist_head rxwait;
+	struct dlist_head txwait = DLIST_HEAD_INIT(txwait);
+	struct dlist_head rxwait = DLIST_HEAD_INIT(rxwait);
 
-	uint8_t debug_mode;
+	uint8_t debug_mode = 0;
+
+	uartring_device(uart_device * udev, 
+			char* rxbuffer, char* txbuffer,
+			size_t rxsz, size_t txsz) :
+		udev(udev), rxbuffer(rxbuffer), txbuffer(txbuffer),
+		rxring(RING_HEAD_INIT(rxsz)), txring(RING_HEAD_INIT(txsz)) 
+	{}
+
+	int read(void* data, size_t size, int flags) override;
+	int write(const void* data, size_t size, int flags) override;
+	void release() override;
+	int open(genos::opened_resource* ores) override;
 };
 
 #define UARTRING_DECLARE(name, uart, rxsz, txsz) 					 			\
 char name##_rxbuffer[rxsz];						 					 			\
 char name##_txbuffer[txsz];						 					 			\
-struct uartring_device name = { SERIAL_DEVICE_INIT(name.cdev, &uartring_dev_ops), \
-				(struct uart_device*)uart, 							 			\
+struct uartring_device name { (struct uart_device*)uart, 						\
 				name##_rxbuffer, name##_txbuffer,					 			\
-				RING_HEAD_INIT(rxsz), RING_HEAD_INIT(txsz), 					\
-				DLIST_HEAD_INIT(name.txwait), DLIST_HEAD_INIT(name.rxwait), 0}
+				rxsz, txsz}
 
 #endif

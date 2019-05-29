@@ -51,18 +51,21 @@ module("genos.sched", "stub",
 
 module("genos.sched", "impl",
 	sources = [
-		"src/sched/sched.c",
-		"src/sched/schedee.c",
+		"src/sched/sched.cpp",
+		"src/sched/schedee.cpp",
 		"src/sched/schedee_mvfs.cpp",
-		"src/sched/apitime.c",
-		"src/sched/schedee/autom.c",
-		"src/sched/schedee/cooperative.c",
+		"src/sched/apitime.cpp",
+		"src/sched/schedee/autom.cpp",
+		"src/sched/schedee/cooperative.cpp",
 
 		"src/sched/posix/fcntl_mvfs.cpp",
 		"src/sched/posix/unistd_mvfs.cpp",
 
-		"src/genos/wait.c",
-		"src/genos/ktimer.c",
+		"src/genos/wait.cpp",
+		"src/genos/ktimer.cpp",
+
+		"src/genos/resource.cpp",
+		"src/genos/fops.cpp"
 	],
 	default=True,
 )
@@ -136,6 +139,8 @@ module("genos",
 		"igris.bug",
 		("igris.dprint", "diag"),
 		("igris.syslock", "genos.atomic"),
+
+		"genos.sched"
 	]
 )
 
