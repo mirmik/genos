@@ -3,7 +3,7 @@
 #include <igris/sync/syslock.h>
 #include <igris/util/bug.h>
 
-#include <sched/sched.h>
+#include <genos/sched.h>
 #include <genos/wait.h>
 
 int uartring_device::write(const void* data,

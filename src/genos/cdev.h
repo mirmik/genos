@@ -2,7 +2,7 @@
 #define GENOS_CHAR_DEVICE_H
 
 #include <genos/resource.h>
-#include <genos/vfsnode.h>
+#include <genos/vfs.h>
 
 #include <defs/ioflags.h>
 
@@ -15,7 +15,8 @@ namespace genos
 
 	class char_device : public vfsnode_stream_resource
 	{
-
+	public:
+		char_device(const char* name) : vfsnode_stream_resource(name) {} 
 	};
 }
 

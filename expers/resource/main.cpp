@@ -5,11 +5,13 @@
 
 #include <drivers/serial/uartring.h>
 
+#include <genos/vfs.h>
+
 #include <unistd.h>
 
 autom_schedee sch;
 
-UARTRING_DECLARE(serial0, &usart0, 16, 128);
+UARTRING_DECLARE(serial0, "serial0", &usart0, 16, 128);
 int wr;
 
 void* task(void* priv, int* state) 
@@ -33,13 +35,18 @@ void* task(void* priv, int* state)
 
 RESOURCE_TABLE(sch_restbl, 5);
 
+genos::directory devdir("dev");
+
 int main() 
 {
 	board_init();
 	scheduler_init();
 
+	genos::root_directory.add_child(&devdir);
+
 	sch.init(task, nullptr);
 	sch.set_resource_table(sch_restbl, 5);
+	sch.run();
 
 	while(1) 
 		__schedule__();

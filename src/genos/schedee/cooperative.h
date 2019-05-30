@@ -2,11 +2,10 @@
 #define GENOS_COOPERATIVE_SCHEDEE_H
 
 #include <hal/subst.h>
-#include <sched/schedee.h>
+#include <genos/schedee.h>
 
-struct cooperative_schedee
+class cooperative_schedee : public schedee
 {
-	struct schedee sch;
 	struct context cntxt;
 
 	void* (*task) (void*);
@@ -15,16 +14,19 @@ struct cooperative_schedee
 	size_t heapsize;
 
 	void * ret;
-};
 
-extern const struct schedee_operations cooperative_schedee_op;
-
-__BEGIN_DECLS
-void cooperative_schedee_init(struct cooperative_schedee *,
-                              void* (*task) (void*),
+public:
+	void init(void* (*task) (void*),
                               void * arg,
                               void * heap,
                               int heapsize);
-__END_DECLS
+
+	void execute() override;
+	int displace() override;
+	void finalize() override; 
+
+	friend 
+	void coopstarter(void * sch);
+};
 
 #endif

@@ -1,5 +1,5 @@
 #include <genos/wait.h>
-#include <sched/sched.h>
+#include <genos/sched.h>
 
 #include <igris/util/macro.h>
 #include <igris/sync/syslock.h>

@@ -1,5 +1,5 @@
-#include <sched/schedee.h>
-#include <sched/sched.h>
+#include <genos/schedee.h>
+#include <genos/sched.h>
 #include <errno.h>
 
 #include <igris/dprint.h>
@@ -53,7 +53,7 @@ void schedee_list_debug_info()
 }
 #endif
 
-int* __errno_location() 
+void schedee::run() 
 {
-	return &current_schedee()->local_errno;
+	schedee_run(this);
 }

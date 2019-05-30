@@ -1,15 +1,14 @@
 #define NODTRACE 1
 
+#include <genos/sched.h>
+
 #include <asm/startup.h> // for RESET_STACK
+#include <util/cpu_delay.h>
+#include <hal/irq.h>
 
-#include <sched/sched.h>
 #include <igris/sync/syslock.h>
-
 #include <igris/dtrace.h>
 #include <igris/util/stub.h>
-#include <util/cpu_delay.h>
-
-#include <hal/irq.h>
 
 #define PRIORITY_TOTAL 4
 
@@ -101,7 +100,7 @@ void __schedee_execute(struct schedee * sch)
 	++sch->execcounter;
 #endif
 
-	sch->sch_op->execute(sch);
+	sch->execute();
 }
 
 int schedee_manager_total_planed() 
@@ -131,7 +130,7 @@ void schedee_manager_step()
 
 		schedee_notify_finalize(sch);
 		sch->state = SCHEDEE_STATE_ZOMBIE;
-		sch->sch_op->finalize(sch);
+		sch->finalize();
 
 		irqs_disable();
 	}
@@ -182,7 +181,7 @@ int __displace__()
 	++sch->dispcounter;
 #endif
 
-	return sch->sch_op->displace(sch);
+	return sch->displace();
 }
 
 void scheduler_init() 

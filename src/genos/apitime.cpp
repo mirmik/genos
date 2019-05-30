@@ -1,4 +1,4 @@
-#include <sched/api.h>
+#include <genos/api.h>
 #include <genos/ktimer.h>
 
 //#include <igris/dprint.h>

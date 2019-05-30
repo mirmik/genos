@@ -44,9 +44,11 @@ struct uartring_device : public genos::char_device
 
 	uint8_t debug_mode = 0;
 
-	uartring_device(uart_device * udev, 
+	uartring_device(const char* name, uart_device * udev, 
 			char* rxbuffer, char* txbuffer,
-			size_t rxsz, size_t txsz) :
+			size_t rxsz, size_t txsz) 
+	:
+		genos::char_device(name),
 		udev(udev), rxbuffer(rxbuffer), txbuffer(txbuffer),
 		rxring(RING_HEAD_INIT(rxsz)), txring(RING_HEAD_INIT(txsz)) 
 	{}
@@ -57,10 +59,10 @@ struct uartring_device : public genos::char_device
 	int open(genos::opened_resource* ores) override;
 };
 
-#define UARTRING_DECLARE(name, uart, rxsz, txsz) 					 			\
+#define UARTRING_DECLARE(name, cname, uart, rxsz, txsz)				 			\
 char name##_rxbuffer[rxsz];						 					 			\
 char name##_txbuffer[txsz];						 					 			\
-struct uartring_device name { (struct uart_device*)uart, 						\
+struct uartring_device name { cname, (struct uart_device*)uart,					\
 				name##_rxbuffer, name##_txbuffer,					 			\
 				rxsz, txsz}
 

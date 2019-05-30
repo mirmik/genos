@@ -1,44 +1,14 @@
 #include <stdlib.h>
 #include <igris/dprint.h>
 
-#include <sched/schedee.h>
-#include <sched/sched.h>
+#include <genos/schedee.h>
+#include <genos/sched.h>
 
 #include <genos/ktimer.h>
 
 #include <assert.h>
 
 DLIST_HEAD(ktimer_list);
-
-/*struct ktimer * ktimer_alloc()
-{
-	return (struct ktimer *) malloc(sizeof(struct ktimer));
-}
-
-void ktimer_dealloc(struct ktimer * ptr)
-{
-	free(ptr);
-}
-
-struct ktimer * ktimer_create(ktimer_callback_t act, void* arg, clock_t start, clock_t interval)
-{
-	struct ktimer * tim;
-
-	assert(interval != 0);
-
-	tim = ktimer_alloc();
-	tim->act = act;
-	tim->arg = arg;
-	tim->start = start;
-	tim->interval = interval;
-
-	//DPRINT(tim->start);
-	//DPRINT(tim->interval);
-
-	ktimer_plan(tim);
-
-	return tim;
-}*/
 
 void ktimer_base_init(struct ktimer_base * tim, clock_t start, clock_t interval, uint8_t ctrtype)
 {
@@ -54,9 +24,8 @@ void ktimer_init(struct ktimer * tim, ktimer_callback_t act, void* arg, clock_t 
 	tim->arg = arg;
 }
 
-
-
-static inline uint8_t ktimer_check(struct ktimer_base * tim, clock_t now)
+static inline 
+uint8_t ktimer_check(struct ktimer_base * tim, clock_t now)
 {
 	return now - tim->start >= tim->interval;
 }
