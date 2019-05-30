@@ -36,6 +36,7 @@ void* task(void* priv, int* state)
 RESOURCE_TABLE(sch_restbl, 5);
 
 genos::directory devdir("dev");
+genos::directory mntdir("mnt");
 
 int main() 
 {
@@ -43,6 +44,7 @@ int main()
 	scheduler_init();
 
 	genos::root_directory.add_child(&devdir);
+	genos::root_directory.add_child(&mntdir);
 
 	sch.init(task, nullptr);
 	sch.set_resource_table(sch_restbl, 5);
