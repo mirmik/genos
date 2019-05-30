@@ -1,7 +1,10 @@
 #include <hal/board.h>
 #include <genos/sched.h>
 #include <genos/ktimer.h>
-#include <genos/vfs.h>
+
+#include <genos/mvfs/vfsnode.h>
+#include <genos/mvfs/directory.h>
+
 #include <genos/schedee/autom.h>
 
 #include <drivers/serial/uartring.h>
@@ -19,7 +22,7 @@ void* task(void* priv, int* state)
 	switch(*state) 
 	{
 		case 0:
-			wr = genos::open_resource(&serial0);
+			wr = genos::open_node(&serial0);
 			*state++;
 			break;
 
@@ -33,7 +36,7 @@ void* task(void* priv, int* state)
 	}
 }
 
-RESOURCE_TABLE(sch_restbl, 5);
+FDTABLE(sch_restbl, 5);
 
 genos::directory devdir("dev");
 genos::directory mntdir("mnt");
@@ -50,7 +53,7 @@ int main()
 	devdir.add_child(&dbgdev);
 
 	sch.init(task, nullptr);
-	sch.set_resource_table(sch_restbl, 5);
+	sch.set_fdtable(sch_restbl, 5);
 	sch.run();
 
 	while(1) 

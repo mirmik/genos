@@ -63,7 +63,7 @@ namespace genos
 		{}
 		
 		virtual int iterate() { return ENOENT; }
-		virtual int lookup(vfsnode** tnode) { return ENOENT; }
+		virtual int lookup(vfsnode** tnode) { tnode = nullptr; return ENOENT; }
 
 		void add_child(vfsnode* node) 
 		{

@@ -55,8 +55,8 @@ struct uartring_device : public genos::char_device
 
 	int read(void* data, size_t size, int flags) override;
 	int write(const void* data, size_t size, int flags) override;
-	void release() override;
-	int open(genos::opened_resource* ores) override;
+	int release() override;
+	int open(genos::file * filp) override;
 };
 
 #define UARTRING_DECLARE(name, cname, uart, rxsz, txsz)				 			\

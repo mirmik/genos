@@ -86,20 +86,22 @@ int uartring_device::read(void* data,
 	return ret;
 }
 
-void uartring_device::release() 
+int uartring_device::release() 
 {
 	uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
 	ring_clean(&rxring);
 	ring_clean(&txring);
+	return 0;
 }
 
-int uartring_device::open(genos::opened_resource* ores) 
+int uartring_device::open(genos::file * ores) 
 {
-	ores->res = this;
+	ores->node = this;
 
 	uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
 	ring_clean(&rxring);
 	ring_clean(&txring);
+	return 0;
 }
 
 int uartring_device_room(struct serial_device* dev)
