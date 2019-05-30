@@ -1,11 +1,11 @@
 #include <hal/board.h>
 #include <genos/sched.h>
 #include <genos/ktimer.h>
+#include <genos/vfs.h>
 #include <genos/schedee/autom.h>
 
 #include <drivers/serial/uartring.h>
-
-#include <genos/vfs.h>
+#include <drivers/cdev/virtual/debug.h>
 
 #include <unistd.h>
 
@@ -38,6 +38,8 @@ RESOURCE_TABLE(sch_restbl, 5);
 genos::directory devdir("dev");
 genos::directory mntdir("mnt");
 
+genos::debug_device dbgdev;
+
 int main() 
 {
 	board_init();
@@ -45,6 +47,7 @@ int main()
 
 	genos::root_directory.add_child(&devdir);
 	genos::root_directory.add_child(&mntdir);
+	devdir.add_child(&dbgdev);
 
 	sch.init(task, nullptr);
 	sch.set_resource_table(sch_restbl, 5);

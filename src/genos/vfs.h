@@ -9,6 +9,8 @@
 
 namespace genos
 {
+	class vfsnode_resource;
+
 	class vfsnode
 	{
 	public:
@@ -22,15 +24,15 @@ namespace genos
 			: name(name), vfsnode_type(vfsnode_type) 
 		{}
 
-		bool is_openable()
-		{ return vfsnode_type & TREEPART_OPENABLE; }
+		int open(opened_resource * ores) 
+		{
+			(vfsnode_resource)
+		}
 	};
 
 	class vfsnode_resource : public vfsnode, public resource
 	{
-	public:
-		vfsnode_resource(const char * name, uint8_t type = 0) 
-		: vfsnode(name, type | TREEPART_OPENABLE) {}
+		
 	};
 
 	class vfsnode_stream_resource : public vfsnode, public stream_resource

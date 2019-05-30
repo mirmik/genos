@@ -16,8 +16,9 @@ namespace genos
 	{
 	public:
 		uint8_t resource_type;
-		virtual void release() = 0;
-		virtual int open(opened_resource * ores) = 0;
+
+		virtual void release() { return ENOTSUP; }
+		virtual int open(opened_resource * ores) { return ENOTSUP; }
 	};
 
 	class stream_resource : public resource 
