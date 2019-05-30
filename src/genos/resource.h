@@ -10,6 +10,7 @@
 
 namespace genos 
 {
+	class directory;
 	class opened_resource;
 
 	class resource 
@@ -17,7 +18,7 @@ namespace genos
 	public:
 		uint8_t resource_type;
 
-		virtual void release() { return ENOTSUP; }
+		virtual void release() {}
 		virtual int open(opened_resource * ores) { return ENOTSUP; }
 	};
 
@@ -42,8 +43,16 @@ namespace genos
 	{
 	public:
 		int flags;
-		resource * 	res; 
-		size_t 		pos;
+		
+		union {
+			resource * 	res;
+			directory * dir; 
+		};
+
+		union {
+			size_t 	pos;
+			void* 	iter;
+		};
 	};
 
 	class resource_table 
