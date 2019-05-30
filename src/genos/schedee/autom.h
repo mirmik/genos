@@ -23,6 +23,11 @@ public:
 		this->flag.can_displace = 1;
 	}
 
+	autom_schedee(autom_schedee_task_t task, void* arg) 
+	{
+		init(task, arg);
+	}
+
 	void execute() override;
 	int displace() override;
 	void finalize() override; 

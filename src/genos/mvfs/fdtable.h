@@ -5,22 +5,28 @@
 #include <errno.h>
 #include <genos/mvfs/file.h>
 
+#include <igris/dprint.h>
+
 namespace genos
 {
 	struct fdtable
 	{
-		struct file * tbl;
+		genos::file * tbl;
 		uint8_t tblsz;
 
 	public:
-		void set_table(struct file * tbl, uint8_t tblsz)
+		void set_table(genos::file * tbl, uint8_t tblsz)
 		{
 			this->tbl = tbl;
 			this->tblsz = tblsz;
+
+			//dprptr(tbl);
+			//dprdump(tbl, 20);
+
 			memset(tbl, 0, sizeof(genos::file) * tblsz);
 		}
 
-		struct file & operator[](int fd) { return tbl[fd]; }
+		genos::file & operator[](int fd) { return tbl[fd]; }
 
 		int get_file(int fd, genos::file ** ores)
 		{

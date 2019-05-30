@@ -17,9 +17,9 @@ void ktimer_base_init(struct ktimer_base * tim, clock_t start, clock_t interval,
 	tim->interval = interval;
 }
 
-void ktimer_init(struct ktimer * tim, ktimer_callback_t act, void* arg, clock_t start, clock_t interval)
+void ktimer_init(genos::ktimer * tim, ktimer_callback_t act, void* arg, clock_t start, clock_t interval)
 {
-	ktimer_base_init(&tim->tim, start, interval, CTROBJ_KTIMER_DELEGATE);
+	ktimer_base_init(tim, start, interval, CTROBJ_KTIMER_DELEGATE);
 	tim->act = act;
 	tim->arg = arg;
 }
@@ -30,32 +30,26 @@ uint8_t ktimer_check(struct ktimer_base * tim, clock_t now)
 	return now - tim->start >= tim->interval;
 }
 
-void ktimer_swift(struct ktimer * tim)
-{
-	tim->tim.start += tim->tim.interval;
-}
-
-
 void ktimer_base_init_for_milliseconds(struct ktimer_base * tim, uint32_t interval, uint8_t ctrtype)
 {
 	ktimer_base_init(tim, jiffies(), ms2jiffies(interval), ctrtype);
 }
 
-void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg, uint32_t interval)
+void ktimer_init_for_milliseconds(genos::ktimer * tim, ktimer_callback_t act, void* arg, uint32_t interval)
 {
 	ktimer_init(tim, act, arg, jiffies(), ms2jiffies(interval));
 }
 
 
 
-void ktimer_base_plan(struct ktimer_base * t)
+void ktimer_base::plan()
 {
 	struct ktimer_base * it;
 	struct dlist_head * sit;
 	clock_t it_final;
 	clock_t final;
 
-	final = t->start + t->interval;
+	final = start + interval;
 	sit = NULL;
 
 	system_lock();
@@ -71,7 +65,7 @@ void ktimer_base_plan(struct ktimer_base * t)
 		}
 	}
 
-	dlist_add_tail(&t->ctr.lnk, sit ? sit : &ktimer_list);
+	dlist_add_tail(&ctr.lnk, sit ? sit : &ktimer_list);
 
 	system_unlock();
 }
@@ -83,7 +77,7 @@ void ktimer_execute(struct ktimer_base * tim)
 	{
 		case CTROBJ_KTIMER_DELEGATE: 
 		{
-			struct ktimer * t = mcast_out(tim, struct ktimer, tim);
+			genos::ktimer * t = (genos::ktimer*) tim;
 			dlist_del(&tim->ctr.lnk);
 			t->act(t->arg, t);
 			break;

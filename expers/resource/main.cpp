@@ -12,23 +12,29 @@
 
 #include <unistd.h>
 
-autom_schedee sch;
+#include  <genos/ktimer.h>
 
 UARTRING_DECLARE(serial0, "serial0", &usart0, 16, 128);
 int wr;
 
 void* task(void* priv, int* state) 
 {
+	int ans;
+	dprln("state:", *state);
+
 	switch(*state) 
 	{
 		case 0:
-			wr = genos::open_node(&serial0);
-			*state++;
+			dprln("TASK");
+			++*state;
+			ans = genos::open_node(&serial0);
+			dprln(ans);
 			break;
 
 		case 1:
-			*state++;
-			write(wr, "HelloWorld", 10);
+			++*state;
+			//write(wr, "HelloWorld", 10);
+			break;
 
 		case 2:
 			schedee_exit();
@@ -43,6 +49,16 @@ genos::directory mntdir("mnt");
 
 genos::debug_device dbgdev;
 
+
+void blink(void* arg, genos::ktimer* tim) 
+{
+	gpio_pin_toggle(&board_led);
+	tim->replan();
+}
+
+autom_schedee sch(task, nullptr);
+genos::ktimer blink_timer(blink, NULL, 1000);
+
 int main() 
 {
 	board_init();
@@ -52,9 +68,12 @@ int main()
 	genos::root_directory.add_child(&mntdir);
 	devdir.add_child(&dbgdev);
 
-	sch.init(task, nullptr);
 	sch.set_fdtable(sch_restbl, 5);
 	sch.run();
+
+	blink_timer.plan();
+
+	irqs_enable();
 
 	while(1) 
 		__schedule__();

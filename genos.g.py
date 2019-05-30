@@ -144,7 +144,8 @@ module("genos",
 		("igris.dprint", "diag"),
 		("igris.syslock", "genos.atomic"),
 
-		"genos.sched"
+		"genos.sched",
+		"igris.cxx_support"
 	]
 )
 

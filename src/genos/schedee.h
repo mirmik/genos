@@ -65,6 +65,8 @@ struct schedee
 	struct file * fds [SCHEDEE_FDMAX]; //массив файловых дескрипторов
 #endif
 
+	schedee(){}
+
 	virtual void execute() = 0;
 	virtual int displace() = 0;
 	virtual void finalize() = 0; 

@@ -12,7 +12,7 @@ namespace genos
 	{
 	public:
 		dlist_head lnk;
-		dlist_head childs;
+		dlist_head childs = DLIST_HEAD_INIT(childs);
 		vfsnode * parent;
 
 		const char * name;
