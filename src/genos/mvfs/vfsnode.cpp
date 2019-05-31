@@ -5,6 +5,7 @@ int genos::open_node(genos::vfsnode * res)
 {
 	int ans;
 	int fd;
+	genos::file * filp;
 
 	ans = current_schedee()->restbl.get_available_fd(&fd);
 	if (ans) 
@@ -13,7 +14,10 @@ int genos::open_node(genos::vfsnode * res)
 		return -1;
 	}
 
-	ans = res->open(&current_schedee()->restbl[fd]);
+	filp = & current_schedee()->restbl[fd];
+	filp -> node = res;	
+
+	ans = res->open(filp);
 	if (ans) 
 	{
 		errno = ans;

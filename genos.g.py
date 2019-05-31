@@ -56,7 +56,7 @@ module("genos.sched", "impl",
 		"src/genos/schedee_mvfs.cpp",
 		"src/genos/apitime.cpp",
 		"src/genos/schedee/autom.cpp",
-		"src/genos/schedee/cooperative.cpp",
+		"src/genos/schedee/coop.cpp",
 
 		"src/sched/posix/fcntl_mvfs.cpp",
 		"src/sched/posix/unistd_mvfs.cpp",

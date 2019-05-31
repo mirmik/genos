@@ -6,23 +6,15 @@
 ssize_t write(int fd, const void* data, size_t size) 
 {
 	int ans;
-	genos::file * ores;
+	genos::file * filp;
 
 	schedee* sch = current_schedee();
 	
-	ans = sch->restbl.get_file(fd, &ores);
+	ans = sch->restbl.get_file(fd, &filp);
 	if (ans)
 		return ans;
 
-	//if (ores->res->resource_type & RESOURCE_STREAM)
-	//	return ((genos::stream_resource*)(ores->res))->write(data, size, ores->flags);
-	//else 
-	//{
-	//	errno = ENOTSUP;
-	//	return -1;
-	//}
-
-	BUG();
+	return filp -> node -> write(data, size, filp->flags);
 }
 
 ssize_t read(int fd, void* data, size_t size) 

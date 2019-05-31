@@ -24,8 +24,8 @@ namespace genos
 		virtual int write(const void* data, size_t size, int flags) { return ENOTSUP; }
 		virtual int read(void* data, size_t size, int flags) { return ENOTSUP; }
 
-		virtual int release() { return ENOTSUP; }
-		virtual int open(genos::file * filp) { return ENOTSUP; }
+		virtual int release() { return 0; }
+		virtual int open(genos::file * filp) { return 0; }
 	};
 
 	int open_node(vfsnode * res);

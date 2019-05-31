@@ -6,6 +6,8 @@
 #include <genos/mvfs/directory.h>
 
 #include <genos/schedee/autom.h>
+#include <genos/schedee/coop.h>
+#include <genos/api.h>
 
 #include <drivers/serial/uartring.h>
 #include <drivers/cdev/virtual/debug.h>
@@ -59,6 +61,23 @@ void blink(void* arg, genos::ktimer* tim)
 autom_schedee sch(task, nullptr);
 genos::ktimer blink_timer(blink, NULL, 1000);
 
+
+
+void* mainproc_task(void* arg) 
+{
+	int fd = open_node(&dbgdev);
+	
+	write(fd, "HelloWorld", 10);
+
+	while(1) 
+	{
+		msleep(100);
+		gpio_pin_toggle(&board_led);
+	}
+}
+
+COOPSCHEDEE_DECLARE(mainproc, mainproc_task, nullptr, 128);
+
 int main() 
 {
 	board_init();
@@ -68,10 +87,13 @@ int main()
 	genos::root_directory.add_child(&mntdir);
 	devdir.add_child(&dbgdev);
 
-	sch.set_fdtable(sch_restbl, 5);
-	sch.run();
+	//sch.set_fdtable(sch_restbl, 5);
+	//sch.run();
 
-	blink_timer.plan();
+	//blink_timer.plan();
+
+	mainproc.run();
+	mainproc.set_fdtable(sch_restbl, 5);
 
 	irqs_enable();
 

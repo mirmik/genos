@@ -8,6 +8,7 @@ namespace genos
 	struct file
 	{
 		int pos;
+		int flags;
 		uint8_t refs;
 		genos::vfsnode * node; ///< Родительский node. Держит ссылку.
 	};

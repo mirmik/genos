@@ -1,14 +1,14 @@
 #include <genos/sched.h>
-#include <genos/schedee/cooperative.h>
+#include <genos/schedee/coop.h>
 #include <genos/api.h>
 #include <stdlib.h>
 
 #include <igris/util/bug.h>
 #include <igris/dprint.h>
 
-void coopstarter (void * sch)
+void genos::coopschedee::starter (void * sch)
 {
-	struct cooperative_schedee * csch = (struct cooperative_schedee *) sch;
+	struct genos::coopschedee * csch = (struct genos::coopschedee *) sch;
 
 	void* ret = csch->task(csch->arg);
 	csch->ret = ret;
@@ -16,13 +16,13 @@ void coopstarter (void * sch)
 	schedee_exit();
 }
 
-void cooperative_schedee::init(void* (*task) (void*),
+void genos::coopschedee::init(void* (*task) (void*),
                               void * arg,
                               void * heap,
                               int heapsize)
 {
 	schedee_init(this, 0);
-	context_init(&cntxt, (uintptr_t) heap + heapsize - 1, coopstarter, this, 1);
+	context_init(&cntxt, (uintptr_t) heap + heapsize - 1, starter, this, 1);
 
 	this -> heap = heap;
 	this -> heapsize = heapsize;
@@ -32,17 +32,17 @@ void cooperative_schedee::init(void* (*task) (void*),
 	this -> flag.can_displace = 1;
 }
 
-/*struct schedee * create_cooperative_schedee(void* (*task) (void*),
+/*struct schedee * create_genos::coopschedee(void* (*task) (void*),
         void * arg,
         int heapsize)
 {
 	DTRACE();
-	struct cooperative_schedee * sch = (struct cooperative_schedee *)
-	                                   malloc(sizeof(struct cooperative_schedee));
+	struct genos::coopschedee * sch = (struct genos::coopschedee *)
+	                                   malloc(sizeof(struct genos::coopschedee));
 	
 	char* heap = (char*) malloc(heapsize);
 
-	cooperative_schedee_init(sch, task, arg, heap, heapsize);
+	genos::coopschedee_init(sch, task, arg, heap, heapsize);
 
 	sch->sch.flag.dynamic = true;
 	sch->sch.flag.dynamic_heap = true;
@@ -50,19 +50,19 @@ void cooperative_schedee::init(void* (*task) (void*),
 	return &sch->sch;
 }*/
 
-void cooperative_schedee::execute()
+void genos::coopschedee::execute()
 {
 	context_load(&cntxt);
 }
 
-int cooperative_schedee::displace()
+int genos::coopschedee::displace()
 {
 	flag.runned = 0;
 	context_save_and_displace(&cntxt);
 	return DISPLACE_REAL;
 }
 
-void cooperative_schedee::finalize()
+void genos::coopschedee::finalize()
 {
 	if (flag.dynamic_heap)
 		BUG();

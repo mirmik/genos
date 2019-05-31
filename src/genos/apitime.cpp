@@ -26,7 +26,7 @@ int msleep(unsigned int ms)
 	sch->state = SCHEDEE_STATE_WAIT;
 
 	ktimer_base_init_for_milliseconds(timer, ms, CTROBJ_KTIMER_SCHEDEE);
-	ktimer_base_plan(timer);
+	timer->plan();
 
 	return __displace__();
 }
