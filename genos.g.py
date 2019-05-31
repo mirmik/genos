@@ -68,6 +68,7 @@ module("genos.sched", "impl",
 		#"src/genos/mvfs/directory.cpp",
 		"src/genos/node.cpp",
 		"src/genos/fdtable.cpp",
+		"src/genos/dev.cpp",
 		
 		"src/genos/errno.cpp"
 	],
@@ -153,7 +154,7 @@ module("genos",
 
 
 
-def genos_firmware(sources = [], mdepends = []):
+def genos_firmware(sources=[], mdepends=[], cxx_flags=""):
 	import shutil
 	import licant.modules
 
@@ -192,6 +193,7 @@ def genos_firmware(sources = [], mdepends = []):
 			licant.cxx_application("firmware",
 				binutils=__configure__.binutils,
 				sources=sources,
+				cxx_flags=cxx_flags,
 				mdepends=all_modules
 			)
 

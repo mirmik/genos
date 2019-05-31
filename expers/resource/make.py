@@ -6,5 +6,6 @@ import os
 licant.include("genos")
 
 licant.glbfunc.genos_firmware(
-	sources=["main.cpp"]
+	sources=["main.cpp"],
+	cxx_flags = "-Wall"
 )

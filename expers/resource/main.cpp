@@ -2,9 +2,6 @@
 #include <genos/sched.h>
 #include <genos/ktimer.h>
 
-#include <genos/mvfs/vfsnode.h>
-#include <genos/mvfs/directory.h>
-
 #include <genos/schedee/autom.h>
 #include <genos/schedee/coop.h>
 #include <genos/api.h>
@@ -66,6 +63,7 @@ genos::ktimer blink_timer(blink, NULL, 1000);
 void* mainproc_task(void* arg) 
 {
 	int fd = open_node(&dbgdev);
+	int df = open_directory(&genos::devmngr);
 	
 	write(fd, "HelloWorld", 10);
 
