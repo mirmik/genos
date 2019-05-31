@@ -96,7 +96,7 @@ namespace genos
 			}
 
 			/// Enable overflow irq.
-			int irq_ovf_enable(bool en)
+			void irq_ovf_enable(bool en)
 			{
 				bits_assign(*timsk, 0x1, en);
 			}

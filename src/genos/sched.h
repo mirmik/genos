@@ -9,11 +9,11 @@
 
 __BEGIN_DECLS
 
-void schedee_run(struct schedee * sch);
-void schedee_wait(struct schedee * sch);
-void __schedee_wait_for(struct schedee * parent, struct schedee * child);
-void schedee_stop(struct schedee * sch);
-//void schedee_final(struct schedee * sch);
+void schedee_run(genos::schedee * sch);
+void schedee_wait(genos::schedee * sch);
+void __schedee_wait_for(genos::schedee * parent, genos::schedee * child);
+void schedee_stop(genos::schedee * sch);
+//void schedee_final(genos::schedee * sch);
 
 void schedee_exit();
 
@@ -26,9 +26,9 @@ void __context_displace_vector__() __attribute__((noreturn));
 void __schedule__();
 int  __displace__();
 
-struct schedee * create_autom_schedee(void*(*task)(void*, int*), void* arg);
-struct schedee * create_cooperative_schedee(void*(*task)(void*), void* arg, int heapsize);
-//struct schedee * create_process(int(*task)(void*), void* arg, int heapsize);
+genos::schedee * create_autom_schedee(void*(*task)(void*, int*), void* arg);
+genos::schedee * create_cooperative_schedee(void*(*task)(void*), void* arg, int heapsize);
+//genos::schedee * create_process(int(*task)(void*), void* arg, int heapsize);
 
 int schedee_manager_total_planed();
 

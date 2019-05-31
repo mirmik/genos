@@ -22,89 +22,93 @@ struct file;
 
 extern struct dlist_head schedee_list;
 
-struct schedee
+namespace genos
 {
-	struct schedee * parent;
-
-	union
+	struct schedee
 	{
-		struct ctrobj ctr;
-		struct waiter waiter;
-		struct ktimer_base ktimer;
-	};
+		genos::schedee * parent;
 
-	uint8_t prio;
-	uint8_t state;
+		union
+		{
+			struct ctrobj ctr;
+			struct waiter waiter;
+			struct ktimer_base ktimer;
+		};
+
+		uint8_t prio;
+		uint8_t state;
 
 #if SCHEDEE_DEBUG_STRUCT
-	struct dlist_head schedee_list_lnk;
-	uint16_t dispcounter;
-	uint16_t execcounter;
+		struct dlist_head schedee_list_lnk;
+		uint16_t dispcounter;
+		uint16_t execcounter;
 #endif
 
-	union
-	{
-		uint8_t flags;
-		struct
+		union
 		{
-			uint8_t runned 			: 1;
-			uint8_t can_displace 	: 1;
-			uint8_t has_context 	: 1;
-			uint8_t dynamic 		: 1;
-			uint8_t dynamic_heap 	: 1;
-			uint8_t killed			: 1;
-		} flag;
-	};
+			uint8_t flags;
+			struct
+			{
+				uint8_t runned 			: 1;
+				uint8_t can_displace 	: 1;
+				uint8_t has_context 	: 1;
+				uint8_t dynamic 		: 1;
+				uint8_t dynamic_heap 	: 1;
+				uint8_t killed			: 1;
+			} flag;
+		};
 
-	int16_t local_errno;
+		int16_t local_errno;
 
-	genos::fdtable restbl;
+		genos::fdtable restbl;
 
 #ifdef MVFS_INCLUDED
-	struct node * pwd;
-	struct file * fds [SCHEDEE_FDMAX]; //массив файловых дескрипторов
+		struct node * pwd;
+		struct file * fds [SCHEDEE_FDMAX]; //массив файловых дескрипторов
 #endif
 
-	schedee(){}
+		schedee() {}
 
-	virtual void execute() = 0;
-	virtual int displace() = 0;
-	virtual void finalize() = 0; 
+		virtual void execute() = 0;
+		virtual int displace() = 0;
+		virtual void finalize() = 0;
 
-	void set_fdtable(genos::opennode* tbl, uint8_t tblsize) 
-	{ restbl.set_table(tbl, tblsize); }
+		void set_fdtable(genos::opennode* tbl, uint8_t tblsize)
+		{ restbl.set_table(tbl, tblsize); }
 
-	void run();
-};
+		void run();
+	};
+}
 
-/*struct schedee_operations
+/*genos::schedee_operations
 {
-	void (*execute) (struct schedee * sch);
-	int (*displace) (struct schedee * sch);
-	void (*finalize) (struct schedee * sch);
+	void (*execute) (genos::schedee * sch);
+	int (*displace) (genos::schedee * sch);
+	void (*finalize) (genos::schedee * sch);
 };*/
 
 __BEGIN_DECLS
 
-struct schedee * current_schedee();
+genos::schedee * current_schedee();
 
 /// Уведомить родителя (если он есть), что процесс завершен.
-void schedee_notify_finalize(struct schedee * sch);
+void schedee_notify_finalize(genos::schedee * sch);
 
 /// Проинициализировать структуры данных поддержки файловой системы.
-void schedee_mvfs_support_init(struct schedee* sch);
+void schedee_mvfs_support_init(genos::schedee* sch);
 
 /// Переоткрыть родительские файлы от своего имени.
-void schedee_copy_parent_files(struct schedee* sch);
+void schedee_copy_parent_files(genos::schedee* sch);
 
-void schedee_debug_print_fds(struct schedee* sch);
+void schedee_debug_print_fds(genos::schedee* sch);
 
 /// Проинициализировать основные поля процесса.
 static inline
-void schedee_init(struct schedee* sch, int prio)
+void schedee_init(genos::schedee* sch, int prio)
 {
 
 #if SCHEDEE_DEBUG_STRUCT
+
 	// В дальнейшем эту провеку следует убрать, так как нод
 	// должен отстыковываться от списка по завершению работы.
 	if (!dlist_in(&sch->schedee_list_lnk, &schedee_list))
@@ -127,7 +131,7 @@ void schedee_init(struct schedee* sch, int prio)
 	sch->prio = prio;
 	sch->state = SCHEDEE_STATE_STOP;
 	sch->flags = 0;
-	
+
 	sch->parent = current_schedee();
 
 #ifdef MVFS_INCLUDED
@@ -142,13 +146,14 @@ void schedee_init(struct schedee* sch, int prio)
 }
 
 #ifdef MVFS_INCLUDED
-int schedee_setfd(struct schedee * sch, struct file * node, int fd);
-int schedee_get_free_fd(struct schedee * sch);
+int schedee_setfd(genos::schedee * sch, struct file * node, int fd);
+int schedee_get_free_fd(genos::schedee * sch);
 #endif //MVFS_INCLUDED
 
 #if SCHEDEE_DEBUG_STRUCT
 void schedee_list_debug_info();
 #endif
+
 
 __END_DECLS
 

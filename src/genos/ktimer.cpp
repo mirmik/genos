@@ -85,7 +85,7 @@ void ktimer_execute(struct ktimer_base * tim)
 
 		case CTROBJ_KTIMER_SCHEDEE: 
 		{
-			struct schedee * sch = mcast_out(tim, struct schedee, ktimer);
+			genos::schedee * sch = mcast_out(tim, genos::schedee, ktimer);
 			// извлечение из списка произойдёт при запуске, т.к. waiter использует поле schedee листа.
 			schedee_run(sch);
 			break;

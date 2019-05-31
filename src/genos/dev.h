@@ -11,18 +11,19 @@ namespace genos
 	public:
 		device_manager() : genos::resmngr("dev") {}
 
-		int lookup(const char* ns, genos::node** np) 
+		int lookup(const char* ns, genos::node** np) override
 		{
-		/*	genos::named_node* nit;
-			dlist_for_each_entry(nit, &list, lnk) 
+			dlist_head* it;
+			dlist_for_each(it, &list) 
 			{
+				genos::node * nit = dlist_entry(it, genos::node, lnk);
 				if (strcmp(nit->name, ns) == 0)
 				{
 					*np = nit;
 					return 0;
 				}
 			}
-			return ENOENT;*/
+			return ENOENT;
 		}
 	};
 

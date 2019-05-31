@@ -8,7 +8,7 @@ ssize_t write(int fd, const void* data, size_t size)
 	int ans;
 	genos::opennode * filp;
 
-	schedee* sch = current_schedee();
+	genos::schedee* sch = current_schedee();
 	
 	ans = sch->restbl.get_file(fd, &filp);
 	if (ans)

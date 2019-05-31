@@ -4,11 +4,36 @@
 #include <igris/datastruct/dlist.h>
 #include <errno.h>
 #include <string.h>
+#include <genos/ctrobj.h>
 
 namespace genos 
 {
-	class node;
-	class directory;
+	class opennode;
+
+	struct node 
+	{
+	public:
+		dlist_head lnk;
+		const char* name;
+
+	public:
+		virtual int write(const void* data, size_t size, int flags) { return ENOTSUP; }
+		virtual int read(void* data, size_t size, int flags) { return ENOTSUP; }
+
+		//virtual int write(const void* data, size_t size, genos::opennode* onode) { return ENOTSUP; }
+		//virtual int read(void* data, size_t size, genos::opennode* onode) { return ENOTSUP; }
+
+		virtual int release() { return 0; }
+		virtual int open(genos::opennode * filp) { return 0; }
+	};
+
+	class directory 
+	{
+	public:
+		virtual int iterate(char* buffer, size_t maxsz, genos::opennode* onode) { return ENOTSUP; }
+		virtual int mknode(const char* childname, genos::opennode* onode) { return ENOTSUP; }
+		virtual int rmnode(const char* childname, genos::opennode* onode) { return ENOTSUP; }
+	};
 
 	class opennode 
 	{
@@ -30,34 +55,11 @@ namespace genos
 		};
 	};
 
-	class node 
-	{
-	public:
-		virtual int write(const void* data, size_t size, int flags) { return ENOTSUP; }
-		virtual int read(void* data, size_t size, int flags) { return ENOTSUP; }
-
-		virtual int write(const void* data, size_t size, genos::opennode* onode) { return ENOTSUP; }
-		virtual int read(void* data, size_t size, genos::opennode* onode) { return ENOTSUP; }
-
-		virtual int release() { return 0; }
-		virtual int open(genos::opennode * filp) { return 0; }
-	};
-
-	class directory 
-	{
-	public:
-		virtual int iterate(char* buffer, size_t maxsz, genos::opennode* onode) { return ENOTSUP; }
-		virtual int mknode(const char* childname, genos::opennode* onode) { return ENOTSUP; }
-		virtual int rmnode(const char* childname, genos::opennode* onode) { return ENOTSUP; }
-	};
-
-
 	class named_node : public node
 	{
 	public:
-		dlist_head lnk;
-		const char* name;
-		named_node(const char* name) : lnk(DLIST_HEAD_INIT(lnk)), name(name) {}
+		named_node(){}
+		named_node(const char* name){}// : lnk(DLIST_HEAD_INIT(lnk)), name(name) {}
 	};
 
 	class named_node_list : public directory

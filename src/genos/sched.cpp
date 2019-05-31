@@ -18,8 +18,8 @@ DLIST_HEAD(waitlist);
 DLIST_HEAD(finallist);
 //struct dlist_head zombie_list;
 
-struct schedee * __current_schedee = NULL;
-struct schedee * current_schedee()
+genos::schedee * __current_schedee = NULL;
+genos::schedee * current_schedee()
 {
 	return __current_schedee;
 }
@@ -32,13 +32,13 @@ void schedee_manager_init()
 		dlist_init(&runlist[i]);
 }
 
-void __schedee_run(struct schedee * sch)
+void __schedee_run(genos::schedee * sch)
 {
 	DTRACE();
 	dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
 }
 
-void schedee_run(struct schedee * sch) 
+void schedee_run(genos::schedee * sch) 
 {
 	DTRACE();
 	system_lock();
@@ -52,7 +52,7 @@ void schedee_run(struct schedee * sch)
 	system_unlock();
 }
 
-void __schedee_wait_for(struct schedee * parent, struct schedee * child)
+void __schedee_wait_for(genos::schedee * parent, genos::schedee * child)
 {
 	DTRACE();
 	system_lock();
@@ -61,7 +61,7 @@ void __schedee_wait_for(struct schedee * parent, struct schedee * child)
 	system_unlock();
 }
 
-void __schedee_final(struct schedee * sch)
+void __schedee_final(genos::schedee * sch)
 {
 	DTRACE();
 
@@ -71,7 +71,7 @@ void __schedee_final(struct schedee * sch)
 	system_unlock();
 }
 
-void schedee_stop(struct schedee * sch)
+void schedee_stop(genos::schedee * sch)
 {
 	DTRACE();
 	system_lock();
@@ -82,7 +82,7 @@ void schedee_stop(struct schedee * sch)
 
 void schedee_exit()
 {
-	struct schedee * sch;
+	genos::schedee * sch;
 
 	sch = current_schedee();
 	__schedee_final(sch);
@@ -90,7 +90,7 @@ void schedee_exit()
 	__displace__();
 }
 
-void __schedee_execute(struct schedee * sch)
+void __schedee_execute(genos::schedee * sch)
 {
 	DTRACE();
 	__current_schedee = sch;
@@ -117,13 +117,13 @@ int schedee_manager_total_planed()
 void schedee_manager_step()
 {
 	DTRACE();
-	struct schedee* sch;
+	genos::schedee* sch;
 
 	// Отрабатываем логику завершения процессов.
 	irqs_disable();
 	while (!dlist_empty(&finallist))
 	{
-		sch = dlist_first_entry(&finallist, struct schedee, ctr.lnk);
+		sch = dlist_first_entry(&finallist, genos::schedee, ctr.lnk);
 		dlist_del_init(&sch->ctr.lnk);
 
 		irqs_enable();
@@ -140,7 +140,7 @@ void schedee_manager_step()
 	irqs_disable();
 	while (!dlist_empty(&unstoplist))
 	{
-		sch = dlist_first_entry(&unstoplist, struct schedee, ctr.lnk);
+		sch = dlist_first_entry(&unstoplist, genos::schedee, ctr.lnk);
 		__schedee_run(sch);
 	}
 	irqs_enable();
@@ -150,7 +150,7 @@ void schedee_manager_step()
 	{
 		if (!dlist_empty(&runlist[priolvl]))
 		{
-			sch = dlist_first_entry(&runlist[priolvl], struct schedee, ctr.lnk);
+			sch = dlist_first_entry(&runlist[priolvl], genos::schedee, ctr.lnk);
 			
 			if (sch->flag.killed) 
 			{
@@ -172,7 +172,7 @@ void schedee_manager_step()
 int __displace__()
 {
 	DTRACE();
-	struct schedee * sch = current_schedee();
+	genos::schedee * sch = current_schedee();
 
 	if (sch->flag.can_displace == 0)
 		return DISPLACE_ERROR;
@@ -195,7 +195,7 @@ void schedee_manager_debug_info()
 
 	for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++)
 	{
-		struct schedee * it;
+		genos::schedee * it;
 
 		dprln("priolvl:", priolvl);
 		dlist_for_each_entry(it, &runlist[priolvl], ctr.lnk) 

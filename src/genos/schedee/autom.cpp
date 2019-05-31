@@ -18,18 +18,18 @@
 	return sch;
 }*/
 
-void autom_schedee::execute()
+void genos::autom_schedee::execute()
 {
 	task(arg, &state);
 }
 
-int autom_schedee::displace()
+int genos::autom_schedee::displace()
 {
 	flag.runned = 0;
 	__context_displace_vector__();
 }
 
-void autom_schedee::finalize()
+void genos::autom_schedee::finalize()
 {
 	if (flag.dynamic)
 		BUG();

@@ -39,6 +39,7 @@ void* task(void* priv, int* state)
 			schedee_exit();
 			break;
 	}
+	return nullptr;
 }
 
 FDTABLE(sch_restbl, 5);
@@ -55,7 +56,6 @@ void blink(void* arg, genos::ktimer* tim)
 	tim->replan();
 }
 
-autom_schedee sch(task, nullptr);
 genos::ktimer blink_timer(blink, NULL, 1000);
 
 
@@ -63,7 +63,7 @@ genos::ktimer blink_timer(blink, NULL, 1000);
 void* mainproc_task(void* arg) 
 {
 	int fd = open_node(&dbgdev);
-	int df = open_directory(&genos::devmngr);
+	open_directory(&genos::devmngr);
 	
 	write(fd, "HelloWorld", 10);
 
@@ -74,6 +74,7 @@ void* mainproc_task(void* arg)
 	}
 }
 
+genos::autom_schedee sch(task, nullptr);
 COOPSCHEDEE_DECLARE(mainproc, mainproc_task, nullptr, 128);
 
 int main() 

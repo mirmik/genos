@@ -8,7 +8,7 @@ DLIST_HEAD(schedee_list);
 
 #ifdef MVFS_INCLUDED
 
-int schedee_get_free_fd(struct schedee * sch) {
+int schedee_get_free_fd(genos::schedee * sch) {
 	for(int i = 0; i < SCHEDEE_FDMAX; ++i) {
 		if (sch->fds[i] == NULL)
 			return i;
@@ -16,7 +16,7 @@ int schedee_get_free_fd(struct schedee * sch) {
 	return -1;
 }
 
-int schedee_setfd(struct schedee * sch, struct file * filp, int fd) {
+int schedee_setfd(genos::schedee * sch, struct file * filp, int fd) {
 	if (sch->fds[fd] != NULL) 
 		return ENOENT;
 
@@ -26,7 +26,7 @@ int schedee_setfd(struct schedee * sch, struct file * filp, int fd) {
 
 #endif //MVFS_INCLUDED
 
-void schedee_notify_finalize(struct schedee * sch) {
+void schedee_notify_finalize(genos::schedee * sch) {
 	if (sch->parent != NULL && sch->parent->state == SCHEDEE_STATE_WAIT_SCHEDEE) {
 		schedee_run(sch->parent); 
 	}
@@ -38,7 +38,7 @@ void schedee_list_debug_info()
 	struct dlist_head * it;
 	dlist_for_each(it, &schedee_list) 
 	{
-		struct schedee * sch = mcast_out(it, struct schedee, schedee_list_lnk);
+		genos::schedee * sch = mcast_out(it, genos::schedee, schedee_list_lnk);
 		dprptr(sch);
 		dpr(" execcounter:");
 		dpr(sch->execcounter);
@@ -53,7 +53,7 @@ void schedee_list_debug_info()
 }
 #endif
 
-void schedee::run() 
+void genos::schedee::run() 
 {
 	schedee_run(this);
 }

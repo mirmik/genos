@@ -24,7 +24,7 @@ namespace genos
 
 		int open(genos::opennode * ores) 
 		{
-			
+			return 0;
 		}
 	};
 }

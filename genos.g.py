@@ -154,7 +154,7 @@ module("genos",
 
 
 
-def genos_firmware(sources=[], mdepends=[], cxx_flags=""):
+def genos_firmware(sources=[], mdepends=[], **kwargs):
 	import shutil
 	import licant.modules
 
@@ -193,8 +193,8 @@ def genos_firmware(sources=[], mdepends=[], cxx_flags=""):
 			licant.cxx_application("firmware",
 				binutils=__configure__.binutils,
 				sources=sources,
-				cxx_flags=cxx_flags,
-				mdepends=all_modules
+				mdepends=all_modules,
+				**kwargs
 			)
 
 			@licant.routine(deps=["firmware"])

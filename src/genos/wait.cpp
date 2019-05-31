@@ -13,7 +13,7 @@ int waiter_unwait(struct dlist_head * lnk)
 		case CTROBJ_WAITER_SCHEDEE:
 			{
 				struct waiter * w = mcast_out(ctr, struct waiter, ctr);
-				struct schedee * sch = mcast_out(w, struct schedee, waiter);
+				genos::schedee * sch = mcast_out(w, genos::schedee, waiter);
 				// извлечение из списка произойдёт при запуске, т.к. waiter использует поле schedee листа.
 				schedee_run(sch);
 			}
@@ -34,7 +34,7 @@ int waiter_unwait(struct dlist_head * lnk)
 
 int wait_current_schedee(struct dlist_head * head, int priority) 
 {
-	struct schedee * sch;
+	genos::schedee * sch;
 
 	sch = current_schedee();
 

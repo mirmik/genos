@@ -5,7 +5,7 @@
 
 int msleep(unsigned int ms)
 {
-	struct schedee * sch;
+	genos::schedee * sch;
 	struct ktimer_base * timer;
 
 	sch = current_schedee();
