@@ -64,10 +64,10 @@ module("genos.sched", "impl",
 		"src/genos/wait.cpp",
 		"src/genos/ktimer.cpp",
 
-		"src/genos/mvfs/fops.cpp",
-		"src/genos/mvfs/directory.cpp",
-		"src/genos/mvfs/vfsnode.cpp",
-		"src/genos/mvfs/fdtable.cpp",
+		"src/genos/fops.cpp",
+		#"src/genos/mvfs/directory.cpp",
+		"src/genos/node.cpp",
+		"src/genos/fdtable.cpp",
 		
 		"src/genos/errno.cpp"
 	],

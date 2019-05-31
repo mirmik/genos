@@ -5,7 +5,7 @@
 #include <genos/wait.h>
 #include <genos/ktimer.h>
 
-#include <genos/mvfs/fdtable.h>
+#include <genos/restbl.h>
 
 #ifdef MVFS_INCLUDED
 struct file;
@@ -71,7 +71,7 @@ struct schedee
 	virtual int displace() = 0;
 	virtual void finalize() = 0; 
 
-	void set_fdtable(genos::file* tbl, uint8_t tblsize) 
+	void set_fdtable(genos::opennode* tbl, uint8_t tblsize) 
 	{ restbl.set_table(tbl, tblsize); }
 
 	void run();

@@ -46,8 +46,8 @@ void* task(void* priv, int* state)
 
 FDTABLE(sch_restbl, 5);
 
-genos::directory devdir("dev");
-genos::directory mntdir("mnt");
+//genos::directory devdir("dev");
+//genos::directory mntdir("mnt");
 
 genos::debug_device dbgdev;
 
@@ -83,9 +83,9 @@ int main()
 	board_init();
 	scheduler_init();
 
-	genos::root_directory.add_child(&devdir);
-	genos::root_directory.add_child(&mntdir);
-	devdir.add_child(&dbgdev);
+	//genos::root_directory.add_child(&devdir);
+	//genos::root_directory.add_child(&mntdir);
+	//devdir.add_child(&dbgdev);
 
 	//sch.set_fdtable(sch_restbl, 5);
 	//sch.run();

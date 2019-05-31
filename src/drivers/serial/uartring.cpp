@@ -94,10 +94,8 @@ int uartring_device::release()
 	return 0;
 }
 
-int uartring_device::open(genos::file * ores) 
+int uartring_device::open(genos::opennode * ores) 
 {
-	ores->node = this;
-
 	uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
 	ring_clean(&rxring);
 	ring_clean(&txring);

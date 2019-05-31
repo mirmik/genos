@@ -1,0 +1,28 @@
+#include <genos/node.h>
+#include <genos/schedee.h>
+
+int genos::open_node(genos::node * res) 
+{
+	int ans;
+	int fd;
+	genos::opennode * filp;
+
+	ans = current_schedee()->restbl.get_available_fd(&fd);
+	if (ans) 
+	{
+		errno = ans;
+		return -1;
+	}
+
+	filp = & current_schedee()->restbl[fd];
+	filp -> node = res;	
+
+	ans = res->open(filp);
+	if (ans) 
+	{
+		errno = ans;
+		return -1;
+	}
+
+	return fd;
+}
