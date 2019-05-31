@@ -63,9 +63,20 @@ genos::ktimer blink_timer(blink, NULL, 1000);
 void* mainproc_task(void* arg) 
 {
 	int fd = open_node(&dbgdev);
-	open_directory(&genos::devmngr);
+	int df = open_directory(&genos::devmngr);
 	
-	write(fd, "HelloWorld", 10);
+	char buf[16];
+	while(1) {
+		readdir(df, buf, 16);
+		if (*buf != 0) 
+		{
+			write(fd, buf, strlen(buf));
+			write(fd, "\r\n", 2);
+		}
+		else
+			break;
+	};
+
 
 	while(1) 
 	{

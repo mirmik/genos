@@ -6,16 +6,15 @@
 #include <string.h>
 #include <genos/ctrobj.h>
 
+#define GENOS_RESOURCE_FILE 1
+#define GENOS_RESOURCE_DIRECTORY 1
+
 namespace genos 
 {
 	class opennode;
 
 	struct node 
 	{
-	public:
-		dlist_head lnk;
-		const char* name;
-
 	public:
 		virtual int write(const void* data, size_t size, int flags) { return ENOTSUP; }
 		virtual int read(void* data, size_t size, int flags) { return ENOTSUP; }
@@ -44,7 +43,7 @@ namespace genos
 			dlist_head * dh; 
 		};
 		
-		uint8_t resource_type;
+		uint8_t restype;
 
 		int flags;
 
@@ -58,14 +57,18 @@ namespace genos
 	class named_node : public node
 	{
 	public:
+		dlist_head lnk;
+		const char* name;
+
+	public:
 		named_node(){}
-		named_node(const char* name){}// : lnk(DLIST_HEAD_INIT(lnk)), name(name) {}
+		named_node(const char* name) : lnk(DLIST_HEAD_INIT(lnk)), name(name) {}
 	};
 
 	class named_node_list : public directory
 	{
 	public:
-		dlist_head list;
+		dlist_head list = DLIST_HEAD_INIT(list);
 
 		int iterate(char* buffer, size_t maxsz, genos::opennode* onode) override 
 		{ 
@@ -79,7 +82,7 @@ namespace genos
 				return 0; 
 			}
 			
-			strncpy(buffer, ((genos::named_node*)(onode->node))->name, maxsz);
+			strncpy(buffer, dlist_entry(onode->dh, named_node, lnk)->name, maxsz);
 			return 0;
 		}
 	};

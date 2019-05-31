@@ -11,7 +11,9 @@ namespace genos
 	public:
 		char_device(const char* name) : 
 			named_node(name) 
-		{} 
+		{
+			devmngr.link(this);
+		} 
 	};
 }
 

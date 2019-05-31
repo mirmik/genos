@@ -16,6 +16,7 @@ int genos::open_node(genos::node * res)
 
 	filp = & current_schedee()->restbl[fd];
 	filp -> node = res;	
+	filp -> restype = GENOS_RESOURCE_FILE;
 
 	ans = res->open(filp);
 	if (ans) 
@@ -41,7 +42,9 @@ int genos::open_directory(genos::directory * res)
 	}
 
 	filp = & current_schedee()->restbl[fd];
-	filp -> dir = res;	
+	
+	filp -> dir = res;
+	filp -> restype = GENOS_RESOURCE_DIRECTORY;
 
 	/*ans = res->open(filp);
 	if (ans) 
