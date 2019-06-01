@@ -65,9 +65,9 @@ module("genos.sched", "impl",
 		"src/genos/ktimer.cpp",
 
 		"src/genos/fops.cpp",
-		#"src/genos/mvfs/directory.cpp",
-		"src/genos/node.cpp",
-		"src/genos/fdtable.cpp",
+		
+		"src/genos/resource.cpp",
+		"src/genos/resmngr.cpp",
 		"src/genos/dev.cpp",
 		
 		"src/genos/errno.cpp"
@@ -120,6 +120,7 @@ module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
 module ("genos.utility.numcmd", sources = ["src/utility/numcmd.c"], mdepends=["igris.protocols.numcmd"])
 module ("genos.utility.contty", sources = ["src/utility/contty.c"])
 module ("genos.utility.contty2", sources = ["src/utility/contty2.c"])
+module ("genos.utility.contty3", sources = ["src/utility/contty3.c"])
 module ("genos.utility.mshell", sources = ["src/utility/mshell.c"])
 
 module("genos.diag", "stub", sources = ["src/diag/diag_stub.c"])

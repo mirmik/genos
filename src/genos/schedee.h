@@ -5,7 +5,7 @@
 #include <genos/wait.h>
 #include <genos/ktimer.h>
 
-#include <genos/restbl.h>
+#include <genos/resource.h>
 
 #ifdef MVFS_INCLUDED
 struct file;
@@ -60,7 +60,7 @@ namespace genos
 
 		int16_t local_errno;
 
-		genos::fdtable restbl;
+		genos::restbl restbl;
 
 #ifdef MVFS_INCLUDED
 		struct node * pwd;
@@ -73,7 +73,7 @@ namespace genos
 		virtual int displace() = 0;
 		virtual void finalize() = 0;
 
-		void set_fdtable(genos::opennode* tbl, uint8_t tblsize)
+		void set_restbl(genos::openres* tbl, uint8_t tblsize)
 		{ restbl.set_table(tbl, tblsize); }
 
 		void run();

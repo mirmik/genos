@@ -22,7 +22,7 @@ namespace genos
 			return size;
 		}
 
-		int open(genos::opennode * ores) 
+		int open(genos::openres * ores) 
 		{
 			return 0;
 		}

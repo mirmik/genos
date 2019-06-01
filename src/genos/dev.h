@@ -1,7 +1,7 @@
 #ifndef GENOS_DEV_H
 #define GENOS_DEV_H
 
-#include <genos/node.h>
+#include <genos/resource.h>
 #include <genos/resmngr.h>
 
 namespace genos 
@@ -9,21 +9,22 @@ namespace genos
 	class device_manager : public genos::resmngr, public genos::named_node_list
 	{
 	public:
-		device_manager() : genos::resmngr("dev"), genos::named_node_list() {}
+		device_manager() : genos::resmngr("/dev"), genos::named_node_list() {}
 
-		int lookup(const char* ns, genos::node** np) override
+		int open(const char* ns, genos::openres* filp) override
 		{
 			dlist_head* it;
+			ns++; // Drop first '/'
+
 			dlist_for_each(it, &list) 
 			{
 				genos::named_node * nit = dlist_entry(it, genos::named_node, lnk);
 				if (strcmp(nit->name, ns) == 0)
 				{
-					*np = nit;
-					return 0;
+					return open_node(nit, filp);
 				}
 			}
-			return ENOENT;
+			return SET_ERRNO(-ENOENT);
 		}
 
 		void link(genos::named_node* node) 

@@ -7,19 +7,20 @@
 #include <genos/wait.h>
 
 int uartring_device::write(const void* data,
-                          unsigned int size,
-                          int flags)
+                           unsigned int size,
+                           int flags)
 {
 	int curwrited;
 	size_t writed = 0;
 
 	system_lock();
+
 	if (uart_device_cantx(udev) && ring_empty(&txring))
 	{
 		writed++;
 		uart_device_sendbyte(udev, *(char*)data);
 	}
-	
+
 	while (size != writed)
 	{
 		curwrited = ring_write(&txring,
@@ -37,7 +38,8 @@ int uartring_device::write(const void* data,
 		if (flags & IO_HOTLOOP)
 			continue;
 
-		if ((flags & IO_NOBLOCK) || current_schedee() == NULL) {
+		if ((flags & IO_NOBLOCK) || current_schedee() == NULL)
+		{
 			break;
 		}
 
@@ -53,31 +55,32 @@ int uartring_device::write(const void* data,
 }
 
 int uartring_device::read(void* data,
-                         unsigned int size, int flags)
+                          unsigned int size, int flags)
 {
 	int ret;
 
 	system_lock();
-	
-	while (ring_empty(&rxring)) 
+
+	while (ring_empty(&rxring))
 	{
 
-		if (flags & IO_NOBLOCK) 
+		if (flags & IO_NOBLOCK)
 			return 0;
 
 		//dprln("WAIT");
-		if (wait_current_schedee(&rxwait, 0) == DISPLACE_VIRTUAL) {
+		if (wait_current_schedee(&rxwait, 0) == DISPLACE_VIRTUAL)
+		{
 			//dprln("AFTERWAIT");
-			return 0; 
+			return 0;
 		}
 	}
 
 	system_unlock();
-	
-	if (flags & IO_ONLYWAIT) 
+
+	if (flags & IO_ONLYWAIT)
 		return 0;
 
-		//dprln("READ");
+	//dprln("READ");
 
 	system_lock();
 	ret = ring_read(&rxring, rxbuffer, (char*)data, size);
@@ -86,19 +89,37 @@ int uartring_device::read(void* data,
 	return ret;
 }
 
-int uartring_device::release() 
+int uartring_device::release()
 {
-	uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
-	ring_clean(&rxring);
-	ring_clean(&txring);
+	--refs;
+
+	if (refs == 0)
+	{
+		uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
+		ring_clean(&rxring);
+		ring_clean(&txring);
+	}
+
+	dprln("release");
+	DPRINT(refs);
+
 	return 0;
 }
 
-int uartring_device::open(genos::opennode * ores) 
+int uartring_device::open(genos::openres * ores)
 {
-	uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
-	ring_clean(&rxring);
-	ring_clean(&txring);
+	dprln("open");
+	DPRINT(refs);
+
+	if (refs == 0)
+	{
+		uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
+		ring_clean(&rxring);
+		ring_clean(&txring);
+	}
+
+	refs++;
+
 	return 0;
 }
 
@@ -137,33 +158,34 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 	switch (code)
 	{
 		case UART_IRQCODE_TX:
-		{
-			if ( ring_empty(&uring->txring) )
 			{
-				uart_device_ctrirqs(uring->udev, UART_CTRIRQS_TXOFF);
-				unwait_one(&uring->txwait);
+				if ( ring_empty(&uring->txring) )
+				{
+					uart_device_ctrirqs(uring->udev, UART_CTRIRQS_TXOFF);
+					unwait_one(&uring->txwait);
+					return;
+				}
+
+				char c = ring_getc(&uring->txring, uring->txbuffer);
+				uart_device_sendbyte(uring->udev, c);
 				return;
 			}
 
-			char c = ring_getc(&uring->txring, uring->txbuffer);
-			uart_device_sendbyte(uring->udev, c);
-			return;
-		}
-
 		case UART_IRQCODE_RX:
-		{
-			char c;
-
-			c = uart_device_recvbyte(uring->udev);
-			if (uring->debug_mode) 
 			{
-				dpr("i recv: "); dprhexln(c); 
-			}
+				char c;
 
-			ring_putc(&uring->rxring, uring->rxbuffer, c);
-			unwait_one(&uring->rxwait);
-			return;
-		}
+				c = uart_device_recvbyte(uring->udev);
+
+				if (uring->debug_mode)
+				{
+					dpr("i recv: "); dprhexln(c);
+				}
+
+				ring_putc(&uring->rxring, uring->rxbuffer, c);
+				unwait_one(&uring->rxwait);
+				return;
+			}
 
 		case UART_IRQCODE_TC: //fallthrow
 			BUG();
@@ -175,7 +197,7 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 }
 
 void uartring_emulate_read(struct uartring_device * dev,
-                           const char* data, unsigned int len) 
+                           const char* data, unsigned int len)
 {
 	system_lock();
 

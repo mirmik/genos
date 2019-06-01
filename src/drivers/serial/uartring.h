@@ -43,6 +43,7 @@ struct uartring_device : public genos::char_device
 	struct dlist_head rxwait = DLIST_HEAD_INIT(rxwait);
 
 	uint8_t debug_mode = 0;
+	int refs = 0;
 
 	uartring_device(const char* name, uart_device * udev, 
 			char* rxbuffer, char* txbuffer,
@@ -56,7 +57,7 @@ struct uartring_device : public genos::char_device
 	int read(void* data, size_t size, int flags) override;
 	int write(const void* data, size_t size, int flags) override;
 	int release() override;
-	int open(genos::opennode * filp) override;
+	int open(genos::openres * filp) override;
 };
 
 #define UARTRING_DECLARE(name, cname, uart, rxsz, txsz)				 			\
