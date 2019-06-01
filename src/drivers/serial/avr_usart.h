@@ -6,31 +6,30 @@
 
 #include <hal/irqtable.h>
 
-__BEGIN_DECLS
-
-int avr_usart_device_enable(struct uart_device * u, int en);
-int avr_usart_device_ctrirqs(struct uart_device * u, uint8_t cmd);
-int avr_usart_device_recvbyte(struct uart_device * u);
-int avr_usart_device_sendbyte(struct uart_device * u, int b);
-int avr_usart_device_cantx(struct uart_device * u);
-int avr_usart_device_hasrx(struct uart_device * u);
-int avr_usart_device_setup(struct uart_device * u,
-                             int32_t baud, char parity,
-                             uint8_t databits, uint8_t stopbits);
-
-__END_DECLS
-
 extern const struct uart_device_operations avr_usart_device_operations;
 
-struct avr_usart_device
-{
-	struct uart_device dev;
-	
+struct avr_usart_device : public uart_device
+{	
 	struct usart_regs * regs;
 	uint8_t base_irq;
+
+	int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
+	int enable(int en) override;
+	int ctrirqs(uint8_t cmd) override;
+	int recvbyte() override;
+	int sendbyte(int c) override;
+	int cantx() override;
+	int hasrx() override;
+
+	avr_usart_device(struct usart_regs * regs, int irqno) 
+		: regs(regs), base_irq(irqno) 
+	{}
+
+private:
+	int irqinit();
 };
 
 #define AVR_USART_DEVICE_DECLARE(name, regs, irqno)	\
-struct avr_usart_device name = {{&avr_usart_device_operations}, regs, irqno}
+struct avr_usart_device name = {regs, irqno}
 
 #endif

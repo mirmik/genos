@@ -40,7 +40,16 @@ ssize_t write(int fd, const void* data, size_t size)
 
 ssize_t read(int fd, void* data, size_t size) 
 {
-	BUG();
+	genos::openres * filp = _get_schedee_file(fd);
+	if (filp == nullptr)
+		return SET_ERRNO(-EBADF);
+
+	if (!(filp->restype & GENOS_RESOURCE_FILE)) 
+	{
+		return SET_ERRNO(-ENOTSUP); 
+	}
+
+	return filp -> node -> read(data, size, filp->flags);
 }
 
 int readdir(int fd, char* buf, size_t maxsz) 

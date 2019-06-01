@@ -13,22 +13,21 @@
 
 static int newline(struct contty3_context * cntxt)
 {
-	/*int ret;
+	int ret;
 	cntxt->rl.line.buf[cntxt->rl.line.len] = 0;
 	ret = mshell_execn(cntxt->rl.line.buf, cntxt->rl.line.len, SH_INTERNAL_SPLIT, NULL, 1);
 
 	switch (ret)
 	{
 		case ENOENT:
-			cntxt->cdev->c_ops->write(
-			    cntxt->cdev, "Entry not found\n\r", 17, 0);
-			cntxt->cdev->c_ops->write(cntxt->cdev, "message: ", 9, 0);
-			cntxt->cdev->c_ops->write(cntxt->cdev, cntxt->rl.line.buf, cntxt->rl.line.len, 0);
-			cntxt->cdev->c_ops->write(cntxt->cdev, "\r\n", 2, 0);
+			write(STDOUT_FILENO, "Entry not found\n\r", 17);
+			write(STDOUT_FILENO, "message: ", 9);
+			write(STDOUT_FILENO, cntxt->rl.line.buf, cntxt->rl.line.len);
+			write(STDOUT_FILENO, "\r\n", 2);
 			break;
 	}
 
-	return ret;*/
+	return ret;
 	return 0;
 }
 
@@ -44,16 +43,15 @@ void * contty3_automate(void * arg, int * state)
 	int ret;
 
 	struct contty3_context * cntxt = (struct contty3_context *) arg;
-	
-	cntxt->wfd = open(cntxt->iopath, 0);
-	cntxt->rfd = open(cntxt->iopath, 0);
-	
 	//struct serial_device * cdev = cntxt->cdev;
 	struct readline * rl = &cntxt->rl;
 
 	switch (*state)
 	{
 		case 0:
+			open(cntxt->iopath, 0);
+			open(cntxt->iopath, 0);
+
 			if (cntxt->debug_mode)
 				dprln("contty: state 0");
 
@@ -61,27 +59,27 @@ void * contty3_automate(void * arg, int * state)
 			readline_history_init(rl, cntxt->hbuffer, CONTTY3_HISTORY_SIZE);
 			*state = 1;
 
-	/*	case 1:
+		case 1:
 			if (cntxt->debug_mode)
 				dprln("contty: state 1");
 
 			readline_newline_do(rl);
 			*state = 2;
-			cdev->c_ops->write(cdev, "$ ", 2, 0);
+			write(STDOUT_FILENO, "$ ", 2);
 
 		case 2:
 			if (cntxt->debug_mode)
 				dprln("contty: state 2");
 
 			*state = 3;
-			cdev->c_ops->read(cdev, &c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
+			read(STDIN_FILENO, &c, 0); //Неблокирующий wait для автомата.
 			break;
 
 		case 3:
 			if (cntxt->debug_mode)
 				dprln("contty: state 3");
 
-			while ((ret = cdev->c_ops->read(cdev, &c, 1, IO_NOBLOCK)))
+			while ((ret = read(STDIN_FILENO, &c, 1)))
 			{
 				if (cntxt->debug_mode)
 				{
@@ -97,48 +95,48 @@ void * contty3_automate(void * arg, int * state)
 				{
 					case READLINE_ECHOCHAR:
 					{
-						cdev->c_ops->write(cdev, &c, 1, 0);
+						write(STDOUT_FILENO, &c, 1);
 
 						if (!sline_in_rightpos(&rl->line))
 						{
 							char buf[16];
 
-							cdev->c_ops->write(cdev, sline_rightpart(&rl->line), sline_rightsize(&rl->line), 0);
+							write(STDOUT_FILENO, sline_rightpart(&rl->line), sline_rightsize(&rl->line));
 							ret = vt100_left(buf, sline_rightsize(&rl->line));
-							cdev->c_ops->write(cdev, buf, ret, 0);
+							write(STDOUT_FILENO, buf, ret);
 						}
 					}
 					break;
 
 					case READLINE_NEWLINE:
 						*state = 1;
-						cdev->c_ops->write(cdev, "\r\n", 2, 0);
+						write(STDOUT_FILENO, "\r\n", 2);
 						newline(cntxt);
 						return NULL;
 
 					case READLINE_BACKSPACE:
 					{
-						cdev->c_ops->write(cdev, VT100_LEFT, 3, 0);
-						cdev->c_ops->write(cdev, VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
+						write(STDOUT_FILENO, VT100_LEFT, 3);
+						write(STDOUT_FILENO, VT100_ERASE_LINE_AFTER_CURSOR, 3);
 
 						if (!sline_in_rightpos(&rl->line))
 						{
 							char buf[16];
 
-							cdev->c_ops->write(cdev, sline_rightpart(&rl->line), sline_rightsize(&rl->line), 0);
+							write(STDOUT_FILENO, sline_rightpart(&rl->line), sline_rightsize(&rl->line));
 							ret = vt100_left(buf, sline_rightsize(&rl->line));
-							cdev->c_ops->write(cdev, buf, ret, 0);
+							write(STDOUT_FILENO, buf, ret);
 						}
 						break;
 					}
 					
 
 					case READLINE_RIGHT:
-						cdev->c_ops->write(cdev, VT100_RIGHT, 3, 0);
+						write(STDOUT_FILENO, VT100_RIGHT, 3);
 						break;
 
 					case READLINE_LEFT:
-						cdev->c_ops->write(cdev, VT100_LEFT, 3, 0);
+						write(STDOUT_FILENO, VT100_LEFT, 3);
 						break;
 
 					case READLINE_NOTHING:
@@ -151,11 +149,11 @@ void * contty3_automate(void * arg, int * state)
 						if (rl->lastsize)
 						{
 							ret = vt100_left(buf, rl->lastsize);
-							cdev->c_ops->write(cdev, buf, ret, 0);
-							cdev->c_ops->write(cdev, VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
+							write(STDOUT_FILENO, buf, ret);
+							write(STDOUT_FILENO, VT100_ERASE_LINE_AFTER_CURSOR, 3);
 						}
 						if (rl->line.len)
-							cdev->c_ops->write(cdev, rl->line.buf, rl->line.len, 0);
+							write(STDOUT_FILENO, rl->line.buf, rl->line.len);
 						break;
 					}
 
@@ -166,7 +164,7 @@ void * contty3_automate(void * arg, int * state)
 
 			}
 			*state = 2;
-			break;*/
+			break;
 
 		default:
 			BUG();

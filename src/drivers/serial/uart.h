@@ -19,28 +19,7 @@
 #define UART_CTRIRQS_TCON 4
 #define UART_CTRIRQS_TCOFF 5
 
-struct uart_device;
 typedef void(*uart_irq_handler_t)(void*, int);
-
-typedef int(*uart_enable_t)(struct uart_device * u, int);
-typedef int(*uart_ctrirqs_t)(struct uart_device * u, uint8_t);
-typedef int(*uart_recvbyte_t)(struct uart_device * u);
-typedef int(*uart_sendbyte_t)(struct uart_device * u, int);
-typedef int(*uart_cantx_t)(struct uart_device * u);
-typedef int(*uart_hasrx_t)(struct uart_device * u);
-typedef int(*uart_setup_t)(struct uart_device * u,
-                           int32_t, char, uint8_t, uint8_t);
-
-struct uart_device_operations
-{
-	uart_enable_t enable;
-	uart_ctrirqs_t ctrirqs;
-	uart_recvbyte_t recvbyte;
-	uart_sendbyte_t sendbyte;
-	uart_cantx_t cantx;
-	uart_hasrx_t hasrx;
-	uart_setup_t setup;
-};
 
 struct uart_device
 {
@@ -48,59 +27,14 @@ struct uart_device
 
 	uart_irq_handler_t  handler;
 	void*               handarg;
+
+	virtual int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) = 0;
+	virtual int enable(int en) = 0;
+	virtual int ctrirqs(uint8_t cmd) = 0;
+	virtual int recvbyte() = 0;
+	virtual int sendbyte(int c) = 0;
+	virtual int cantx() = 0;
+	virtual int hasrx() = 0;
 };
-
-__BEGIN_DECLS
-
-static inline void
-uart_device_init(struct uart_device * u,
-                 const struct uart_device_operations * u_ops)
-{
-	u -> u_ops = u_ops;
-}
-
-static inline int
-uart_device_setup(void* dev, int32_t baud, char parity,
-                  uint8_t databits, uint8_t stopbits) 
-{
-	RETYPE(struct uart_device*, u, dev);
-	return u->u_ops->setup(u, baud, parity, databits, stopbits);
-}
-
-static inline 
-int uart_device_sendbyte(void* dev, int symbol) 
-{
-	RETYPE(struct uart_device*, u, dev);
-	return u->u_ops->sendbyte(u, symbol);		
-}
-
-static inline 
-int uart_device_recvbyte(void* dev) 
-{
-	RETYPE(struct uart_device*, u, dev);
-	return u->u_ops->recvbyte(u);		
-}
-
-static inline 
-int uart_device_cantx(void* dev) 
-{
-	RETYPE(struct uart_device*, u, dev);
-	return u->u_ops->cantx(u);		
-}
-
-static inline 
-int uart_device_hasrx(void* dev) 
-{
-	RETYPE(struct uart_device*, u, dev);
-	return u->u_ops->hasrx(u);		
-}
-
-static inline 
-int uart_device_ctrirqs(struct uart_device* u, uint8_t cmd) 
-{
-	return u->u_ops->ctrirqs(u, cmd);		
-}
-
-__END_DECLS
 
 #endif

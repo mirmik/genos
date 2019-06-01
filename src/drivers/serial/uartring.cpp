@@ -15,10 +15,10 @@ int uartring_device::write(const void* data,
 
 	system_lock();
 
-	if (uart_device_cantx(udev) && ring_empty(&txring))
+	if (udev->cantx() && ring_empty(&txring))
 	{
 		writed++;
-		uart_device_sendbyte(udev, *(char*)data);
+		udev->sendbyte(*(char*)data);
 	}
 
 	while (size != writed)
@@ -28,7 +28,7 @@ int uartring_device::write(const void* data,
 		                       (char*)data + writed, size - writed);
 
 		if (curwrited)
-			uart_device_ctrirqs(udev, UART_CTRIRQS_TXON);
+			udev->ctrirqs(UART_CTRIRQS_TXON);
 
 		writed += curwrited;
 
@@ -95,7 +95,7 @@ int uartring_device::release()
 
 	if (refs == 0)
 	{
-		uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
+		udev->ctrirqs(UART_CTRIRQS_TXOFF);
 		ring_clean(&rxring);
 		ring_clean(&txring);
 	}
@@ -113,7 +113,7 @@ int uartring_device::open(genos::openres * ores)
 
 	if (refs == 0)
 	{
-		uart_device_ctrirqs(udev, UART_CTRIRQS_TXOFF);
+		udev->ctrirqs(UART_CTRIRQS_TXOFF);
 		ring_clean(&rxring);
 		ring_clean(&txring);
 	}
@@ -123,19 +123,17 @@ int uartring_device::open(genos::openres * ores)
 	return 0;
 }
 
-int uartring_device_room(struct serial_device* dev)
+int uartring_device::room()
 {
-	RETYPE(struct uartring_device *, udev, dev);
-	return ring_room(&udev->txring);
+	return ring_room(&txring);
 }
 
-int uartring_device_avail(struct serial_device* dev)
+int uartring_device::avail()
 {
-	RETYPE(struct uartring_device *, udev, dev);
-	return ring_avail(&udev->rxring);
+	return ring_avail(&rxring);
 }
 
-/*int uartring_device_waitread(struct serial_device* dev)
+/*int uartring_device::waitread(struct serial_device* dev)
 {
 	RETYPE(struct uartring_device *, udev, dev);
 	system_lock();
@@ -161,13 +159,13 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 			{
 				if ( ring_empty(&uring->txring) )
 				{
-					uart_device_ctrirqs(uring->udev, UART_CTRIRQS_TXOFF);
+					uring->udev->ctrirqs(UART_CTRIRQS_TXOFF);
 					unwait_one(&uring->txwait);
 					return;
 				}
 
 				char c = ring_getc(&uring->txring, uring->txbuffer);
-				uart_device_sendbyte(uring->udev, c);
+				uring->udev->sendbyte(c);
 				return;
 			}
 
@@ -175,7 +173,7 @@ void uartring_ddevice_irq_handler(void* priv, int code)
 			{
 				char c;
 
-				c = uart_device_recvbyte(uring->udev);
+				c = uring->udev->recvbyte();
 
 				if (uring->debug_mode)
 				{
@@ -207,10 +205,10 @@ void uartring_emulate_read(struct uartring_device * dev,
 	system_unlock();
 }
 
-void uartring_begin(struct uartring_device * dev, struct uart_device * uart)
+void uartring_device::begin(struct uart_device * uart)
 {
-	dev -> udev = uart;
+	udev = uart;
 	uart -> handler = uartring_ddevice_irq_handler;
-	uart -> handarg = (void*)dev;
-	uart_device_ctrirqs(dev->udev, UART_CTRIRQS_RXON);
+	uart -> handarg = (void*)this;
+	udev->ctrirqs(UART_CTRIRQS_RXON);
 }

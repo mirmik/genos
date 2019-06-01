@@ -7,6 +7,8 @@
 #include <igris/datastruct/dlist.h>
 #include <igris/dprint.h>
 
+#include <limits.h>
+
 #define GENOS_RESOURCE_FILE 1
 #define GENOS_RESOURCE_DIRECTORY 1
 
@@ -27,6 +29,8 @@ namespace genos
 	public:
 		virtual int write(const void* data, size_t size, int flags) { return ENOTSUP; }
 		virtual int read(void* data, size_t size, int flags) { return ENOTSUP; }
+		virtual int room() { return INT_MAX; }
+		virtual int avail() { return INT_MAX; }
 		//virtual int write(const void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 		//virtual int read(void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 	};

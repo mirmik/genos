@@ -13,9 +13,6 @@ struct contty3_context {
 	unsigned char debug_mode;
 	char buffer[CONTTY3_LINE_LENGTH];
 	char hbuffer[CONTTY3_LINE_LENGTH * CONTTY3_HISTORY_SIZE];
-
-	int rfd;
-	int wfd;
 };
 
 __BEGIN_DECLS

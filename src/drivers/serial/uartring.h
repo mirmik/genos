@@ -32,7 +32,6 @@ extern const struct serial_device_operations uartring_dev_ops;
 
 struct uartring_device : public genos::char_device
 {
-	//struct serial_device cdev;
 	struct uart_device * udev;
 	char* rxbuffer;
 	char* txbuffer;
@@ -58,6 +57,11 @@ struct uartring_device : public genos::char_device
 	int write(const void* data, size_t size, int flags) override;
 	int release() override;
 	int open(genos::openres * filp) override;
+
+	int room() override;
+	int avail() override;
+
+	void begin(struct uart_device * udev);
 };
 
 #define UARTRING_DECLARE(name, cname, uart, rxsz, txsz)				 			\

@@ -11,6 +11,8 @@
 #include <drivers/serial/uartring.h>
 #include <drivers/cdev/virtual/debug.h>
 
+#include <utility/mshell.h>
+
 #include <unistd.h>
 
 #include  <genos/ktimer.h>
@@ -90,6 +92,11 @@ void* mainproc_task(void* arg)
 	}
 }
 
+mshell_command mshell_commands_table[] = 
+{
+	MSHELL_TBLFIN
+};
+
 genos::autom_schedee sch(task, nullptr);
 COOPSCHEDEE_DECLARE(mainproc, mainproc_task, nullptr, 128);
 
@@ -100,6 +107,9 @@ int main()
 {
 	board_init();
 	scheduler_init();
+
+	usart0.setup(115200, 'n', 8, 1);
+	serial0.begin(&usart0);
 
 	//genos::root_directory.add_child(&devdir);
 	//genos::root_directory.add_child(&mntdir);
