@@ -100,17 +100,11 @@ int uartring_device::release()
 		ring_clean(&txring);
 	}
 
-	dprln("release");
-	DPRINT(refs);
-
 	return 0;
 }
 
 int uartring_device::open(genos::openres * ores)
 {
-	dprln("open");
-	DPRINT(refs);
-
 	if (refs == 0)
 	{
 		udev->ctrirqs(UART_CTRIRQS_TXOFF);

@@ -14,8 +14,9 @@
 #include <utility/mshell.h>
 
 #include <unistd.h>
-
 #include  <genos/ktimer.h>
+
+#include <genos/nav.h>
 
 UARTRING_DECLARE(serial0, "serial0", &usart0, 16, 128);
 int wr;
