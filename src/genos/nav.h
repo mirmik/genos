@@ -8,27 +8,33 @@ namespace genos
 {
 	class navigation_context
 	{
-		char * pwdbuf;
-		int bufsz;
+		char * buf;
+		int cap;
 
-		navigation_context(char* buf, int bufsz) 
-			: pwdbuf(buf), bufsz(bufsz) 
+	public:
+		navigation_context(char* buf, int cap) 
+			: buf(buf), cap(cap) 
 		{
-			strcpy(pwdbuf, "/");
+			strcpy(path, "/");
 		}
 
-		void add_node(const char * nd, int sz) 
+		// Установить новое значение пути. Путь обязан быть абсолютным.
+		char * set(char * abspath); 
+		 
+
+		// Добавить часть пути к текущему. Возвращает указатель на предыдущий финал строки.
+		// Для возможности восстановления её состояния.
+		char * add(char * addpath);
+
+		// Восстановить ранее предыдущее состояние.
+		void restore(char * old);
+
+		const char * path() 
 		{
-			strncat(pwdbuf, nd, sz);
+			return buf;
 		}
 
-		void rm_node() 
-		{
-			char * lastnode = (char*)path_last_node(pwdbuf);
-			*lastnode = '\0';
-		}
-
-		int apply(const char* path, size_t size) 
+		/*int apply(const char* path, size_t size) 
 		{
 			if (path_is_abs(path)) 
 			{
@@ -54,7 +60,7 @@ namespace genos
 			}
 
 			return 0;
-		} 
+		} */
 	};
 }
 
