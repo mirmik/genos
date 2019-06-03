@@ -1,21 +1,22 @@
 #ifndef GENOS_NAV_H
 #define GENOS_NAV_H
 
-#include <igris/util/pathops.h>
+//#include <igris/util/pathops.h>
+#include <string.h>
 #include <genos/resmngr.h>
 
 namespace genos 
 {
-	class navigation_context
+	class navblock
 	{
 		char * buf;
 		int cap;
 
 	public:
-		navigation_context(char* buf, int cap) 
+		navblock(char* buf, int cap) 
 			: buf(buf), cap(cap) 
 		{
-			strcpy(path, "/");
+			strcpy(buf, "/");
 		}
 
 		// Установить новое значение пути. Путь обязан быть абсолютным.

@@ -6,6 +6,7 @@
 #include <genos/ktimer.h>
 
 #include <genos/resource.h>
+#include <genos/nav.h>
 
 #ifdef MVFS_INCLUDED
 struct file;
@@ -61,6 +62,7 @@ namespace genos
 		int16_t local_errno;
 
 		genos::restbl restbl;
+		genos::navblock * navblock = nullptr;
 
 #ifdef MVFS_INCLUDED
 		struct node * pwd;

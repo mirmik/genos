@@ -68,6 +68,7 @@ module("genos.sched", "impl",
 		
 		"src/genos/resource.cpp",
 		"src/genos/resmngr.cpp",
+		"src/genos/nav.cpp",
 		"src/genos/dev.cpp",
 		
 		"src/genos/errno.cpp"
