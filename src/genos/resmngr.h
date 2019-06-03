@@ -25,7 +25,7 @@ namespace genos
 	};
 
 	genos::resmngr * lookup_resmngr(const char* path, const char** epath);
-	bool directory_exists(const char* path);
+	bool directory_exists(const char* path, size_t sz);
 }
 
 #endif

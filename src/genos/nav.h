@@ -5,7 +5,7 @@
 #include <string.h>
 #include <genos/resmngr.h>
 
-namespace genos 
+namespace genos
 {
 	class navblock
 	{
@@ -13,56 +13,44 @@ namespace genos
 		int cap;
 
 	public:
-		navblock(char* buf, int cap) 
-			: buf(buf), cap(cap) 
+		navblock(char* buf, int cap)
+			: buf(buf), cap(cap)
 		{
 			strcpy(buf, "/");
 		}
 
 		// Установить новое значение пути. Путь обязан быть абсолютным.
-		char * set(char * abspath); 
-		 
+		void set(const char * abspath)
+		{
+			strcpy(buf, abspath);
+		}
 
 		// Добавить часть пути к текущему. Возвращает указатель на предыдущий финал строки.
 		// Для возможности восстановления её состояния.
-		char * add(char * addpath);
+		char * add(const char * addpath, size_t sz)
+		{
+			char * old = buf + strlen(buf);
+			strncat(buf, addpath, sz);
+
+			if (buf[strlen(buf) - 1] != '/')
+				strcat(buf, "/");
+
+			return old;
+		}
 
 		// Восстановить ранее предыдущее состояние.
-		void restore(char * old);
+		void restore(char * old)
+		{
+			*old = '\0';
+		}
 
-		const char * path() 
+		const char * path()
 		{
 			return buf;
 		}
-
-		/*int apply(const char* path, size_t size) 
-		{
-			if (path_is_abs(path)) 
-			{
-				bool correct = directory_exists(path);
-				
-				if (!correct)
-					return SET_ERRNO(ENOENT);
-
-				strncpy(pwdbuf, path, size);
-			}
-			else 
-			{
-				char * oldpath = pwdbuf + strlen(pwdbuf);
-				strncat(pwdbuf, path, size);
-
-				bool correct = directory_exists(pwdbuf);
-
-				if (!correct) 
-				{
-					*oldpath = '\0';
-					return SET_ERRNO(ENOENT);
-				}
-			}
-
-			return 0;
-		} */
 	};
+
+	int change_directory(const char * path);
 }
 
 #endif
