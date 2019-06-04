@@ -16,8 +16,7 @@ namespace genos
 		int displace() override;
 		void finalize() override;
 
-		void signal_handler(int sig) override;
-	
+		void signal_handler(int sig) override;	
 	};
 
 	class autom_schedee : public schedee
@@ -46,7 +45,7 @@ namespace genos
 		int displace() override;
 		void finalize() override;
 
-		void signal_handler(int sig) override;
+		void signal_handler(int sig) override {}
 	};
 }
 

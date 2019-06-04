@@ -1,46 +1,32 @@
-#ifndef GENOS_DRIVERS_TTY_H
-#define GENOS_DRIVERS_TTY_H
+#ifndef GENOS_DRIVERS_CDEV_TTY_H
+#define GENOS_DRIVERS_CDEV_TTY_H
 
-#include <drivers/cdev/cdev.h>
-#include <mvfs/node.h>
+#include <genos/resource.h>
 
-#include <sched/schedee.h>
+#include <drivers/serial/uart.h>
+#include <drivers/cdev/ldisc.h>
 
-struct tty;
-struct tty_driver;
-struct tty_ldisc;
-
-struct tty_ldisc_operations 
+namespace genos 
 {
-	int (*write)(struct tty_ldisc * ldisc, char* data, int size) //< препроцессинг выходных данных
-	int (*recv_handler)(struct tty_ldisc * ldisc, char c); //< препроцессинг входных данных
-};
+	class tty : public node
+	{
+	public:
+		uart_device * driver;
+		genos::ldisc * ldisc;
 
-struct tty_driver_operations 
-{
-	int (*write)(struct tty_driver * drv, char* data, int size);
-};
+		void set_driver(uart_device * u) { driver = u; } 
+		void set_ldisc(genos::ldisc * l) { ldisc = l; }
 
-extern node_operations tty_node_ops;
+		int write(const char* data, size_t size) override
+		{
+			return ldisc->write(data, size);
+		}
 
-struct tty_ldisc
-{
-	const struct tty_ldisc_operations* ops;
-	struct tty * tty;
-};
+		int read(char* data, size_t size) 
+		{
+			return ldisc->read(data, size);
+		}
+	};
+}
 
-struct tty_driver
-{
-	const struct tty_driver_operations* ops;
-	struct tty * tty;
-};
-
-struct tty
-{
-	struct node node;
-
-	struct tty_ldisc *ldisc;
-	struct tty_driver *drv;
-
-	struct schedee * opensch;
-};
+#endif

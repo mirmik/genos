@@ -51,7 +51,7 @@ ssize_t read(int fd, void* data, size_t size)
 		return SET_ERRNO(-EBADF);
 
 	res = filp->res;
-	if (!(res->restype & GENOS_RESOURCE_FILE)) 
+	if (!(res->gettype() & GENOS_RESOURCE_FILE)) 
 		return SET_ERRNO(-ENOTSUP); 
 	
 	node = filp->node;

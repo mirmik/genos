@@ -27,7 +27,7 @@ int genos::open_resource(genos::resource * res, int16_t flags)
 	return fd;
 }
 
-/*
+
 int genos::open_directory(genos::directory * res) 
 {
 	int ans;
@@ -38,11 +38,10 @@ int genos::open_directory(genos::directory * res)
 	if (fd < 0) 
 		return -1;
 
-	filp = & current_schedee()->restbl[fd];
+	filp = current_schedee()->restbl[fd];
 	
 	filp -> dir = res;
-	filp -> restype = GENOS_RESOURCE_DIRECTORY;
-
+	
 	(void) ans;
 	ans = res->open(filp);
 	if (ans) 
@@ -53,7 +52,7 @@ int genos::open_directory(genos::directory * res)
 
 	return fd;
 }
-*/
+
 int genos::restbl::get_available_fd() 
 {
 	for (int i = 0; i < RESTBL_SIZE; ++i) 
