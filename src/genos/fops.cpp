@@ -8,24 +8,24 @@
 #include <genos/schedee.h>
 
 #include <igris/util/bug.h>
-/*
+
 static 
 genos::openres * _get_schedee_file(int fd) 
 {
 	genos::schedee* sch = current_schedee();
 	
-	if (fd >= sch->restbl.tblsz)
+	if (fd >= sch->restbl.size())
 	{
 		errno = EBADF;
 		return nullptr;
 	}
 
-	return &sch->restbl[fd];
+	return sch->restbl[fd];
 }
 
 ssize_t write(int fd, const void* data, size_t size) 
 {
-	genos::openres * filp = _get_schedee_file(fd);
+/*	genos::openres * filp = _get_schedee_file(fd);
 	if (filp == nullptr)
 		return -1;
 
@@ -36,25 +36,31 @@ ssize_t write(int fd, const void* data, size_t size)
 	}
 
 	return filp -> node -> write(data, size, filp->flags);
+*/
+	return 0;
 }
 
 ssize_t read(int fd, void* data, size_t size) 
 {
-	genos::openres * filp = _get_schedee_file(fd);
+	genos::openres * filp;
+	genos::resource * res;
+	genos::node * node;
+
+	filp = _get_schedee_file(fd);
 	if (filp == nullptr)
 		return SET_ERRNO(-EBADF);
 
-	if (!(filp->restype & GENOS_RESOURCE_FILE)) 
-	{
+	res = filp->res;
+	if (!(res->restype & GENOS_RESOURCE_FILE)) 
 		return SET_ERRNO(-ENOTSUP); 
-	}
-
-	return filp -> node -> read(data, size, filp->flags);
+	
+	node = filp->node;
+	return node -> read(data, size, 0);
 }
 
 int readdir(int fd, char* buf, size_t maxsz) 
 {
-	genos::openres * filp = _get_schedee_file(fd);
+	/*genos::openres * filp = _get_schedee_file(fd);
 	if (filp == nullptr)
 		return -1; 
 	
@@ -64,7 +70,8 @@ int readdir(int fd, char* buf, size_t maxsz)
 		return -1; 
 	}
 
-	return filp -> dir -> iterate(buf, maxsz, filp);
+	return filp -> dir -> iterate(buf, maxsz, filp);*/
+	return 0;
 }
 
 int open(const char * path, int flags, ...) 
@@ -92,7 +99,7 @@ int open(const char * path, int flags, ...)
 	if ((ans = resmngr->open(epath, filp)))
 		return ans;
 
-	filp -> flags = flags;
+//	filp -> flags = flags;
 
 	return fd;
-}*/
+}

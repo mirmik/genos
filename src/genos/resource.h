@@ -19,6 +19,7 @@ namespace genos
 	class resource
 	{
 	public:
+		uint8_t restype;
 		virtual int release() { return ENOTSUP; }
 		virtual int open(openres * ores) { return ENOTSUP; }
 	};
@@ -35,8 +36,10 @@ namespace genos
 		//virtual int read(void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 	};
 
-	int open_node(genos::node * res, genos::openres * ores);
-	int open_node(genos::node * res, int flags);
+//	int open_node(genos::node * res, genos::openres * ores);
+//	int open_node(genos::node * res, int flags);
+	int open_resource(genos::resource * res, genos::openres * ores);
+	int open_resource(genos::resource * res, int flags);
 
 	
 	class directory : public resource
@@ -54,47 +57,47 @@ namespace genos
 	class openres
 	{
 	public:
-		union
-		{
-			uintptr_t pos;
-			void * ptr;
-			dlist_head * dh;
-		};
-
-		uint8_t restype;
-
-		int flags;
-
-		union
-		{
+		union {
+			genos::resource * res;
 			genos::node * node;
-			genos::directory * dir;
 		};
+		int16_t flags;
 	};
+
+#define RESTBL_SIZE 4
 
 	struct restbl
 	{
-		genos::openres * tbl;
-		uint8_t tblsz;
+//		genos::openres * tbl;
+//		uint8_t tblsz;
 
+		genos::openres * tbl[RESTBL_SIZE];
+	
 	public:
-		void set_table(genos::openres * tbl, uint8_t tblsz)
+		restbl() 
+		{
+			memset(tbl, 0, sizeof(tbl));
+		}
+
+		int size() 
+		{
+			return RESTBL_SIZE;
+		}
+
+/*		void set_table(genos::openres * tbl, uint8_t tblsz)
 		{
 			this->tbl = tbl;
 			this->tblsz = tblsz;
 
 			memset(tbl, 0, sizeof(genos::openres) * tblsz);
-		}
+		}*/
 
-		genos::openres & operator[](int fd) { return tbl[fd]; }
-
-		int get_file(int fd, genos::openres ** ores)
+		genos::openres * operator[](int i) 
 		{
-			if (fd >= tblsz || tbl[fd].node == nullptr)
-				return EBADF;
+			if (i >= RESTBL_SIZE) 
+				return nullptr;
 
-			*ores = &tbl[fd];
-			return 0;
+			return tbl[i];
 		}
 
 		int get_available_fd();
@@ -119,7 +122,7 @@ namespace genos
 
 		int iterate(char* buffer, size_t maxsz, genos::openres* onode) override
 		{
-			if (onode->dh == nullptr)
+		/*	if (onode->dh == nullptr)
 				onode->dh = list.next;
 			else
 				onode->dh = onode->dh->next;
@@ -131,11 +134,11 @@ namespace genos
 			}
 
 			strncpy(buffer, dlist_entry(onode->dh, named_node, lnk)->name, maxsz);
-			return 0;
+		*/	return 0;
 		}
 	};
 }
 
-#define RESOURCE_TABLE(name, size) genos::openres name[size]
+//#define RESOURCE_TABLE(name, size) genos::openres name[size]
 
 #endif

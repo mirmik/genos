@@ -33,7 +33,7 @@ void* task(void* priv, int* state)
 		case 0:
 			dprln("TASK");
 			++*state;
-			ans = genos::open_node(&serial0, 0);
+			ans = genos::open_resource(&serial0, 0);
 			dprln(ans);
 			break;
 
@@ -69,7 +69,7 @@ genos::ktimer blink_timer(blink, NULL, 1000);
 
 void* mainproc_task(void* arg)
 {
-	int fd = open_node(&dbgdev, 0);
+	int fd = open_resource(&dbgdev, 0);
 	int df = open_directory(&genos::devmngr);
 
 	char buf[16];

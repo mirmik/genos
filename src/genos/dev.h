@@ -21,7 +21,7 @@ namespace genos
 				genos::named_node * nit = dlist_entry(it, genos::named_node, lnk);
 				if (strcmp(nit->name, ns) == 0)
 				{
-					return open_node(nit, filp);
+					return open_resource(nit, filp);
 				}
 			}
 			return SET_ERRNO(-ENOENT);
