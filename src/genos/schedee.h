@@ -8,6 +8,8 @@
 #include <genos/resource.h>
 #include <genos/nav.h>
 
+#define RESTBL_SIZE 4
+
 #ifdef MVFS_INCLUDED
 struct file;
 #endif
@@ -61,7 +63,9 @@ namespace genos
 
 		int16_t local_errno;
 
-		genos::restbl restbl;
+		//genos::restbl restbl;
+		genos::openres resources [RESTBL_SIZE]
+
 		genos::navblock * navblock = nullptr;
 
 #ifdef MVFS_INCLUDED
