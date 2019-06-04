@@ -1,6 +1,6 @@
 #include <genos/resource.h>
 #include <genos/schedee.h>
-
+/*
 int genos::open_node(genos::node * res, genos::openres * filp) 
 {
 	filp -> node = res;	
@@ -52,7 +52,7 @@ int genos::open_directory(genos::directory * res)
 		errno = ans;
 		return -1;
 	}*/
-
+/*
 	return fd;
 }
 
@@ -67,4 +67,4 @@ int genos::restbl::get_available_fd()
 	}
 
 	return SET_ERRNO(-EMFILE);
-}
+}*/

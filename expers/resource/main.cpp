@@ -6,17 +6,19 @@
 #include <genos/schedee/coop.h>
 #include <genos/api.h>
 
-#include <utility/contty3.h>
+//#include <utility/contty3.h>
 
 #include <drivers/serial/uartring.h>
 #include <drivers/cdev/virtual/debug.h>
 
-#include <utility/mshell.h>
+//#include <utility/mshell.h>
 
 #include <unistd.h>
 #include  <genos/ktimer.h>
 
-#include <genos/nav.h>
+#include <drivers/cdev/tty.h>
+
+//#include <genos/nav.h>
 
 UARTRING_DECLARE(serial0, "serial0", &usart0, 16, 128);
 int wr;
@@ -48,8 +50,8 @@ void* task(void* priv, int* state)
 	return nullptr;
 }
 
-RESOURCE_TABLE(sch_restbl, 5);
-RESOURCE_TABLE(sch_restbl_2, 2);
+//RESOURCE_TABLE(sch_restbl, 5);
+//RESOURCE_TABLE(sch_restbl_2, 2);
 
 //genos::directory devdir("dev");
 //genos::directory mntdir("mnt");
@@ -93,16 +95,16 @@ void* mainproc_task(void* arg)
 	}
 }
 
-mshell_command mshell_commands_table[] = 
+/*mshell_command mshell_commands_table[] = 
 {
 	MSHELL_TBLFIN
-};
+};*/
 
 genos::autom_schedee sch(task, nullptr);
 COOPSCHEDEE_DECLARE(mainproc, mainproc_task, nullptr, 128);
 
-CONTTY3_DECLARE(contty_context, "/dev/serial0");
-genos::autom_schedee contty_sch(contty3_automate, &contty_context);
+//CONTTY3_DECLARE(contty_context, "/dev/serial0");
+//genos::autom_schedee contty_sch(contty3_automate, &contty_context);
 
 int main()
 {
@@ -121,11 +123,11 @@ int main()
 
 	//blink_timer.plan();
 
-	mainproc.set_restbl(sch_restbl, 5);
+//	mainproc.set_restbl(sch_restbl, 5);
 	mainproc.run();
 	
-	contty_sch.set_restbl(sch_restbl_2, 2);
-	contty_sch.run();
+//	contty_sch.set_restbl(sch_restbl_2, 2);
+//	contty_sch.run();
 
 
 	irqs_enable();

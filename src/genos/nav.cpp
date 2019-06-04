@@ -1,9 +1,9 @@
-#include <genos/nav.h>
+//#include <genos/nav.h>
 #include <genos/schedee.h>
 #include <genos/resmngr.h>
 
 #include <igris/util/pathops.h>
-
+/*
 int change_directory(const char * path, size_t sz) 
 {
 	genos::schedee * sch = current_schedee();
@@ -33,3 +33,4 @@ int change_directory(const char * path, size_t sz)
 
 	return 0;
 }
+*/

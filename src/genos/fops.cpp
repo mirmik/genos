@@ -8,7 +8,7 @@
 #include <genos/schedee.h>
 
 #include <igris/util/bug.h>
-
+/*
 static 
 genos::openres * _get_schedee_file(int fd) 
 {
@@ -95,4 +95,4 @@ int open(const char * path, int flags, ...)
 	filp -> flags = flags;
 
 	return fd;
-}
+}*/

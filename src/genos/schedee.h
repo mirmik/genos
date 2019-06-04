@@ -6,7 +6,7 @@
 #include <genos/ktimer.h>
 
 #include <genos/resource.h>
-#include <genos/nav.h>
+//#include <genos/nav.h>
 
 #define RESTBL_SIZE 4
 
@@ -64,9 +64,8 @@ namespace genos
 		int16_t local_errno;
 
 		//genos::restbl restbl;
-		genos::openres resources [RESTBL_SIZE]
-
-		genos::navblock * navblock = nullptr;
+		genos::resource * resources [RESTBL_SIZE];
+		//genos::navblock * navblock = nullptr;
 
 #ifdef MVFS_INCLUDED
 		struct node * pwd;
@@ -78,10 +77,18 @@ namespace genos
 		virtual void execute() = 0;
 		virtual int displace() = 0;
 		virtual void finalize() = 0;
-		virtual void signal_handler(int sig) = 0;
+		virtual void signal_handler(int sig) {}
 
-		void set_restbl(genos::openres* tbl, uint8_t tblsize)
-		{ restbl.set_table(tbl, tblsize); }
+		//void set_restbl(genos::openres* tbl, uint8_t tblsize)
+		//{ restbl.set_table(tbl, tblsize); }
+
+		genos::resource * getres(int i) 
+		{
+			if (i >= RESTBL_SIZE) 
+				return nullptr;
+			
+			return resources[i];
+		}
 
 		void run();
 	};
