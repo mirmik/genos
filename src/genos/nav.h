@@ -5,6 +5,8 @@
 #include <string.h>
 #include <genos/resmngr.h>
 
+#define MAX_PATH_LEN 32
+
 namespace genos
 {
 	class navblock
@@ -47,6 +49,21 @@ namespace genos
 		const char * path()
 		{
 			return buf;
+		}
+
+		void apply(const char * path) 
+		{		
+			char npath[MAX_PATH_LEN];
+				
+			if (!path_is_abs(path)) 
+				path_simplify_join(npath, buf, path);
+			else 
+				path_simplify(npath, path);
+			
+			if (directory_exists(npath)) 
+				set(npath);
+			else 
+				return SET_ERRNO(-ENOENT);
 		}
 	};
 

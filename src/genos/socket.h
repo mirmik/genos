@@ -2,11 +2,17 @@
 #define GENOS_SOCKET_H
 
 #include <igris/compiler.h>
+#include <genos/>
 
-__BEGIN_DECLS
-
-int crow_socket();
-
-__END_DECLAS
+namespace genos 
+{
+	class socket : public node
+	{
+		virtual int disconnect();
+		virtual int connect();
+		virtual int listen();
+		virtual int bind();
+	};
+}
 
 #endif
