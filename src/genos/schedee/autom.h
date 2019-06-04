@@ -8,6 +8,18 @@ typedef void* (*autom_schedee_task_t) (void*, int*);
 
 namespace genos
 {
+	class autom_schedee_base : public schedee
+	{
+		int state;
+
+		void execute() override;
+		int displace() override;
+		void finalize() override;
+
+		void signal_handler(int sig) override;
+	
+	};
+
 	class autom_schedee : public schedee
 	{
 		void* (*task) (void*, int*);
@@ -33,6 +45,8 @@ namespace genos
 		void execute() override;
 		int displace() override;
 		void finalize() override;
+
+		void signal_handler(int sig) override;
 	};
 }
 

@@ -74,6 +74,7 @@ namespace genos
 		virtual void execute() = 0;
 		virtual int displace() = 0;
 		virtual void finalize() = 0;
+		virtual void signal_handler(int sig) = 0;
 
 		void set_restbl(genos::openres* tbl, uint8_t tblsize)
 		{ restbl.set_table(tbl, tblsize); }
