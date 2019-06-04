@@ -16,7 +16,7 @@ namespace genos
 
 	class nobuf_pipe : public pipe
 	{
-		dlist_head wr_wait;
+		dlist_head wr_wait = DLIST_HEAD_INIT(&wr_wait);
 		uint8_t refs = 0;
 		const char * msg;
 		size_t msglen;
@@ -43,7 +43,7 @@ namespace genos
 		int read(void* data, size_t size, int flags) override 
 		{
 			if (refs < 2) return -1;
-			
+
 			while (msg == nullptr) 
 			{
 				wait_current_schedee(&wr_wait);
@@ -59,6 +59,14 @@ namespace genos
 		}	
 
 		int avail() override { return msg ? msglen : 0; }
+
+		void clean() 
+		{
+			wr_wait = DLIST_HEAD_INIT(&wr_wait);
+			refs = 0;
+			msg = nullptr;
+			msglen = 0;
+		}
 	}
 }
 
