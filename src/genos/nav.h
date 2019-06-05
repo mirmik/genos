@@ -4,6 +4,7 @@
 #include <igris/util/pathops.h>
 #include <string.h>
 #include <genos/resmngr.h>
+#include <genos/syscmd.h>
 
 #define MAX_PATH_LEN 32
 
@@ -27,32 +28,26 @@ namespace genos
 			strcpy(buf, abspath);
 		}
 
-		int apply(const char * path) 
-		{		
+		int apply(const char * path)
+		{
 			char npath[MAX_PATH_LEN];
-				
-			if (!path_is_abs(path)) 
+
+			if (!path_is_abs(path))
 				path_simplify_join(npath, buf, path);
-			else 
+			else
 				path_simplify(npath, path);
-			
-			if (directory_exists(npath, strlen(npath))) 
+
+			if (directory_exists(npath, strlen(npath)))
 				set(npath);
-			else 
+			else
 				return SET_ERRNO(-ENOENT);
 
 			return 0;
 		}
 	};
 
-	int change_directory(int argc, char ** path);
-	int list_directory(int argc, char ** path);
+	extern genos::syscmd_command navigation_shell_table[];
 }
 
-#include <genos/syscmd.h>
-SYSCMD(navigation_shell,
-	{"cd", change_directory, CMDFUNC, NOHELP},
-	{"ls", list_directory, CMDFUNC, NOHELP}
-)
 
 #endif
