@@ -6,6 +6,7 @@
 
 #include <genos/schedee/autom.h>
 #include <genos/executor.h>
+#include <genos/nav.h>
 
 #define CONTTY_LINE_LENGTH 32
 #define CONTTY_HISTORY_SIZE 3
@@ -25,10 +26,16 @@ namespace genos
 		char buffer[CONTTY_LINE_LENGTH];
 		char hbuffer[CONTTY_LINE_LENGTH * CONTTY_HISTORY_SIZE];
 
+		char navbuf[32];
+		genos::navblock nav;
+
 		void newline();
 
 	public:
-		contty(genos::node * outside) : outside(outside) {}
+		contty(genos::node * outside) : outside(outside), nav(navbuf, 32) 
+		{
+			set_navblock(&nav);
+		}
 
 		void execute() override;
 	};

@@ -6,7 +6,7 @@
 #include <genos/ktimer.h>
 
 #include <genos/resource.h>
-//#include <genos/nav.h>
+#include <genos/nav.h>
 
 #define SCHEDEE_STATE_RUN 			0
 #define SCHEDEE_STATE_WAIT 			2
@@ -58,7 +58,7 @@ namespace genos
 		int16_t local_errno;
 
 		genos::restbl restbl;
-		//genos::navblock * navblock = nullptr;
+		genos::navblock * navblock = nullptr;
 
 		schedee() {}
 
@@ -69,6 +69,8 @@ namespace genos
 
 		//void set_restbl(genos::openres* tbl, uint8_t tblsize)
 		//{ restbl.set_table(tbl, tblsize); }
+
+		void set_navblock(genos::navblock * nav) { navblock = nav; }
 
 		genos::openres * getres(int i) 
 		{

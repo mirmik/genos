@@ -5,9 +5,9 @@
 
 #define SH_INTERNAL_SPLIT 0x01
 
-#define SYSCMD_FUNCTION 0
-#define SYSCMD_AUTOMATE 1
-#define SYSCMD_PROCESS 2
+#define CMDFUNC 0
+#define CMDAUTOM 1
+#define CMDCOOP 2
 
 #define SYSCMD_OK 0
 
@@ -15,20 +15,28 @@
 
 namespace genos 
 {
-	struct shell_command 
+	struct syscmd_command 
 	{
 		const char* name;
-		int (*func) (int, char**);
+		void * func;
 		uint8_t type;
-		const char* help;		
-	};
+		const char* help;
 
-	class syscmd_node
-	{
-	public:
-		dlist_head lnk;
-		shell_command * table;
+		constexpr syscmd_command(
+			const char* name,
+			int (*func)(int, char**),
+			uint8_t type,
+			const char* help) 
+		:
+			name(name),
+			func((void*)func),
+			type(type),
+			help(help)
+		{}		
 	};
 }
+
+#define SYSCMD(name, ...) \
+genos::syscmd_command name[] {__VA_ARGS__, SYSCMD_TBLFIN}
 
 #endif

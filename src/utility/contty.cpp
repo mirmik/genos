@@ -5,6 +5,19 @@
 
 #include <igris/defs/vt100.h>
 
+void genos::contty::newline() 
+{
+	int ans;
+	char line[48];
+	int len = readline_linecpy(&rl, line, 48);
+
+	if (ex)
+		ans = ex->execute(line, len);
+
+	if (ans == EXECUTOR_PROCESS_STARTED)
+		state = 5;
+}
+
 void genos::contty::execute()
 {
 	char c;
@@ -128,6 +141,9 @@ void genos::contty::execute()
 			}
 			state = 2;
 			break;
+
+		case 5:
+			dprln("state5");
 
 		default:
 			BUG();
