@@ -17,7 +17,7 @@ SYSCMD(main_shell_table,
 );
 
 EXECUTOR(executor, 
-	//genos::navigation_shell_table,
+	genos::navigation_shell_table,
 	main_shell_table
 );
 

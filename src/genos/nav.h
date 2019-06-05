@@ -45,7 +45,14 @@ namespace genos
 		}
 	};
 
-	int change_directory(const char * path);
+	int change_directory(int argc, char ** path);
+	int list_directory(int argc, char ** path);
 }
+
+#include <genos/syscmd.h>
+SYSCMD(navigation_shell,
+	{"cd", change_directory, CMDFUNC, NOHELP},
+	{"ls", list_directory, CMDFUNC, NOHELP}
+)
 
 #endif
