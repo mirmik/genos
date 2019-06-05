@@ -42,7 +42,7 @@ void schedee_run(genos::schedee * sch)
 {
 	DTRACE();
 	system_lock();
-	sch->state = SCHEDEE_STATE_RUN;
+	sch->sch_state = SCHEDEE_STATE_RUN;
 	sch->ctr.type = CTROBJ_SCHEDEE_LIST;
 
 	// detail: Если это объект отличный от schedee_list, благодаря бинарной совместимости перемещение
@@ -56,7 +56,7 @@ void __schedee_wait_for(genos::schedee * parent, genos::schedee * child)
 {
 	DTRACE();
 	system_lock();
-	parent->state = SCHEDEE_STATE_WAIT_SCHEDEE;
+	parent->sch_state = SCHEDEE_STATE_WAIT_SCHEDEE;
 	dlist_move_tail(&parent->ctr.lnk, &waitlist);
 	system_unlock();
 }
@@ -66,7 +66,7 @@ void __schedee_final(genos::schedee * sch)
 	DTRACE();
 
 	system_lock();
-	sch->state = SCHEDEE_STATE_FINAL;
+	sch->sch_state = SCHEDEE_STATE_FINAL;
 	dlist_move_tail(&sch->ctr.lnk, &finallist);
 	system_unlock();
 }
@@ -75,7 +75,7 @@ void schedee_stop(genos::schedee * sch)
 {
 	DTRACE();
 	system_lock();
-	sch->state = SCHEDEE_STATE_STOP;
+	sch->sch_state = SCHEDEE_STATE_STOP;
 	dlist_del_init(&sch->ctr.lnk);
 	system_unlock();
 }
@@ -129,7 +129,7 @@ void schedee_manager_step()
 		irqs_enable();
 
 		schedee_notify_finalize(sch);
-		sch->state = SCHEDEE_STATE_ZOMBIE;
+		sch->sch_state = SCHEDEE_STATE_ZOMBIE;
 		sch->finalize();
 
 		irqs_disable();

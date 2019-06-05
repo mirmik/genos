@@ -10,21 +10,20 @@ namespace genos
 {
 	class autom_schedee_base : public schedee
 	{
-		int state;
+	protected:
+		int state = 0;
 
-		void execute() override;
+	public:
 		int displace() override;
-		void finalize() override;
-
-		void signal_handler(int sig) override;	
+		void finalize() override {}
+		void signal_handler(int sig) override {}	
 	};
 
-	class autom_schedee : public schedee
+	class autom_schedee : public autom_schedee_base
 	{
-		void* (*task) (void*, int*);
+		autom_schedee_task_t task;
 		void * arg;
-		int state;
-
+	
 	public:
 		void init(autom_schedee_task_t task, void* arg)
 		{
@@ -42,10 +41,7 @@ namespace genos
 		}
 
 		void execute() override;
-		int displace() override;
 		void finalize() override;
-
-		void signal_handler(int sig) override {}
 	};
 }
 

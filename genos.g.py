@@ -119,7 +119,7 @@ module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
 
 module ("genos.utility.numcmd", sources = ["src/utility/numcmd.c"], mdepends=["igris.protocols.numcmd"])
-module ("genos.utility.contty", sources = ["src/utility/contty.c"])
+module ("genos.utility.contty", sources = ["src/utility/contty.cpp"])
 module ("genos.utility.contty2", sources = ["src/utility/contty2.c"])
 module ("genos.utility.contty3", sources = ["src/utility/contty3.c"])
 module ("genos.utility.mshell", sources = ["src/utility/mshell.c"])

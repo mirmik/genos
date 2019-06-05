@@ -37,7 +37,7 @@ namespace genos
 		};
 
 		uint8_t prio;
-		uint8_t state;
+		uint8_t sch_state;
 
 #if SCHEDEE_DEBUG_STRUCT
 		struct dlist_head schedee_list_lnk;
@@ -139,7 +139,7 @@ void schedee_init(genos::schedee* sch, int prio)
 #endif
 
 	sch->prio = prio;
-	sch->state = SCHEDEE_STATE_STOP;
+	sch->sch_state = SCHEDEE_STATE_STOP;
 	sch->flags = 0;
 
 	sch->parent = current_schedee();

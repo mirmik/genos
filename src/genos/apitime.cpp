@@ -23,7 +23,7 @@ int msleep(unsigned int ms)
 	system_unlock();
 
 	sch->ctr.type = CTROBJ_KTIMER_SCHEDEE;
-	sch->state = SCHEDEE_STATE_WAIT;
+	sch->sch_state = SCHEDEE_STATE_WAIT;
 
 	ktimer_base_init_for_milliseconds(timer, ms, CTROBJ_KTIMER_SCHEDEE);
 	timer->plan();

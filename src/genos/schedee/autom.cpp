@@ -23,7 +23,7 @@ void genos::autom_schedee::execute()
 	task(arg, &state);
 }
 
-int genos::autom_schedee::displace()
+int genos::autom_schedee_base::displace()
 {
 	flag.runned = 0;
 	__context_displace_vector__();

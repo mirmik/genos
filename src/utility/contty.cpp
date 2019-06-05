@@ -1,46 +1,21 @@
-#include <utility/contty.h>
+#include "contty.h"
 
-#include <drivers/cdev/cdev.h>
-#include <igris/util/bug.h>
-#include <igris/dprint.h>
-
-#include <errno.h>
-#include <utility/mshell.h>
-
-static int newline(struct contty_context * cntxt)
-{
-	int ret;
-
-//	struct schedee * sch = create_autom_schedee(sh_utility, NULL);
-//	schedee_run(sch);
-//	__schedee_wait_for(current_schedee(), sch);
-//	__displace__();
-	ret = mshell_execn(cntxt->line.buf, cntxt->line.len, SH_INTERNAL_SPLIT, NULL, 1);
-
-	switch (ret)
-	{
-		case ENOENT: cntxt->cdev->c_ops->write(
-			    cntxt->cdev, "Entry not found\n\r", 17, 0);
-	}
-
-	return ret;
-}
-
-void contty_debug_mode(struct contty_context * cntxt, int en)
-{
-	cntxt->debug_mode = en;
-}
-
-void * contty_automate(void * arg, int * state)
+void genos::contty::execute() 
 {
 	//struct file * filp;
-	char c;
+	/*char c;
 	int ret;
 
 	struct contty_context * cntxt = (struct contty_context *) arg;
 	struct char_device * cdev = cntxt->cdev;
 	struct sline * line = &cntxt->line;
+*/
+	switch (state) 
+	{
 
+	}
+
+/*
 	switch (*state)
 	{
 		case 0:
@@ -111,7 +86,5 @@ void * contty_automate(void * arg, int * state)
 
 		default:
 			BUG();
-	}
-
-	return NULL;
+	}*/
 }

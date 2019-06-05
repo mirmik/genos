@@ -27,7 +27,9 @@ int schedee_setfd(genos::schedee * sch, struct file * filp, int fd) {
 #endif //MVFS_INCLUDED
 
 void schedee_notify_finalize(genos::schedee * sch) {
-	if (sch->parent != NULL && sch->parent->state == SCHEDEE_STATE_WAIT_SCHEDEE) {
+	if (sch->parent != NULL 
+		&& sch->parent->sch_state == SCHEDEE_STATE_WAIT_SCHEDEE) 
+	{
 		schedee_run(sch->parent); 
 	}
 }
@@ -46,8 +48,8 @@ void schedee_list_debug_info()
 		dpr(sch->dispcounter);
 		dpr(" prio:");
 		dpr(sch->prio);
-		dpr(" state");
-		dpr(sch->state);
+		dpr(" sch_state");
+		dpr(sch->sch_state);
 		dprln("");
 	}
 }

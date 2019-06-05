@@ -42,7 +42,7 @@ int wait_current_schedee(struct dlist_head * head, int priority)
 		return -1;
 
 	sch->ctr.type = CTROBJ_WAITER_SCHEDEE;
-	sch->state = SCHEDEE_STATE_WAIT;
+	sch->sch_state = SCHEDEE_STATE_WAIT;
 
 	system_lock();
 
