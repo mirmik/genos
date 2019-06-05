@@ -5,26 +5,26 @@
 #include <igris/datastruct/sline.h>
 
 #define CONTTY_LINE_LENGTH 32
+#define CONTTY_HISTORY_SIZE 3
 
 struct char_device;
 
-struct contty_context {
-	struct sline line;
-	struct char_device * cdev;
+struct contty : public autom_schedee_base
+{
+	struct readline rl;
+	
+	node * outside;
+	executor ex;
+	
 	char last;
-	char buffer[CONTTY_LINE_LENGTH];
 	unsigned char debug_mode;
+
+	char buffer[CONTTY_LINE_LENGTH];
+	char hbuffer[CONTTY_LINE_LENGTH * CONTTY_HISTORY_SIZE];
+
+	contty(node * outside) : outside(outside) {}
+
+	void execute() override;
 };
-
-__BEGIN_DECLS
-
-void * contty_automate(void * arg, int * state);
-void contty_debug_mode(struct contty_context * cntxt, int en);
-
-__END_DECLS
-
-#define CONTTY_CONTEXT(name, cdev) \
-struct contty_context name = { {}, cdev } 
-
 
 #endif

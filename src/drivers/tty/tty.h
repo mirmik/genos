@@ -1,14 +1,14 @@
 #ifndef GENOS_DRIVERS_CDEV_TTY_H
 #define GENOS_DRIVERS_CDEV_TTY_H
 
-#include <genos/resource.h>
+#include <genos/cdev.h>
 
-#include <drivers/serial/uart.h>
-#include <drivers/cdev/ldisc.h>
+#include <drivers/tty/ttydrv.h>
+#include <drivers/tty/ldisc.h>
 
 namespace genos 
 {
-	class tty : public node
+	class tty : public char_device
 	{
 	public:
 		uart_device * driver;

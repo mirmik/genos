@@ -11,7 +11,7 @@ namespace genos
 		genos::tty * tty;
 
 	public:
-		virtual void receive_byte(char c) = 0;
+		virtual void recvbyte_handler(char c) = 0;
 		virtual void write(const char* data, size_t size);
 	};
 }

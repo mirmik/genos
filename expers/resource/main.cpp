@@ -9,6 +9,7 @@
 //#include <utility/contty3.h>
 
 #include <drivers/serial/uartring.h>
+#include <drivers/tty/outring.h>
 #include <drivers/cdev/virtual/debug.h>
 
 //#include <utility/mshell.h>
@@ -16,7 +17,7 @@
 #include <unistd.h>
 #include  <genos/ktimer.h>
 
-#include <drivers/cdev/tty.h>
+#include <drivers/tty/tty.h>
 
 //#include <genos/nav.h>
 
@@ -55,6 +56,12 @@ void* task(void* priv, int* state)
 
 //genos::directory devdir("dev");
 //genos::directory mntdir("mnt");
+
+genos::outring uout0(usart0);
+genos::liner_discipline ldisc0();
+genos::tty ttyS0(&uout0, &ldisc0);
+
+
 
 genos::debug_device dbgdev;
 
