@@ -25,6 +25,8 @@ namespace genos
 		char buffer[CONTTY_LINE_LENGTH];
 		char hbuffer[CONTTY_LINE_LENGTH * CONTTY_HISTORY_SIZE];
 
+		void newline();
+
 	public:
 		contty(genos::node * outside) : outside(outside) {}
 

@@ -1,90 +1,135 @@
 #include "contty.h"
 
-void genos::contty::execute() 
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <igris/defs/vt100.h>
+
+void genos::contty::execute()
 {
-	//struct file * filp;
-	/*char c;
+	char c;
 	int ret;
 
-	struct contty_context * cntxt = (struct contty_context *) arg;
-	struct char_device * cdev = cntxt->cdev;
-	struct sline * line = &cntxt->line;
-*/
-	switch (state) 
-	{
-
-	}
-
-/*
-	switch (*state)
+	switch (state)
 	{
 		case 0:
-			if (cntxt->debug_mode)
+			if (debug_mode)
 				dprln("contty: state 0");
 
-			//filp = vfs_file_alloc();
-			//cdev->open(filp);
-			//vfs_open_node(cdev, &filp);
-			//schedee_setfd(current_schedee(), filp, 0); //input
-			//schedee_setfd(current_schedee(), filp, 1); //output
+			open_resource(outside, 0);
 
-			cntxt->last = '\n';
-			sline_setbuf(line, cntxt->buffer, CONTTY_LINE_LENGTH);
-			*state = 1;
+			readline_init(&rl, buffer, CONTTY_LINE_LENGTH);
+			readline_history_init(&rl, hbuffer, CONTTY_HISTORY_SIZE);
+			state = 1;
 
 		case 1:
-			if (cntxt->debug_mode)
+			if (debug_mode)
 				dprln("contty: state 1");
 
-			sline_reset(line);
-			cdev->c_ops->write(cdev, "$ ", 2, 0);
-			*state = 2;
+			readline_newline_reset(&rl);
+			state = 2;
+			write(0, "$ ", 2);
 
 		case 2:
-			if (cntxt->debug_mode)
+			if (debug_mode)
 				dprln("contty: state 2");
 
-			//dpr("line_state: "); debug_write(line->buf, line->len); dprln();
-			cdev->c_ops->read(cdev, &c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
-			*state = 3;
+			state = 3;
+			read(0, &c, 0); //Неблокирующий wait для автомата.
 			break;
 
 		case 3:
-			if (cntxt->debug_mode)
+			if (debug_mode)
 				dprln("contty: state 3");
 
-			while ((ret = cdev->c_ops->read(cdev, &c, 1, IO_NOBLOCK)))
+			while ((ret = read(0, &c, 1)))
 			{
-				if (cntxt->debug_mode)
+				if (debug_mode)
 				{
 					dpr("contty: read char ");
-					dprchar(c);
+					dprhex(c);
 					dln();
+					continue;
 				}
 
-				switch (c)
+				ret = readline_putchar(&rl, c);
+
+				switch (ret)
 				{
-					case '\r':
-					case '\n':
-						if (cntxt->last == '\r')
-							break;
-						cntxt->last = '\n';
-						cdev->c_ops->write(cdev, "\r\n", 2, 0);
-						newline(cntxt);
-						*state = 1;
-						return NULL;
+					case READLINE_ECHOCHAR:
+					{
+						write(0, &c, 1);
+
+						if (!sline_in_rightpos(&rl.line))
+						{
+							char buf[16];
+
+							write(0, sline_rightpart(&rl.line), sline_rightsize(&rl.line));
+							ret = vt100_left(buf, sline_rightsize(&rl.line));
+							write(0, buf, ret);
+						}
+					}
+					break;
+
+					case READLINE_NEWLINE:
+						state = 1;
+						write(0, "\r\n", 2);
+						newline();
+						return;
+
+					case READLINE_BACKSPACE:
+					{
+						write(0, VT100_LEFT, 3);
+						write(0, VT100_ERASE_LINE_AFTER_CURSOR, 3);
+
+						if (!sline_in_rightpos(&rl.line))
+						{
+							char buf[16];
+
+							write(0, sline_rightpart(&rl.line), sline_rightsize(&rl.line));
+							ret = vt100_left(buf, sline_rightsize(&rl.line));
+							write(0, buf, ret);
+						}
+						break;
+					}
+
+
+					case READLINE_RIGHT:
+						write(0, VT100_RIGHT, 3);
+						break;
+
+					case READLINE_LEFT:
+						write(0, VT100_LEFT, 3);
+						break;
+
+					case READLINE_NOTHING:
+						break;
+
+					case READLINE_UPDATELINE:
+					{
+						char buf[16];
+
+						if (rl.lastsize)
+						{
+							ret = vt100_left(buf, rl.lastsize);
+							write(0, buf, ret);
+							write(0, VT100_ERASE_LINE_AFTER_CURSOR, 3);
+						}
+						if (rl.line.len)
+							write(0, rl.line.buf, rl.line.len);
+						break;
+					}
 
 					default:
-						cdev->c_ops->write(cdev, &c, 1, 0);
-						sline_putchar(line, c);
-						break;
+						dprln("retcode:", ret);
+						BUG();
 				}
-				cntxt->last = c;
+
 			}
-			*state = 2;
+			state = 2;
 			break;
 
 		default:
 			BUG();
-	}*/
+	}
 }
