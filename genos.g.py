@@ -53,7 +53,6 @@ module("genos.sched", "impl",
 	sources = [
 		"src/genos/sched.cpp",
 		"src/genos/schedee.cpp",
-		"src/genos/schedee_mvfs.cpp",
 		"src/genos/apitime.cpp",
 		"src/genos/schedee/autom.cpp",
 		"src/genos/schedee/coop.cpp",

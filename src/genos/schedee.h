@@ -8,10 +8,6 @@
 #include <genos/resource.h>
 //#include <genos/nav.h>
 
-#ifdef MVFS_INCLUDED
-struct file;
-#endif
-
 #define SCHEDEE_STATE_RUN 			0
 #define SCHEDEE_STATE_WAIT 			2
 #define SCHEDEE_STATE_WAIT_SCHEDEE 	6
@@ -62,14 +58,7 @@ namespace genos
 		int16_t local_errno;
 
 		genos::restbl restbl;
-		
-		//genos::resource * resources [RESTBL_SIZE];
 		//genos::navblock * navblock = nullptr;
-
-#ifdef MVFS_INCLUDED
-		struct node * pwd;
-		struct file * fds [SCHEDEE_FDMAX]; //массив файловых дескрипторов
-#endif
 
 		schedee() {}
 
@@ -90,22 +79,12 @@ namespace genos
 	};
 }
 
-/*genos::schedee_operations
-{
-	void (*execute) (genos::schedee * sch);
-	int (*displace) (genos::schedee * sch);
-	void (*finalize) (genos::schedee * sch);
-};*/
-
 __BEGIN_DECLS
 
 genos::schedee * current_schedee();
 
 /// Уведомить родителя (если он есть), что процесс завершен.
 void schedee_notify_finalize(genos::schedee * sch);
-
-/// Проинициализировать структуры данных поддержки файловой системы.
-void schedee_mvfs_support_init(genos::schedee* sch);
 
 /// Переоткрыть родительские файлы от своего имени.
 void schedee_copy_parent_files(genos::schedee* sch);
@@ -144,21 +123,8 @@ void schedee_init(genos::schedee* sch, int prio)
 
 	sch->parent = current_schedee();
 
-#ifdef MVFS_INCLUDED
-	schedee_mvfs_support_init(sch);
-
-	if (sch->parent)
-		schedee_copy_parent_files(sch);
-
-#endif //MVFS_INCLUDED
-
 	sch->local_errno = 0;
 }
-
-#ifdef MVFS_INCLUDED
-int schedee_setfd(genos::schedee * sch, struct file * node, int fd);
-int schedee_get_free_fd(genos::schedee * sch);
-#endif //MVFS_INCLUDED
 
 #if SCHEDEE_DEBUG_STRUCT
 void schedee_list_debug_info();
