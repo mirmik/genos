@@ -33,6 +33,15 @@ namespace genos
 			ch.wait_handshake_request();
 			return 0;
 		}
+
+		static void handler(crow::channel* self, crow::packet* pack) 
+		{
+
+		}
+
+		crow_socket() :
+			ch(handler);
+		{}
 	};
 }
 
