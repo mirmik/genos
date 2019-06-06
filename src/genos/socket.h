@@ -40,7 +40,7 @@ namespace genos
 		}
 
 		crow_socket() :
-			ch(handler);
+			ch(handler)
 		{}
 	};
 }
