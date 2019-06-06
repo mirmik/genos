@@ -23,14 +23,15 @@ namespace genos
 
 		int bind(int chid) override 
 		{
-			crow::link_channel(&ch);
+			crow::link_channel(&ch, chid);
+			return chid;
 		}	
 
 		int listen(int max = 0) override 
 		{
 			(void)max;
-
-			ch->wait_handshake();
+			ch.wait_handshake_request();
+			return 0;
 		}
 	};
 }
