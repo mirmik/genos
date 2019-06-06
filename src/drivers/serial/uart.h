@@ -23,8 +23,6 @@ typedef void(*uart_irq_handler_t)(void*, int);
 
 struct uart_device
 {
-	const struct uart_device_operations * u_ops;
-
 	uart_irq_handler_t  handler;
 	void*               handarg;
 

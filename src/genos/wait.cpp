@@ -45,6 +45,7 @@ int wait_current_schedee(struct dlist_head * head, int priority)
 	sch->sch_state = SCHEDEE_STATE_WAIT;
 
 	system_lock();
+	dlist_del_init(&sch->ctr.lnk);
 
 	if (priority) 
 		dlist_move(&sch->ctr.lnk, head);

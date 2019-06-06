@@ -15,11 +15,11 @@ int msleep(unsigned int ms)
 		delay(ms);
 		return 0;
 	}
-	
+
 	timer = &sch->ktimer;
 
 	system_lock();
-	dlist_del(&sch->ctr.lnk);
+	dlist_del_init(&sch->ctr.lnk);
 	system_unlock();
 
 	sch->ctr.type = CTROBJ_KTIMER_SCHEDEE;

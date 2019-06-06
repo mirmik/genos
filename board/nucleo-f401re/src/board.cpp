@@ -13,8 +13,8 @@
 #include <util/cpu_delay.h>
 
 GPIO_PIN(board_led, GPIOA, 5);
-STM32_USART_DEVICE_DECLARE(usart2, USART2, STM32_IRQ_USART2);
-STM32_USART_DEVICE_DECLARE(usart6, USART6, STM32_IRQ_USART6);
+stm32_usart_device usart2 (USART2, STM32_IRQ_USART2);
+stm32_usart_device usart6 (USART6, STM32_IRQ_USART6);
 
 void board_init() 
 {

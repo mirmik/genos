@@ -57,7 +57,7 @@ int genos::restbl::get_available_fd()
 {
 	for (int i = 0; i < RESTBL_SIZE; ++i) 
 	{
-		if (tbl[i]->node == nullptr) 
+		if (tbl[i].node == nullptr) 
 		{
 			return i;
 		}

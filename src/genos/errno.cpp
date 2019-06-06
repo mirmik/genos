@@ -3,7 +3,7 @@
 
 int* __errno_location() 
 {
-	static int16_t global_errno;
+	static int global_errno;
 
 	if (current_schedee() == nullptr) 
 	{

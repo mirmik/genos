@@ -75,6 +75,9 @@ void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, vo
 void ktimer_base_init_for_milliseconds(struct ktimer_base * tim, uint32_t interval, uint8_t ctrtype);
 
 
+
+void ktimer_list_debug_print();
+
 //void ktimer_base_plan(struct ktimer_base * t);
 
 // Сместить временную отметку начала отсчета с тем, чтобы обеспечить

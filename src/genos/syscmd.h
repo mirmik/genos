@@ -15,6 +15,8 @@
 
 namespace genos 
 {
+	using syscmd_func_t = int (*)(int, char**);
+
 	struct syscmd_command 
 	{
 		const char* name;

@@ -25,19 +25,20 @@ genos::openres * _get_schedee_file(int fd)
 
 ssize_t write(int fd, const void* data, size_t size) 
 {
-/*	genos::openres * filp = _get_schedee_file(fd);
+	genos::openres * filp;
+	genos::resource * res;
+	genos::node * node;
+
+	filp = _get_schedee_file(fd);
 	if (filp == nullptr)
-		return -1;
+		return SET_ERRNO(-EBADF);
 
-	if (!(filp->restype & GENOS_RESOURCE_FILE)) 
-	{
-		errno = ENOTSUP;
-		return -1; 
-	}
-
-	return filp -> node -> write(data, size, filp->flags);
-*/
-	return 0;
+	res = filp->res;
+	if (!(res->gettype() & GENOS_RESOURCE_FILE)) 
+		return SET_ERRNO(-ENOTSUP); 
+	
+	node = filp->node;
+	return node -> write(data, size, 0);
 }
 
 ssize_t read(int fd, void* data, size_t size) 

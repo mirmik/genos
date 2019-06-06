@@ -67,10 +67,8 @@ int uartring_device::read(void* data,
 		if (flags & IO_NOBLOCK)
 			return 0;
 
-		//dprln("WAIT");
 		if (wait_current_schedee(&rxwait, 0) == DISPLACE_VIRTUAL)
 		{
-			//dprln("AFTERWAIT");
 			return 0;
 		}
 	}
@@ -105,6 +103,8 @@ int uartring_device::release()
 
 int uartring_device::open(genos::openres * ores)
 {
+	dprln("uartring_device::open");
+
 	if (refs == 0)
 	{
 		udev->ctrirqs(UART_CTRIRQS_TXOFF);
@@ -204,5 +204,7 @@ void uartring_device::begin(struct uart_device * uart)
 	udev = uart;
 	uart -> handler = uartring_ddevice_irq_handler;
 	uart -> handarg = (void*)this;
+
+	udev->enable(1);
 	udev->ctrirqs(UART_CTRIRQS_RXON);
 }

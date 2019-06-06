@@ -13,6 +13,13 @@ namespace genos
 	protected:
 		int state = 0;
 
+		autom_schedee_base() 
+		{
+			this -> state = 0;
+			schedee_init(this, 0);
+			this->flag.can_displace = 1;
+		}
+
 	public:
 		int displace() override;
 		void finalize() override {}
@@ -25,19 +32,10 @@ namespace genos
 		void * arg;
 	
 	public:
-		void init(autom_schedee_task_t task, void* arg)
+		autom_schedee(autom_schedee_task_t task, void* arg)
 		{
 			this -> task = task;
 			this -> arg = arg;
-			this -> state = 0;
-			schedee_init(this, 0);
-
-			this->flag.can_displace = 1;
-		}
-
-		autom_schedee(autom_schedee_task_t task, void* arg)
-		{
-			init(task, arg);
 		}
 
 		void execute() override;

@@ -21,7 +21,6 @@ namespace genos
 		executor * ex;
 
 		char last;
-		unsigned char debug_mode;
 
 		char buffer[CONTTY_LINE_LENGTH];
 		char hbuffer[CONTTY_LINE_LENGTH * CONTTY_HISTORY_SIZE];
@@ -32,7 +31,9 @@ namespace genos
 		void newline();
 
 	public:
-		contty(genos::node * outside) : outside(outside), nav(navbuf, 32) 
+		uint8_t debug_mode = 0;
+
+		contty(genos::node * outside, executor* ex) : outside(outside), ex(ex) , nav(navbuf, 32)
 		{
 			set_navblock(&nav);
 		}

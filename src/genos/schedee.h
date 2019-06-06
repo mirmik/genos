@@ -55,7 +55,7 @@ namespace genos
 			} flag;
 		};
 
-		int16_t local_errno;
+		int local_errno;
 
 		genos::restbl restbl;
 		genos::navblock * navblock = nullptr;

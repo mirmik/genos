@@ -40,12 +40,19 @@ void ktimer_init_for_milliseconds(genos::ktimer * tim, ktimer_callback_t act, vo
 	ktimer_init(tim, act, arg, jiffies(), ms2jiffies(interval));
 }
 
-
+void ktimer_list_debug_print() 
+{
+	struct ktimer_base * it;
+	dlist_for_each_entry(it, &ktimer_list, ctr.lnk) 
+	{
+		dprln("timer", it->start, it->interval);
+	}
+}
 
 void ktimer_base::plan()
 {
 	struct ktimer_base * it;
-	struct dlist_head * sit;
+	struct dlist_head * sit = nullptr;
 	clock_t it_final;
 	clock_t final;
 
@@ -78,7 +85,7 @@ void ktimer_execute(struct ktimer_base * tim)
 		case CTROBJ_KTIMER_DELEGATE: 
 		{
 			genos::ktimer * t = (genos::ktimer*) tim;
-			dlist_del(&tim->ctr.lnk);
+			dlist_del_init(&tim->ctr.lnk);
 			t->act(t->arg, t);
 			break;
 		}

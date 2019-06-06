@@ -21,7 +21,7 @@ namespace genos
 	public:
 		virtual int release() { return ENOTSUP; }
 		virtual int open(openres * ores) { return ENOTSUP; }
-		virtual constexpr int gettype() { return 0; }
+		virtual int gettype() { return 0; }
 	};
 
 
@@ -35,13 +35,13 @@ namespace genos
 		//virtual int write(const void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 		//virtual int read(void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 	
-		constexpr int gettype() override { return GENOS_RESOURCE_FILE; } 
+		int gettype() override { return GENOS_RESOURCE_FILE; } 
 	};
 
 //	int open_node(genos::node * res, genos::openres * ores);
 //	int open_node(genos::node * res, int flags);
 	int open_resource(genos::resource * res, genos::openres * ores);
-	int open_resource(genos::resource * res, int flags);
+	int open_resource(genos::resource * res, int16_t flags);
 
 	
 	class directory : public resource
@@ -51,7 +51,7 @@ namespace genos
 		virtual int mknode(const char* childname, genos::openres* onode) { return ENOTSUP; }
 		virtual int rmnode(const char* childname, genos::openres* onode) { return ENOTSUP; }
 	
-		constexpr int gettype() override { return GENOS_RESOURCE_DIRECTORY; } 
+		int gettype() override { return GENOS_RESOURCE_DIRECTORY; } 
 	};
 
 	int open_directory(genos::directory * res);
@@ -76,7 +76,7 @@ namespace genos
 //		genos::openres * tbl;
 //		uint8_t tblsz;
 
-		genos::openres * tbl[RESTBL_SIZE];
+		genos::openres tbl[RESTBL_SIZE];
 	
 	public:
 		restbl() 
@@ -102,7 +102,7 @@ namespace genos
 			if (i >= RESTBL_SIZE) 
 				return nullptr;
 
-			return tbl[i];
+			return &tbl[i];
 		}
 
 		int get_available_fd();
