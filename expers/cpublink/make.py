@@ -6,5 +6,5 @@ import os
 licant.include("genos")
 
 licant.glbfunc.genos_firmware(
-	sources=["main.c"]
+	sources=["main.cpp"]
 )
