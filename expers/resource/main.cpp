@@ -8,7 +8,7 @@
 #include <genos/api.h>
 #include <genos/schedee/coop.h>
 
-UARTRING_DECLARE(serial2, "serial2", &usart2, 16, 128);
+UARTRING_DECLARE(serial2, "serial2", &usart0, 16, 128);
 
 int hello(int argc, char ** argv) { dprln("HELLOW"); return 0; }
 int hello2(int argc, char ** argv) { dprln("HELLOW");return 0; }
@@ -38,8 +38,8 @@ int main()
 	board_init();
 	scheduler_init();
 
-	usart2.setup(115200, 'n', 8, 1);
-	serial2.begin(&usart2);
+	usart0.setup(115200, 'n', 8, 1);
+	serial2.begin(&usart0);
 
 	//ctty2.debug_mode = true;
 	//serial2.debug_mode = true;
