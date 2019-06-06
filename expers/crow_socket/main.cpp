@@ -34,6 +34,8 @@ void* blink(void*, int*state)
 	return nullptr;
 }
 genos::autom_schedee blsch(blink, nullptr);
+
+genos::crow_socket sock;
 	
 int main()
 {

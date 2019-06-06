@@ -13,7 +13,8 @@ licant.glbfunc.genos_firmware(
 		"genos.utility.contty", 
 		"crow",
 		("nos.current_ostream", "nullptr"),
-		("crow.time", "__none__")
+		("crow.time", "__none__"),
+		("crow.allocator", "pool")
 	], 
 	cxx_flags = "-Wall",
 	cxxstd = "c++17"

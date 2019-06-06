@@ -18,10 +18,10 @@ namespace genos
 	class crow_socket : public socket 
 	{
 		char buf[32];
-		ring_head rxring;
+		ring_head rxring = RING_HEAD_INIT(32);
 
 		crow::channel ch;
-
+public:
 		int bind(int chid) override 
 		{
 			crow::link_channel(&ch, chid);
@@ -49,6 +49,9 @@ namespace genos
 		crow_socket() :
 			ch(handler)
 		{}
+
+		int connect() override { return 0;}
+		int disconnect() override { return 0; }
 	};
 }
 
