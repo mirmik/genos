@@ -3,6 +3,7 @@
 
 #include <genos/resource.h>
 #include <crow/channel.h>
+#include <crow/tower.h>
 
 namespace genos 
 {
@@ -36,7 +37,13 @@ namespace genos
 
 		static void handler(crow::channel* self, crow::packet* pack) 
 		{
+			crow_socket * sock = (crow_socket *) self;
 
+			igris::buffer data = crow::channel::getdata(pack);
+
+			ring_write(&sock->rxring, sock->buf, data.data(), data.size());	
+
+			crow::release(pack);
 		}
 
 		crow_socket() :
