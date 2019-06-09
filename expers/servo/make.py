@@ -7,7 +7,9 @@ licant.include("genos")
 
 licant.glbfunc.genos_firmware(
 	sources=["main.cpp"],
-	mdepends=["genos.utility.contty"], 
+	mdepends=[
+		"genos.utility.contty",
+	], 
 	cxx_flags = "-Wall",
 	cxxstd = "c++17"
 )

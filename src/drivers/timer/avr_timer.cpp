@@ -1,6 +1,6 @@
 #include <drivers/timer/avr_timer.h>
 
-namespace periph {
+namespace genos { namespace avr {
 #if defined (CHIP_ATMEGA2560)
 	genos::avr::timer8 	timer0(TIMER0, {ATMEGA_IRQ_TIM0_OVF, ATMEGA_IRQ_TIM0_COMPA, ATMEGA_IRQ_TIM0_COMPB, 0}, 						&TIMSK[0]);
 	genos::avr::timer16 timer1(TIMER1, {ATMEGA_IRQ_TIM1_OVF, ATMEGA_IRQ_TIM1_COMPA, ATMEGA_IRQ_TIM1_COMPB, ATMEGA_IRQ_TIM1_COMPC}, 	&TIMSK[1]);
@@ -15,4 +15,4 @@ namespace periph {
 #else
 #	error "Undefined CHIP"
 #endif
-}
+}}

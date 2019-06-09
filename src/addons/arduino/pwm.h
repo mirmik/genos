@@ -1,40 +1,37 @@
 #ifndef ARDUINO_PWM_H
 #define ARDUINO_PWM_H
 
-#include <periph/regs/timer.h>
-
-struct pwmregs 
-{
-	void * timer;
-	volatile void * reg;
-	uint8_t type;
-};
+#include <drivers/timer/avr_timer.h>
+#include <drivers/pwmservo/avr_pwmservo.h>
 
 #ifdef BOARD_ARDUINO_MEGA
-constexpr const struct pwmregs ARDUINO_PWMS[] = 
+constexpr const struct genos::avr::pwmregs ARDUINO_PWM[] = 
 {
-	{ TIMER3, &TIMER3->ocr_b, 0 }, // 2
-	{ TIMER3, &TIMER3->ocr_c, 0 }, // 3
-	{ TIMER0, &TIMER0->ocr_b, 0 }, // 4
-	{ TIMER3, &TIMER3->ocr_a, 0 }, // 5
-	{ TIMER4, &TIMER4->ocr_a, 0 }, // 6
-	{ TIMER4, &TIMER4->ocr_b, 0 }, // 7
-	{ TIMER4, &TIMER4->ocr_c, 0 }, // 8
-	{ TIMER2, &TIMER2->ocr_b, 0 }, // 9
-	{ TIMER2, &TIMER2->ocr_a, 0 }, // 10
-	{ TIMER1, &TIMER1->ocr_a, 0 }, // 11
-	{ TIMER1, &TIMER1->ocr_b, 0 }, // 12
-	{ TIMER1, &TIMER1->ocr_c, 0 }, // 13.1
-	{ TIMER0, &TIMER0->ocr_a, 0 }  // 13.2
+	{ &genos::avr::timer3, AVR_TIMER_OCRB }, // 2
+	{ &genos::avr::timer3, AVR_TIMER_OCRC }, // 3
+	{ &genos::avr::timer0, AVR_TIMER_OCRB }, // 4
+	{ &genos::avr::timer3, AVR_TIMER_OCRA }, // 5
+	{ &genos::avr::timer4, AVR_TIMER_OCRA }, // 6
+	{ &genos::avr::timer4, AVR_TIMER_OCRB }, // 7
+	{ &genos::avr::timer4, AVR_TIMER_OCRC }, // 8
+	{ &genos::avr::timer2, AVR_TIMER_OCRB }, // 9
+	{ &genos::avr::timer2, AVR_TIMER_OCRA }, // 10
+	{ &genos::avr::timer1, AVR_TIMER_OCRA }, // 11
+	{ &genos::avr::timer1, AVR_TIMER_OCRB }, // 12
+	{ &genos::avr::timer1, AVR_TIMER_OCRC }, // 13.1
+	{ &genos::avr::timer0, AVR_TIMER_OCRA }  // 13.2
 };
 #else
 #error "undefined board"
 #endif
 
 static inline
-constexpr pwmregs arduino_pwm_regs(int num) 
+constexpr genos::avr::timer_base * arduino_pwm_timer(int num)
 {
-	return ARDUINO_PWMS[num - 2]; 
+	return ARDUINO_PWM[num - 2].timer; 
 }
+
+static inline
+constexpr genos::avr::timer_base * arduino_pwm_timer_configure_out(int num);
 
 #endif

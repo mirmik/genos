@@ -9,6 +9,13 @@
 
 #include <assert.h>
 
+#define AVR_TIMER_OCRA 0
+#define AVR_TIMER_OCRB 1
+#define AVR_TIMER_OCRC 2
+
+#define AVR_TIMER8 8
+#define AVR_TIMER16 16
+
 namespace genos
 {
 	namespace avr
@@ -44,15 +51,35 @@ namespace genos
 			return -1;
 		}
 
+		class timer_base
+		{
+		public:
+			virtual int set_divider(uint16_t div) = 0;
+			virtual int set_divcode(uint8_t code)  = 0;
+			virtual void irq_ovf_enable(bool en) = 0;
+			virtual void set_ovf_handler(void(*handler)(void*), void* arg) = 0;
+			virtual uint8_t type() = 0;
+			virtual uint16_t value16() = 0;
+		};
+
 		template<class T, class R>
-		struct timer
+		struct timer : public timer_base
 		{
 			R  							regs;
 			struct timer_irqs	 		irqs;
 			volatile uint8_t* 			timsk;
 
+			timer(R regs, struct timer_irqs irqs, volatile uint8_t* timsk) :
+				regs(regs), irqs(irqs), timsk(timsk)
+			{}
+
 			/// Read value
 			T value()
+			{
+				return regs->tcnt;
+			}
+
+			uint16_t value16()
 			{
 				return regs->tcnt;
 			}
@@ -72,6 +99,11 @@ namespace genos
 				regs->ocr_b = val;
 			}
 
+			uint8_t type() 
+			{
+				return sizeof(T) * 8;
+			}
+
 			/**
 				Активировать таймер.
 				@param div Устанавливаемый делитель. (см. доступные делители в tc_divider_code)
@@ -89,7 +121,7 @@ namespace genos
 				return 0;
 			}
 
-			int set_divcode(uint8_t code) 
+			int set_divcode(uint8_t code)
 			{
 				bits_assign(regs->tccr_b, 7, code);
 				return 0;
@@ -154,10 +186,10 @@ namespace genos
 				Output modes:
 				0b00 - disconnect
 				0b01 - toggle
-				0b10 - clear on compare, set on downlevel 
+				0b10 - clear on compare, set on downlevel
 				0b10 - set on compare, clear on downlevel
 			*/
-			
+
 			void set_output_a_mode(uint8_t mode)
 			{
 				assert(mode <= 3);
@@ -181,7 +213,7 @@ namespace genos
 				Output modes:
 				0b00 - disconnect
 				0b01 - toggle
-				0b10 - clear on compare, set on downlevel 
+				0b10 - clear on compare, set on downlevel
 				0b10 - set on compare, clear on downlevel
 			*/
 
@@ -206,19 +238,25 @@ namespace genos
 			/*
 				WGM modes:
 
-				Value 	Timer mode         TOP
+				Value 	Timer mode         			TOP
+			
+				 0000  	Clock mode         			0xFFFF
+				 0001  	PWM  8bit          			0x00FF
+				 0010  	PWM  9bit          			0x01FF
+				 0011  	PWM 10bit          			0x03FF
+				 0100  	CTC                			OCRnA
+				 0101  	Fast PWM  8bit     			0x00FF
+				 0110  	Fast PWM  9bit     			0x01FF
+				 0111  	Fast PWM 10bit     			0x03FF
 
-				 0000  	Clock mode         0xFFFF
-				 0001  	PWM  8bit          0x00FF
-				 0010  	PWM  9bit          0x01FF
-				 0011  	PWM 10bit          0x03FF
-				 0100  	CTC                OCRnA
-				 0101  	Fast PWM  8bit     0x00FF
-				 0110  	Fast PWM  9bit     0x01FF
-				 0111  	Fast PWM 10bit     0x03FF
-
-				 1000
-				 #TODO					
+				 1000	PWM Phs and Freq correct	ICRn  //Update bottom
+				 1001   PWM Phs and Freq correct	OCRnA //Update bottom
+				 1010	PWM Phs and Freq correct	ICRn  //Update top
+				 1011   PWM Phs and Freq correct	OCRnA //Update top
+				 1100  	CTC                			ICRn
+				 1101   RESERVED
+				 1110   Fast PWM                    ICRn
+				 1111   Fast PWM                    OCRnA
 			*/
 
 			enum class TimerMode : uint8_t
@@ -226,7 +264,7 @@ namespace genos
 				Clock     = 0b0000,
 				PWM8      = 0b0001,
 				PWM9      = 0b0010,
-				PWM10     = 0b0011, 
+				PWM10     = 0b0011,
 				CTC       = 0b0100,
 				FastPWM8  = 0b0101,
 				FastPWM9  = 0b0110,
@@ -269,23 +307,22 @@ namespace genos
 				dpr("TIMSK_: "); dprptr(timsk); dpr(" "); dprbinln(*timsk);
 			}
 		};
+
+
+#if defined (CHIP_ATMEGA2560)
+		extern genos::avr::timer8 timer0;
+		extern genos::avr::timer8 timer2;
+		extern genos::avr::timer16 timer1;
+		extern genos::avr::timer16 timer3;
+		extern genos::avr::timer16 timer4;
+		extern genos::avr::timer16 timer5;
+#elif defined (CHIP_ATMEGA328P)
+		extern genos::avr::timer8 timer0;
+		extern genos::avr::timer8 timer2;
+		extern genos::avr::timer16 timer1;
+#endif
 	}
 }
 
-namespace periph
-{
-#if defined (CHIP_ATMEGA2560)
-	extern genos::avr::timer8 timer0;
-	extern genos::avr::timer8 timer2;
-	extern genos::avr::timer16 timer1;
-	extern genos::avr::timer16 timer3;
-	extern genos::avr::timer16 timer4;
-	extern genos::avr::timer16 timer5;
-#elif defined (CHIP_ATMEGA328P)
-	extern genos::avr::timer8 timer0;
-	extern genos::avr::timer8 timer2;
-	extern genos::avr::timer16 timer1;
-#endif
-}
 
 #endif

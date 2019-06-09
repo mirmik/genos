@@ -4,7 +4,7 @@
 #include <assert.h>
 
 template <typename T>
-class pwmservo 
+class pwmservo_writer
 {
 	volatile T* reg;
 
@@ -16,7 +16,7 @@ class pwmservo
 	T regmax;
 
 public:
-	pwmservo(volatile T* reg, float min, float max, T regmax, T regmin) : 
+	pwmservo_writer(volatile T* reg, float min, float max, T regmax, T regmin) : 
 		reg(reg), min(min), max(max), minmax(max - min), regmin(regmin), regmax(regmax) {}
 
 	void set_value(float f) 
