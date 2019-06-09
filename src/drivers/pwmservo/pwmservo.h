@@ -1,6 +1,8 @@
 #ifndef GENOS_DRIVERS_PWM_SERVO_H
 #define GENOS_DRIVERS_PWM_SERVO_H
 
+#include <assert.h>
+
 template <typename T>
 class pwmservo 
 {
