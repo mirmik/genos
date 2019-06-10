@@ -22,7 +22,8 @@ namespace genos
 			uint8_t compcode = -1;
 
 		public:
-			pwmservo(pwmregs pr) : tim(pr.timer), compcode(pr.out) {}
+			pwmservo(pwmregs pr) : tim(pr.timer), compcode(pr.out) 
+			{}
 
 			int set_divider(int divider)
 			{
@@ -47,7 +48,6 @@ namespace genos
 					BUG();
 				}
 			}
-
 		};
 	}
 }

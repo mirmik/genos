@@ -21,14 +21,27 @@ constexpr const struct genos::avr::pwmregs ARDUINO_PWM[] =
 	{ &genos::avr::timer1, AVR_TIMER_OCRC }, // 13.1
 	{ &genos::avr::timer0, AVR_TIMER_OCRA }  // 13.2
 };
-#else
+#elif BOARD_ARDUINO_UNO
 #error "undefined board"
 #endif
 
 static inline
 constexpr genos::avr::timer_base * arduino_pwm_timer(int num)
 {
-	return ARDUINO_PWM[num - 2].timer; 
+#ifdef BOARD_ARDUINO_MEGA
+	return ARDUINO_PWM[num - 2].timer;
+#elif BOARD_ARDUINO_UNO
+	switch(num) 
+	{
+		case 3:  return { genos::avr::timer2, AVR_TIMER_OCRB }
+		case 5:  return { genos::avr::timer0, AVR_TIMER_OCRB }
+		case 6:  return { genos::avr::timer0, AVR_TIMER_OCRA }
+		case 9:  return { genos::avr::timer1, AVR_TIMER_OCRA }
+		case 10: return { genos::avr::timer1, AVR_TIMER_OCRB }
+		case 11: return { genos::avr::timer2, AVR_TIMER_OCRA }
+	}
+#endif	 
+	return {nullptr, 0}
 }
 
 static inline
