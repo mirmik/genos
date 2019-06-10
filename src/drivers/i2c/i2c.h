@@ -5,7 +5,7 @@
 
 #include <igris/datastruct/dlist.h>
 #include <igris/sync/syslock.h>
-#include <sched/api.h>
+#include <genos/api.h>
 #include <genos/wait.h>
 
 struct i2c_device

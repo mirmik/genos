@@ -16,7 +16,7 @@
  ****************************************************/
 
 #include "Adafruit_MS_PWMServoDriver.h"
-#include <sched/api.h>
+#include <genos/api.h>
 
 #include <math.h>
 

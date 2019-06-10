@@ -21,11 +21,11 @@ void crow_uartgate::do_send(crow::packet* pack)
 	send_ptr = (char*) &pack->header;
 	send_end = (char*) pack->endptr();
 
-	uart_device_sendbyte(u, GSTUFF_START);
+	u->sendbyte(GSTUFF_START);
 	send_crc = 0xFF;
 	send_state = 0;
 
-	uart_device_ctrirqs(u, UART_CTRIRQS_TXON);
+	u->ctrirqs(UART_CTRIRQS_TXON);
 }
 
 void crow_uartgate::sended()
@@ -77,13 +77,13 @@ void uartgate_tx_handler(void* arg)
 
 				if ((char)gate->send_crc == GSTUFF_START || (char)gate->send_crc == GSTUFF_STUB)
 				{
-					uart_device_sendbyte(gate->u, GSTUFF_STUB);
+					gate->u->sendbyte(GSTUFF_STUB);
 					gate->send_state = 4;
 					return;
 				}
 
 				gate->send_state = 2;
-				uart_device_sendbyte(gate->u, gate->send_crc);
+				gate->u->sendbyte(gate->send_crc);
 				return;
 			}
 
@@ -92,12 +92,12 @@ void uartgate_tx_handler(void* arg)
 
 			if (c == GSTUFF_START || c == GSTUFF_STUB)
 			{
-				uart_device_sendbyte(gate->u, GSTUFF_STUB);
+				gate->u->sendbyte(GSTUFF_STUB);
 				gate->send_state = 1;
 			}
 			else
 			{
-				uart_device_sendbyte(gate->u, c);
+				gate->u->sendbyte(c);
 			}
 
 			return;
@@ -105,30 +105,30 @@ void uartgate_tx_handler(void* arg)
 		case 1:
 			switch (*(gate->send_ptr - 1))
 			{
-				case GSTUFF_START: uart_device_sendbyte(gate->u, GSTUFF_STUB_START); break;
+				case GSTUFF_START: gate->u->sendbyte(GSTUFF_STUB_START); break;
 
-				case GSTUFF_STUB: uart_device_sendbyte(gate->u, GSTUFF_STUB_STUB); break;
+				case GSTUFF_STUB: gate->u->sendbyte(GSTUFF_STUB_STUB); break;
 			}
 
 			gate->send_state = 0;
 			return;
 
 		case 2:
-			uart_device_sendbyte(gate->u, GSTUFF_START);
+			gate->u->sendbyte(GSTUFF_START);
 			gate->send_state = 3;
 			return;
 
 		case 3:
-			uart_device_ctrirqs(gate->u, UART_CTRIRQS_TXOFF);
+			gate->u->ctrirqs(UART_CTRIRQS_TXOFF);
 			gate->sended();
 			return;
 
 		case 4:
 			switch ((char)gate->send_crc)
 			{
-				case GSTUFF_START: uart_device_sendbyte(gate->u, GSTUFF_STUB_START); break;
+				case GSTUFF_START: gate->u->sendbyte(GSTUFF_STUB_START); break;
 
-				case GSTUFF_STUB: uart_device_sendbyte(gate->u, GSTUFF_STUB_STUB); break;
+				case GSTUFF_STUB: gate->u->sendbyte(GSTUFF_STUB_STUB); break;
 			}
 
 			gate->send_state = 2;
@@ -194,7 +194,7 @@ void uartgate_rx_handler(void* arg)
 {
 	DTRACE();
 	crow_uartgate* gate = (crow_uartgate*) arg;
-	ring_putc(&gate->recvring, gate->recvring_buffer, uart_device_recvbyte(gate->u));
+	ring_putc(&gate->recvring, gate->recvring_buffer, gate->u->recvbyte());
 }
 
 
@@ -227,5 +227,5 @@ void crow_uartgate::init(struct uart_device * uart)
 	u->handarg = (void*) this;
 	u->handler = uartgate_handler;
 
-	uart_device_ctrirqs(u, UART_CTRIRQS_RXON);
+    u -> ctrirqs(UART_CTRIRQS_RXON);
 }

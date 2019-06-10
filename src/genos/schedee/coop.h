@@ -19,6 +19,9 @@ namespace genos
 		void * ret;
 
 	public:
+
+		coopschedee(){}
+
 		coopschedee(void* (*task) (void*),
 		          void * arg,
 		          void * heap,

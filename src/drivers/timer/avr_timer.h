@@ -214,7 +214,7 @@ namespace genos
 				0b00 - disconnect
 				0b01 - toggle
 				0b10 - clear on compare, set on downlevel
-				0b10 - set on compare, clear on downlevel
+				0b11 - set on compare, clear on downlevel
 			*/
 
 			void set_output_a_mode(uint8_t mode)
@@ -292,6 +292,27 @@ namespace genos
 			void irq_compare_b_enable(bool en)
 			{
 				bits_lvl(*timsk, 1 << 2, en); //OCIEB
+			}
+
+			volatile uint16_t * get_ocr_register(char ocrsym) 
+			{
+				switch (ocrsym) 
+				{
+					case 'a': return &regs->ocr_a;
+					case 'b': return &regs->ocr_b;
+					case 'c': return &regs->ocr_c;
+				}
+				return nullptr;
+			}
+
+			void enable_ocr_out(char ocrsym) 
+			{
+				switch (ocrsym) 
+				{
+					case 'a': set_output_a_mode(0b10); break;
+					case 'b': set_output_b_mode(0b10); break;
+					case 'c': set_output_c_mode(0b10); break;
+				}
 			}
 
 			void debug_print_regs()
