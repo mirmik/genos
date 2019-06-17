@@ -32,7 +32,15 @@ namespace genos
 		void * arg;
 	
 	public:
+		autom_schedee(){}
+
 		autom_schedee(autom_schedee_task_t task, void* arg)
+		{
+			this -> task = task;
+			this -> arg = arg;
+		}
+
+		void init(autom_schedee_task_t task, void* arg)
 		{
 			this -> task = task;
 			this -> arg = arg;

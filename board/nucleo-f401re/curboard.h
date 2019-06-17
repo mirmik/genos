@@ -14,7 +14,7 @@ extern struct stm32_usart_device usart6;
 
 __BEGIN_DECLS
 
-void board_init();
+void board_init(int freqmode = 0);
 
 __END_DECLS
 

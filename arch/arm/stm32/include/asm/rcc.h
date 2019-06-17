@@ -23,6 +23,7 @@ __BEGIN_DECLS
 
 void rcc_reset();
 void rcc_enable_gpio(struct gpio_regs* g);
+void rcc_enable_spi(struct spi_regs* g);
 void rcc_enable_usart(struct usart_regs* u);
 void rcc_enable_timer(struct timer_regs* u);
 void rcc_enable_syscfg();

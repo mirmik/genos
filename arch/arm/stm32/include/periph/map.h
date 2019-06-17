@@ -3,6 +3,7 @@
 
 #include <periph/regs/gpio.h>
 #include <periph/regs/usart.h>
+#include <periph/regs/spi.h>
 #include <periph/regs/timer.h>
 #include <periph/regs/rcc.h>
 #include <periph/regs/pwr.h>
@@ -162,6 +163,11 @@
 #define GPIOI ((struct gpio_regs *) GPIOI_BASE)
 #define GPIOJ ((struct gpio_regs *) GPIOJ_BASE)
 #define GPIOK ((struct gpio_regs *) GPIOK_BASE)
+
+#define SPI1 ((struct spi_regs *) SPI1_BASE) 
+#define SPI4 ((struct spi_regs *) SPI4_BASE)
+#define SPI5 ((struct spi_regs *) SPI5_BASE)
+#define SPI6 ((struct spi_regs *) SPI6_BASE)
 
 #define USART1 ((struct usart_regs *) USART1_BASE) 
 #define USART2 ((struct usart_regs *) USART2_BASE)

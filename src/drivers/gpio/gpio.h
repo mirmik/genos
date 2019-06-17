@@ -86,6 +86,10 @@ extern void gpio_toggle(gpio_t *gpio, gpio_mask_t mask);
 //extern int gpio_pin_irq_detach(struct gpio *gpio, gpio_mask_t mask,
 //		irq_handler_t pin_handler, int mode);
 
+#ifdef CHIP_STM32
+void gpio_alternate(gpio_t *gpio, gpio_mask_t mask, uint8_t code); 
+#endif
+
 __END_DECLS
 
 #endif
