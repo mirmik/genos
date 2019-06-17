@@ -35,6 +35,10 @@ struct gpio_pin
 #endif
 };
 
+#ifdef __cplusplus
+namespace genos { using pin = ::gpio_pin; }
+#endif
+
 #define GPIO_PIN(name, io, num) struct gpio_pin name = { io, 1<<(num) };
 
 __BEGIN_DECLS
