@@ -4,7 +4,7 @@
 #include <drivers/gpio/pin.h>
 
 static
-struct gpio_pin PINOUT[] = 
+const struct gpio_pin PINOUT[] = 
 {
 	//CN9
 	{ GPIOA, 1<<3 },	//d0

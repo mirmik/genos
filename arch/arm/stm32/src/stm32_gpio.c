@@ -1,4 +1,6 @@
 #include <asm/gpio.h>
+#include <asm/rcc.h>
+
 #include <igris/util/bits.h>
 
 #include <asm/chip.h>

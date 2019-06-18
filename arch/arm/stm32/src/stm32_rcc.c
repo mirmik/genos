@@ -1,6 +1,7 @@
 #include <periph/map.h>
 #include <periph/regs/gpio.h>
 #include <periph/regs/usart.h>
+#include <periph/regs/spi.h>
 #include <igris/util/bug.h>
 
 uint32_t stm32_declared_clockbus_freq[3];
@@ -127,15 +128,23 @@ void rcc_enable_spi(struct spi_regs* regs)
 {
 	switch ((uintptr_t)regs)
 	{
-		case SPI1_BASE : RCC->APB1ENR |= RCC_APB2ENR_SPI1EN; break;
-		case SPI4_BASE : RCC->APB1ENR |= RCC_APB2ENR_SPI4EN; break;
-		case SPI5_BASE : RCC->APB1ENR |= RCC_APB2ENR_SPI5EN; break;
-		case SPI6_BASE : RCC->APB1ENR |= RCC_APB2ENR_SPI6EN; break;
+		case SPI1_BASE :
+			RCC->APB1ENR |= RCC_APB2ENR_SPI1EN; break;
+		
+		case SPI4_BASE :
+			RCC->APB1ENR |= RCC_APB2ENR_SPI4EN; break;
+		
+		case SPI5_BASE :
+			RCC->APB1ENR |= RCC_APB2ENR_SPI5EN; break;
+		
+		case SPI6_BASE :
+			RCC->APB1ENR |= RCC_APB2ENR_SPI6EN; break;
+		
 		default: BUG();
 	}
 }
 
-void rcc_enable_syscfg() 
+void rcc_enable_syscfg()
 {
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 }

@@ -8,6 +8,7 @@
 
 struct gpio_regs;
 struct usart_regs;
+struct spi_regs;
 struct timer_regs;
 
 #define CLOCKBUS_NO_PLL 0

@@ -20,9 +20,9 @@ struct gpio_pin
 #ifdef __cplusplus
 	gpio_pin(gpio_t * gpio, gpio_mask_t mask) : gpio(gpio), mask(mask) {}
 	
-	void set(int lvl) { gpio_write(gpio, mask, lvl); }
-	void toggle() { gpio_toggle(gpio, mask); }
-	void tgl() { gpio_toggle(gpio, mask); }
+	void set(int lvl) const { gpio_write(gpio, mask, lvl); }
+	void toggle() const { gpio_toggle(gpio, mask); }
+	void tgl()  const { gpio_toggle(gpio, mask); }
 	uint8_t get() const { return !!gpio_read(gpio, mask); }
 	int mode(uint32_t _mode) const { return gpio_settings(gpio, mask, _mode); }
 

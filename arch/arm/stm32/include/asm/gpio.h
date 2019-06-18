@@ -48,7 +48,7 @@ void stm32_gpio_write(struct gpio_regs* g, uint32_t mask,
 static inline
 uint32_t stm32_gpio_read(struct gpio_regs* g, uint32_t mask)
 {
-	return g->ODR & mask;
+	return g->IDR & mask;
 }
 
 static inline

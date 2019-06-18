@@ -23,7 +23,7 @@ void pinMode(int pin, uint8_t mode)
 } 
 
 static inline 
-gpio_pin getPin(int pin) 
+const gpio_pin getPin(int pin) 
 {
 	return PINOUT[pin];
 } 

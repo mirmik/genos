@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include <asm/gpio.h>
+#include <asm/rcc.h>
 
 void gpio_write(struct gpio_regs* g, gpio_mask_t mask, unsigned char level)
 {
