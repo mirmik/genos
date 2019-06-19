@@ -44,6 +44,10 @@
 #define GPIO_MODE_OUT_OPEN_DRAIN    (1 << 14)
 #endif
 
+#ifndef GPIO_MODE_ANALOG_INPUT
+#define GPIO_MODE_ANALOG_INPUT      0x00020000
+#endif
+
 /*
 #ifndef GPIO_MODE_IN_INT_EN
 #define GPIO_MODE_IN_INT_EN         (1 << 31)

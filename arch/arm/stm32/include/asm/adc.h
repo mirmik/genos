@@ -4,6 +4,9 @@
 #include <sys/cdefs.h>
 #include <periph/regs/adc.h>
 
+#include <igris/util/bits.h>
+#include <igris/dprint.h>
+
 __BEGIN_DECLS
 
 void stm32_adc_enable(struct stm32_adc_regs * regs, int en);
@@ -48,6 +51,12 @@ static inline
 void stm32_adc_continuos_mode(struct stm32_adc_regs * regs, int en) 
 {
 	regs->CR2 |= ADC_CR2_CONT;
+}
+
+static inline 
+void stm32_adc_debug_print(struct stm32_adc_regs * regs) 
+{
+	dpr("SR: ");
 }
 
 __END_DECLS

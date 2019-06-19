@@ -71,6 +71,11 @@ int gpio_settings(struct gpio_regs * gpio, gpio_mask_t mask, uint32_t mode)
 		mode_val = 0b10;
 	}
 
+	else if (mode & GPIO_MODE_ANALOG_INPUT)
+	{
+		mode_val = 0b11;
+	}
+
 	bits_masked_assign_multimap(gpio->MODER, mask, mode_val, 2);
 
 	return 0;
