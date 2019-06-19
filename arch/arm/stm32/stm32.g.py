@@ -11,6 +11,7 @@ module("genos.hal.stm32.common",
 		"stm32_usart.c",
 		"stm32_gpio.c",
 		"stm32_rcc.c",
+		"stm32_adc.c",
 		"stm32_diag.c",
 	],
 

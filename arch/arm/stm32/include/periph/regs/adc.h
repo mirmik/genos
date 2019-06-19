@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-struct adc_regs
+struct stm32_adc_regs
 {
   volatile uint32_t SR;     /*!< ADC status register,                         Address offset: 0x00 */
   volatile uint32_t CR1;    /*!< ADC control register 1,                      Address offset: 0x04 */      
@@ -27,7 +27,7 @@ struct adc_regs
   volatile uint32_t DR;     /*!< ADC regular data register,                   Address offset: 0x4C */
 };
 
-struct adc_common_regs
+struct stm32_adc_common_regs
 {
   volatile uint32_t CSR;    /*!< ADC Common status register,                  Address offset: ADC1 base address + 0x300 */
   volatile uint32_t CCR;    /*!< ADC common control register,                 Address offset: ADC1 base address + 0x304 */

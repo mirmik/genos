@@ -189,6 +189,11 @@
 #define TIM13 ((struct timer_regs *) TIM13_BASE)
 #define TIM14 ((struct timer_regs *) TIM14_BASE)
 
+#define ADC   ((struct stm32_adc_common_regs *) ADC_BASE)
+#define ADC1  ((struct stm32_adc_regs *) ADC1_BASE)
+#define ADC2  ((struct stm32_adc_regs *) ADC2_BASE)
+#define ADC3  ((struct stm32_adc_regs *) ADC3_BASE)
+
 #define FLASH ((struct flash_regs *) FLASH_R_BASE)
 #define PWR ((struct pwr_regs *) PWR_BASE)
 #define SYSCFG ((struct syscfg_regs *) SYSCFG_BASE)

@@ -9,6 +9,7 @@
 struct gpio_regs;
 struct usart_regs;
 struct spi_regs;
+struct stm32_adc_regs;
 struct timer_regs;
 
 #define CLOCKBUS_NO_PLL 0
@@ -24,6 +25,7 @@ __BEGIN_DECLS
 
 void rcc_reset();
 void rcc_enable_gpio(struct gpio_regs* g);
+void rcc_enable_adc(struct stm32_adc_regs* g);
 void rcc_enable_spi(struct spi_regs* g);
 void rcc_enable_usart(struct usart_regs* u);
 void rcc_enable_timer(struct timer_regs* u);
