@@ -7,7 +7,7 @@
 
 #include <igris/datastruct/dlist.h>
 
-struct avr_spi_device : public spi_device {
+struct avr_spi_device : public genos::spi_driver {
 //	struct spi_device spi;
 
 	void * current_select = nullptr;
@@ -30,7 +30,7 @@ struct avr_spi_device : public spi_device {
 	int exbyte 			(int byte) 									override;
 	int setfrequency	(uint32_t freq) 							override;
 
-	void init(const char * name) override;
+	void init(const char * name);
 
 };
 
