@@ -5,9 +5,14 @@
 
 void stm32_adc_enable(struct stm32_adc_regs * regs, int en) 
 {
-	rcc_enable_adc(regs);
 	bits_lvl(regs->CR2, ADC_CR2_ADON, en);
 }
+
+void stm32_adc_enable_clocking(struct stm32_adc_regs * regs) 
+{
+	rcc_enable_adc(regs);
+}
+
 
 /*void stm32_adc_start_single_conversion(struct stm32_adc_regs * regs) 
 {
