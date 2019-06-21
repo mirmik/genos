@@ -24,7 +24,7 @@ module("genos.hal.stm32.common",
 
 	cc_flags = "-Os -nostdlib -nostdinc -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
 	cxx_flags = "-Os -nostdlib -nostdinc -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
-	ld_flags = "-Os -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--strip-all -Wl,--gc-sections -fno-use-cxa-atexit",
+	ld_flags = "-Os -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
 	libs = ["m", "gcc"],
 )
 

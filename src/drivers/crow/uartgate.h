@@ -10,17 +10,18 @@
 void uartgate_rx_handler(void*);
 void uartgate_tx_handler(void*);
 
-struct crow_uartgate : public crow::gateway {
+struct crow_uartgate : public crow::gateway 
+{
 	struct uart_device * u;
 
-	struct dlist_head to_send;
-	struct crow::packet * insend;
-	struct crow::packet * rpack;
+	struct dlist_head to_send = DLIST_HEAD_INIT(to_send);
+	struct crow::packet * insend = nullptr;
+	struct crow::packet * rpack = nullptr;
 
 	uint8_t send_state = 0;
-	uint8_t send_crc;
-	char* send_ptr;
-	char* send_end;		
+	uint8_t send_crc = 0;
+	char* send_ptr = nullptr;
+	char* send_end = nullptr;		
 
 	struct gstuff_autorecv recver;
 
