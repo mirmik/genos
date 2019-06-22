@@ -6,23 +6,24 @@
 #include <asm/gpio.h>
 #include <asm/rcc.h>
 
-void gpio_write(struct gpio_regs* g, gpio_mask_t mask, unsigned char level)
+void gpio_write(void* g, unsigned int mask, unsigned char level)
 {
-	stm32_gpio_write(g, mask, level);
+	stm32_gpio_write((struct gpio_regs *)(g), mask, level);
 }
 
-gpio_mask_t gpio_read(struct gpio_regs* g, gpio_mask_t mask)
+unsigned int gpio_read(void* g, unsigned int mask)
 {
-	return stm32_gpio_read(g, mask);
+	return stm32_gpio_read((struct gpio_regs *)(g), mask);
 }
 
-void gpio_toggle(struct gpio_regs* g, gpio_mask_t mask)
+void gpio_toggle(void* g, unsigned int mask)
 {
-	stm32_gpio_toggle(g, mask);
+	stm32_gpio_toggle((struct gpio_regs *)(g), mask);
 }
 
-int gpio_settings(struct gpio_regs * gpio, gpio_mask_t mask, uint32_t mode)
+int gpio_settings(void * g, unsigned int mask, uint32_t mode)
 {
+	struct gpio_regs * gpio = (struct gpio_regs *)(g);
 	int mode_val = 0;
 
 	if ((mode & GPIO_MODE_OUT_SECTION) &&
@@ -82,8 +83,9 @@ int gpio_settings(struct gpio_regs * gpio, gpio_mask_t mask, uint32_t mode)
 }
 
 #ifdef CHIP_STM32
-void gpio_alternate(gpio_t *gpio, gpio_mask_t mask, uint8_t code) 
+void gpio_alternate(void *g, unsigned int mask, uint8_t code) 
 {
+	struct gpio_regs * gpio = (struct gpio_regs *)(g);
 	rcc_enable_gpio(gpio);
 	bits_masked_assign_multimap(gpio->MODER, mask, 0b10, 2);
 	stm32_gpio_set_alternate(gpio, mask, code);	
