@@ -177,8 +177,8 @@
 #  define ATMEGA_IRQ_SPMRDY     24 /* 0x0032 Store Program Memory Ready */
 
 #  define NR_IRQS             25
-//#  define AVR_PC_SIZE         2
-//#  define IRQ_CONTEXT_SIZE    38 /* Size of the register state save array (in bytes) */
+#  define AVR_PC_SIZE         2
+#  define IRQ_CONTEXT_SIZE    38 /* Size of the register state save array (in bytes) */
 
 #else
   #error "Unrecognized chip"

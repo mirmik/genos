@@ -5,7 +5,7 @@
 #include <systime/systime.h>
 
 #include <diag/diag.h>
-#include <periph/irqdefs.h>
+#include <periph/map.h>
 
 __BEGIN_DECLS
 

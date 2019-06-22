@@ -1,7 +1,7 @@
 #ifndef GENOS_DRIVERS_AVR_TIMER_H
 #define GENOS_DRIVERS_AVR_TIMER_H
 
-#include <periph/regs/timer.h>
+#include <periph/regs/avr/timer.h>
 #include <periph/irqdefs.h>
 
 #include <hal/irqtable.h>

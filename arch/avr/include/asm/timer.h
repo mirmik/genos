@@ -1,7 +1,7 @@
 #ifndef GENOS_AVR_TIMER_H
 #define GENOS_AVR_TIMER_H
 
-#include <periph/regs/timer.h>
+#include <periph/regs/avr/timer.h>
 #include <sys/cdefs.h>
 #include <inttypes.h>
 

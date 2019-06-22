@@ -14,11 +14,11 @@
 
 struct gpio_pin
 {
-	gpio_t * gpio;
-	gpio_mask_t mask;
+	void * gpio;
+	unsigned int mask;
 
 #ifdef __cplusplus
-	gpio_pin(gpio_t * gpio, gpio_mask_t mask) : gpio(gpio), mask(mask) {}
+	gpio_pin(void * gpio, unsigned int mask) : gpio(gpio), mask(mask) {}
 	
 	void set(int lvl) const { gpio_write(gpio, mask, lvl); }
 	void toggle() const { gpio_toggle(gpio, mask); }
@@ -48,7 +48,7 @@ static inline int gpio_pin_settings(struct gpio_pin * pin, uint32_t mode)
 	return gpio_settings(pin->gpio, pin->mask, mode);
 }
 
-static inline void gpio_pin_init(struct gpio_pin * pin, gpio_t * io, uint8_t num)
+static inline void gpio_pin_init(struct gpio_pin * pin, void * io, uint8_t num)
 {
 	pin->gpio = io;
 	pin->mask = 1 << num;

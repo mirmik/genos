@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include <periph/regs/spi.h>
+#include <periph/regs/avr/spi.h>
 
 #if 0
 

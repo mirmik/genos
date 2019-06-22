@@ -48,6 +48,7 @@ __BEGIN_DECLS
 //void board_shutdown(arch_shutdown_mode_t mode) __attribute__((noreturn));
 
 void emergency_stop();
+void board_init();
 
 __END_DECLS
 

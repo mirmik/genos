@@ -2,7 +2,7 @@
 #define GENOS_DRIVERS_AVR_UART
 
 #include <drivers/serial/uart.h>
-#include <periph/regs/usart.h>
+#include <periph/regs/avr/usart.h>
 
 #include <hal/irqtable.h>
 

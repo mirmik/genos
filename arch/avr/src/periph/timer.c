@@ -1,7 +1,6 @@
-#include <periph/regs/timer.h>
-#include <asm/timer.h>
-#include <periph/irqdefs.h>
+#include <periph/map.h>
 
+#include <asm/timer.h>
 #include <igris/util/bits.h>
 
 #include <assert.h>
