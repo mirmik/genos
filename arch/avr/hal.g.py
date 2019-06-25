@@ -37,7 +37,7 @@ module("genos.hal", impl = "atmega2560",
 	defines = ["CHIP_ATMEGA2560"],
 	cxx_flags = "-nostdlib -Os -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
 	cc_flags = "-nostdlib -Os -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
-	ld_flags = "-nostdlib -Os -mmcu=atmega2560 -fdata-sections -ffunction-sections -flto -Wl,--strip-all -Wl,--gc-sections ",
+	ld_flags = "-nostdlib -Os -mmcu=atmega2560 -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
 	libs = ["m", "gcc"],
 )
 
@@ -48,7 +48,7 @@ module("genos.hal", impl = "atmega328p",
 	defines = ["CHIP_ATMEGA328P"],
 	cxx_flags = "-nostdlib -Os -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
 	cc_flags = "-nostdlib -Os -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
-	ld_flags = "-nostdlib -Os -mmcu=atmega328p -fdata-sections -ffunction-sections -flto -Wl,--strip-all -Wl,--gc-sections ",
+	ld_flags = "-nostdlib -Os -mmcu=atmega328p -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
 	libs = ["m", "gcc"],
 )
 

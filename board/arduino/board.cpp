@@ -14,6 +14,8 @@ AVR_USART_DEVICE_DECLARE(usart0, USART0, ATMEGA_IRQ_U0RX);
 
 void board_init() {
 	arch_init();
+	dprln("arch_inited");
+
 	//arch_uart_init();	
 	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT);
 	gpio_pin_write(&board_led, 1);

@@ -1,7 +1,6 @@
-#include <gxx/diag/diag.h>
-#include <gxx/util/stub.h>
+#include <diag/diag.h>
 
-void diag_setup(struct diag_ops* ndiag){};
+void diag_setup(struct diag_ops* ndiag, void* priv){};
 
 int diag_putc(char c){};
 int diag_getc(){};
