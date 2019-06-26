@@ -1,8 +1,8 @@
 #ifndef GENOS_BUTTON_CHECKER_H
 #define GENOS_BUTTON_CHECKER_H
 
-#include <drivers/gpio/pin.h>
 #include <igris/math/schmidt.h>
+#include <drivers/gpio/pin.h>
 
 #include <systime/systime.h>
 
