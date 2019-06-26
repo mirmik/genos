@@ -1,4 +1,4 @@
-#define NODTRACE 0
+#define NODTRACE 1
 #include <igris/dtrace.h>
 
 #include <drivers/serial/uart.h>
@@ -15,7 +15,7 @@
 void crow_uartgate::do_send(crow::packet* pack)
 {
 	DTRACE();
-	dlist_del(&pack->lnk);
+	dlist_del_init(&pack->lnk);
 	insend = pack;
 
 	send_ptr = (char*) &pack->header;
@@ -51,8 +51,8 @@ void crow_uartgate::send(crow::packet* pack)
 	DTRACE();
 	system_lock();
 
-	dprptrln(insend);
-	dprln(dlist_empty(&to_send));
+	//dprptrln(insend);
+	//dprln(dlist_empty(&to_send));
 
 	if (insend == nullptr && dlist_empty(&to_send))
 	{

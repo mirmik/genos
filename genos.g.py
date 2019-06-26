@@ -119,7 +119,9 @@ module("genos",
 		("igris.syslock", "genos.atomic"),
 
 		"genos.sched",
-		"igris.cxx_support"
+		"igris.cxx_support",
+
+		"genos.diag"
 	]
 )
 
