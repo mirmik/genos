@@ -144,6 +144,11 @@ void crow_uartgate::init_recv()
 	DTRACE();
 	system_lock();
 	rpack = (struct crow::packet*) crow::allocate_packet(PACKET_DATAADDR_SIZE_MAX);
+	if (rpack == nullptr) 
+	{
+		system_unlock();
+		return;
+	}
 
 	gstuff_autorecv_setbuf(&recver, (char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX);
 	gstuff_autorecv_reset(&recver);
@@ -171,6 +176,12 @@ void crow_uartgate::nblock_onestep()
 	int sts;
 	char c;
 
+	if (rpack==nullptr) 
+	{
+		init_recv();
+		if (rpack == nullptr) return;
+	}
+
 	if (ring_avail(&recvring))
 	{
 
@@ -197,7 +208,13 @@ void uartgate_rx_handler(void* arg)
 {
 	DTRACE();
 	crow_uartgate* gate = (crow_uartgate*) arg;
-	ring_putc(&gate->recvring, gate->recvring_buffer, gate->u->recvbyte());
+
+	char c = gate->u->recvbyte();
+
+	if (gate->rpack == nullptr) 
+		return;
+
+	ring_putc(&gate->recvring, gate->recvring_buffer, c);
 }
 
 
