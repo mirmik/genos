@@ -15,6 +15,10 @@
 void crow_uartgate::do_send(crow::packet* pack)
 {
 	DTRACE();
+	assert(pack);
+
+	system_lock();
+
 	dlist_del_init(&pack->lnk);
 	insend = pack;
 
@@ -26,12 +30,18 @@ void crow_uartgate::do_send(crow::packet* pack)
 	send_state = 0;
 
 	u->ctrirqs(UART_CTRIRQS_TXON);
+
+	system_unlock();
 }
 
 void crow_uartgate::sended()
 {
+	system_lock();
 	DTRACE();
-	auto tmp = insend;
+	assert(insend);
+
+	crow::packet * tmp = insend;
+	assert(tmp);
 
 	if (dlist_empty(&to_send))
 	{
@@ -43,6 +53,7 @@ void crow_uartgate::sended()
 		do_send(entry);
 	}
 
+	system_unlock();
 	crow::return_to_tower(tmp, CROW_SENDED);
 }
 
@@ -50,6 +61,8 @@ void crow_uartgate::send(crow::packet* pack)
 {
 	DTRACE();
 	system_lock();
+
+	assert(pack);
 
 	//dprptrln(insend);
 	//dprln(dlist_empty(&to_send));
@@ -66,7 +79,7 @@ void crow_uartgate::send(crow::packet* pack)
 	system_unlock();
 }
 
-void uartgate_tx_handler(void* arg)
+void crow_uartgate::uartgate_tx_handler(void* arg)
 {
 	DTRACE();
 	crow_uartgate* gate = (crow_uartgate*) arg;
@@ -146,8 +159,8 @@ void crow_uartgate::init_recv()
 	rpack = (struct crow::packet*) crow::allocate_packet(PACKET_DATAADDR_SIZE_MAX);
 	if (rpack == nullptr) 
 	{
-		system_unlock();
 		return;
+		system_unlock();
 	}
 
 	gstuff_autorecv_setbuf(&recver, (char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX);
@@ -176,16 +189,22 @@ void crow_uartgate::nblock_onestep()
 	int sts;
 	char c;
 
-	if (rpack==nullptr) 
-	{
+	if (rpack==nullptr)
 		init_recv();
-		if (rpack == nullptr) return;
-	}
 
-	if (ring_avail(&recvring))
+	while (1)
 	{
+		system_lock();
+		int ravail = ring_avail(&recvring);
+		if (ravail == 0) break;
+		system_unlock();
 
+		if (rpack == nullptr)
+			return;
+
+		system_lock();
 		c = ring_getc(&recvring, recvring_buffer);
+		system_unlock();
 
 		sts = gstuff_autorecv_newchar(&recver, c);
 
@@ -193,32 +212,26 @@ void crow_uartgate::nblock_onestep()
 		{
 			newline_handler();
 		}
-		else
+		else if (sts == GSTUFF_CONTINUE)
 		{
-			//free(gate->rpack);
-			//init_recv(gate);
+			return;
+		}
+		else 
+		{
+			// RESET
 		}
 	}
-
-	//dprln("exit from");
-	//while(1);
 }
 
-void uartgate_rx_handler(void* arg)
+void crow_uartgate::uartgate_rx_handler(void* arg)
 {
 	DTRACE();
 	crow_uartgate* gate = (crow_uartgate*) arg;
-
-	char c = gate->u->recvbyte();
-
-	if (gate->rpack == nullptr) 
-		return;
-
-	ring_putc(&gate->recvring, gate->recvring_buffer, c);
+	ring_putc(&gate->recvring, gate->recvring_buffer, gate->u->recvbyte());
 }
 
 
-void uartgate_handler(void* arg, int variant)
+void crow_uartgate::uartgate_handler(void* arg, int variant)
 {
 	DTRACE();
 
@@ -237,10 +250,10 @@ void crow_uartgate::init(struct uart_device * uart)
 	DTRACE();
 	u = uart;
 	dlist_init(&to_send);
-	insend = NULL;
+	//insend = NULL;
 	init_recv();
 
-	ring_init(&recvring, PACKET_DATAADDR_SIZE_MAX);
+	ring_init(&recvring, UARTGATE_RECVRING_SIZE);
 
 	crow::link_gate(this, 0xF4);
 
