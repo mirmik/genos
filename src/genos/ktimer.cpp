@@ -121,7 +121,7 @@ void ktimer_manager_step()
 		{
 			ktimer_execute(it);
 		}
-		else break;
+		else return;
 
 		system_lock();
 	}

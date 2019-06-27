@@ -196,9 +196,9 @@ void crow_uartgate::nblock_onestep()
 	{
 		system_lock();
 		int ravail = ring_avail(&recvring);
-		if (ravail == 0) break;
 		system_unlock();
-
+		if (ravail == 0) break;
+		
 		if (rpack == nullptr)
 			return;
 
