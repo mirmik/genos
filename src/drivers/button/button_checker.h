@@ -44,6 +44,11 @@ namespace genos
 			unpressed_level(unpressed_level)
 		{}
 
+		int raw() 
+		{
+			return pin.get();	
+		}
+
 		int check()
 		{
 			int val = pin.get();
