@@ -6,9 +6,9 @@
 
 #include <systime/systime.h>
 
-#define BUTTON_PRESS_EVENT 1
-#define BUTTON_LONG_PRESS_EVENT 2
-#define BUTTON_RELEASE_EVENT 3
+#define BUTTON_PRESS_EVENT 0b001
+#define BUTTON_LONG_PRESS_EVENT 0b010
+#define BUTTON_RELEASE_EVENT 0b100
 #define BUTTON_NONE 0
 
 // Простой драйвер кнопки. Не использует прерывания.
@@ -39,8 +39,8 @@ namespace genos
 		};
 
 	public:
-		button_checker(const genos::pin pin, uint8_t unpressed_level) :
-			schmidt(10, 20, 30, unpressed_level), pin(pin), 
+		button_checker(const genos::pin pin, uint8_t unpressed_level, uint8_t defence = 10) :
+			schmidt(1*defence, 2*defence, 3*defence, unpressed_level), pin(pin), 
 			unpressed_level(unpressed_level)
 		{}
 
