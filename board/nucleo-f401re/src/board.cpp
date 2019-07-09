@@ -84,5 +84,6 @@ void board_init(int freqmode)
 	stm32_gpio_set_alternate(GPIOA, (1 << 11 | 1 << 12), GPIO_AF_USART6);
 
 	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
+	stm32_usart_setup(USART6, 115200, 'n', 8, 1);
 	stm32_diag_init(USART2);
 }
