@@ -67,7 +67,7 @@ void board_init(int freqmode)
 	systime_set_frequency(1000);
 
 	rcc_enable_usart(USART2);
-//	rcc_enable_usart(USART6);
+	rcc_enable_usart(USART6);
 	rcc_enable_gpio(GPIOA);
 	//rcc_enable_gpio(GPIOD);
 
@@ -77,8 +77,13 @@ void board_init(int freqmode)
 
 	gpio_settings(GPIOA, (1 << 2 | 1 << 3), GPIO_MODE_ALTERNATE);
 	stm32_gpio_set_maxspeed(GPIOA, (1 << 2 | 1 << 3), STM32_GPIO_SPEED_LEVEL_0);
-	stm32_gpio_set_alternate(GPIOA, (1 << 2 | 1 << 3), 7);
+	stm32_gpio_set_alternate(GPIOA, (1 << 2 | 1 << 3), GPIO_AF_USART2);
+
+	gpio_settings(GPIOA, (1 << 11 | 1 << 12), GPIO_MODE_ALTERNATE);
+	stm32_gpio_set_maxspeed(GPIOA, (1 << 11 | 1 << 12), STM32_GPIO_SPEED_LEVEL_0);
+	stm32_gpio_set_alternate(GPIOA, (1 << 11 | 1 << 12), GPIO_AF_USART6);
 
 	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
+	stm32_usart_setup(USART6, 115200, 'n', 8, 1);
 	stm32_diag_init(USART2);
 }
