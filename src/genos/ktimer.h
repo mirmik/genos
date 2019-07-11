@@ -38,6 +38,12 @@ struct ktimer_base
 		swift();
 		plan();
 	}
+
+	bool planned();
+	void unplan();	
+
+	void set_start_now();
+	void set_interval_ms(clock_t t);
 };
 
 namespace genos

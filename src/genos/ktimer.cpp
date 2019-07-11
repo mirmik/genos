@@ -40,6 +40,9 @@ void ktimer_init_for_milliseconds(genos::ktimer * tim, ktimer_callback_t act, vo
 	ktimer_init(tim, act, arg, jiffies(), ms2jiffies(interval));
 }
 
+void ktimer_base::set_start_now() { start = jiffies(); }
+void ktimer_base::set_interval_ms(clock_t t) { interval = ms2jiffies(t); }
+
 void ktimer_list_debug_print() 
 {
 	struct ktimer_base * it;
@@ -47,6 +50,16 @@ void ktimer_list_debug_print()
 	{
 		dprln("timer", it->start, it->interval);
 	}
+}
+
+bool ktimer_base::planned() 
+{
+	return ctr.lnk.next != ctr.lnk.prev;
+}
+
+void ktimer_base::unplan() 
+{
+	dlist_del_init(&ctr.lnk);
 }
 
 void ktimer_base::plan()
