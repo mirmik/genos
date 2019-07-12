@@ -72,6 +72,9 @@
 
 class QuadDisplay
 {
+public:
+    const static uint8_t numerals[];
+
 private:
     unsigned long _startMillis = millis();
     bool _state;

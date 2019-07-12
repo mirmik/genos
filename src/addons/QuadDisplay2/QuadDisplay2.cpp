@@ -1,7 +1,7 @@
 #include "QuadDisplay2.h"
 #include <math.h>
 
-const static uint8_t numerals[] = {QD_0, QD_1, QD_2, QD_3, QD_4, QD_5, QD_6, QD_7, QD_8, QD_9};
+const uint8_t QuadDisplay::numerals[] = {QD_0, QD_1, QD_2, QD_3, QD_4, QD_5, QD_6, QD_7, QD_8, QD_9};
 
 void QuadDisplay::begin()
 {

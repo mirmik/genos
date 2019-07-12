@@ -66,9 +66,9 @@ void board_init(int freqmode)
 
 	systime_set_frequency(1000);
 
+	rcc_enable_gpio(GPIOA);
 	rcc_enable_usart(USART2);
 	rcc_enable_usart(USART6);
-	rcc_enable_gpio(GPIOA);
 	//rcc_enable_gpio(GPIOD);
 
 	cpu_delay(100);
