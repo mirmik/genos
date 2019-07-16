@@ -5,6 +5,7 @@
 #include <igris/protocols/numcmd/numcmd.h>
 #include <igris/datastruct/sline.h>
 
+#include <genos/cdev.h>
 #include <stdint.h>
 
 #define NUMCMD_LINE_LENGTH 64
@@ -13,7 +14,7 @@ struct numcmd_context
 {
 	struct numcmd_record * numcmd_table;
 	struct sline line;
-	struct serial_device * serdev;
+	genos::char_device * serdev;
 	int state;
 	char last;
 	char buffer[NUMCMD_LINE_LENGTH];

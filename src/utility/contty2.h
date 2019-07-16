@@ -2,6 +2,7 @@
 #define GENOS_UTILITY_CONTTY2_H
 
 #include <sys/cdefs.h>
+#include <genos/cdev.h>
 #include <igris/shell/readline.h>
 
 #define CONTTY2_LINE_LENGTH 32
@@ -11,7 +12,7 @@ struct serial_device;
 
 struct contty2_context {
 	struct readline rl;
-	struct serial_device * cdev;
+	genos::char_device * cdev;
 	unsigned char debug_mode;
 	char buffer[CONTTY2_LINE_LENGTH];
 	char hbuffer[CONTTY2_LINE_LENGTH * CONTTY2_HISTORY_SIZE];

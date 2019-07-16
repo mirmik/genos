@@ -34,6 +34,8 @@ namespace genos
 		virtual int avail() { return INT_MAX; }
 		//virtual int write(const void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 		//virtual int read(void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
+
+		int print(const char * str, int flags) { return write(str, strlen(str), flags); }
 	
 		int gettype() override { return GENOS_RESOURCE_FILE; } 
 	};

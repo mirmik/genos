@@ -16,7 +16,7 @@ void numcmd_send_answer(struct numcmd_context * cntxt, int32_t ret)
 
 	numcmd_form_checksum(buf);
 
-	serdev_write(cntxt->serdev, buf, 14, 0);
+	cntxt->serdev->write(buf, 14, 0);
 	
 	if (cntxt->debug_mode) 
 	{
@@ -58,7 +58,7 @@ void numcmd_wrong_frame(struct numcmd_context * cntxt)
 	if (cntxt->debug_mode)
 		dprln("numcmd: wrong frame");
 
-	serdev_write(cntxt->serdev, "\001JJ\003", 4, 0);
+	cntxt->serdev->write("\001JJ\003", 4, 0);
 };
 
 void numcmd_newmessage(struct numcmd_context * cntxt)
@@ -117,7 +117,7 @@ void* numcmd_automate(void* arg, int* state)
 
 	char c;
 	int ret;
-	struct serial_device * serdev = cntxt->serdev;
+	genos::char_device * serdev = cntxt->serdev;
 	struct sline * line = &cntxt->line;
 
 	switch (cntxt->state)
@@ -144,7 +144,7 @@ void* numcmd_automate(void* arg, int* state)
 				dprln("numcmd: state 2");
 
 			//dpr("line_state: "); debug_write(line->buf, line->len); dprln();
-			serdev->c_ops->read(serdev, &c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
+			serdev->read(&c, 0, IO_ONLYWAIT); //Неблокирующий wait для автомата.
 			cntxt->state = 3;
 			break;
 
@@ -152,7 +152,7 @@ void* numcmd_automate(void* arg, int* state)
 			if (cntxt->debug_mode)
 				dprln("numcmd: state 3");
 
-			while ((ret = serdev->c_ops->read(serdev, &c, 1, IO_NOBLOCK)))
+			while ((ret = serdev->read(&c, 1, IO_NOBLOCK)))
 			{
 				if (cntxt->debug_mode)
 				{
