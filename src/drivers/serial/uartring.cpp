@@ -125,7 +125,7 @@ int uartring_device::avail()
 	return ring_avail(&rxring);
 }
 
-void uartring_ddevice_irq_handler(void* priv, int code)
+void uartring_device_irq_handler(void* priv, int code)
 {
 	struct uartring_device* uring = (struct uartring_device*) priv;
 
@@ -184,7 +184,7 @@ void uartring_emulate_read(struct uartring_device * dev,
 void uartring_device::begin(struct uart_device * uart)
 {
 	udev = uart;
-	uart -> handler = uartring_ddevice_irq_handler;
+	uart -> handler = uartring_device_irq_handler;
 	uart -> handarg = (void*)this;
 
 	udev->enable(1);
