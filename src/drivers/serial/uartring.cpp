@@ -101,8 +101,6 @@ int uartring_device::release()
 
 int uartring_device::open(genos::openres * ores)
 {
-	dprln("uartring_device::open");
-
 	if (refs == 0)
 	{
 		udev->ctrirqs(UART_CTRIRQS_TXOFF);
@@ -125,7 +123,7 @@ int uartring_device::avail()
 	return ring_avail(&rxring);
 }
 
-void uartring_device_irq_handler(void* priv, int code)
+static void uartring_device_irq_handler(void* priv, int code)
 {
 	struct uartring_device* uring = (struct uartring_device*) priv;
 
