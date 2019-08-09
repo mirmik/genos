@@ -34,13 +34,13 @@ namespace genos
 	public:
 		autom_schedee(){}
 
-		autom_schedee(autom_schedee_task_t task, void* arg)
+		autom_schedee(autom_schedee_task_t task, void* arg = nullptr)
 		{
 			this -> task = task;
 			this -> arg = arg;
 		}
 
-		void init(autom_schedee_task_t task, void* arg)
+		void init(autom_schedee_task_t task, void* arg = nullptr)
 		{
 			this -> task = task;
 			this -> arg = arg;
