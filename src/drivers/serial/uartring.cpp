@@ -78,8 +78,6 @@ int uartring_device::read(void* data,
 	if (flags & IO_ONLYWAIT)
 		return 0;
 
-	//dprln("READ");
-
 	system_lock();
 	ret = ring_read(&rxring, rxbuffer, (char*)data, size);
 	system_unlock();
@@ -103,8 +101,6 @@ int uartring_device::release()
 
 int uartring_device::open(genos::openres * ores)
 {
-	dprln("uartring_device::open");
-
 	if (refs == 0)
 	{
 		udev->ctrirqs(UART_CTRIRQS_TXOFF);
@@ -127,23 +123,7 @@ int uartring_device::avail()
 	return ring_avail(&rxring);
 }
 
-/*int uartring_device::waitread(struct serial_device* dev)
-{
-	RETYPE(struct uartring_device *, udev, dev);
-	system_lock();
-
-	if (ring_avail(&udev->rxring))
-	{
-		system_unlock();
-		return 1;
-	}
-
-	wait_current_schedee(&dev->node.rxwlst, 0);
-	system_unlock();
-	return 0;
-}*/
-
-void uartring_ddevice_irq_handler(void* priv, int code)
+static void uartring_device_irq_handler(void* priv, int code)
 {
 	struct uartring_device* uring = (struct uartring_device*) priv;
 
@@ -202,7 +182,7 @@ void uartring_emulate_read(struct uartring_device * dev,
 void uartring_device::begin(struct uart_device * uart)
 {
 	udev = uart;
-	uart -> handler = uartring_ddevice_irq_handler;
+	uart -> handler = uartring_device_irq_handler;
 	uart -> handarg = (void*)this;
 
 	udev->enable(1);
