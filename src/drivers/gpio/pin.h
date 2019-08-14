@@ -71,4 +71,9 @@ static inline uint8_t gpio_pin_read(struct gpio_pin * ptr)
 
 __END_DECLS
 
+namespace genos
+{
+	using ::gpio_pin;
+}
+
 #endif
