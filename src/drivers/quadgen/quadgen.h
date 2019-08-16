@@ -34,8 +34,6 @@ namespace genos
 		{
 			uint8_t setcode = igris::graycode(state);
 
-			dprln((bool)(setcode & 0b01), (bool)(setcode & 0b10));
-
 			bool a = (bool)(setcode & 0b01);
 			bool b = (bool)(setcode & 0b10);
 

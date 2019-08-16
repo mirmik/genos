@@ -34,6 +34,16 @@ void irqtable_debug_print();
 
 __END_DECLS
 
+#ifdef __cplusplus
+namespace genos
+{
+	namespace irqtable 
+	{
+		uint16_t counter(int irqno);
+	}
+}
+#endif
+
 /*#ifdef __cplusplus
 #include <igris/event/delegate.h>
 

@@ -21,7 +21,7 @@ namespace genos
 
 		void dec() override 
 		{
-			q.inc();
+			q.dec();
 		}
 
 		void set();
