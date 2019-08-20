@@ -10,6 +10,7 @@ namespace genos
 	{
 	public:
 		genos::quadgen_differential q;
+		bool en = false;
 
 	public:
 		quadgen_stepctr(const genos::quadgen_differential& q) : q(q) {}
@@ -25,6 +26,17 @@ namespace genos
 		}
 
 		void set();
+
+		void power(bool en) override 
+		{
+			this->en = en;
+			//pass
+		}
+
+		/*int64_t target_position() override 
+		{
+			return target_impulse_position / 4;
+		}*/
 	};
 }
 
