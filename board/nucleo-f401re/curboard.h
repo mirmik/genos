@@ -12,6 +12,11 @@ extern struct gpio_pin board_led;
 extern struct stm32_usart_device usart2;
 extern struct stm32_usart_device usart6;
 
+namespace board 
+{
+	extern gpio_pin sysled;
+}
+
 __BEGIN_DECLS
 
 void board_init(int freqmode = 0);

@@ -13,4 +13,4 @@ def install(file, *args):
 	os.system("st-flash write firmware.bin 0x8000000")
 
 def terminal(path="/dev/ttyACM0"):
-	os.system("sudo gtkterm -p {} -s 115200 --parity none".format(path))
+	os.system("gtkterm -p {} -s 115200 --parity none".format(path))

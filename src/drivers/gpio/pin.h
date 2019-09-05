@@ -19,6 +19,7 @@ struct gpio_pin
 
 #ifdef __cplusplus
 	gpio_pin(void * gpio, unsigned int mask) : gpio(gpio), mask(mask) {}
+	gpio_pin() : gpio(nullptr), mask(0) {}
 	
 	void set(int lvl) const { gpio_write(gpio, mask, lvl); }
 	void toggle() const { gpio_toggle(gpio, mask); }

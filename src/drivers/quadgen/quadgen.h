@@ -6,7 +6,6 @@
 
 namespace genos 
 {
-
 	class quadgen_differential
 	{
 		genos::gpio_pin apin0; 
@@ -24,6 +23,8 @@ namespace genos
 		) 
 			: apin0(apin0), apin1(apin1), bpin0(bpin0), bpin1(bpin1)
 		{}
+
+		quadgen_differential() {}
 
 		quadgen_differential(const quadgen_differential& q) :
 			apin0(q.apin0), apin1(q.apin1), bpin0(q.bpin0), bpin1(q.bpin1),

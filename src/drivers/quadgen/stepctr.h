@@ -27,7 +27,7 @@ namespace genos
 
 		void set();
 
-		void power(bool en) override 
+		void enable_power(bool en) override 
 		{
 			this->en = en;
 			//pass
