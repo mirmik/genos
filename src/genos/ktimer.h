@@ -2,9 +2,9 @@
 #define GENOS_TIMER_TASKLET_H
 
 #include <igris/sync/syslock.h>
+#include <igris/osinter/ctrobj.h>
 
 #include <systime/systime.h>
-#include <genos/ctrobj.h>
 
 namespace genos 
 {

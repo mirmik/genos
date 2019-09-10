@@ -1,8 +1,8 @@
 #ifndef GENOS_SCHEDEE_H
 #define GENOS_SCHEDEE_H
 
-#include <genos/ctrobj.h>
-#include <genos/wait.h>
+#include <igris/osinter/ctrobj.h>
+#include <igris/osinter/wait.h>
 #include <genos/ktimer.h>
 
 #include <genos/resource.h>
@@ -34,6 +34,7 @@ namespace genos
 
 		uint8_t prio;
 		uint8_t sch_state;
+		uint8_t syslock_counter_save;
 
 #if SCHEDEE_DEBUG_STRUCT
 		struct dlist_head schedee_list_lnk;
@@ -78,6 +79,7 @@ namespace genos
 		}
 
 		void run();
+		void stop();
 	};
 }
 

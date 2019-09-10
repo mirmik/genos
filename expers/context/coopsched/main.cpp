@@ -1,10 +1,12 @@
 #include <hal/board.h>
 #include <hal/irq.h>
 
-#include <sched/api.h>
+#include <genos/api.h>
 
-#include <sched/schedee/cooperative.h>
-#include <sched/sched.h>
+#include <genos/schedee/coop.h>
+#include <genos/schedee/autom.h>
+
+#include <genos/sched.h>
 #include <genos/ktimer.h>
 
 #include <igris/dprint.h>
@@ -29,8 +31,9 @@ void* autom_task(void* arg, int* state)
 	msleep(1000);
 }
 
-struct cooperative_schedee sch;
 char sch_heap[128];
+genos::autom_schedee asch(autom_task, NULL);
+genos::coopschedee sch(task, NULL, sch_heap, 128);
 
 int main() 
 {
@@ -39,8 +42,8 @@ int main()
 	dprln("init scheduler");
 	scheduler_init();
 	
-	cooperative_schedee_init(&sch, task, NULL, sch_heap, 128);
-	schedee_run(&sch.sch);
+	sch.run();
+	asch.run();
 
 	//struct schedee* asch = create_autom_schedee(autom_task, NULL);
 	//schedee_run(asch);
@@ -56,7 +59,7 @@ int main()
 void __schedule__() 
 {
 	while(1) {
-		timer_manager_step();
+		ktimer_manager_step();
 		schedee_manager_step();
 	}
 }

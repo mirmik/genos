@@ -120,6 +120,7 @@ module("genos",
 
 		"genos.sched",
 		"igris.cxx_support",
+		"igris.ctrobj.common",
 
 		"genos.diag"
 	]

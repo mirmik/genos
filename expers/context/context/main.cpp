@@ -77,6 +77,7 @@ int main()
 	blink_loop();
 }
 
+extern "C" void __context_displace_vector__();
 void __context_displace_vector__()
 {
 	debug_print_line("__context_displace_vector__");

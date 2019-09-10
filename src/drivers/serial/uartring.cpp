@@ -1,5 +1,6 @@
 #include <drivers/serial/uartring.h>
 
+#include <igris/defs/schedee.h>
 #include <igris/sync/syslock.h>
 #include <igris/util/bug.h>
 
@@ -44,7 +45,7 @@ int uartring_device::write(const void* data,
 		}
 
 		system_unlock();
-		wait_current_schedee(&txwait, WAIT_PRIORITY);
+		wait_current_schedee(&txwait, WAIT_PRIORITY, nullptr);
 		system_lock();
 	}
 
@@ -67,7 +68,7 @@ int uartring_device::read(void* data,
 		if (flags & IO_NOBLOCK)
 			return 0;
 
-		if (wait_current_schedee(&rxwait, 0) == DISPLACE_VIRTUAL)
+		if (wait_current_schedee(&rxwait, 0, nullptr) == SCHEDEE_DISPLACE_VIRTUAL)
 		{
 			return 0;
 		}
@@ -134,7 +135,7 @@ static void uartring_device_irq_handler(void* priv, int code)
 				if ( ring_empty(&uring->txring) )
 				{
 					uring->udev->ctrirqs(UART_CTRIRQS_TXOFF);
-					unwait_one(&uring->txwait);
+					unwait_one(&uring->txwait, nullptr);
 					return;
 				}
 
@@ -155,7 +156,7 @@ static void uartring_device_irq_handler(void* priv, int code)
 				}
 
 				ring_putc(&uring->rxring, uring->rxbuffer, c);
-				unwait_one(&uring->rxwait);
+				unwait_one(&uring->rxwait, nullptr);
 				return;
 			}
 
@@ -174,7 +175,7 @@ void uartring_emulate_read(struct uartring_device * dev,
 	system_lock();
 
 	ring_write(&dev->rxring, dev->rxbuffer, data, len);
-	unwait_one(&dev->rxwait);
+	unwait_one(&dev->rxwait, nullptr);
 
 	system_unlock();
 }

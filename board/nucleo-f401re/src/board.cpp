@@ -16,11 +16,6 @@ GPIO_PIN(board_led, GPIOA, 5);
 stm32_usart_device usart2 (USART2, STM32_IRQ_USART2);
 stm32_usart_device usart6 (USART6, STM32_IRQ_USART6);
 
-namespace board 
-{
-	GPIO_PIN(sysled, GPIOA, 5);
-}
-
 void board_init(int freqmode)
 {
 	arch_init();

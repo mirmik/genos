@@ -8,6 +8,7 @@
 
 #include <igris/sync/syslock.h>
 #include <igris/dtrace.h>
+#include <igris/defs/schedee.h>
 //#include <igris/util/stub.h>
 
 #define PRIORITY_TOTAL 4
@@ -96,6 +97,12 @@ void __schedee_execute(genos::schedee * sch)
 	__current_schedee = sch;
 	sch->flag.runned = 1;
 
+	syslock_counter_set(sch->syslock_counter_save);
+	if (sch->syslock_counter_save != 0)
+		irqs_disable();
+	else
+		irqs_enable(); 
+
 #if SCHEDEE_DEBUG_STRUCT
 	++sch->execcounter;
 #endif
@@ -175,12 +182,15 @@ int __displace__()
 	genos::schedee * sch = current_schedee();
 
 	if (sch->flag.can_displace == 0)
-		return DISPLACE_ERROR;
+		return SCHEDEE_DISPLACE_ERROR;
+
+	sch->syslock_counter_save = syslock_counter();
 
 #if SCHEDEE_DEBUG_STRUCT
 	++sch->dispcounter;
 #endif
 
+	//irqs_disable();
 	return sch->displace();
 }
 
@@ -207,6 +217,7 @@ void schedee_manager_debug_info()
 	system_unlock();
 }
 
+__attribute__((weak))
 void __context_displace_vector__()
 {
 	RESET_STACK();

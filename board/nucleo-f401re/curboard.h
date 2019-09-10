@@ -14,7 +14,8 @@ extern struct stm32_usart_device usart6;
 
 namespace board 
 {
-	extern gpio_pin sysled;
+	static gpio_pin sysled = board_led;
+	static stm32_usart_device & sysusart = usart2;
 }
 
 __BEGIN_DECLS

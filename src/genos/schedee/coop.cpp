@@ -3,6 +3,7 @@
 #include <genos/api.h>
 #include <stdlib.h>
 
+#include <igris/defs/schedee.h>
 #include <igris/util/bug.h>
 #include <igris/dprint.h>
 
@@ -59,7 +60,7 @@ int genos::coopschedee::displace()
 {
 	flag.runned = 0;
 	context_save_and_displace(&cntxt);
-	return DISPLACE_REAL;
+	return SCHEDEE_DISPLACE_REAL;
 }
 
 void genos::coopschedee::finalize()

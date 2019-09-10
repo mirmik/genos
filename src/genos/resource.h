@@ -28,8 +28,8 @@ namespace genos
 	struct node : public resource
 	{
 	public:
-		virtual int write(const void* data, size_t size, int flags) { return ENOTSUP; }
-		virtual int read(void* data, size_t size, int flags) { return ENOTSUP; }
+		virtual int write(const void* data, size_t size, int flags) { errno = ENOTSUP; return -1; }
+		virtual int read(void* data, size_t size, int flags) { errno = ENOTSUP; return -1; }
 		virtual int room() { return INT_MAX; }
 		virtual int avail() { return INT_MAX; }
 		//virtual int write(const void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
@@ -143,7 +143,5 @@ namespace genos
 		}
 	};
 }
-
-//#define RESOURCE_TABLE(name, size) genos::openres name[size]
 
 #endif
