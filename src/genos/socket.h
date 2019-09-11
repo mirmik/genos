@@ -5,7 +5,7 @@
 
 #include <genos/wait.h>
 #include <genos/resource.h>
-#include <crow/channel.h>
+#include <crow/proto/channel.h>
 #include <crow/tower.h>
 
 namespace genos
