@@ -57,7 +57,7 @@ public:
 
 	void operation_finish() 
 	{
-		unwait_one(&wlnk);
+		unwait_one(&wlnk, nullptr);
 	}
 
 	void error_handler() 

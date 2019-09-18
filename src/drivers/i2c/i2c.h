@@ -23,7 +23,7 @@ struct i2c_device
 		write_start(target, data, size);
 
 		//dprln("WAIT");
-		ret = wait_current_schedee(&wlnk, 1);
+		ret = wait_current_schedee(&wlnk, 1, nullptr);
 		//dprln("UNWAIT");
 		/*if (ret == -1) 
 		{
@@ -39,7 +39,7 @@ struct i2c_device
 		int ret;
 		writeread_start(target, out, olen, in, ilen);
 		
-		ret = wait_current_schedee(&wlnk, 1);
+		ret = wait_current_schedee(&wlnk, 1, nullptr);
 		/*if (ret == -1) 
 		{
 			volatile uint8_t flag = 0;
@@ -58,7 +58,7 @@ struct i2c_device
 			if (0 != _lock)
 			{
 				system_unlock();
-				wait_current_schedee(&wlnk, 0);
+				wait_current_schedee(&wlnk, 0, nullptr);
 			}
 			else break;
 		}
@@ -68,7 +68,7 @@ struct i2c_device
 
 	int unlock()
 	{
-		unwait_one(&wlnk);
+		unwait_one(&wlnk, nullptr);
 	}
 };
 

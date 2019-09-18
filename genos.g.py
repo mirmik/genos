@@ -2,6 +2,8 @@ from licant.modules import module
 import traceback
 
 licant.include("periph")
+licant.include("igris")
+licant.include("nos")
 
 licant.execute_recursive("src", ".g.py")
 licant.execute_recursive("arch", ".g.py")
@@ -103,6 +105,10 @@ licant.module("igris.dprint", "diag",
 	mdepends = [("igris.dprint.common","impl"), "genos.diag"],
 )
 
+licant.module_default_implementation("igris.dprint", "diag")
+licant.module_default_implementation("igris.syslock", "genos.atomic")
+licant.module_default_implementation("nos.current_ostream", "nullptr")
+
 module("genos",
 	mdepends = 
 	[
@@ -115,8 +121,8 @@ module("genos",
 
 		"igris.util",
 		"igris.bug",
-#		("igris.dprint", "diag"),
-		("igris.syslock", "genos.atomic"),
+		"igris.dprint",
+		"igris.syslock",
 
 		"genos.sched",
 		"igris.cxx_support",
