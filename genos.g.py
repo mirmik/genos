@@ -163,7 +163,7 @@ def genos_firmware(sources=[], mdepends=[], **kwargs):
 			all_modules.extend(mdepends)
 
 			licant.cxx_application("firmware",
-				binutils=__configure__.binutils,
+				toolchain=__configure__.toolchain,
 				sources=sources,
 				mdepends=all_modules,
 				**kwargs
