@@ -115,7 +115,7 @@ module("genos",
 
 		"igris.util",
 		"igris.bug",
-		("igris.dprint", "diag"),
+#		("igris.dprint", "diag"),
 		("igris.syslock", "genos.atomic"),
 
 		"genos.sched",

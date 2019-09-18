@@ -1,7 +1,7 @@
 import licant
 import os
 
-binutils = licant.cxx_make.make_gcc_binutils("avr")
+toolchain = licant.cxx_make.toolchain_gcc("avr-")
 
 mdepends = [
 	("genos.board", "arduino_uno"),

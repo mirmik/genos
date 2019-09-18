@@ -1,7 +1,7 @@
 import licant
 import os
 
-toolchain = licant.cxx_make.gcc_toolchain("arm-none-eabi-")
+toolchain = licant.cxx_make.toolchain_gcc("arm-none-eabi-")
 
 mdepends = [
 	("genos.board", "nucleo-f401re"),
