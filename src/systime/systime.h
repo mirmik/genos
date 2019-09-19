@@ -2,23 +2,26 @@
 #define GENOS_KERNEL_SYSTIME_H
 
 #include <inttypes.h>
+#include <sys/cdefs.h>
 
-typedef int32_t clock_t;
+// Обязательно должен быть знаковым.
+// Аналог clock_t.
+typedef int64_t jiffies_t;
 
-extern volatile clock_t __jiffies;
+extern volatile jiffies_t __jiffies;
 
 __BEGIN_DECLS
 
 void systime_set_frequency(uint32_t freq);
 void system_tick();
 
-clock_t jiffies();
-clock_t millis();
-clock_t micros();
+jiffies_t jiffies();
+jiffies_t millis();
+jiffies_t micros();
 
 void delay(double d);
 	
-clock_t ms2jiffies(uint32_t ms);
+jiffies_t ms2jiffies(uint32_t ms);
 
 __END_DECLS
 

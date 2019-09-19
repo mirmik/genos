@@ -1,7 +1,9 @@
 #include <asm/nvic.h>
-#include <periph/regs/nvic.h>
 
+#include <periph/regs/nvic.h>
 #include <periph/irqdefs.h>
+
+#include <igris/dprint.h>
 
 void dprint_dump_nvic()
 {

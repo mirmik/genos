@@ -116,7 +116,7 @@ module("genos",
 		"igris.include",
 		"genos.include",
 		
-		"igris.stdlibs",
+		#"igris.stdlibs",
 		"genos.irqtable",
 
 		"igris.util",

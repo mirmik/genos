@@ -3,6 +3,7 @@
 
 #include <periph/map.h>
 #include <assert.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 

@@ -39,8 +39,11 @@ namespace genos
 
 			if (directory_exists(npath, strlen(npath)))
 				set(npath);
-			else
-				return SET_ERRNO(-ENOENT);
+			else 
+			{
+				errno = -ENOENT;
+				return -1;
+			}
 
 			return 0;
 		}

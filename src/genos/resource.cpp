@@ -1,6 +1,8 @@
 #include <genos/resource.h>
 #include <genos/schedee.h>
 
+#include <igris/util/errno.h>
+
 int genos::open_resource(genos::resource * res, genos::openres * filp) 
 {
 	filp -> res = res;	

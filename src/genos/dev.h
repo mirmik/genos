@@ -24,7 +24,8 @@ namespace genos
 					return open_resource(nit, filp);
 				}
 			}
-			return SET_ERRNO(-ENOENT);
+			errno = -ENOENT;
+			return -1;
 		}
 
 		void link(genos::named_node* node) 

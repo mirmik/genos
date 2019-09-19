@@ -7,6 +7,7 @@
 #include <genos/resmngr.h>
 #include <genos/schedee.h>
 
+#include <igris/util/errno.h>
 #include <igris/util/bug.h>
 
 static 
