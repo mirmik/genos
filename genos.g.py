@@ -164,10 +164,11 @@ def genos_firmware(sources=[], mdepends=[], **kwargs):
 		try:
 			licant.include("igris")
 
-			all_modules = ["genos"]
-			all_modules.extend(__configure__.mdepends)
+			all_modules=[]
 			all_modules.extend(mdepends)
-
+			all_modules.extend(__configure__.mdepends)
+			all_modules.extend(["genos"])
+			
 			licant.cxx_application("firmware",
 				toolchain=__configure__.toolchain,
 				sources=sources,

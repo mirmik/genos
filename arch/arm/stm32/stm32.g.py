@@ -1,6 +1,7 @@
 import licant
 
-module("genos.hal.stm32.common", 
+module("genos.hal.stm32.common", "base",
+	default=True,
 	include_paths=["include"],
 	srcdir = "src",
 
@@ -22,10 +23,39 @@ module("genos.hal.stm32.common",
 
 	defines = ["CHIP_STM32"],
 
-	cc_flags = "-Os -nodefaultlibs -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
-	cxx_flags = "-Os -nodefaultlibs -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
-	ld_flags = "-Os -nodefaultlibs -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
-	libs = ["m", "gcc"],
+	cc_flags = "-Os -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
+	cxx_flags = "-Os -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
+	ld_flags = "-Os -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
+	libs = ["m", "gcc"]
+)
+
+
+module("genos.hal.stm32.common", "experiment",
+	include_paths=["include"],
+	srcdir = "src",
+
+	sources = [
+		"stm32_vectors.S",
+		"stm32_start.c",
+		"stm32_arch.c",
+		"stm32_usart.c",
+		"stm32_gpio.c",
+		"stm32_rcc.c",
+		"stm32_adc.c",
+		"stm32_diag.c",
+	],
+
+	mdepends = [
+		"genos.irqtable",
+		"genos.systime"
+	],
+
+	defines = ["CHIP_STM32"],
+
+	cc_flags = "-Os -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
+	cxx_flags = "-Os -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
+	ld_flags = "-Os -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
+	libs = ["m", "gcc", "c"],
 )
 
 module("genos.hal.stm32f4xx", 
