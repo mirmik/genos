@@ -60,6 +60,11 @@ void genos::schedee::run()
 	schedee_run(this);
 }
 
+void genos::schedee::start() 
+{
+	schedee_run(this);
+}
+
 void genos::schedee::stop() 
 {
 	schedee_stop(this);

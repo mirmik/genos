@@ -78,7 +78,8 @@ namespace genos
 			return restbl[i];
 		}
 
-		void run();
+		void run() __attribute__((deprecated("you should replace *run* with *start*")));
+		void start();
 		void stop();
 	};
 }
