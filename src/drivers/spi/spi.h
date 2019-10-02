@@ -4,6 +4,9 @@
 #include <sys/cdefs.h>
 #include <sched/flags.h>
 
+#include <igris/datastruct/dlist.h>
+#include <drivers/gpio/pin.h>
+
 struct spi_operations;
 
 enum spi_mode_e {
@@ -19,6 +22,7 @@ namespace genos
 	{
    		//const struct spi_operations * spi_op;
     	uint8_t locked;
+    	dlist_head waits;
 
 		virtual int enable 			(bool en = true);
 		virtual int select   		(void *slct, int en);
@@ -30,6 +34,15 @@ namespace genos
 		void unlock() { locked = 0; }
 
 		//virtual void init(const char * name);
+	};
+
+	struct spi_device 
+	{
+		spi_driver * driver;
+		gpio_pin cs;
+
+		void lock_bus();
+		void unlock_bus();
 	};
 }
 
