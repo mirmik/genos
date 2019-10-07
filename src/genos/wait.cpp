@@ -8,7 +8,7 @@
 int unwait_schedee_waiter(struct waiter* w) 
 {
 	genos::schedee * sch = mcast_out(w, genos::schedee, waiter);
-	sch->run();
+	sch->start();
 
 	return 0;
 }
