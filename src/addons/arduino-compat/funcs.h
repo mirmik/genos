@@ -1,12 +1,12 @@
-#ifndef UTIL_ARDUINO_COMPAT_H
-#define UTIL_ARDUINO_COMPAT_H
+#ifndef GENOS_ARDUINO_COMPAT_FUNCTIONS_H
+#define GENOS_ARDUINO_COMPAT_FUNCTIONS_H
 
 #include <hal/irq.h>
 #include <systime/systime.h>
 
 #include <defs/arduino.h>
 #include <drivers/gpio/pin.h>
-#include <addons/arduino/pin.h>
+#include <addons/arduino-compat/pinout.h>
 
 static inline 
 void digitalWrite(int num, int en) 

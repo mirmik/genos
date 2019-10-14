@@ -5,6 +5,7 @@
 
 volatile jiffies_t __jiffies = 0;
 uint32_t system_frequency = 1;
+uint32_t system_clock_frequency = 1;
 uint32_t jiffies_to_millis = 1;
 
 #define FREQSHIFT 8
@@ -40,4 +41,14 @@ jiffies_t ms2jiffies(uint32_t ms) {
 void system_tick()
 { 
 	++__jiffies; 
+}
+
+uint32_t sysclock_frequency() 
+{
+	return system_clock_frequency;
+}
+
+void sysclock_set_frequency(uint32_t freq) 
+{
+	system_clock_frequency = freq;	
 }

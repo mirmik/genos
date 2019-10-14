@@ -22,9 +22,9 @@
 #define SysTick ((SysTick_Type   *)     SysTick_BASE  )   /*!< SysTick configuration struct       */
 #define NVIC    ((struct nvic_regs   *) NVIC_BASE     )   /*!< NVIC configuration struct          */
 #define ITM       ((ITM_Type       *)     ITM_BASE      )   /*!< ITM configuration struct           */
-#define DWT       ((DWT_Type       *)     DWT_BASE      )   /*!< DWT configuration struct           */
+#define DWT       ((struct dwt_regs *)     DWT_BASE      )   /*!< DWT configuration struct           */
 #define TPI       ((TPI_Type       *)     TPI_BASE      )   /*!< TPI configuration struct           */
-#define CoreDebug ((CoreDebug_Type *)     CoreDebug_BASE)   /*!< Core Debug configuration struct    */
+#define CoreDebug ((struct coredebug_regs *)     CoreDebug_BASE)   /*!< Core Debug configuration struct    */
 #define SCB       ((SCB_Type       *)     SCB_BASE      )   /*!< SCB configuration struct           */
 
 

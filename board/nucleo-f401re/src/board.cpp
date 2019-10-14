@@ -35,6 +35,7 @@ void board_init(int freqmode)
 
 			stm32_init_pll_clocking(&pll_settings);
 			stm32_systick_config(84000);
+			sysclock_set_frequency(84000000);
 
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 84000000;
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 42000000;
@@ -55,6 +56,7 @@ void board_init(int freqmode)
 
 			stm32_init_pll_clocking(&pll_settings);
 			stm32_systick_config(16000);
+			sysclock_set_frequency(16000000);
 
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 16000000;
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 8000000;

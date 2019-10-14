@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-#include <util/arduino_compat.h> // for delayMicroseconds, digitalPinToBitMask, etc
+#include <addons/arduino-compat/funcs.h> // for delayMicroseconds, digitalPinToBitMask, etc
 
 // You can exclude certain features from OneWire.  In theory, this
 // might save some space.  In practice, the compiler automatically

@@ -1,10 +1,6 @@
-#ifndef ARDUINO_PINOUT_H
-#define ARDUINO_PINOUT_H
+#ifndef GENOS_ARDUINO_MEGA_PINOUT_H
+#define GENOS_ARDUINO_MEGA_PINOUT_H
 
-#include <__local__/arch_gpio.h>
-#include <drivers/gpio/pin.h>
-
-#ifdef BOARD_ARDUINO_MEGA
 const struct gpio_pin PINOUT[] = 
 {
 	{GPIOE, 1 << 0}, //0
@@ -78,47 +74,5 @@ const struct gpio_pin PINOUT[] =
 	{GPIOK, 1 << 6}, //68
 	{GPIOK, 1 << 7}, //69
 };
-#elif BOARD_ARDUINO_UNO
-const struct gpio_pin PINOUT[] = 
-{
-	{GPIOD, 1 << 0}, //0
-	{GPIOD, 1 << 1}, //1
-	{GPIOD, 1 << 2}, //2
-	{GPIOD, 1 << 3}, //3
-	{GPIOD, 1 << 4}, //4
-	{GPIOD, 1 << 5}, //5
-	{GPIOD, 1 << 6}, //6
-	{GPIOD, 1 << 7}, //7
-	
-	{GPIOB, 1 << 0}, //8
-	{GPIOB, 1 << 1}, //9
-	{GPIOB, 1 << 2}, //10
-	{GPIOB, 1 << 3}, //11
-	{GPIOB, 1 << 4}, //12
-	{GPIOB, 1 << 5}, //13
-};
-#elif BOARD_NUCLEO_F401RE
-const struct gpio_pin PINOUT[] = 
-{
-};
-#else
-#	error "Uncompatible board"
-#endif
-
-/*static inline void digitalWrite(int num, int lvl) 
-{
-	gpio_write(PINOUT[num].gpio, PINOUT[num].mask, lvl);
-}
-
-static inline int digitalRead(int num) 
-{
-	return gpio_read(PINOUT[num].gpio, PINOUT[num].mask);
-}
-
-static inline void pinMode(int num, int lvl) 
-{
-	if (lvl) gpio_settings(PINOUT[num].gpio, PINOUT[num].mask, GPIO_MODE_OUTPUT);
-	else gpio_settings(PINOUT[num].gpio, PINOUT[num].mask, GPIO_MODE_INPUT);
-}*/
 
 #endif

@@ -44,6 +44,7 @@ void arch_init()
 	// Настроен на встроенный генератор 8МГц
 	// Период - 1мс.
 	stm32_systick_config(HSI_FREQ / 1000);
+	sysclock_set_frequency(HSI_FREQ / 1000);
 	systime_set_frequency(1000);
 
 	// Инициализируем таблицу прерываний.
