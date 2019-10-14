@@ -24,6 +24,10 @@ module("genos.addons.adafruit_motor_shield", sources = [
 	"src/addons/Adafruit_MotorShield/Adafruit_MotorShield.cpp",
 ])
 
+module("genos.addons.OneWire", sources = [
+	"src/addons/OneWire/OneWire.cpp"
+])
+
 module("genos.sched", "stub",
 	sources = ["src/sched/waitstub.c"],
 )
@@ -94,6 +98,7 @@ module ("genos.utility.numcmd", sources = ["src/utility/numcmd.cpp"], mdepends=[
 module ("genos.utility.contty", sources = ["src/utility/contty.cpp"])
 module ("genos.utility.contty2", sources = ["src/utility/contty2.cpp"])
 module ("genos.utility.contty3", sources = ["src/utility/contty3.c"])
+module ("genos.utility.contty4", sources = ["src/utility/contty4.cpp"])
 module ("genos.utility.mshell", sources = ["src/utility/mshell.c"])
 
 module("genos.diag", "stub", sources = ["src/diag/diag_stub.c"])

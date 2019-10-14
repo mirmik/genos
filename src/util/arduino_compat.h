@@ -1,8 +1,12 @@
 #ifndef UTIL_ARDUINO_COMPAT_H
 #define UTIL_ARDUINO_COMPAT_H
 
+#include <hal/irq.h>
+#include <systime/systime.h>
+
 #include <defs/arduino.h>
 #include <drivers/gpio/pin.h>
+#include <addons/arduino/pin.h>
 
 static inline 
 void digitalWrite(int num, int en) 
@@ -42,6 +46,17 @@ void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
         digitalWrite(clockPin, HIGH);
         digitalWrite(clockPin, LOW);        
     }
+}
+
+static inline void interrupts() 
+{ irqs_enable(); }
+
+static inline void noInterrupts() 
+{ irqs_disable(); }
+
+static inline void delayMicroseconds(int us) 
+{
+    delay(us/1000 + 1);
 }
 
 #endif

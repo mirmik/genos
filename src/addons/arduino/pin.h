@@ -97,11 +97,15 @@ const struct gpio_pin PINOUT[] =
 	{GPIOB, 1 << 4}, //12
 	{GPIOB, 1 << 5}, //13
 };
+#elif BOARD_NUCLEO_F401RE
+const struct gpio_pin PINOUT[] = 
+{
+};
 #else
 #	error "Uncompatible board"
 #endif
 
-static inline void digitalWrite(int num, int lvl) 
+/*static inline void digitalWrite(int num, int lvl) 
 {
 	gpio_write(PINOUT[num].gpio, PINOUT[num].mask, lvl);
 }
@@ -115,6 +119,6 @@ static inline void pinMode(int num, int lvl)
 {
 	if (lvl) gpio_settings(PINOUT[num].gpio, PINOUT[num].mask, GPIO_MODE_OUTPUT);
 	else gpio_settings(PINOUT[num].gpio, PINOUT[num].mask, GPIO_MODE_INPUT);
-}
+}*/
 
 #endif

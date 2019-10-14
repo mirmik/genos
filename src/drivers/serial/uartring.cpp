@@ -55,6 +55,7 @@ int uartring_device::write(const void* data,
 
 }
 
+#warning "wait_current_schedee and system_lock restoring"
 int uartring_device::read(void* data,
                           unsigned int size, int flags)
 {
@@ -65,11 +66,16 @@ int uartring_device::read(void* data,
 	while (ring_empty(&rxring))
 	{
 
-		if (flags & IO_NOBLOCK)
+		if (flags & IO_NOBLOCK) 
+		{
+			system_unlock();
 			return 0;
+		}
 
+		system_unlock();
 		if (wait_current_schedee(&rxwait, 0, nullptr) == SCHEDEE_DISPLACE_VIRTUAL)
 		{
+			system_unlock();
 			return 0;
 		}
 	}
