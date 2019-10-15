@@ -3,6 +3,8 @@
 
 #include <asm/arch.h>
 #include <asm/rcc.h>
+#include <asm/dwt.h>
+#include <asm/delay.h>
 
 #include <periph/map.h>
 #include <periph/irqdefs.h>
@@ -41,10 +43,13 @@ void arch_init()
 //	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
 //	stm32_diag_init(USART2);
 
+	arm_dwt_init();
+
 	// Настроен на встроенный генератор 8МГц
 	// Период - 1мс.
 	stm32_systick_config(HSI_FREQ / 1000);
-	sysclock_set_frequency(HSI_FREQ / 1000);
+	sysclock_set_frequency(HSI_FREQ);
+	init_delays(HSI_FREQ);
 	systime_set_frequency(1000);
 
 	// Инициализируем таблицу прерываний.

@@ -12,14 +12,13 @@
 
 static int newline(struct contty2_context * cntxt)
 {
-	char data[48];
+/*	char data[48];
 	size_t sz = readline_linecpy(&cntxt->rl, data, 48);
 	data[sz] = '\n';
-	//data[sz+1] = '\r';
-	//data[sz+2] = 0;
 	dprdump(data, sz+1);
-	SCPI_Input(&scpi_context, data, sz+1);
+	SCPI_Input(&scpi_context, data, sz+1);*/
 }
+#warning "restore scpi in contty4"
 
 void contty2_debug_mode(struct contty2_context * cntxt, int en)
 {

@@ -5,7 +5,16 @@
 
 #include <stdint.h>
 
-#include <addons/arduino-compat/funcs.h> // for delayMicroseconds, digitalPinToBitMask, etc
+#if defined(__AVR__)
+#include <util/crc16.h>
+#endif
+
+#if ARDUINO >= 100
+#include <Arduino.h>       // for delayMicroseconds, digitalPinToBitMask, etc
+#else
+#include "WProgram.h"      // for delayMicroseconds
+#include "pins_arduino.h"  // for digitalPinToBitMask, etc
+#endif
 
 // You can exclude certain features from OneWire.  In theory, this
 // might save some space.  In practice, the compiler automatically
@@ -43,7 +52,7 @@
 #endif
 
 // Board-specific macros for direct GPIO
-#include "addons/OneWire/OneWire_direct_regtype.h"
+#include "util/OneWire_direct_regtype.h"
 
 class OneWire
 {

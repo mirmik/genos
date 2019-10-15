@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-void stm32_dwt_init() 
+/*void stm32_dwt_init() 
 {
 	DWT->CTRL |= 1 ; // enable the counter
 	DWT->CYCCNT = 0; // reset the counter
@@ -15,3 +15,4 @@ void delayMilliseconds(uint32_t us) {
 	} while(DWT->CYCCNT - start < cycles);
 }
 #pragma GCC pop_options
+*/
