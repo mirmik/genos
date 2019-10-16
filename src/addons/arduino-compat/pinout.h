@@ -14,7 +14,7 @@
 #include <addons/arduino-compat/nucleo-f401.h>
 
 #else
-#	error "Uncompatible board"
+#include <board/pinout.h>
 #endif
 
 #endif

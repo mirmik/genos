@@ -165,6 +165,8 @@
 #define GPIOK ((struct gpio_regs *) GPIOK_BASE)
 
 #define SPI1 ((struct spi_regs *) SPI1_BASE) 
+#define SPI2 ((struct spi_regs *) SPI2_BASE) 
+#define SPI3 ((struct spi_regs *) SPI3_BASE) 
 #define SPI4 ((struct spi_regs *) SPI4_BASE)
 #define SPI5 ((struct spi_regs *) SPI5_BASE)
 #define SPI6 ((struct spi_regs *) SPI6_BASE)

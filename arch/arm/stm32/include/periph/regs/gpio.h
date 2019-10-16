@@ -6,8 +6,7 @@
 
 typedef uint16_t __gpio_mask_t;
 
-#if (defined CHIP_STM32F3XX) || (defined CHIP_STM32F4XX)  
-
+//#if (defined CHIP_STM32F3XX) || (defined CHIP_STM32F4XX)  
 struct gpio_regs {
 	volatile uint32_t MODER;    /*!< GPIO port mode register,               Address offset: 0x00      */
 	volatile uint32_t OTYPER;   /*!< GPIO port output type register,        Address offset: 0x04      */
@@ -20,10 +19,9 @@ struct gpio_regs {
 	volatile uint32_t LCKR;     /*!< GPIO port configuration lock register, Address offset: 0x1C      */
 	volatile uint32_t AFR[2];   /*!< GPIO alternate function registers,     Address offset: 0x20-0x24 */
 };
-
-#else
-#	error "Wrong chip family"
-#endif
+//#else
+//#	error "Wrong chip family"
+//#endif
 
 #define GPIO_AF_RTC_50Hz      ((uint8_t)0x00)  /* RTC_50Hz Alternate Function mapping */
 #define GPIO_AF_MCO           ((uint8_t)0x00)  /* MCO (MCO1 and MCO2) Alternate Function mapping */

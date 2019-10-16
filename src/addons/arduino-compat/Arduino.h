@@ -4,6 +4,8 @@
 #include "funcs.h"
 #include "pinout.h"
 
+#define PINA(x) (x+NR_PINOUT_D)
+
 #include <systime/systime.h>
 
 #define min(a,b) ((a)<(b)?(a):(b))

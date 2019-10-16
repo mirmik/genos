@@ -9,27 +9,27 @@
 #include <addons/arduino-compat/pinout.h>
 
 static inline 
+const gpio_pin getPin(int pin) 
+{
+    return PINOUT[pin];
+} 
+
+static inline 
 void digitalWrite(int num, int en) 
 {
-	PINOUT[num].set(en);
+	getPin(num).set(en);
 } 
 
 static inline
 uint8_t digitalRead(int num) 
 {
-	return PINOUT[num].get();
+	return getPin(num).get();
 }
 
 static inline 
 void pinMode(int pin, uint8_t mode) 
 {
-	PINOUT[pin].mode(mode == OUTPUT ? GPIO_MODE_OUTPUT : GPIO_MODE_INPUT);
-} 
-
-static inline 
-const gpio_pin getPin(int pin) 
-{
-	return PINOUT[pin];
+	getPin(pin).mode(mode == OUTPUT ? GPIO_MODE_OUTPUT : GPIO_MODE_INPUT);
 } 
 
 static inline
@@ -54,9 +54,9 @@ static inline void interrupts()
 static inline void noInterrupts() 
 { irqs_disable(); }
 
-static inline void delayMicroseconds(int us) 
+/*static inline void delayMicroseconds(int us) 
 {
     delay(us/1000 + 1);
-}
+}*/
 
 #endif

@@ -67,6 +67,9 @@ void board_init(int freqmode)
 		}
 		break;
 
+		case 2:
+			break;
+
 	};
 
 	systime_set_frequency(1000);

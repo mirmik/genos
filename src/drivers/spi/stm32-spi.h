@@ -6,23 +6,27 @@
 #include <drivers/spi/spi.h>
 #include <periph/map.h>
 
-namespace stm32 
+namespace drivers
 {
-	class spi : public genos::spi_driver
+	namespace stm32
 	{
-		spi_regs * regs;
-		int irqno;
+		class spi_driver : public drivers::spi_driver
+		{
+			spi_regs * regs;
+			int irqno;
 
-	public:
-		spi(spi_regs * regs, int irqno) : regs(regs), irqno(irqno) {}
+		public:
+			spi_driver(spi_regs * regs, int irqno) : regs(regs), irqno(irqno) {}
 
-		int enable 			(bool en = true) override;
-		int select   		(void *slct, int en) override;
-		int exbyte 			(int byte) override;
-		int exchange 		(const void *txbuf, void *rxbuf, int len) override;
-		int setfrequency	(uint32_t freq) override;
+			int enable 			(bool en = true) override;
+			//int select   		(void *slct, int en) override;
+			int exbyte 			(int byte) override;
+			int exchange 		(const void *txbuf, void *rxbuf, int len, char dummy = '\0') override;
+			int setfrequency	(uint32_t freq) override;
 
-	};
+			int set_divider(int divider);
+		};
+	}
 }
 
 #endif

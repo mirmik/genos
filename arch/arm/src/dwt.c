@@ -8,6 +8,8 @@
 
 #include <igris/dprint.h>
 
+#error "deprecated delays"
+
 void arm_dwt_init() 
 {	
 	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;

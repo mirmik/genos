@@ -46,31 +46,17 @@ _vectors:
 
 /* External Interrupts */
 
-#if !defined(CHIP_NOEXT_VECTORS)
-#undef VECTOR
-#define VECTOR(l,i) .word l
+	.altmacro
+	.macro irq_labelX number
+    	.word nonamed_irq_handler\number
+	.endm
 
-#undef UNUSED
-#define UNUSED(i) .word stm32_reserved
+	.set i,STM32_IRQ_FIRST
+	.rept (NR_IRQS - STM32_IRQ_FIRST)
+	    irq_labelX %i
+	    .set i, i+1
+	.endr
 
-#if defined(CHIP_STM32L15XX)
-#  include "chip//stm32l15xxx_vectors.h"
-#elif defined(CHIP_STM32F10XX)
-#  include "chip//stm32f10xxx_vectors.h"
-#elif defined(CHIP_STM32F20XX)
-#  include "chip//stm32f20xxx_vectors.h"
-#elif defined(CHIP_STM32F30XX)
-#  include "chip//stm32f30xxx_vectors.h"
-#elif defined(CHIP_STM32F37XX)
-#  include "chip//stm32f37xxx_vectors.h"
-#elif defined(CHIP_STM32F40XX)
-#  include "chip//stm32f40xxx_vectors.h"
-#elif defined(CHIP_STM32L4XX)
-#  include "chip/stm32l4xx_vectors.h"
-#else
-#  error "No vectors for STM32 chip"
-#endif
-#endif /* CHIP_NOEXT_VECTORS */
 	.size	_vectors, .-_vectors
 
 /************************************************************************************
@@ -92,32 +78,16 @@ handlers:
 	HANDLER	stm32_pendsv, STM32_IRQ_PENDSV			/* Vector 14: Penable system service request */
 	HANDLER	stm32_systick, STM32_IRQ_SYSTICK		/* Vector 15: System tick */
 
-#if !defined(CHIP_NOEXT_VECTORS)
+	.altmacro
+	.macro HANDLER2 number
+    	HANDLER nonamed_irq_handler\number, number
+	.endm
 
-#undef VECTOR
-#define VECTOR(l,i) HANDLER l, i
-
-#undef UNUSED
-#define UNUSED(i)
-
-#if defined(CHIP_STM32L15XX)
-#  include "chip//stm32l15xxx_vectors.h"
-#elif defined(CHIP_STM32F10XX)
-#  include "chip//stm32f10xxx_vectors.h"
-#elif defined(CHIP_STM32F20XX)
-#  include "chip//stm32f20xxx_vectors.h"
-#elif defined(CHIP_STM32F30XX)
-#  include "chip//stm32f30xxx_vectors.h"
-#elif defined(CHIP_STM32F37XX)
-#  include "chip//stm32f37xxx_vectors.h"
-#elif defined(CHIP_STM32F40XX)
-#  include "chip//stm32f40xxx_vectors.h"
-#else
-#  error "No handlers for STM32 chip"
-#endif
-
-#endif /* CHIP_NOEXT_VECTORS */
-
+	.set i,STM32_IRQ_FIRST
+	.rept (NR_IRQS - STM32_IRQ_FIRST)
+		HANDLER2 %i
+	    .set i, i+1
+	.endr
 
 /* Common IRQ handling logic.  On entry here, the return stack is on either
  * the PSP or the MSP and looks like the following:

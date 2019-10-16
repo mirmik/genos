@@ -4,9 +4,13 @@
 #if (defined CHIP_STM32F407) || (defined CHIP_STM32F401) 
 #	define CHIP_STM32F4XX
 #	define CHIP_STM32F40XX
+#elif (defined CHIP_STM32L432) 
+#	define CHIP_STM32L4XX
+#	define CHIP_STM32L40XX
 #else
 #	error "Need to define any stm32 chip CHIP_XXXXXXX"
 #endif
+
 
 /* NVIC priority levels *************************************************************/
 

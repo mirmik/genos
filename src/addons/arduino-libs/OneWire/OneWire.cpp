@@ -206,34 +206,21 @@ void OneWire::write_bit(uint8_t v)
 
 	if (v & 1)
 	{
-		dprln(2212);
 		noInterrupts();
-		dprln(2222);
 		DIRECT_WRITE_LOW(reg, mask);
-		dprln(2232);
 		DIRECT_MODE_OUTPUT(reg, mask);	// drive output low
-		dprln(222);
 		delayMicroseconds(10);
-		dprln(333);
 		DIRECT_WRITE_HIGH(reg, mask);	// drive output high
 		interrupts();
-		delayMicroseconds(55);
 	}
 	else
 	{
-		dprln(2221);
 		noInterrupts();
-		dprln(2222);
 		DIRECT_WRITE_LOW(reg, mask);
-		dprln(2223);
 		DIRECT_MODE_OUTPUT(reg, mask);	// drive output low
-		dprln(2224);
 		delayMicroseconds(65);
-		dprln(2225);
 		DIRECT_WRITE_HIGH(reg, mask);	// drive output high
-		dprln(2225);
 		interrupts();
-		dprln(2226);
 		delayMicroseconds(5);
 	}
 }
@@ -271,22 +258,15 @@ void OneWire::write(uint8_t v, uint8_t power /* = 0 */)
 {
 	uint8_t bitMask;
 
-	dprln(222);
-
 	for (bitMask = 0x01; bitMask; bitMask <<= 1)
 	{
-		dprln(222);
 		OneWire::write_bit( (bitMask & v) ? 1 : 0);
 	}
 
-	dprln(222);
-
 	if ( !power)
 	{
-		dprln(222);
 		noInterrupts();
 		DIRECT_MODE_INPUT(baseReg, bitmask);
-		dprln(222);
 		DIRECT_WRITE_LOW(baseReg, bitmask);
 		interrupts();
 	}

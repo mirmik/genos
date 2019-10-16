@@ -6,13 +6,14 @@ module("genos.hal.stm32.common", "base",
 	srcdir = "src",
 
 	sources = [
-		"stm32_vectors.S",
+		"stm32_vectors_rept.S",
 		"stm32_start.c",
 		"stm32_arch.c",
 		"stm32_usart.c",
 		"stm32_gpio.c",
 		"stm32_rcc.c",
 		"stm32_adc.c",
+		"stm32_spi.c",
 		"stm32_diag.c",
 	],
 
@@ -29,34 +30,30 @@ module("genos.hal.stm32.common", "base",
 	libs = ["m", "gcc"]
 )
 
-
-module("genos.hal.stm32.common", "experiment",
+module("genos.hal.stm32.common", "startup_debug",
 	include_paths=["include"],
 	srcdir = "src",
 
 	sources = [
-		"stm32_vectors.S",
-		"stm32_start.c",
+		"stm32_vectors_rept.S",
+		#"stm32_start.c",
 		"stm32_arch.c",
 		"stm32_usart.c",
 		"stm32_gpio.c",
 		"stm32_rcc.c",
 		"stm32_adc.c",
+		"stm32_spi.c",
 		"stm32_diag.c",
-	],
-
-	mdepends = [
-		"genos.irqtable",
-		"genos.systime"
 	],
 
 	defines = ["CHIP_STM32"],
 
-	cc_flags = "-Os -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
-	cxx_flags = "-Os -Wl,--gc-sections -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
+	cc_flags = "-Os -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
+	cxx_flags = "-Os -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
 	ld_flags = "-Os -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
-	libs = ["m", "gcc", "c"],
+	libs = ["m", "gcc"]
 )
+
 
 module("genos.hal.stm32f4xx", 
 	mdepends = [
@@ -81,6 +78,15 @@ module("genos.hal", impl = "stm32f401",
 		"genos.hal.stm32.common",
 	],
 	ldscripts = "ldscripts/stm32f401vc.ld",
+)
+
+module("genos.hal", impl = "stm32l432", 
+	defines = ["CHIP_STM32L432"],
+	mdepends = [
+		"genos.hal.stm32f4xx",	
+		"genos.hal.stm32.common",
+	],
+	ldscripts = "ldscripts/stm32f432vc.ld",
 )
 
 module("genos.stm32.spl.stm32f4xx", 

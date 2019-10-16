@@ -1,6 +1,7 @@
 #ifndef ARCH_STM32_SPI_H
 #define ARCH_STM32_SPI_H
 
+#include <stdint.h>
 #include <stdbool.h>
 #include <sys/cdefs.h>
 
@@ -43,6 +44,12 @@ int stm32_spi_set_divider(struct spi_regs * regs, int divider)
 
 	return 0;
 }
+
+// if rxbuf == NULL, - send only
+// rxbuf can be equal to txbuf
+void stm32_spi_exchange(struct spi_regs * spi, 
+	const uint8_t* sbuf, uint8_t *rbuf, uint32_t len, char dummy);
+
 
 __END_DECLS
 

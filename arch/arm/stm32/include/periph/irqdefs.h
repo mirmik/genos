@@ -182,4 +182,7 @@
 #elif defined(CHIP_STM32F469)
 #  define NR_VECTORS           (STM32_IRQ_FIRST+93)
 #  define NR_IRQS              (STM32_IRQ_FIRST+93)
+#else
+#	define NR_IRQS 100
+#	warning "unknown NR_IRQS total. setted to 100"
 #endif

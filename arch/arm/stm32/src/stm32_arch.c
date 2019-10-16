@@ -43,7 +43,7 @@ void arch_init()
 //	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
 //	stm32_diag_init(USART2);
 
-	arm_dwt_init();
+//	arm_dwt_init();
 
 	// Настроен на встроенный генератор 8МГц
 	// Период - 1мс.

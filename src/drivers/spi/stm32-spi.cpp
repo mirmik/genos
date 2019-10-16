@@ -4,29 +4,38 @@
 
 #include <errno.h>
 
-int stm32::spi::enable(bool en) 
+int drivers::stm32::spi_driver::enable(bool en)
 {
 	rcc_enable_spi(regs);
 	stm32_spi_enable(regs, en);
 	return 0;
 }
 
-int stm32::spi::select(void *slct, int en) 
+/*int genos::stm32::spi::select(void *slct, int en)
+{
+	//return 0;
+}*/
+
+int drivers::stm32::spi_driver::exbyte(int byte)
 {
 	return 0;
 }
 
-int stm32::spi::exbyte(int byte) 
+// rxbuf can be nullptr
+int drivers::stm32::spi_driver::exchange(
+    const void *txbuf, void *rxbuf, int len, char dummy)
 {
-	return 0;
+	stm32_spi_exchange(regs,
+	                   (const uint8_t*)txbuf, (uint8_t*)rxbuf,
+	                   len, dummy);
 }
 
-int stm32::spi::exchange(const void *txbuf, void *rxbuf, int len) 
-{
-	return 0;
-}
-
-int stm32::spi::setfrequency(uint32_t freq) 
+int drivers::stm32::spi_driver::setfrequency(uint32_t freq)
 {
 	return -ENOTSUP;
+}
+
+int drivers::stm32::spi_driver::set_divider(int div) 
+{
+	return stm32_spi_set_divider(regs, div);
 }

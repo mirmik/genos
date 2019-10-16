@@ -16,7 +16,7 @@ void stm32_gpio_set_maxspeed(struct gpio_regs* regs, uint16_t map,
 	bits_masked_assign_multimap(regs->CRL, lmap, maxspeed, 4);
 	bits_masked_assign_multimap(regs->CRH, hmap, maxspeed, 4);
 
-#elif defined CHIP_STM32F3XX || defined CHIP_STM32F4XX
+#elif defined CHIP_STM32F3XX || defined CHIP_STM32F4XX || defined CHIP_STM32L4XX
 
 	bits_masked_assign_multimap(regs->OSPEEDR, map, maxspeed, 2);
 

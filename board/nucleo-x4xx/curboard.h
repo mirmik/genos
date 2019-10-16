@@ -18,7 +18,6 @@
 #	define DEBUG_USART_TX_PIN 10
 #	define DEBUG_USART_AF GPIO_AF_USART1
 #elif defined(BOARD_NUCLEO_F401RE)
-#error "a"
 #	define BOARD_LED_GPIO GPIOA
 #	define BOARD_LED_PIN 5
 #	define DEBUG_USART USART2
