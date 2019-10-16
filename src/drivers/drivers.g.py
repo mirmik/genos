@@ -36,6 +36,12 @@ licant.module("genos.drivers.stm32",
 	]
 )
 
+licant.module("genos.drivers.stm32l4", 
+	mdepends = [
+		"genos.drivers.common",
+	]
+)
+
 licant.module("genos.drivers.atmel_dataflash", sources = ["bdev/atmel_dataflash.cpp"])
 
 

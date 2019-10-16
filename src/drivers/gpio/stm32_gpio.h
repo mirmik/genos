@@ -2,10 +2,10 @@
 #define DRIVERS_STM32_GPIO_H
 
 #include <stdint.h>
-#include <periph/regs/gpio.h>
+#include <periph/map.h>
 
 #include <asm/gpio.h>
 
-typedef struct gpio_regs gpio_t;
+typedef gpio_regs_t gpio_t;
 
 #endif

@@ -1,7 +1,8 @@
 #ifndef DRIVERS_GPIO_H
 #define DRIVERS_GPIO_H
 
-#include <__local__/arch_gpio.h>
+//#include <__local__/arch_gpio.h>
+#include <stdint.h>
 #include <sys/cdefs.h>
 
 #include <defs/gpiodefs.h>

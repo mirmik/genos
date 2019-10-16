@@ -55,7 +55,7 @@ void dprint_dump_nvic()
 
 void nvic_enable_irq(uint32_t irqno) 
 {
-	irqno = irqno - STM32_IRQ_FIRST;
+	irqno = NVIC_IRQNO(irqno);
 
 	uint32_t regno = irqno >> 5;
 	uint32_t bitno = irqno & 0x1F;

@@ -1,5 +1,5 @@
-#ifndef STM32F4DISCOVERY_V2_BOARD
-#define STM32F4DISCOVERY_V2_BOARD
+#ifndef NUCLEO_BOARDS
+#define NUCLEO_BOARDS
 
 #include <sys/cdefs.h>
 #include <drivers/gpio/pin.h>
@@ -27,6 +27,16 @@
 #	define DEBUG_USART_RX_PIN 2
 #	define DEBUG_USART_TX_PIN 3
 #	define DEBUG_USART_AF GPIO_AF_USART2
+#elif defined(BOARD_NUCLEO_F412RB)
+#	define BOARD_LED_GPIO GPIOB
+#	define BOARD_LED_PIN 13
+#	define DEBUG_USART USART2
+#	define DEBUG_USART_IRQ STM32_IRQ_USART2
+#	define DEBUG_USART_RX_GPIO GPIOA
+#	define DEBUG_USART_TX_GPIO GPIOA
+#	define DEBUG_USART_RX_PIN 2
+#	define DEBUG_USART_TX_PIN 3
+#	define DEBUG_USART_AF GPIO_AF_USART2
 #else
 #	error "unregistred board"
 #endif
@@ -35,7 +45,6 @@
 extern struct gpio_pin board_led;
 
 extern struct stm32_usart_device usart2;
-extern struct stm32_usart_device usart6;
 
 namespace board 
 {
@@ -45,7 +54,7 @@ namespace board
 
 __BEGIN_DECLS
 
-void board_init(int freqmode = 0);
+void board_init(int freqmode = 2);
 
 __END_DECLS
 

@@ -117,7 +117,7 @@ licant.module_default_implementation("nos.current_ostream", "nullptr")
 module("genos",
 	mdepends = 
 	[
-		"periph.include",
+		#"periph.include",
 		"igris.include",
 		"genos.include",
 		

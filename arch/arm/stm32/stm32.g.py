@@ -2,7 +2,7 @@ import licant
 
 module("genos.hal.stm32.common", "base",
 	default=True,
-	include_paths=["include"],
+	include_paths=["src"],
 	srcdir = "src",
 
 	sources = [
@@ -27,11 +27,12 @@ module("genos.hal.stm32.common", "base",
 	cc_flags = "-Os -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
 	cxx_flags = "-Os -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
 	ld_flags = "-Os -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
-	libs = ["m", "gcc"]
+	libs = ["m", "gcc"],
+	ldscripts = "ldscripts/stm32_common.ld",
 )
 
 module("genos.hal.stm32.common", "startup_debug",
-	include_paths=["include"],
+	include_paths=["src"],
 	srcdir = "src",
 
 	sources = [
@@ -68,7 +69,7 @@ module("genos.hal", impl = "stm32f407",
 		"genos.hal.stm32f4xx",	
 		"genos.hal.stm32.common",
 	],
-	ldscripts = "ldscripts/stm32f401vc.ld",
+	ldscripts = "ldscripts/stm32f407.ld",
 )
 
 module("genos.hal", impl = "stm32f401", 
@@ -77,7 +78,7 @@ module("genos.hal", impl = "stm32f401",
 		"genos.hal.stm32f4xx",	
 		"genos.hal.stm32.common",
 	],
-	ldscripts = "ldscripts/stm32f401vc.ld",
+	ldscripts = "ldscripts/stm32f401.ld",
 )
 
 module("genos.hal", impl = "stm32l432", 
@@ -86,7 +87,7 @@ module("genos.hal", impl = "stm32l432",
 		"genos.hal.stm32f4xx",	
 		"genos.hal.stm32.common",
 	],
-	ldscripts = "ldscripts/stm32f432vc.ld",
+	ldscripts = "ldscripts/stm32f432.ld",
 )
 
 module("genos.stm32.spl.stm32f4xx", 

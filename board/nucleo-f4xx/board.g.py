@@ -19,3 +19,7 @@ module("genos.board", impl = "nucleo-f401re",
 	],
 	defines=["BOARD_NUCLEO_F401RE"]
 )
+
+module("genos.board", impl = "nucleo-l412rb", 
+	mdepends = [ "genos.board.nucleo-x4xx", ("genos.hal", "stm32l412") ], 
+	defines=["BOARD_NUCLEO_F412RB"])

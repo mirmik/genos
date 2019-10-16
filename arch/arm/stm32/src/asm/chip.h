@@ -4,7 +4,7 @@
 #if (defined CHIP_STM32F407) || (defined CHIP_STM32F401) 
 #	define CHIP_STM32F4XX
 #	define CHIP_STM32F40XX
-#elif (defined CHIP_STM32L432) 
+#elif (defined CHIP_STM32L432) || (defined CHIP_STM32L412)
 #	define CHIP_STM32L4XX
 #	define CHIP_STM32L40XX
 #else
