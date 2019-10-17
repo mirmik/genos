@@ -45,6 +45,7 @@ void irqtable_init()
 
 void irqtable_set_handler(int irqno, irq_handler_t handler, void* handler_arg)
 {
+	irqno = IRQTABLE_IRQNO(irqno);
 	__irqtable[irqno].handler = handler;
 	__irqtable[irqno].handler_arg = handler_arg;
 }

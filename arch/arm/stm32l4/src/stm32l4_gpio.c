@@ -9,14 +9,29 @@ void stm32l4_gpio_write(GPIO_TypeDef* g, uint32_t mask,
 	else g->ODR &= ~mask;
 }
 
+void gpio_write(GPIO_TypeDef* g, uint32_t mask, unsigned char level) 
+{
+	stm32l4_gpio_write(g, mask, level);
+}
+
 uint32_t stm32l4_gpio_read(GPIO_TypeDef* g, uint32_t mask)
 {
 	return g->IDR & mask;
 }
 
-void stm32l4_gpio_toggle(GPIO_TypeDef* g, uint32_t mask)
+uint32_t gpio_read(GPIO_TypeDef* g, uint32_t mask) 
+{
+	return  stm32l4_gpio_read(g, mask);
+}
+
+inline void stm32l4_gpio_toggle(GPIO_TypeDef* g, uint32_t mask)
 {
 	g->ODR ^= mask;
+}
+
+void gpio_toggle(GPIO_TypeDef* g, uint32_t mask) 
+{
+	stm32l4_gpio_toggle(g, mask);
 }
 
 int stm32l4_gpio_mode(GPIO_TypeDef* gpio, unsigned int mask, uint32_t mode)
@@ -75,6 +90,22 @@ int stm32l4_gpio_mode(GPIO_TypeDef* gpio, unsigned int mask, uint32_t mode)
 	}
 
 	bits_masked_assign_multimap(gpio->MODER, mask, mode_val, 2);
+
+	return 0;
+}
+
+int gpio_settings(GPIO_TypeDef* gpio, unsigned int mask, uint32_t mode) 
+{
+	stm32l4_gpio_mode(gpio, mask, mode);
+}
+
+int stm32l4_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate)
+{
+	uint16_t lmask = (mask & 0x00FF);
+	uint16_t hmask = (mask & 0xFF00) >> 8;
+	alternate = alternate & 0xF;
+	bits_masked_assign_multimap(g->AFR[0], lmask, alternate, 4);
+	bits_masked_assign_multimap(g->AFR[1], hmask, alternate, 4);
 
 	return 0;
 }

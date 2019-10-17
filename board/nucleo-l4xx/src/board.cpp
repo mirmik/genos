@@ -17,13 +17,13 @@ GPIO_PIN(board_led, BOARD_LED_GPIO, BOARD_LED_PIN);
 //stm32_usart_device debug_usart(DEBUG_USART, DEBUG_USART_IRQ);
 //stm32_usart_device usart6 (USART6, STM32_IRQ_USART6);
 
-void board_init()
+void board_init(int freqmode)
 {
 	arch_init();
 
-/*	switch (freqmode)
+	switch (freqmode)
 	{
-		case 0:
+/*		case 0:
 		{
 			struct stm32_pll_settings pll_settings =
 			{
@@ -66,29 +66,56 @@ void board_init()
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 16000000;
 		}
 		break;
-
-		case 2:
-			break;
-
-	};
 */
-/*	systime_set_frequency(1000);
+		case 2:
+			stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 16000000;
+			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 16000000;
+			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 16000000;
+			break;
+	};
 
-	rcc_enable_gpio(BOARD_LED_GPIO);
-	rcc_enable_usart(DEBUG_USART);
+/*	systime_set_frequency(1000);
+*/
+	stm32l4_rcc_enable_gpio(BOARD_LED_GPIO);
+	stm32l4_rcc_enable_gpio(GPIOA);
+	stm32l4_rcc_enable_usart(LPUART1);
+
+	bits_assign(RCC->CCIPR, RCC_CCIPR_LPUART1SEL_Msk, (0b01) << RCC_CCIPR_LPUART1SEL_Pos);
 
 	cpu_delay(100);
 
 	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
-
-	gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), GPIO_MODE_ALTERNATE);
-	stm32_gpio_set_maxspeed(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), STM32_GPIO_SPEED_LEVEL_0);
-	stm32_gpio_set_alternate(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), DEBUG_USART_AF);
 	
-	gpio_settings(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), GPIO_MODE_ALTERNATE);
-	stm32_gpio_set_maxspeed(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), STM32_GPIO_SPEED_LEVEL_0);
-	stm32_gpio_set_alternate(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), DEBUG_USART_AF);
+	gpio_settings(GPIOA, (1 << 2), GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
+	gpio_settings(GPIOA, (1 << 2) | (1 << 3), GPIO_MODE_ALTERNATE);
+	//stm32_gpio_set_maxspeed(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), STM32_GPIO_SPEED_LEVEL_0);
+	stm32l4_gpio_set_alternate(GPIOA, (1 << 2) | (1 << 3), 8);
+	
+	//stm32l4_usart_setup(LPUART1, 115200, 'n', 8, 1);
+	stm32l4_usart_setup(LPUART1, 115200, 'n', 8, 1);
+	//LPUART1->GTPR = 1;
 
-	stm32_usart_setup(DEBUG_USART, 115200, 'n', 8, 1);
-	stm32_diag_init(DEBUG_USART);*/
+	//LPUART1->BRR = 0x0F000034;
+	//int32_t BAUDRATE = 9600;
+
+	//LPUART1->BRR = 16000000 / 152000;
+	//LPUART1->BRR = 0x2A55;
+	//LPUART1->BRR = 0x2555;
+	//LPUART1->BRR = 35552;
+
+
+	stm32_usart_putc(LPUART1, 'A');
+	//stm32_usart_putc(DEBUG_USART, 'A');
+	stm32l4_diag_init(LPUART1);
+
+	/*while(1) 
+	{
+		//board::sysled.toggle();
+		//delay_us(5000);
+		cpu_delay(100000);
+	//	stm32_usart_putc(LPUART1, 'A');
+	
+		board::sysled.toggle();
+	}*/
+
 }

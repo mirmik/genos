@@ -6,6 +6,7 @@
 
 #include <defs/arduino.h>
 #include <drivers/gpio/pin.h>
+
 #include <addons/arduino-compat/pinout.h>
 
 static inline 

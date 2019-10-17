@@ -12,11 +12,11 @@ namespace drivers
 	{
 		class spi_driver : public drivers::spi_driver
 		{
-			spi_regs * regs;
+			spi_regs_t * regs;
 			int irqno;
 
 		public:
-			spi_driver(spi_regs * regs, int irqno) : regs(regs), irqno(irqno) {}
+			spi_driver(spi_regs_t * regs, int irqno) : regs(regs), irqno(irqno) {}
 
 			int enable 			(bool en = true) override;
 			//int select   		(void *slct, int en) override;

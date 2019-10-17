@@ -4,13 +4,14 @@ module("genos.hal.stm32l4.common", "__default__",
 	srcdir = "src",
 
 	sources = [
-	#	"stm32l4_vectors_rept.S",
-	#	"stm32l4_start_test.c",
-		"stm32l4_start_test.S",
-		#"stm32_arch.c",
+		"stm32l4_vectors_rept.S",
+		"stm32l4_start.c",
+	#	"stm32l4_start_test.S",
+		"stm32l4_arch.c",
 		"stm32l4_rcc.c",
 		"stm32l4_gpio.c",
-		#"stm32_diag.c",
+		"stm32l4_usart.c",
+		"stm32l4_diag.c",
 	],
 
 	mdepends = [
@@ -25,7 +26,7 @@ module("genos.hal.stm32l4.common", "__default__",
 	cxx_flags = "-Os -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
 	ld_flags = "-Os -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
 	libs = ["m", "gcc"],
-	#ldscripts = "../stm32/ldscripts/stm32_common.ld",
+	ldscripts = "../stm32/ldscripts/stm32_common.ld",
 )
 
 module("genos.hal", impl = "stm32l412", 
@@ -33,5 +34,5 @@ module("genos.hal", impl = "stm32l412",
 	mdepends = [	
 		"genos.hal.stm32l4.common",
 	],
-	ldscripts = "ldscripts/stm32l412_example.ld",
+	ldscripts = "ldscripts/stm32l412.ld",
 )

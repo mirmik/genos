@@ -38,6 +38,8 @@ void stm32l4_rcc_enable_usart(USART_TypeDef * usart)
 {
 	switch ((uintptr_t)usart)
 	{
+		case LPUART1_BASE : RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN; break;
+		case USART1_BASE : RCC->APB2ENR |= RCC_APB2ENR_USART1EN; break;
 		case USART2_BASE : RCC->APB1ENR1 |= RCC_APB1ENR1_USART2EN; break;
 		case USART3_BASE : RCC->APB1ENR1 |= RCC_APB1ENR1_USART3EN; break;
 		default: BUG();

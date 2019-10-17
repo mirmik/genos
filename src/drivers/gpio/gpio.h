@@ -7,6 +7,8 @@
 
 #include <defs/gpiodefs.h>
 
+#include <asm/gpio.h>
+
 #define GPIO_MODE_IN_SECTION        0x000000FF
 #define GPIO_MODE_OUT_SECTION       0x0000FF00
 #define GPIO_MODE_INT_SECTION       0xFF000000
@@ -72,12 +74,12 @@ __BEGIN_DECLS
 
 //extern struct gpio *gpio_by_num(int num_port);
 
-extern int gpio_settings(void *gpio, unsigned int mask, uint32_t mode);
+extern int gpio_settings(gpio_regs_t *gpio, unsigned int mask, uint32_t mode);
 
-extern void gpio_write(void *gpio, unsigned int mask, uint8_t level);
-extern unsigned int gpio_read(void *gpio, unsigned int mask);
+extern void gpio_write(gpio_regs_t *gpio, unsigned int mask, uint8_t level);
+extern unsigned int gpio_read(gpio_regs_t *gpio, unsigned int mask);
 
-extern void gpio_toggle(void *gpio, unsigned int mask);
+extern void gpio_toggle(gpio_regs_t *gpio, unsigned int mask);
 
 //extern int gpio_pin_irq_attach(struct gpio *gpio, unsigned int mask,
 //		irq_handler_t pin_handler, int mode, void *data);
@@ -86,7 +88,7 @@ extern void gpio_toggle(void *gpio, unsigned int mask);
 //		irq_handler_t pin_handler, int mode);
 
 #ifdef CHIP_STM32
-void gpio_alternate(void *gpio, unsigned int mask, uint8_t code); 
+void gpio_alternate(gpio_regs_t *gpio, unsigned int mask, uint8_t code); 
 #endif
 
 __END_DECLS

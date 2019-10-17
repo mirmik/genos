@@ -10,5 +10,7 @@
 #endif
 
 typedef GPIO_TypeDef gpio_regs_t;
+typedef USART_TypeDef usart_regs_t;
+typedef SPI_TypeDef spi_regs_t;
 
 #endif

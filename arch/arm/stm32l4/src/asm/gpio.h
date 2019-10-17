@@ -15,6 +15,8 @@ void stm32l4_gpio_toggle(GPIO_TypeDef* g, uint32_t mask);
 
 int stm32l4_gpio_mode(GPIO_TypeDef* gpio, unsigned int mask, uint32_t mode);
 
+int stm32l4_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate);
+
 __END_DECLS
 
 #endif

@@ -1,8 +1,8 @@
 #ifndef ARDUINO_H
 #define ARDUINO_H
 
-#include "funcs.h"
 #include "pinout.h"
+#include "funcs.h"
 
 #define PINA(x) (x+NR_PINOUT_D)
 
