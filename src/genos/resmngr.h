@@ -4,6 +4,13 @@
 #include <igris/datastruct/dlist.h>
 #include <genos/resource.h>
 
+//#error "That file will ever compiled?"
+
+/**
+	Ресурсный менеджер контролирует пространства имён
+	ищет и открывает ресурс по его имени.
+*/
+
 namespace genos 
 {
 	extern struct dlist_head ns_list;

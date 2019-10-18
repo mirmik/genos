@@ -4,6 +4,10 @@
 #include <genos/resource.h>
 #include <genos/resmngr.h>
 
+/**
+	Ресурсный менеджер, контролирующий директорий /dev
+*/
+
 namespace genos 
 {
 	class device_manager : public genos::resmngr, public genos::named_node_list

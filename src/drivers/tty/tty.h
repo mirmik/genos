@@ -1,31 +1,67 @@
-#ifndef GENOS_DRIVERS_CDEV_TTY_H
-#define GENOS_DRIVERS_CDEV_TTY_H
+#ifndef GENOS_TTY_H
+#define GENOS_TTY_H
 
-#include <genos/cdev.h>
+#include <genos/resource.h>
+#include <drivers/serial/uart.h>
 
-#include <drivers/tty/ttydrv.h>
-#include <drivers/tty/ldisc.h>
-
-namespace genos 
+namespace drivers
 {
-	class tty : public char_device
+	class tty : public genos::node
 	{
+		drivers::uart * uart;
+		drivers::tty_disc * disc;
+
 	public:
-		uart_device * driver;
-		genos::ldisc * ldisc;
+		tty(drivers::uart * uart, drivers::tty_disc * disc) :
+			tty(uart, disc)
+		{}
 
-		void set_driver(uart_device * u) { driver = u; } 
-		void set_ldisc(genos::ldisc * l) { ldisc = l; }
 
-		int write(const char* data, size_t size) override
+		int release() override
 		{
-			return ldisc->write(data, size);
+			return ENOTSUP;
 		}
 
-		int read(char* data, size_t size) 
+		int open(openres * ores) override
 		{
-			return ldisc->read(data, size);
+			return ENOTSUP;
 		}
+
+
+		int write(const void* data, size_t size, int flags) override
+		{
+			return disc->write(data, size, flags);
+		}
+
+		int read(void* data, size_t size, int flags) override
+		{
+			return disc->read(data, size, flags);
+		}
+
+		int room() override
+		{
+			return disc->room();
+		}
+
+		int avail() override
+		{
+			return disc->avail();
+		}
+
+		/*void sendbyte(char* data, size_t size)
+		{
+
+		}
+
+		void rx_interrupt_handle(char c)
+		{
+			disc->newchar_handle(c);
+		}
+
+		void tx_interrupt_handle(char c)
+		{
+			disc->tx_request_handle(c);
+		}*/
 	};
 }
 
