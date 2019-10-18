@@ -58,6 +58,8 @@ namespace genos
 
 		int local_errno;
 
+		// Ресурсы должны принадлежать процессу специального вида (процесс-пользователь).
+		// всем schedee ресурсы не нужны.
 		genos::restbl restbl;
 		genos::navblock * navblock = nullptr;
 

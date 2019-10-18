@@ -8,6 +8,10 @@
 
 #define MAX_PATH_LEN 32
 
+/**
+	Модуль, отвечающий за запоминания текущей директории.
+*/
+
 namespace genos
 {
 	class navblock
