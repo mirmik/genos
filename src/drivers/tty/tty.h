@@ -4,6 +4,9 @@
 #include <genos/resource.h>
 #include <drivers/serial/uart.h>
 
+// Контроль линии обязательно должен быть на стороне драйвера. 
+// Потому что у процесса нет времени на управление потоком.
+
 namespace drivers
 {
 	class tty : public genos::node
@@ -48,20 +51,16 @@ namespace drivers
 			return disc->avail();
 		}
 
-		/*void sendbyte(char* data, size_t size)
-		{
 
-		}
-
-		void rx_interrupt_handle(char c)
+		void rx_interrupt_handle()
 		{
-			disc->newchar_handle(c);
+			disc->newchar_handle(uart->recvbyte());
 		}
 
 		void tx_interrupt_handle(char c)
 		{
 			disc->tx_request_handle(c);
-		}*/
+		}
 	};
 }
 
