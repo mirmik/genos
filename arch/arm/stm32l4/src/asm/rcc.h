@@ -13,6 +13,7 @@ void stm32l4_rcc_enable_spi(SPI_TypeDef * spi);
 void stm32l4_rcc_reset();
 
 static inline void rcc_enable_spi(SPI_TypeDef * spi) { stm32l4_rcc_enable_spi(spi); };
+static inline void rcc_enable_gpio(GPIO_TypeDef * spi) { stm32l4_rcc_enable_gpio(spi); };
 
 __END_DECLS
 

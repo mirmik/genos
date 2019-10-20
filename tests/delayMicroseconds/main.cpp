@@ -1,17 +1,18 @@
 #include <hal/board.h>
 #include <hal/irq.h>
 
-#include <util/cpu_delay.h>
+#include <systime/systime.h>
 
 int main()
 {
 	board_init();
 
-	//irqs_enable();
+	irqs_enable();
 
 	while(1) 
 	{
-		cpu_delay(500000);
+		delayMicroseconds(1000000);
+		dprln(millis());
 		board::sysled.toggle();
 	}
 }

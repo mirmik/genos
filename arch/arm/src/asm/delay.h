@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-extern uint32_t stm32_ticks_per_us_div_3;
+extern float stm32_ticks_per_us_div_3;
 
 static inline void init_delays(uint32_t cpufreqs) 
 {
-    stm32_ticks_per_us_div_3 = cpufreqs / 1000000 / 3;
+    stm32_ticks_per_us_div_3 = (float)cpufreqs / 1000000 / 3;
 }
 
 #define STM32_DELAY_US_MULT stm32_ticks_per_us_div_3

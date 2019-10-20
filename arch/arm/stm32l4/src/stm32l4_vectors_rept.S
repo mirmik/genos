@@ -52,7 +52,7 @@ _vectors:
 
 	.set i,0
 	.rept GENERATE_VECTORS
-	    irq_labelX %i
+	    irq_labelX %i+16
 	    .set i, i+1
 	.endr
 
@@ -84,7 +84,7 @@ handlers:
 
 	.set i, 0
 	.rept GENERATE_VECTORS
-		HANDLER2 %i
+		HANDLER2 %i+16
 	    .set i, i+1
 	.endr
 

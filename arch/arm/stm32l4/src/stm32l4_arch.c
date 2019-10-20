@@ -65,7 +65,7 @@ void arch_init()
 {
 	volatile int i;
 
-	RCC->AHB1RSTR = 0xFFFFFFFF;
+	/*RCC->AHB1RSTR = 0xFFFFFFFF;
 	RCC->AHB2RSTR = 0xFFFFFFFF;
 	RCC->APB1RSTR1 = 0xFFFFFFFF;
 	RCC->APB1RSTR2 = 0xFFFFFFFF;
@@ -77,7 +77,7 @@ void arch_init()
 	RCC->APB1RSTR1 = 0;
 	RCC->APB1RSTR2 = 0;
 	RCC->APB2RSTR = 0;
-	i = 1000; while (--i);
+	i = 1000; while (--i);*/
 
 	SystemInit();
 

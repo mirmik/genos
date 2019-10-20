@@ -10,6 +10,7 @@
 #define DRIVERS_GPIO_PIN_H
 
 #include <drivers/gpio/gpio.h>
+#include <igris/dprint.h>
 //#include <asm/chip.h>
 
 struct gpio_pin

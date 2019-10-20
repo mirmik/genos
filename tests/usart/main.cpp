@@ -2,6 +2,7 @@
 #include <hal/irq.h>
 
 #include <systime/systime.h>
+#include <util/cpu_delay.h>
 
 int main()
 {
@@ -9,13 +10,9 @@ int main()
 
 	dprln("HelloWorld");
 
-	board::sysuart.setup(115200, 'n', 8, 1);
-
-	irqs_enable();
-
 	while(1) 
 	{
-		delay(500);
+		cpu_delay(500000);
 		dprln("HelloWorld");
 		board::sysled.toggle();
 	}

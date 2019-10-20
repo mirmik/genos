@@ -9,8 +9,10 @@
 
 #include <addons/arduino-compat/pinout.h>
 
+#include <igris/dprint.h>
+
 static inline 
-const gpio_pin getPin(int pin) 
+gpio_pin getPin(int pin) 
 {
     return PINOUT[pin];
 } 
@@ -30,7 +32,12 @@ uint8_t digitalRead(int num)
 static inline 
 void pinMode(int pin, uint8_t mode) 
 {
-	getPin(pin).mode(mode == OUTPUT ? GPIO_MODE_OUTPUT : GPIO_MODE_INPUT);
+    dprln("pinmode");
+    auto gpin = getPin(pin);
+    dprptr(gpin.gpio);dprln();
+    dprln(gpin.mask);dprln();
+	gpin.mode(mode == OUTPUT ? GPIO_MODE_OUTPUT : GPIO_MODE_INPUT);
+    dprln("pinmode out");
 } 
 
 static inline

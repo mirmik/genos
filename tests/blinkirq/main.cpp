@@ -12,7 +12,6 @@ int main()
 	while(1) 
 	{
 		delay(500);
-		dprln(millis());
 		board::sysled.toggle();
 	}
 }

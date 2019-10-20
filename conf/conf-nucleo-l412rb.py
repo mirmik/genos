@@ -10,6 +10,7 @@ mdepends = [
 
 def install(file, *args):
 	os.system("arm-none-eabi-objcopy -O binary {file} firmware.bin".format(file=file))
+	os.system("st-flash erase")
 	os.system("st-flash write firmware.bin 0x8000000")
 
 def terminal(path="/dev/ttyACM0"):

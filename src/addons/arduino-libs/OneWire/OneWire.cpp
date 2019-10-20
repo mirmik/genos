@@ -143,13 +143,20 @@ sample code bearing this copyright.
 #include "OneWire.h"
 #include "util/OneWire_direct_gpio.h"
 
+#include <igris/dprint.h>
+
 
 void OneWire::begin(uint8_t pin)
 {
+	dprln("OneWire::begin in");
 	pinMode(pin, INPUT);
+	dprln("pinMode out");
 	bitmask = PIN_TO_BITMASK(pin);
 	baseReg = PIN_TO_BASEREG(pin);
+	dprln("OneWire::begin out");
+	dprln("ONEWIRE_SEARCH");
 #if ONEWIRE_SEARCH
+	dprln("ONEWIRE_SEARCH");
 	reset_search();
 #endif
 }

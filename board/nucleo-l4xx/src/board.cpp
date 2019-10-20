@@ -70,6 +70,8 @@ void board_init(int freqmode)
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 16000000;
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 16000000;
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 16000000;
+			sysclock_set_frequency(16000000);
+			init_delays(16000000);
 			break;
 	};
 
@@ -80,19 +82,14 @@ void board_init(int freqmode)
 	stm32l4_rcc_enable_gpio(DEBUG_USART_RX_GPIO);
 	stm32l4_rcc_enable_usart(DEBUG_USART);
 
-	bits_assign(RCC->CCIPR, RCC_CCIPR_LPUART1SEL_Msk, (0b01) << RCC_CCIPR_LPUART1SEL_Pos);
+	//bits_assign(RCC->CCIPR, RCC_CCIPR_LPUART1SEL_Msk, (0b01) << RCC_CCIPR_LPUART1SEL_Pos);
 
 	cpu_delay(100);
 
 	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 	
-	//gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
-	gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), GPIO_MODE_ALTERNATE);
-	gpio_settings(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), GPIO_MODE_ALTERNATE);
-	//stm32_gpio_set_maxspeed(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), STM32_GPIO_SPEED_LEVEL_0);
-	
-	stm32l4_gpio_set_alternate(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), DEBUG_USART_AF);
-	stm32l4_gpio_set_alternate(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), DEBUG_USART_AF);
+	gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_TX_PIN) | (1 << DEBUG_USART_RX_PIN), GPIO_MODE_ALTERNATE);
+	stm32l4_gpio_set_alternate(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN) | (1 << DEBUG_USART_RX_PIN), DEBUG_USART_AF);
 	
 	//stm32l4_usart_setup(LPUART1, 115200, 'n', 8, 1);
 	stm32l4_usart_setup(DEBUG_USART, 115200, 'n', 8, 1);

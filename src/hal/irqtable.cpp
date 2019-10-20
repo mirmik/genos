@@ -68,7 +68,7 @@ void irqtable_debug_print()
 uint16_t genos::irqtable::counter(int irqno) 
 {
 	auto save = irqs_save();	
-	uint16_t count = __irqtable[irqno].count; 
+	uint16_t count = __irqtable[IRQTABLE_IRQNO(irqno)].count; 
 	irqs_restore(save);
 
 	return count;
