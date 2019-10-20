@@ -27,9 +27,12 @@ namespace drivers
 	public:
 		OneWire(gpio_pin pin) : pin(pin) {}
 
-		void init()
+		void begin(gpio_pin pin)
 		{
 			pin.mode(GPIO_MODE_INPUT);
+#if ONEWIRE_SEARCH
+			reset_search();
+#endif
 		}
 
 		void input_state() { pin.mode(GPIO_MODE_INPUT | GPIO_MODE_IN_NOPULL); }
