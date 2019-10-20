@@ -4,8 +4,8 @@ import os
 toolchain = licant.cxx_make.toolchain_gcc("arm-none-eabi-")
 
 mdepends = [
-	("genos.board", "nucleo-l432"),
-	"genos.drivers.stm32"
+	("genos.board", "nucleo-l432kc"),
+	"genos.drivers.stm32l4"
 ]
 
 def install(file, *args):

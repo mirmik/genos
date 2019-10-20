@@ -12,6 +12,7 @@ module("genos.hal.stm32l4.common", "__default__",
 		"stm32l4_gpio.c",
 		"stm32l4_usart.c",
 		"stm32l4_diag.c",
+		"stm32l4_spi.c",
 	],
 
 	mdepends = [
@@ -35,4 +36,12 @@ module("genos.hal", impl = "stm32l412",
 		"genos.hal.stm32l4.common",
 	],
 	ldscripts = "ldscripts/stm32l412.ld",
+)
+
+module("genos.hal", impl = "stm32l432", 
+	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX"],
+	mdepends = [	
+		"genos.hal.stm32l4.common",
+	],
+	ldscripts = "ldscripts/stm32l432.ld",
 )

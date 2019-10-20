@@ -81,15 +81,6 @@ module("genos.hal", impl = "stm32f401",
 	ldscripts = "ldscripts/stm32f401.ld",
 )
 
-module("genos.hal", impl = "stm32l432", 
-	defines = ["CHIP_STM32L432"],
-	mdepends = [
-		"genos.hal.stm32f4xx",	
-		"genos.hal.stm32.common",
-	],
-	ldscripts = "ldscripts/stm32f432.ld",
-)
-
 module("genos.stm32.spl.stm32f4xx", 
 	srcdir = "./src/spl",
 	sources = [

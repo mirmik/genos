@@ -3,23 +3,20 @@
 
 #include <systime/systime.h>
 
-#include <asm/gpio.h>
-#include <asm/rcc.h>
-
-#include <util/cpu_delay.h>
-
 int main()
 {
-	//arch_init();
 	board_init();
+
+	dprln("HelloWorld");
+
+	board::sysuart.setup(115200, 'n', 8, 1);
 
 	irqs_enable();
 
 	while(1) 
 	{
-		delay(100);
-		dprln(millis());
-
+		delay(500);
+		dprln("HelloWorld");
 		board::sysled.toggle();
 	}
 }

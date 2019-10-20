@@ -10,7 +10,7 @@
 
 struct stm32l4_usart_device : public uart_device
 {
-	struct usart_regs * regs;
+	usart_regs_t * regs;
 	uint8_t irqno;
 
 	int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
@@ -23,7 +23,7 @@ struct stm32l4_usart_device : public uart_device
 
 	void irqinit();
 
-	stm32l4_usart_device(struct usart_regs * regs, uint8_t irqno) :
+	stm32l4_usart_device(usart_regs_t * regs, uint8_t irqno) :
 		regs(regs), irqno(irqno) 
 	{}
 };

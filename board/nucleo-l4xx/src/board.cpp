@@ -14,8 +14,7 @@
 #include <util/cpu_delay.h>
 
 GPIO_PIN(board_led, BOARD_LED_GPIO, BOARD_LED_PIN);
-//stm32_usart_device debug_usart(DEBUG_USART, DEBUG_USART_IRQ);
-//stm32_usart_device usart6 (USART6, STM32_IRQ_USART6);
+stm32l4_usart_device board::sysuart(DEBUG_USART, DEBUG_USART_IRQ);
 
 void board_init(int freqmode)
 {
@@ -77,8 +76,9 @@ void board_init(int freqmode)
 /*	systime_set_frequency(1000);
 */
 	stm32l4_rcc_enable_gpio(BOARD_LED_GPIO);
-	stm32l4_rcc_enable_gpio(GPIOA);
-	stm32l4_rcc_enable_usart(LPUART1);
+	stm32l4_rcc_enable_gpio(DEBUG_USART_TX_GPIO);
+	stm32l4_rcc_enable_gpio(DEBUG_USART_RX_GPIO);
+	stm32l4_rcc_enable_usart(DEBUG_USART);
 
 	bits_assign(RCC->CCIPR, RCC_CCIPR_LPUART1SEL_Msk, (0b01) << RCC_CCIPR_LPUART1SEL_Pos);
 
@@ -86,13 +86,16 @@ void board_init(int freqmode)
 
 	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 	
-	gpio_settings(GPIOA, (1 << 2), GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
-	gpio_settings(GPIOA, (1 << 2) | (1 << 3), GPIO_MODE_ALTERNATE);
+	//gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
+	gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), GPIO_MODE_ALTERNATE);
+	gpio_settings(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), GPIO_MODE_ALTERNATE);
 	//stm32_gpio_set_maxspeed(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), STM32_GPIO_SPEED_LEVEL_0);
-	stm32l4_gpio_set_alternate(GPIOA, (1 << 2) | (1 << 3), 8);
+	
+	stm32l4_gpio_set_alternate(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), DEBUG_USART_AF);
+	stm32l4_gpio_set_alternate(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), DEBUG_USART_AF);
 	
 	//stm32l4_usart_setup(LPUART1, 115200, 'n', 8, 1);
-	stm32l4_usart_setup(LPUART1, 115200, 'n', 8, 1);
+	stm32l4_usart_setup(DEBUG_USART, 115200, 'n', 8, 1);
 	//LPUART1->GTPR = 1;
 
 	//LPUART1->BRR = 0x0F000034;
@@ -103,10 +106,7 @@ void board_init(int freqmode)
 	//LPUART1->BRR = 0x2555;
 	//LPUART1->BRR = 35552;
 
-
-	stm32_usart_putc(LPUART1, 'A');
-	//stm32_usart_putc(DEBUG_USART, 'A');
-	stm32l4_diag_init(LPUART1);
+	stm32l4_diag_init(DEBUG_USART);
 
 	/*while(1) 
 	{

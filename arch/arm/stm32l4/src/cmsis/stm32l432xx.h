@@ -138,6 +138,8 @@ typedef enum
   CRS_IRQn                    = 82      /*!< CRS global interrupt                                              */
 } IRQn_Type;
 
+#define NR_IRQS (83+16)
+
 /**
   * @}
   */

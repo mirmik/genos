@@ -6,7 +6,7 @@
 #include <defs/uartdefs.h>
 #include <igris/dprint.h>
 
-uint8_t stm32_usart_clockbus(usart_regs_t* regs)
+uint8_t stm32l4_usart_clockbus(usart_regs_t* regs)
 {
 	switch ((uintptr_t)regs)
 	{
@@ -32,13 +32,13 @@ uint8_t stm32_usart_clockbus(usart_regs_t* regs)
 	return 0;
 }
 
-void stm32_usart_set_baudrate(usart_regs_t* regs, uint32_t baud)
+void stm32l4_usart_set_baudrate(usart_regs_t* regs, uint32_t baud)
 {
-	uint32_t busfreq = stm32_declared_clockbus_freq[stm32_usart_clockbus(regs)];
+	uint32_t busfreq = stm32_declared_clockbus_freq[stm32l4_usart_clockbus(regs)];
 	regs->BRR = busfreq / baud * 256;
 }
 
-void stm32_usart_set_parity(usart_regs_t* regs, char parity)
+void stm32l4_usart_set_parity(usart_regs_t* regs, char parity)
 {
 	switch (parity)
 	{
@@ -64,7 +64,7 @@ void stm32_usart_set_parity(usart_regs_t* regs, char parity)
 
 // Note: If parity bit is using you should set one more databit.
 // F.E. nine databits for eight information bits and one for parity.
-void stm32_usart_set_databits(usart_regs_t* regs, uint8_t databits)
+void stm32l4_usart_set_databits(usart_regs_t* regs, uint8_t databits)
 {
 	switch (databits)
 	{
@@ -82,7 +82,7 @@ void stm32_usart_set_databits(usart_regs_t* regs, uint8_t databits)
 	return;
 }
 
-void stm32_usart_set_stopbits(usart_regs_t* regs,
+void stm32l4_usart_set_stopbits(usart_regs_t* regs,
                               enum uart_stopbits_e stopbits)
 {
 	switch (stopbits)
@@ -110,7 +110,7 @@ void stm32_usart_set_stopbits(usart_regs_t* regs,
 	return;
 }
 
-void stm32_usart_enable(usart_regs_t* regs, int en)
+void stm32l4_usart_enable(usart_regs_t* regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_UE)
@@ -118,7 +118,7 @@ void stm32_usart_enable(usart_regs_t* regs, int en)
 		bits_clr(regs->CR1, USART_CR1_UE);
 }
 
-void stm32_usart_enable_rx(usart_regs_t* regs, int en)
+void stm32l4_usart_enable_rx(usart_regs_t* regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_RE)
@@ -126,7 +126,7 @@ void stm32_usart_enable_rx(usart_regs_t* regs, int en)
 		bits_clr(regs->CR1, USART_CR1_RE);
 }
 
-void stm32_usart_enable_tx(usart_regs_t* regs, int en)
+void stm32l4_usart_enable_tx(usart_regs_t* regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_TE)
@@ -134,7 +134,7 @@ void stm32_usart_enable_tx(usart_regs_t* regs, int en)
 		bits_clr(regs->CR1, USART_CR1_TE);
 }
 
-void stm32_usart_rxirq_enable(usart_regs_t* regs, int en)
+void stm32l4_usart_rxirq_enable(usart_regs_t* regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_RXNEIE)
@@ -142,7 +142,7 @@ void stm32_usart_rxirq_enable(usart_regs_t* regs, int en)
 		bits_clr(regs->CR1, USART_CR1_RXNEIE);
 }
 
-void stm32_usart_txirq_enable(usart_regs_t* regs, int en)
+void stm32l4_usart_txirq_enable(usart_regs_t* regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_TXEIE)
@@ -150,7 +150,7 @@ void stm32_usart_txirq_enable(usart_regs_t* regs, int en)
 		bits_clr(regs->CR1, USART_CR1_TXEIE);
 }
 
-void stm32_usart_tcirq_enable(usart_regs_t* regs, int en) 
+void stm32l4_usart_tcirq_enable(usart_regs_t* regs, int en) 
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_TCIE)
@@ -167,17 +167,17 @@ int stm32l4_usart_setup(
 {
 	stm32l4_rcc_enable_usart(regs);
 
-	stm32_usart_set_baudrate(regs, baud);
-	stm32_usart_set_parity(regs, parity);
-	stm32_usart_set_databits(regs, databits);
-	stm32_usart_set_stopbits(regs, stopbits);
+	stm32l4_usart_set_baudrate(regs, baud);
+	stm32l4_usart_set_parity(regs, parity);
+	stm32l4_usart_set_databits(regs, databits);
+	stm32l4_usart_set_stopbits(regs, stopbits);
 
 	regs->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE; 
 	
 	return 0;
 }
 
-void stm32_usart_debug_print(usart_regs_t * usart) 
+void stm32l4_usart_debug_print(usart_regs_t * usart) 
 {
 	DPRINTHEX(usart->ISR);
 	DPRINTHEX(usart->RDR);

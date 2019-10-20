@@ -13,24 +13,35 @@
 #if defined(BOARD_NUCLEO_L412RB)
 #	define BOARD_LED_GPIO GPIOB
 #	define BOARD_LED_PIN 13
-#	define DEBUG_USART USART2
-#	define DEBUG_USART_IRQ USART2_IRQn
+#	define DEBUG_USART LPUART1
+#	define DEBUG_USART_IRQ IRQTABLE_IRQNO(LPUART1_IRQn)
 #	define DEBUG_USART_RX_GPIO GPIOA
 #	define DEBUG_USART_TX_GPIO GPIOA
 #	define DEBUG_USART_RX_PIN 2
 #	define DEBUG_USART_TX_PIN 3
-#	define DEBUG_USART_AF 7
+#	define DEBUG_USART_AF 8
+#elif defined(BOARD_NUCLEO_L432KC)
+#	define BOARD_LED_GPIO GPIOB
+#	define BOARD_LED_PIN 3
+#	define DEBUG_USART LPUART1
+#	define DEBUG_USART_IRQ IRQTABLE_IRQNO(LPUART1_IRQn)
+#	define DEBUG_USART_RX_GPIO GPIOA
+#	define DEBUG_USART_TX_GPIO GPIOA
+#	define DEBUG_USART_RX_PIN 2
+#	define DEBUG_USART_TX_PIN 3
+#	define DEBUG_USART_AF 8
 #else
 #	error "unregistred board"
 #endif
 
 extern struct gpio_pin board_led;
-extern struct stm32l4_usart_device lpuart1;
 
 namespace board 
 {
 	static gpio_pin sysled = board_led;
-	static stm32l4_usart_device & vserial = lpuart1;
+	extern stm32l4_usart_device sysuart;
+	
+	//static stm32l4_usart_device & sysuart = sysuart;
 }
 
 __BEGIN_DECLS
