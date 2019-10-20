@@ -118,6 +118,7 @@ namespace drivers
 
 		while (_wire->search(deviceAddress))
 		{
+			dprln("search iter");
 
 			if (validAddress(deviceAddress))
 			{

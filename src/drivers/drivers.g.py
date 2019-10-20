@@ -17,7 +17,7 @@ licant.module("genos.drivers.avr.timer", sources = [ "timer/avr_timer.cpp" ])
 licant.module("genos.drivers.avr",
 	mdepends = [
 		"genos.drivers.common",
-		"genos.drivers.avr.spi", 
+		#"genos.drivers.avr.spi", 
 		"genos.drivers.avr.usart",
 		"genos.drivers.avr.timer",
 		"genos.drivers.avr.gpio",

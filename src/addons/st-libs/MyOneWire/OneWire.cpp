@@ -61,6 +61,8 @@ namespace drivers
 //
 	bool OneWire::search(uint8_t *newAddr, bool search_mode /* = true */)
 	{
+		dprln("search");
+
 		uint8_t id_bit_number;
 		uint8_t last_zero, rom_byte_number;
 		bool    search_result;
@@ -104,6 +106,9 @@ namespace drivers
 				// read a bit and its complement
 				id_bit = read_bit();
 				cmp_id_bit = read_bit();
+
+				dprln("id_bit", id_bit);
+				dprln("cmp_id_bit", cmp_id_bit);
 
 				// check for no devices on 1-wire
 				if ((id_bit == 1) && (cmp_id_bit == 1))
@@ -279,9 +284,6 @@ uint8_t OneWire::crc8(const uint8_t *addr, uint8_t len)
 
 	while (len--)
 	{
-#if defined(__AVR__)
-		crc = _crc_ibutton_update(crc, *addr++);
-#else
 		uint8_t inbyte = *addr++;
 
 		for (uint8_t i = 8; i; i--)
@@ -293,8 +295,6 @@ uint8_t OneWire::crc8(const uint8_t *addr, uint8_t len)
 
 			inbyte >>= 1;
 		}
-
-#endif
 	}
 
 	return crc;

@@ -4,7 +4,7 @@
 #include "pinout.h"
 #include "funcs.h"
 
-#define PINA(x) (x+NR_PINOUT_D)
+#define PIN_NO_A(x) (x+NR_PINOUT_D)
 
 #include <systime/systime.h>
 

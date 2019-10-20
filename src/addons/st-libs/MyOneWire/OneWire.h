@@ -32,8 +32,8 @@ namespace drivers
 			pin.mode(GPIO_MODE_INPUT);
 		}
 
-		void input_state() { pin.mode(GPIO_MODE_INPUT); }
-		void output_state() { pin.mode(GPIO_MODE_OUTPUT); }
+		void input_state() { pin.mode(GPIO_MODE_INPUT | GPIO_MODE_IN_NOPULL); }
+		void output_state() { pin.mode(GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL); }
 		//uint8_t readpin() { return pin.get(); }
 		//void writehigh() { return pin.set(1); }
 		//void writelow() { return pin.set(0); }
@@ -77,17 +77,17 @@ namespace drivers
 			if (v & 1)
 			{
 				irqs_disable();
-				pin.set(0);;
+				pin.set(0);
 				output_state();	// drive output low
 				delay_us(10);
-				pin.set(1);;	// drive output high
+				pin.set(1);	// drive output high
 				irqs_enable();
 				delay_us(55);
 			}
 			else
 			{
 				irqs_disable();
-				pin.set(0);;
+				pin.set(0);
 				output_state();	// drive output low
 				delay_us(65);
 				pin.set(1);;	// drive output high
