@@ -7,7 +7,7 @@ licant.include("genos")
 
 licant.glbfunc.genos_firmware(
 	sources=["main.cpp"],
-	mdepends=["igris.stdlibs", "MyOneWire", "arduino-compat"],
+	mdepends=["igris.stdlibs", "OneWire", "arduino-compat"],
 	cxx_flags = "-Wall",
 	cxxstd = "c++14"
 )

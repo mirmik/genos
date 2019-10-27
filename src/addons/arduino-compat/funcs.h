@@ -32,12 +32,8 @@ uint8_t digitalRead(int num)
 static inline 
 void pinMode(int pin, uint8_t mode) 
 {
-    dprln("pinmode");
     auto gpin = getPin(pin);
-    dprptr(gpin.gpio);dprln();
-    dprln(gpin.mask);dprln();
 	gpin.mode(mode == OUTPUT ? GPIO_MODE_OUTPUT : GPIO_MODE_INPUT);
-    dprln("pinmode out");
 } 
 
 static inline

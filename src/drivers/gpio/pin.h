@@ -26,7 +26,8 @@ struct gpio_pin
 	void toggle() const { gpio_toggle(gpio, mask); }
 	void tgl()  const { gpio_toggle(gpio, mask); }
 	uint8_t get() const { return !!gpio_read(gpio, mask); }
-	int mode(uint32_t _mode) const { return gpio_settings(gpio, mask, _mode); }
+	int mode(uint32_t _mode) const { 
+		return gpio_settings(gpio, mask, _mode); }
 
 	#ifdef CHIP_STM32
 	void alternate(uint8_t fn) 

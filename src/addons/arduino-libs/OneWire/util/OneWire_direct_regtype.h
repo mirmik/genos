@@ -1,6 +1,8 @@
 #ifndef OneWire_Direct_RegType_h
 #define OneWire_Direct_RegType_h
 
+#define ARDUINO_ARCH_STM32
+
 #include <stdint.h>
 
 // Platform specific I/O register type

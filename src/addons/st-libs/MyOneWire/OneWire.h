@@ -35,8 +35,8 @@ namespace drivers
 #endif
 		}
 
-		void input_state() { pin.mode(GPIO_MODE_INPUT | GPIO_MODE_IN_NOPULL); }
-		void output_state() { pin.mode(GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL); }
+		inline void input_state() { pin.mode(GPIO_MODE_INPUT | GPIO_MODE_IN_NOPULL); }
+		inline void output_state() { pin.mode(GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL); }
 		//uint8_t readpin() { return pin.get(); }
 		//void writehigh() { return pin.set(1); }
 		//void writelow() { return pin.set(0); }

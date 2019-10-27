@@ -4,7 +4,7 @@
 
 uint8_t findDevices(int pin)
 {
-  drivers::OneWire ow(getPin(pin));
+  OneWire ow(pin);
 
   uint8_t address[8];
   uint8_t count = 0;
@@ -40,11 +40,16 @@ void setup()
 {
 	board_init();
 
+  rcc_enable_gpio(GPIOA);
+  rcc_enable_gpio(GPIOB);
+  rcc_enable_gpio(GPIOC);
+
   dprln("//\n// Start oneWireSearch.ino \n//");
 
   for (uint8_t pin = 2; pin < 13; pin++)
   {
-    findDevices(pin);
+    if (PINOUT[pin].gpio != NULL)
+      findDevices(pin);
   }
   dprln("\n//\n// End oneWireSearch.ino \n//");
 }

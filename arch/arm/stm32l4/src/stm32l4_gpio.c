@@ -109,3 +109,9 @@ int stm32l4_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate
 
 	return 0;
 }
+/*
+void stm32_gpio_set_maxspeed(GPIO_TypeDef* regs, uint16_t map,
+                             enum stm32_gpio_maxspeed_e maxspeed)
+{
+	bits_masked_assign_multimap(regs->OSPEEDR, map, maxspeed, 2);
+}*/

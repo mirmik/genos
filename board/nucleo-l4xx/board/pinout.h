@@ -39,6 +39,21 @@ const gpio_pin PINOUT[] =
 #warning "PINOUT_D is undefined"
 const gpio_pin PINOUT[] =
 {
+	{GPIOA, 1 << 10}, //0
+	{GPIOA, 1 << 9}, //1
+	{GPIOA, 1 << 12}, //2
+	{GPIOB, 1 << 3}, //3
+	{GPIOB, 1 << 5}, //4
+	{GPIOA, 1 << 15}, //5
+	{GPIOB, 1 << 10}, //6
+	{GPIOC, 1 << 7}, //7
+	{GPIOB, 1 << 6}, //8
+	{GPIOA, 1 << 8}, //9
+	{GPIOA, 1 << 11}, //10
+	{GPIOB, 1 << 15}, //11
+	{GPIOB, 1 << 14}, //12
+	{GPIOB, 1 << 13}, //13
+
 	{GPIOA, 1 << 0}, //0
 	{GPIOA, 1 << 1}, //1
 	{GPIOA, 1 << 3}, //2
@@ -48,7 +63,7 @@ const gpio_pin PINOUT[] =
 	{GPIOA, 1 << 7}, //6
 	{GPIOA, 1 << 2}, //7
 };
-#define NR_PINOUT_D 0
+#define NR_PINOUT_D 14
 #define PINOUT_A (PINOUT + NR_PINOUT_D)
 
 #endif
