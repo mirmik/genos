@@ -75,6 +75,7 @@ __BEGIN_DECLS
 //extern struct gpio *gpio_by_num(int num_port);
 
 extern int gpio_settings(gpio_regs_t *gpio, unsigned int mask, uint32_t mode);
+extern int gpio_mode_fast(gpio_regs_t *gpio, unsigned int mask, uint32_t mode);
 
 extern void gpio_write(gpio_regs_t *gpio, unsigned int mask, uint8_t level);
 extern unsigned int gpio_read(gpio_regs_t *gpio, unsigned int mask);

@@ -169,6 +169,14 @@ uint8_t OneWire::reset(void)
 	uint8_t r;
 	uint8_t retries = 125;
 
+  gpio_mode_fast((gpio_regs_t*)baseReg, bitmask, GPIO_MODE_INPUT | GPIO_MODE_IN_NOPULL);//pin_
+  gpio_mode_fast((gpio_regs_t*)baseReg, bitmask, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_OPEN_DRAIN);
+
+  uint8_t nbit = __builtin_ctz(mask);
+  modermask = 0b11 << (nbit*2);
+  inval = 0b00 << (nbit*2);
+  outval = 0b01 << (nbit*2);  
+
 	noInterrupts();
 	DIRECT_MODE_INPUT(reg, mask);
 	interrupts();

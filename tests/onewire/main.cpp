@@ -46,10 +46,11 @@ void setup()
 
   dprln("//\n// Start oneWireSearch.ino \n//");
 
-  for (uint8_t pin = 2; pin < 13; pin++)
+  for (uint8_t pin = PINA(0); pin < PINA(6); pin++)
   {
-    if (PINOUT[pin].gpio != NULL)
+    if (PINOUT[pin].gpio != NULL){
       findDevices(pin);
+    }
   }
   dprln("\n//\n// End oneWireSearch.ino \n//");
 }

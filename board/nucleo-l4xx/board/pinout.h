@@ -22,7 +22,6 @@ const gpio_pin PINOUT[] =
 	{GPIOB, 1 << 4}, //12
 	{GPIOB, 1 << 3}, //13
 
-
 	{GPIOA, 1 << 0}, //0 14
 	{GPIOA, 1 << 1}, //1 15
 	{GPIOA, 1 << 3}, //2 16
@@ -67,5 +66,7 @@ const gpio_pin PINOUT[] =
 #define PINOUT_A (PINOUT + NR_PINOUT_D)
 
 #endif
+
+#define PINA(x) (NR_PINOUT_D+(x))
 
 #endif

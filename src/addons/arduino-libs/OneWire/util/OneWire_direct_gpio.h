@@ -6,6 +6,7 @@
 // sketches or other libraries which may include OneWire.h.
 
 #include <stdint.h>
+#include <igris/util/bits.h>
 #define ARDUINO_ARCH_STM32
 
 // Platform specific I/O definitions
@@ -233,11 +234,11 @@ void directModeOutput(IO_REG_TYPE pin)
 #define IO_REG_TYPE uint32_t
 #define IO_REG_BASE_ATTR
 #define IO_REG_MASK_ATTR
-#define DIRECT_READ(base, pin)          (((gpio_regs_t*)base)->IDR & pin ? 1 : 0) //digitalReadFast((PinName)pin)
+#define DIRECT_READ(base, pin)          ((((gpio_regs_t*)base)->IDR & pin) ? 1 : 0) //digitalReadFast((PinName)pin)
 #define DIRECT_WRITE_LOW(base, pin)     (((gpio_regs_t*)base)->ODR &= ~pin)//digitalWriteFast((PinName)pin, LOW)
 #define DIRECT_WRITE_HIGH(base, pin)    (((gpio_regs_t*)base)->ODR |= pin)//digitalWriteFast((PinName)pin, HIGH)
-#define DIRECT_MODE_INPUT(base, pin)    (gpio_settings((gpio_regs_t*)base, pin, GPIO_MODE_INPUT | GPIO_MODE_IN_NOPULL))//pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_INPUT, GPIO_NOPULL, 0))
-#define DIRECT_MODE_OUTPUT(base, pin)   (gpio_settings((gpio_regs_t*)base, pin, GPIO_MODE_OUTPUT))//pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_OUTPUT_PP, GPIO_NOPULL, 0))
+#define DIRECT_MODE_INPUT(base, pin)    (bits_assign(((gpio_regs_t*)base)->MODER, modermask, inval))//pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_INPUT, GPIO_NOPULL, 0))
+#define DIRECT_MODE_OUTPUT(base, pin)   (bits_assign(((gpio_regs_t*)base)->MODER, modermask, outval))//pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_OUTPUT_PP, GPIO_NOPULL, 0))
 
 #elif defined(__SAMD21G18A__)
 #define PIN_TO_BASEREG(pin)             portModeRegister(digitalPinToPort(pin))

@@ -1,6 +1,7 @@
 #include <asm/gpio.h>
 #include <drivers/gpio/gpio.h>
 #include <igris/util/bits.h>
+#include <igris/dprint.h>
 
 void stm32l4_gpio_write(GPIO_TypeDef* g, uint32_t mask,
                       unsigned char level)
@@ -89,7 +90,72 @@ int stm32l4_gpio_mode(GPIO_TypeDef* gpio, unsigned int mask, uint32_t mode)
 		mode_val = 0b11;
 	}
 
+	bits_masked_assign_multimap(gpio->OSPEEDR, mask, 0b11, 2);
 	bits_masked_assign_multimap(gpio->MODER, mask, mode_val, 2);
+
+	return 0;
+}
+
+
+int gpio_mode_fast(GPIO_TypeDef* gpio, unsigned int mask, uint32_t mode)
+{
+	int mode_val = 0;
+	uint8_t nbit = __builtin_ctz(mask);
+
+	if ((mode & GPIO_MODE_OUT_SECTION) &&
+	        (mode & GPIO_MODE_IN_SECTION))   /* mode is incorrect */
+	{
+		return -1;
+	}
+
+	if (mode & GPIO_MODE_INPUT)
+	{
+		mode_val = 0b00;
+
+		if (mode & GPIO_MODE_IN_NOPULL)
+		{
+			bits_assign_bias(gpio->PUPDR, 0b11, 0b00, (nbit*2));
+		}
+
+		else if (mode & GPIO_MODE_IN_PULL_UP)
+		{
+			bits_assign_bias(gpio->PUPDR, 0b11, 0b01, (nbit*2));
+		}
+
+		else if (mode & GPIO_MODE_IN_PULL_DOWN)
+		{
+			bits_assign_bias(gpio->PUPDR, 0b11, 0b10, (nbit*2));
+		}
+	}
+	
+	else if (mode & GPIO_MODE_OUTPUT)
+	{
+		mode_val = 0b01;
+
+		if (mode & GPIO_MODE_OUT_PUSH_PULL)
+		{
+			bits_clr(gpio->OTYPER, mask);
+		}
+
+		else if (mode & GPIO_MODE_OUT_OPEN_DRAIN)
+		{
+			bits_set(gpio->OTYPER, mask);
+		}
+	}
+	
+	else if (mode & GPIO_MODE_ALTERNATE)
+	{
+		mode_val = 0b10;
+	}
+
+	else if (mode & GPIO_MODE_ANALOG_INPUT)
+	{
+		mode_val = 0b11;
+	}
+
+	//bits_masked_assign_multimap(gpio->OSPEEDR, mask, 0b11, 2);
+	bits_assign_bias(gpio->OSPEEDR, 0b11, 0b11, (nbit*2));
+	bits_assign_bias(gpio->MODER, 0b11, mode_val, (nbit*2));
 
 	return 0;
 }

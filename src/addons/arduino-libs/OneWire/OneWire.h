@@ -60,6 +60,10 @@ class OneWire
     IO_REG_TYPE bitmask;
     volatile IO_REG_TYPE *baseReg;
 
+    uint32_t modermask;
+    uint32_t inval;
+    uint32_t outval;
+
 #if ONEWIRE_SEARCH
     // global search state
     unsigned char ROM_NO[8];
