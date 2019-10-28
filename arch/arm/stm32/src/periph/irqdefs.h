@@ -1,5 +1,8 @@
 #include <asm/chip.h>
 
+#define IRQTABLE_IRQNO(x) (x)
+#define NVIC_IRQNO(x) (x - 16)
+
 #define STM32_IRQ_RESERVED       (0) /* Reserved vector (only used with CONFIG_DEBUG) */
                                      /* Vector  0: Reset stack pointer value */
                                      /* Vector  1: Reset (not handler as an IRQ) */

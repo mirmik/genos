@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include <asm/spi.h>
 #include <drivers/spi/spi.h>
 #include <periph/map.h>
 

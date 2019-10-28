@@ -6,22 +6,22 @@
 #include <asm/gpio.h>
 #include <asm/rcc.h>
 
-void gpio_write(void* g, unsigned int mask, unsigned char level)
+void gpio_write(gpio_regs_t* g, unsigned int mask, unsigned char level)
 {
 	stm32_gpio_write((struct gpio_regs *)(g), mask, level);
 }
 
-unsigned int gpio_read(void* g, unsigned int mask)
+unsigned int gpio_read(gpio_regs_t* g, unsigned int mask)
 {
 	return stm32_gpio_read((struct gpio_regs *)(g), mask);
 }
 
-void gpio_toggle(void* g, unsigned int mask)
+void gpio_toggle(gpio_regs_t* g, unsigned int mask)
 {
 	stm32_gpio_toggle((struct gpio_regs *)(g), mask);
 }
 
-int gpio_settings(void * g, unsigned int mask, uint32_t mode)
+int gpio_settings(gpio_regs_t* g, unsigned int mask, uint32_t mode)
 {
 	struct gpio_regs * gpio = (struct gpio_regs *)(g);
 	int mode_val = 0;
@@ -83,7 +83,7 @@ int gpio_settings(void * g, unsigned int mask, uint32_t mode)
 }
 
 #ifdef CHIP_STM32
-void gpio_alternate(void *g, unsigned int mask, uint8_t code) 
+void gpio_alternate(gpio_regs_t*g, unsigned int mask, uint8_t code) 
 {
 	struct gpio_regs * gpio = (struct gpio_regs *)(g);
 	rcc_enable_gpio(gpio);

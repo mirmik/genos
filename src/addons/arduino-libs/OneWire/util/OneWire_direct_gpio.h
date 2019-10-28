@@ -233,7 +233,7 @@ void directModeOutput(IO_REG_TYPE pin)
 #define IO_REG_TYPE uint32_t
 #define IO_REG_BASE_ATTR
 #define IO_REG_MASK_ATTR
-#define DIRECT_READ(base, pin)          (((gpio_regs_t*)base)->IDR & pin) //digitalReadFast((PinName)pin)
+#define DIRECT_READ(base, pin)          (((gpio_regs_t*)base)->IDR & pin ? 1 : 0) //digitalReadFast((PinName)pin)
 #define DIRECT_WRITE_LOW(base, pin)     (((gpio_regs_t*)base)->ODR &= ~pin)//digitalWriteFast((PinName)pin, LOW)
 #define DIRECT_WRITE_HIGH(base, pin)    (((gpio_regs_t*)base)->ODR |= pin)//digitalWriteFast((PinName)pin, HIGH)
 #define DIRECT_MODE_INPUT(base, pin)    (gpio_settings((gpio_regs_t*)base, pin, GPIO_MODE_INPUT | GPIO_MODE_IN_NOPULL))//pin_function((PinName)pin, STM_PIN_DATA(STM_MODE_INPUT, GPIO_NOPULL, 0))

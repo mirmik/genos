@@ -8,6 +8,8 @@
 #include <igris/util/bits.h>
 #include <periph/regs/spi.h>
 
+typedef struct spi_regs spi_regs_t;
+
 __BEGIN_DECLS
 
 static inline

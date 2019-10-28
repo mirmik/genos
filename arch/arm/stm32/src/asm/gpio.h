@@ -15,6 +15,8 @@
 
 //int gpio_settings_alternate(struct gpio_regs *g, gpio_mask_t mask, int32_t alternate);
 
+typedef struct gpio_regs gpio_regs_t;
+
 #if defined CHIP_STM32F1XX || defined CHIP_STM32F2XX
 enum stm32_gpio_maxspeed_e 
 {

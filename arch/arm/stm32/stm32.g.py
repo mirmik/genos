@@ -78,7 +78,7 @@ module("genos.hal", impl = "stm32f401",
 		"genos.hal.stm32f4xx",	
 		"genos.hal.stm32.common",
 	],
-	ldscripts = "ldscripts/stm32f401.ld",
+	ldscripts = "ldscripts/stm32f401re.ld",
 )
 
 module("genos.stm32.spl.stm32f4xx", 
