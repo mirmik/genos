@@ -16,6 +16,10 @@
 GPIO_PIN(board_led, BOARD_LED_GPIO, BOARD_LED_PIN);
 stm32l4_usart_device board::sysuart(DEBUG_USART, DEBUG_USART_IRQ);
 
+#ifdef BOARD_NUCLEO_L432KC
+stm32l4_usart_device board::usart1(USART1, USART1_IRQn);
+#endif
+
 void board_init(int freqmode)
 {
 	arch_init();
@@ -88,8 +92,11 @@ void board_init(int freqmode)
 
 	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 	
-	gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_TX_PIN) | (1 << DEBUG_USART_RX_PIN), GPIO_MODE_ALTERNATE);
-	stm32l4_gpio_set_alternate(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN) | (1 << DEBUG_USART_RX_PIN), DEBUG_USART_AF);
+	gpio_settings(DEBUG_USART_TX_GPIO, 1 << DEBUG_USART_TX_PIN, GPIO_MODE_ALTERNATE);
+	stm32l4_gpio_set_alternate(DEBUG_USART_TX_GPIO, 1 << DEBUG_USART_TX_PIN, DEBUG_USART_TX_AF);
+	
+	gpio_settings(DEBUG_USART_RX_GPIO, 1 << DEBUG_USART_RX_PIN, GPIO_MODE_ALTERNATE);
+	stm32l4_gpio_set_alternate(DEBUG_USART_RX_GPIO, 1 << DEBUG_USART_RX_PIN, DEBUG_USART_RX_AF);
 	
 	//stm32l4_usart_setup(LPUART1, 115200, 'n', 8, 1);
 	stm32l4_usart_setup(DEBUG_USART, 115200, 'n', 8, 1);
@@ -115,4 +122,10 @@ void board_init(int freqmode)
 		board::sysled.toggle();
 	}*/
 
+#if defined(BOARD_NUCLEO_L432KC) 
+	stm32l4_rcc_enable_gpio(GPIOA);
+	stm32l4_rcc_enable_usart(USART1);
+	gpio_settings(GPIOA, (1 << 9) | (1 << 10), GPIO_MODE_ALTERNATE);
+	stm32l4_gpio_set_alternate(GPIOA, (1 << 9) | (1 << 10), 7);
+#endif
 }

@@ -1,7 +1,7 @@
 #ifndef __ASSEMBLER__
 
 #include <periph/map.h>
-#define NVIC_IRQNO(x) x
+#define NVIC_IRQNO(x) (x)
 #define IRQTABLE_IRQNO(x) (x+16)
 
 #else
