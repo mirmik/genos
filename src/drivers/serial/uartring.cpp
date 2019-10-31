@@ -14,6 +14,11 @@ int uartring_device::write(const void* data,
 	int curwrited;
 	size_t writed = 0;
 
+	if (size == 0) 
+	{
+		return 0;
+	}
+
 	system_lock();
 
 	if (udev->cantx() && ring_empty(&txring))
