@@ -35,7 +35,10 @@ uint8_t stm32l4_usart_clockbus(usart_regs_t* regs)
 void stm32l4_usart_set_baudrate(usart_regs_t* regs, uint32_t baud)
 {
 	uint32_t busfreq = stm32_declared_clockbus_freq[stm32l4_usart_clockbus(regs)];
-	regs->BRR = busfreq / baud * 256;
+	if (regs == LPUART1)
+		regs->BRR = busfreq / baud * 256;
+	else
+		regs->BRR = busfreq / baud;
 }
 
 void stm32l4_usart_set_parity(usart_regs_t* regs, char parity)

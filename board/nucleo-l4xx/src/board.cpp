@@ -47,29 +47,32 @@ void board_init(int freqmode)
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 84000000;
 		}
 		break;
-
+*/
 		case 1:
 		{
-			struct stm32_pll_settings pll_settings =
+			/*struct stm32l4_pll_settings pll_settings =
 			{
-				.Mkoeff = 8,
-				.Nkoeff = 64,
-				.Pkoeff = 4,
+				.Mkoeff = 2,
+				.Nkoeff = 16,
+				.Pkoeff = 8,
+				.Rkoeff = 8,
 				.Qkoeff = 7
 			}; //16 000 000 Гц
 
 
-			stm32_init_pll_clocking(&pll_settings);
-			stm32_systick_config(16000);
+			stm32l4_init_pll_clocking(&pll_settings);
+			*///stm32_systick_config(16000);
+			stm32l4_clock_source_hse();
+
 			sysclock_set_frequency(16000000);
 			init_delays(16000000);
 
-			stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 16000000;
+			stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 8000000;
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 8000000;
-			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 16000000;
+			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 8000000;
 		}
 		break;
-*/
+
 		case 2:
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 16000000;
 			stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 16000000;

@@ -20,7 +20,6 @@ namespace genos
 		node * outside;
 		executor * ex;
 
-		const char * prefix_string = "$ ";
 		char last;
 
 		char buffer[CONTTY_LINE_LENGTH];
@@ -34,11 +33,6 @@ namespace genos
 		contty(genos::node * outside, executor* ex) 
 			: outside(outside), ex(ex)
 		{}
-
-		void set_prefix_string(const char* str) 
-		{
-			prefix_string = str;
-		} 
 
 		void execute() override;
 	};

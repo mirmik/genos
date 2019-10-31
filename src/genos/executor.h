@@ -13,14 +13,23 @@
 
 namespace genos
 {
+
 	class executor
+	{
+	public:
+		virtual int execute(
+		    char* str, int len, int flags, int* p_ret) = 0;
+	};
+
+	class syscmd_executor : public executor
 	{
 		syscmd_command ** tbl;
 
 	public:
-		executor(genos::syscmd_command** syscmdtbl) : tbl(syscmdtbl) {}
+		syscmd_executor(genos::syscmd_command** syscmdtbl)
+			: tbl(syscmdtbl) {}
 
-		virtual int execute(char * str, int len, int flags, int * retptr)
+		int execute(char * str, int len, int flags, int * retptr) override
 		{
 			int flen = 0;
 			int argc;
@@ -99,6 +108,92 @@ namespace genos
 					}
 				}
 			}
+
+			return ENOENT;
+		}
+	};
+
+	class syscmd_executor_onelevel : public executor
+	{
+		syscmd_command * tbl;
+
+	public:
+		syscmd_executor_onelevel(genos::syscmd_command* syscmdtbl)
+			: tbl(syscmdtbl) {}
+
+		int execute(char * str, int len, int flags, int * retptr) override
+		{
+			int flen = 0;
+			int argc;
+			int res;
+			char * argv[10];
+			struct syscmd_command * it;
+
+			if (!(flags & SH_INTERNAL_SPLIT))
+			{
+				BUG();
+			}
+
+			if (len <= 0)
+			{
+				return 0;
+			}
+
+			// Скипаем ведущие пробелы
+			while (*str == ' ')
+				++str;
+
+			// Ищем длину первого слова
+			while (flen != len && str[flen] != '\0' && str[flen] != ' ')
+				++flen;
+
+			// Встроенная функция help
+			if (flen == 4 && !strncmp(str, "help", 4))
+			{
+				for (it = tbl; it != nullptr; ++it)
+				{
+					if (it->help)
+					{
+						write(0, it->name, strlen(it->name));
+						write(0, " - ", 3);
+						write(0, it->help, strlen(it->help));
+						write(0, "\r\n", 2);
+					}
+					else
+					{
+						write(0, it->name, strlen(it->name));
+						write(0, "\r\n", 2);
+					}
+				}
+				return 0;
+			}
+
+			// Основной цикл
+			for (it = tbl; it != nullptr; ++it)
+			{
+				if (!strncmp(str, it->name, flen))
+				{
+					switch (it->type)
+					{
+						case CMDFUNC:
+							argc = argvc_internal_split(str, argv, 10);
+							res = ((syscmd_func_t)(it->func))(argc, argv);
+
+							if (retptr) *retptr = res;
+
+							return 0;
+
+						case CMDAUTOM:
+							BUG();
+
+						case CMDCOOP:
+							BUG();
+							argc = 0;
+							//return mshell_make_process(it1->func, argc, argv);
+					}
+				}
+			}
+
 
 			return ENOENT;
 		}

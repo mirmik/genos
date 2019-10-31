@@ -29,13 +29,13 @@ void genos::contty::execute()
 			if (debug_mode)
 				dprln("contty: state 0");
 
-			//ret = open_resource(outside, (int)0);
+			ret = open_resource(outside, (int)0);
 
-			/*if (ret)
+			if (ret)
 			{
 				dprln("contty:open_resource", ret);
 				schedee_exit();
-			}*/
+			}
 
 			readline_init(&rl, buffer, CONTTY_LINE_LENGTH);
 			readline_history_init(&rl, hbuffer, CONTTY_HISTORY_SIZE);
@@ -47,21 +47,21 @@ void genos::contty::execute()
 
 			readline_newline_reset(&rl);
 			state = 2;
-			outside->write(prefix_string, strlen(prefix_string), 0);
+			write(0, "$ ", 2);
 
 		case 2:
 			if (debug_mode)
 				dprln("contty: state 2");
 
 			state = 3;
-			outside->read(&c, 0, 0); //Неблокирующий wait для автомата.
+			read(0, &c, 0); //Неблокирующий wait для автомата.
 			break;
 
 		case 3:
 			if (debug_mode)
 				dprln("contty: state 3");
 
-			ret = outside->read(&c, 1, 0);
+			ret = read(0, &c, 1);
 
 			if (debug_mode)
 			{
@@ -78,37 +78,37 @@ void genos::contty::execute()
 			{
 				case READLINE_ECHOCHAR:
 					{
-						ret = outside->write(&c, 1, 0);
+						ret = write(0, &c, 1);
 
 						if (!sline_in_rightpos(&rl.line))
 						{
 							char buf[16];
 
-							outside->write(sline_rightpart(&rl.line), sline_rightsize(&rl.line), 0);
+							write(0, sline_rightpart(&rl.line), sline_rightsize(&rl.line));
 							ret = vt100_left(buf, sline_rightsize(&rl.line));
-							outside->write(buf, ret, 0);
+							write(0, buf, ret);
 						}
 					}
 					break;
 
 				case READLINE_NEWLINE:
 					state = 1;
-					outside->write("\r\n", 2, 0);
+					write(0, "\r\n", 2);
 					newline();
 					return;
 
 				case READLINE_BACKSPACE:
 					{
-						outside->write(VT100_LEFT, 3, 0);
-						outside->write(VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
+						write(0, VT100_LEFT, 3);
+						write(0, VT100_ERASE_LINE_AFTER_CURSOR, 3);
 
 						if (!sline_in_rightpos(&rl.line))
 						{
 							char buf[16];
 
-							outside->write(sline_rightpart(&rl.line), sline_rightsize(&rl.line), 0);
+							write(0, sline_rightpart(&rl.line), sline_rightsize(&rl.line));
 							ret = vt100_left(buf, sline_rightsize(&rl.line));
-							outside->write(buf, ret, 0);
+							write(0, buf, ret);
 						}
 
 						break;
@@ -116,11 +116,11 @@ void genos::contty::execute()
 
 
 				case READLINE_RIGHT:
-					outside->write(VT100_RIGHT, 3, 0);
+					write(0, VT100_RIGHT, 3);
 					break;
 
 				case READLINE_LEFT:
-					outside->write(VT100_LEFT, 3, 0);
+					write(0, VT100_LEFT, 3);
 					break;
 
 				case READLINE_NOTHING:
@@ -133,12 +133,12 @@ void genos::contty::execute()
 						if (rl.lastsize)
 						{
 							ret = vt100_left(buf, rl.lastsize);
-							outside->write(buf, ret, 0);
-							outside->write(VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
+							write(0, buf, ret);
+							write(0, VT100_ERASE_LINE_AFTER_CURSOR, 3);
 						}
 
 						if (rl.line.len)
-							outside->write(rl.line.buf, rl.line.len, 0);
+							write(0, rl.line.buf, rl.line.len);
 
 						break;
 					}

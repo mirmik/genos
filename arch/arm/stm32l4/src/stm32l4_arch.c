@@ -61,6 +61,18 @@ int stm32_systick_config(uint32_t ticks)
 	return 0;
 }
 
+void stm32l4_clock_source_hse() 
+{
+	// Запуск HSE и ожидание включения
+	RCC->CR |= RCC_CR_HSEON;
+	while (!(RCC->CR & RCC_CR_HSERDY));
+
+	// Тактируем шину от PLL, ждём подтверждения.
+	RCC->CFGR &= ~(RCC_CFGR_SW);
+	RCC->CFGR |= (RCC_CFGR_SW_HSE);
+	while ((RCC->CFGR & RCC_CFGR_SWS_HSE) != RCC_CFGR_SWS_PLL);
+}
+
 void arch_init()
 {
 	volatile int i;
@@ -105,4 +117,60 @@ void arch_init()
 	// через таблицу прерываний
 	irqtable_init();
 	irqtable_set_handler(SysTick_IRQn, system_tick, NULL);
+}
+
+
+
+
+
+
+/**	Инициализация внешнего генератора.
+ *	Частота расщитывается по формуле: SYSCLK = HSE / Mkoeff * Nkoeff / Pkoeff
+ *	HSE - справочный параметр на основе которой функция расчитывает установленную частоту.
+ *	Диапазоны допустимых значений:
+ *	M : TODO
+ *	N : 50 ... 432
+ *	P : TODO
+ *	---
+ *	Q определяет выход 48Mhz, предназначенный для контроля частоты.  48MHzOutput = HSE / Mkoeff * Nkoeff / Pkoeff
+ */
+//unsigned stm32_clock_(unsigned Mkoeff, unsigned Nkoeff, unsigned Pkoeff, unsigned Qkoeff, unsigned HSE)
+unsigned stm32l4_init_pll_clocking(struct stm32l4_pll_settings* s)
+{
+	// Включаем масштабирование регулятора напряжения.
+	// Необходимо для высоких частот ???
+	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
+	//PWR->CR1 |= PWR_CR1_VOS;
+
+	/// Настраиваем задержки FLASH для работы при повышенной частоте.
+	//FLASH->ACR = FLASH_ACR_ICEN | FLASH_ACR_DCEN | FLASH_ACR_LATENCY_4WS;
+
+	// Настраиваем делители в цепочках тактирования
+	RCC->CFGR |= RCC_CFGR_HPRE_DIV1
+	             | RCC_CFGR_PPRE1_DIV2
+	             | RCC_CFGR_PPRE2_DIV1;
+
+	// Запуск HSE и ожидание включения
+	RCC->CR |= RCC_CR_HSEON;
+	while (!(RCC->CR & RCC_CR_HSERDY));
+
+	// Конфигурируем PLL, выбирая в качестве источника внешний кварц.
+	RCC->PLLCFGR = (RCC_PLLCFGR_PLLSRC_HSE |
+	                (RCC_PLLCFGR_PLLM & (2 << RCC_PLLCFGR_PLLM_Pos))
+	                | (RCC_PLLCFGR_PLLN & (16 << RCC_PLLCFGR_PLLN_Pos))
+	                | (RCC_PLLCFGR_PLLP & (RCC_PLLCFGR_PLLPDIV_4 << RCC_PLLCFGR_PLLP_Pos))
+	                | (RCC_PLLCFGR_PLLR & (0b10 << RCC_PLLCFGR_PLLR_Pos))
+	               	| (RCC_PLLCFGR_PLLQ & (0b10 << RCC_PLLCFGR_PLLQ_Pos))
+	            );
+
+	// Активируем PLL, ждём, пока он запустится.
+	RCC->CR |= RCC_CR_PLLON;
+	while (!(RCC->CR & RCC_CR_PLLRDY));
+
+	// Тактируем шину от PLL, ждём подтверждения.
+	RCC->CFGR &= ~(RCC_CFGR_SW);
+	RCC->CFGR |= (RCC_CFGR_SW_PLL);
+	while ((RCC->CFGR & RCC_CFGR_SWS_PLL) != RCC_CFGR_SWS_PLL);
+
+	return 0;
 }

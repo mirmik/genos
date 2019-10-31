@@ -12,6 +12,20 @@ extern int32_t stm32_declared_clockbus_freq[3];
 
 __BEGIN_DECLS
 
+struct stm32l4_pll_settings
+{
+	uint32_t Mkoeff;
+	uint32_t Nkoeff;
+	uint32_t Pkoeff;
+	uint32_t Rkoeff;
+	uint32_t Qkoeff;
+};
+
+unsigned stm32l4_init_pll_clocking(struct stm32l4_pll_settings*);
+
+void stm32l4_clock_source_hse();
+
+int stm32_systick_config(uint32_t ticks);
 void stm32l4_diag_init(usart_regs_t* regs);
 
 __END_DECLS
