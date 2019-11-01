@@ -10,22 +10,25 @@
 
 #include <stdint.h>
 
+#include <asm/rcc.h>
+
 __BEGIN_DECLS
 
 static inline
-void stm32_spi_enable(SPI_TypeDef * regs, bool en) 
+void stm32l4_spi_enable(SPI_TypeDef * regs, bool en) 
 {
+	rcc_enable_spi(regs);
 	regs->CR1 |= SPI_CR1_SPE;
 }
 
 static inline 
-void stm32_spi_set_divider_code(SPI_TypeDef * regs, uint8_t code) 
+void stm32l4_spi_set_divider_code(SPI_TypeDef * regs, uint8_t code) 
 {
 	bits_assign_bias(regs->CR1, 0b111, code, 3);
 }
 
 static inline 
-int stm32_spi_set_divider(SPI_TypeDef * regs, int divider) 
+int stm32l4_spi_set_divider(SPI_TypeDef * regs, int divider) 
 {
 	int divcode;
 
@@ -42,14 +45,14 @@ int stm32_spi_set_divider(SPI_TypeDef * regs, int divider)
 		default: return -1;
 	}
 
-	stm32_spi_set_divider_code(regs, divcode);
+	stm32l4_spi_set_divider_code(regs, divcode);
 
 	return 0;
 }
 
 // if rxbuf == NULL, - send only
 // rxbuf can be equal to txbuf
-void stm32_spi_exchange(SPI_TypeDef * spi, 
+void stm32l4_spi_exchange(SPI_TypeDef * spi, 
 	const uint8_t* sbuf, uint8_t *rbuf, uint32_t len, char dummy);
 
 

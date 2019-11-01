@@ -26,15 +26,17 @@ namespace drivers
     	dlist_head waits;
 
     public:
-		virtual int enable 			(bool en = true);
+    	virtual int begin() = 0;
+
+		virtual int enable 			(bool en = true) = 0;
 //		virtual int select   		(void *slct, int en); // device must select himself
-		virtual int exbyte 			(int byte);
+		virtual int exbyte 			(int byte) = 0;
 
 		// Произвести обмен по шине spi.
 		// При этом, 
 		// если txbuf==NULL, вместо данных спамится байт dummy
 		// если rxbuf==NULL, процедура чтения опускается
-		virtual int exchange 		(const void *txbuf, void *rxbuf, int len, char dummy = '\0');
+		virtual int exchange 		(const void *txbuf, void *rxbuf, int len, char dummy = '\0') = 0;
 		
 		virtual int setfrequency	(uint32_t freq) 
 		{

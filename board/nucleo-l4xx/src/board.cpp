@@ -89,6 +89,11 @@ void board_init(int freqmode)
 	stm32l4_rcc_enable_gpio(DEBUG_USART_RX_GPIO);
 	stm32l4_rcc_enable_usart(DEBUG_USART);
 
+	stm32l4_rcc_enable_gpio(GPIOA);
+	stm32l4_rcc_enable_gpio(GPIOB);
+	stm32l4_rcc_enable_gpio(GPIOC);
+
+
 	//bits_assign(RCC->CCIPR, RCC_CCIPR_LPUART1SEL_Msk, (0b01) << RCC_CCIPR_LPUART1SEL_Pos);
 
 	cpu_delay(100);
@@ -131,4 +136,35 @@ void board_init(int freqmode)
 	gpio_settings(GPIOA, (1 << 9) | (1 << 10), GPIO_MODE_ALTERNATE);
 	stm32l4_gpio_set_alternate(GPIOA, (1 << 9) | (1 << 10), 7);
 #endif
+
+
+
+
+
+
+
+// SPI
+
+	gpio_settings(GPIOB, (1 << 5) | (1 << 4) | (1 << 3), GPIO_MODE_ALTERNATE);
+	stm32l4_gpio_set_alternate( GPIOB, 1<<5, 6 );
+	stm32l4_gpio_set_alternate( GPIOB, 1<<4, 6 );
+	stm32l4_gpio_set_alternate( GPIOB, 1<<3, 6 );
+
+ 
+  //GPIO_PinAFConfig( GPIOB, GPIO_PinSource12, GPIO_AF_SPI2 );
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

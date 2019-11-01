@@ -19,6 +19,7 @@ namespace drivers
 		public:
 			spi_driver(spi_regs_t * regs, int irqno) : regs(regs), irqno(irqno) {}
 
+			int begin();
 			int enable 			(bool en = true) override;
 			//int select   		(void *slct, int en) override;
 			int exbyte 			(int byte) override;
