@@ -2,6 +2,7 @@
 #include <asm/spi.h>
 #include <asm/rcc.h>
 
+#include <systime/systime.h>
 #include <errno.h>
 
 int drivers::stm32::spi_driver::enable(bool en)
@@ -12,9 +13,14 @@ int drivers::stm32::spi_driver::enable(bool en)
 //	regs->CR2 = 0;
 	//regs->CR2 = SPI_CR2_FRXTH;
 //	regs->CR1 = SPI_CR1_SPE | SPI_CR1_MSTR | SPI_CR1_BR_2 | SPI_CR1_SSI | SPI_CR1_SSM;
-regs->CR1 = SPI_CR1_MSTR | SPI_CR1_BR | SPI_CR1_SSM | SPI_CR1_SSI;
-regs->CR2 = SPI_CR2_SSOE;// |SPI_CR2_RXNEIE;
+regs->CR1 = SPI_CR1_MSTR | SPI_CR1_BR_1 
+	| SPI_CR1_BR_2 | SPI_CR1_BR_0 | SPI_CR1_SSM | SPI_CR1_SSI;
+//regs->CR2 = SPI_CR2_SSOE;// |SPI_CR2_RXNEIE;
+regs->CR2 = 0;
 regs->CR1 |= SPI_CR1_SPE;	
+
+	//delayMicroseconds(100000);
+
 	return 0;
 }
 
