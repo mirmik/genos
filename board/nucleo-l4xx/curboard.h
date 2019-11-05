@@ -19,7 +19,8 @@
 #	define DEBUG_USART_TX_GPIO GPIOA
 #	define DEBUG_USART_RX_PIN 2
 #	define DEBUG_USART_TX_PIN 3
-#	define DEBUG_USART_AF 8
+#	define DEBUG_USART_TX_AF 8
+#	define DEBUG_USART_RX_AF 8
 #elif defined(BOARD_NUCLEO_L432KC)
 #	define BOARD_LED_GPIO GPIOB
 #	define BOARD_LED_PIN 3

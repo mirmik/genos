@@ -135,9 +135,24 @@ void board_init(int freqmode)
 	stm32l4_rcc_enable_usart(USART1);
 	gpio_settings(GPIOA, (1 << 9) | (1 << 10), GPIO_MODE_ALTERNATE);
 	stm32l4_gpio_set_alternate(GPIOA, (1 << 9) | (1 << 10), 7);
+
+	gpio_settings(GPIOB, (1 << 5) | (1 << 4) | (1 << 3), GPIO_MODE_ALTERNATE);
+	stm32l4_gpio_set_alternate( GPIOB, 1<<5, 6 );
+	stm32l4_gpio_set_alternate( GPIOB, 1<<4, 6 );
+	stm32l4_gpio_set_alternate( GPIOB, 1<<3, 6 );
 #endif
 
 
+#if defined(BOARD_NUCLEO_L412RB)
+
+	stm32l4_rcc_enable_gpio(GPIOB);
+	stm32l4_rcc_enable_spi(SPI2);
+gpio_settings(GPIOB, (1 << 13) | (1 << 14) | (1 << 15), GPIO_MODE_ALTERNATE);
+stm32l4_gpio_set_alternate( GPIOB, 1<<15, 5 );
+stm32l4_gpio_set_alternate( GPIOB, 1<<14, 5 );
+stm32l4_gpio_set_alternate( GPIOB, 1<<13, 5 );
+
+#endif 
 
 
 
@@ -145,10 +160,7 @@ void board_init(int freqmode)
 
 // SPI
 
-	gpio_settings(GPIOB, (1 << 5) | (1 << 4) | (1 << 3), GPIO_MODE_ALTERNATE);
-	stm32l4_gpio_set_alternate( GPIOB, 1<<5, 6 );
-	stm32l4_gpio_set_alternate( GPIOB, 1<<4, 6 );
-	stm32l4_gpio_set_alternate( GPIOB, 1<<3, 6 );
+	
 
  
   //GPIO_PinAFConfig( GPIOB, GPIO_PinSource12, GPIO_AF_SPI2 );

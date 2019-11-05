@@ -135,7 +135,7 @@ void arch_init()
  *	Q определяет выход 48Mhz, предназначенный для контроля частоты.  48MHzOutput = HSE / Mkoeff * Nkoeff / Pkoeff
  */
 //unsigned stm32_clock_(unsigned Mkoeff, unsigned Nkoeff, unsigned Pkoeff, unsigned Qkoeff, unsigned HSE)
-unsigned stm32l4_init_pll_clocking(struct stm32l4_pll_settings* s)
+/*unsigned stm32l4_init_pll_clocking(struct stm32l4_pll_settings* s)
 {
 	// Включаем масштабирование регулятора напряжения.
 	// Необходимо для высоких частот ???
@@ -173,4 +173,4 @@ unsigned stm32l4_init_pll_clocking(struct stm32l4_pll_settings* s)
 	while ((RCC->CFGR & RCC_CFGR_SWS_PLL) != RCC_CFGR_SWS_PLL);
 
 	return 0;
-}
+}*/
