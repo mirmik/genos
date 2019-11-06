@@ -93,7 +93,6 @@ void board_init(int freqmode)
 	stm32l4_rcc_enable_gpio(GPIOB);
 	stm32l4_rcc_enable_gpio(GPIOC);
 
-	stm32l4_rcc_enable_spi(SPI3);
 
 	//bits_assign(RCC->CCIPR, RCC_CCIPR_LPUART1SEL_Msk, (0b01) << RCC_CCIPR_LPUART1SEL_Pos);
 
@@ -132,6 +131,7 @@ void board_init(int freqmode)
 	}*/
 
 #if defined(BOARD_NUCLEO_L432KC) 
+	stm32l4_rcc_enable_spi(SPI3);
 	stm32l4_rcc_enable_gpio(GPIOA);
 	stm32l4_rcc_enable_usart(USART1);
 	gpio_settings(GPIOA, (1 << 9) | (1 << 10), GPIO_MODE_ALTERNATE);

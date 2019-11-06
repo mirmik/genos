@@ -9,6 +9,7 @@ int drivers::stm32::spi_driver::enable(bool en)
 {
 	rcc_enable_spi(regs);
 	//stm32l4_spi_enable(regs, en);
+delay(100);
 
 //	regs->CR2 = 0;
 	//regs->CR2 = SPI_CR2_FRXTH;
@@ -16,8 +17,9 @@ int drivers::stm32::spi_driver::enable(bool en)
 regs->CR1 = SPI_CR1_MSTR | SPI_CR1_BR_1 
 	| SPI_CR1_BR_2 | SPI_CR1_BR_0 | SPI_CR1_SSM | SPI_CR1_SSI;
 //regs->CR2 = SPI_CR2_SSOE;// |SPI_CR2_RXNEIE;
-regs->CR2 = 0;
+regs->CR2 = SPI_CR2_FRXTH;
 regs->CR1 |= SPI_CR1_SPE;	
+	delay(100);
 
 	//delayMicroseconds(100000);
 
@@ -38,10 +40,11 @@ int drivers::stm32::spi_driver::exbyte(int byte)
 {
 //	dprln("exbyte");
 	uint8_t b = byte;
+	uint8_t rb = 0;
 	//dprln("send", b);
-	exchange(&b, &b, 1);
+	exchange(&b, &rb, 1);
 	//dprln("recv", b);
-	return b;
+	return rb;
 }
 
 // rxbuf can be nullptr
@@ -52,6 +55,8 @@ int drivers::stm32::spi_driver::exchange(
 	stm32l4_spi_exchange(regs,
 	                   (const uint8_t*)txbuf, (uint8_t*)rxbuf,
 	                   len, dummy);
+
+	return 0;
 }
 
 int drivers::stm32::spi_driver::setfrequency(uint32_t freq)

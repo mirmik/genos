@@ -66,12 +66,16 @@ void stm32l4_rcc_enable_spi(SPI_TypeDef * spi)
 		case SPI1_BASE :
 			RCC->APB2ENR |= RCC_APB2ENR_SPI1EN; break;
 
+#ifdef SPI2_BASE
 		case SPI2_BASE :
 			RCC->APB1ENR1 |= RCC_APB1ENR1_SPI2EN; break;
-//
-		//case SPI3_BASE :
-		//	RCC->APB1ENR1 |= RCC_APB1ENR1_SPI3EN; break;
-		
+#endif
+
+#ifdef SPI3_BASE
+		case SPI3_BASE :
+			RCC->APB1ENR1 |= RCC_APB1ENR1_SPI3EN; break;
+#endif
+
 		//case SPI4_BASE :
 		//	RCC->APB2ENR |= RCC_APB2ENR_SPI4EN; break;
 		//

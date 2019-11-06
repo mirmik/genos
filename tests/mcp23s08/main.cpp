@@ -4,7 +4,7 @@
 #include "mcp23s08.h"
 
 #include <Arduino.h>
-#define SS 9
+#define SS 10
 #define CHIP 0x40       // The chip's address (set by pins 4 & 5)
 #define IO_DIR_REG 0x00 // The Input/Output Register
 #define GPIO_REG 0x09   // The GPIO Register<br><br>void 
@@ -28,12 +28,12 @@ void SPIWrite(uint8_t spiRegister, uint8_t value)
 	dprln(c);
 	digitalWrite(SS, HIGH);
 
-	delay(100);  // Set pin 1 LOW<br>
+	delay(1);  // Set pin 1 LOW<br>
 	digitalWrite(SS, LOW); // 2) Send the chip's address to the chip
 
 	dprln("Read");
 	a = spi2.exbyte(CHIP + 1); // 3) Send the register to the chip
-	b = spi2.exbyte(spiRegister-1); // 4) Send the value to the chip
+	b = spi2.exbyte(spiRegister); // 4) Send the value to the chip
 	c = spi2.exbyte(0); //5) Pull the Slave/Chip select HIGH
 	dprln(a);
 	dprln(b);
@@ -60,7 +60,6 @@ int main()
 
 	digitalWrite(SS, HIGH);
 	delay(100);
-	spi2.begin();
 	SPIWrite(IO_DIR_REG, 0x00); // Set all pins to OUTPUT
 	SPIWrite(GPIO_REG, 0x00);  // Set all pins LOW
 
