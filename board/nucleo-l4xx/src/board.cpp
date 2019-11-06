@@ -93,12 +93,13 @@ void board_init(int freqmode)
 	stm32l4_rcc_enable_gpio(GPIOB);
 	stm32l4_rcc_enable_gpio(GPIOC);
 
+	stm32l4_rcc_enable_spi(SPI3);
 
 	//bits_assign(RCC->CCIPR, RCC_CCIPR_LPUART1SEL_Msk, (0b01) << RCC_CCIPR_LPUART1SEL_Pos);
 
 	cpu_delay(100);
 
-	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
+//	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 	
 	gpio_settings(DEBUG_USART_TX_GPIO, 1 << DEBUG_USART_TX_PIN, GPIO_MODE_ALTERNATE);
 	stm32l4_gpio_set_alternate(DEBUG_USART_TX_GPIO, 1 << DEBUG_USART_TX_PIN, DEBUG_USART_TX_AF);

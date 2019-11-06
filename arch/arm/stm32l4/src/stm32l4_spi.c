@@ -21,10 +21,13 @@ void stm32l4_spi_exchange(SPI_TypeDef * spi,
 
 		while (!(spi->SR & SPI_SR_RXNE)) 
 		{}; // Wait while RX buffer is empty
-		if (rbuf)
+		//if (rbuf) {
+		while ((spi->SR & SPI_SR_RXNE)) {
 			c = spi->DR; // Read received byte
 			DPRINTHEX(c);
 			*rbuf++ = c;
+		}
+		//}
 	}
 
 	//DPRINTHEX(c);

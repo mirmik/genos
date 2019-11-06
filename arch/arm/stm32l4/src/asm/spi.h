@@ -11,12 +11,14 @@
 #include <stdint.h>
 
 #include <asm/rcc.h>
+#include <igris/util/bug.h>
 
 __BEGIN_DECLS
 
 static inline
 void stm32l4_spi_enable(SPI_TypeDef * regs, bool en) 
 {
+	BUG();
 	rcc_enable_spi(regs);
 	regs->CR1 |= SPI_CR1_SPE;
 }
