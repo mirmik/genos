@@ -16,11 +16,10 @@ void stm32l4_spi_exchange(SPI_TypeDef * spi,
 {
 	char c;
 
-	DPRINT(len);
 	while (len--)
 	{
 		//dprln("here");
-		DPRINTHEX(*sbuf);
+//		DPRINTHEX(*sbuf);
 		while ((spi->SR & SPI_SR_RXNE)) ;
 
 		//dprln("len--");
@@ -33,7 +32,7 @@ void stm32l4_spi_exchange(SPI_TypeDef * spi,
 		{}; // Wait while RX buffer is empty
 
 		stm32l4_spi_rd8(spi, &c); // Read received byte
-		DPRINTHEX(c);
+//		DPRINTHEX(c);
 		if (rbuf) {
 			*rbuf++ = c;
 		}

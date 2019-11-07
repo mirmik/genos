@@ -9,7 +9,7 @@ int drivers::stm32::spi_driver::enable(bool en)
 {
 	rcc_enable_spi(regs);
 	//stm32l4_spi_enable(regs, en);
-delay(100);
+delayMicroseconds(100000);
 
 //	regs->CR2 = 0;
 	//regs->CR2 = SPI_CR2_FRXTH;
@@ -19,7 +19,7 @@ regs->CR1 = SPI_CR1_MSTR | SPI_CR1_BR_1
 //regs->CR2 = SPI_CR2_SSOE;// |SPI_CR2_RXNEIE;
 regs->CR2 = SPI_CR2_FRXTH;
 regs->CR1 |= SPI_CR1_SPE;	
-	delay(100);
+delayMicroseconds(100000);
 
 	//delayMicroseconds(100000);
 
