@@ -13,6 +13,8 @@
 #include <periph/map.h>
 #include <util/cpu_delay.h>
 
+#error "?"
+
 GPIO_PIN(board_led, BOARD_LED_GPIO, BOARD_LED_PIN);
 stm32_usart_device debug_usart(DEBUG_USART, DEBUG_USART_IRQ);
 //stm32_usart_device usart6 (USART6, STM32_IRQ_USART6);

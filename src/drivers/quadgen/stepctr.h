@@ -13,7 +13,13 @@ namespace genos
 		bool en = false;
 
 	public:
-		quadgen_stepctr(const genos::quadgen_differential& q) : q(q) {}
+		quadgen_stepctr(const char* name, const genos::quadgen_differential& q) : 
+			q(q), ralgo::stepctr(name)
+		{
+
+		}
+
+
 
 		void inc() override 
 		{

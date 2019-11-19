@@ -27,7 +27,7 @@
 #	define DEBUG_USART_RX_PIN 2
 #	define DEBUG_USART_TX_PIN 3
 #	define DEBUG_USART_AF GPIO_AF_USART2
-#elif defined(BOARD_NUCLEO_F412RB)
+/*#elif defined(BOARD_NUCLEO_F412RB)
 #	define BOARD_LED_GPIO GPIOB
 #	define BOARD_LED_PIN 13
 #	define DEBUG_USART USART2
@@ -36,7 +36,7 @@
 #	define DEBUG_USART_TX_GPIO GPIOA
 #	define DEBUG_USART_RX_PIN 2
 #	define DEBUG_USART_TX_PIN 3
-#	define DEBUG_USART_AF GPIO_AF_USART2
+#	define DEBUG_USART_AF GPIO_AF_USART2*/
 #else
 #	error "unregistred board"
 #endif
@@ -44,12 +44,10 @@
 
 extern struct gpio_pin board_led;
 
-extern struct stm32_usart_device usart2;
-
 namespace board 
 {
 	static gpio_pin sysled = board_led;
-	static stm32_usart_device & sysusart = usart2;
+	extern stm32_usart_device sysusart;
 }
 
 __BEGIN_DECLS

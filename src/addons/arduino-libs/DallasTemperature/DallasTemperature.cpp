@@ -166,6 +166,7 @@ bool DallasTemperature::getAddress(uint8_t* deviceAddress, uint8_t index)
 		depth++;
 	}
 
+	dprln("depth", depth);
 	return false;
 
 }
@@ -526,6 +527,7 @@ float DallasTemperature::getTempCByIndex(uint8_t deviceIndex)
 	DeviceAddress deviceAddress;
 	if (!getAddress(deviceAddress, deviceIndex))
 	{
+		dprln("Disconnected");
 		return DEVICE_DISCONNECTED_C;
 	}
 

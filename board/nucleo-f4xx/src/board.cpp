@@ -14,7 +14,7 @@
 #include <util/cpu_delay.h>
 
 GPIO_PIN(board_led, BOARD_LED_GPIO, BOARD_LED_PIN);
-stm32_usart_device debug_usart(DEBUG_USART, DEBUG_USART_IRQ);
+stm32_usart_device board::sysusart(DEBUG_USART, DEBUG_USART_IRQ);
 //stm32_usart_device usart6 (USART6, STM32_IRQ_USART6);
 
 void board_init(int freqmode)
@@ -75,6 +75,8 @@ void board_init(int freqmode)
 	systime_set_frequency(1000);
 
 	rcc_enable_gpio(BOARD_LED_GPIO);
+	rcc_enable_gpio(DEBUG_USART_RX_GPIO);
+	rcc_enable_gpio(DEBUG_USART_TX_GPIO);
 	rcc_enable_usart(DEBUG_USART);
 
 	cpu_delay(100);
@@ -82,11 +84,11 @@ void board_init(int freqmode)
 	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT | GPIO_MODE_OUT_PUSH_PULL);
 
 	gpio_settings(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), GPIO_MODE_ALTERNATE);
-	stm32_gpio_set_maxspeed(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), STM32_GPIO_SPEED_LEVEL_0);
+	//stm32_gpio_set_maxspeed(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), STM32_GPIO_SPEED_LEVEL_0);
 	stm32_gpio_set_alternate(DEBUG_USART_RX_GPIO, (1 << DEBUG_USART_RX_PIN), DEBUG_USART_AF);
 	
 	gpio_settings(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), GPIO_MODE_ALTERNATE);
-	stm32_gpio_set_maxspeed(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), STM32_GPIO_SPEED_LEVEL_0);
+	//stm32_gpio_set_maxspeed(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), STM32_GPIO_SPEED_LEVEL_0);
 	stm32_gpio_set_alternate(DEBUG_USART_TX_GPIO, (1 << DEBUG_USART_TX_PIN), DEBUG_USART_AF);
 
 	stm32_usart_setup(DEBUG_USART, 115200, 'n', 8, 1);

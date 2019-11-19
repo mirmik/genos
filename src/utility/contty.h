@@ -30,6 +30,7 @@ namespace genos
 
 	public:
 		uint8_t debug_mode = 0;
+		bool echo = true;
 
 		contty(genos::node * outside, executor* ex) 
 			: outside(outside), ex(ex)
