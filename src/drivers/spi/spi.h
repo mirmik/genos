@@ -79,8 +79,8 @@ namespace drivers
 		void lock_bus();
 		void unlock_bus();
 
-		int select(bool en = true) { cs.set(!en); }
-		int deselect() { select(false); }
+		int select(bool en = true) { cs.set(!en); return 0; }
+		int deselect() { return select(false); }
 	};
 }
 

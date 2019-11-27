@@ -18,6 +18,7 @@ int drivers::stm32::spi_driver::enable(bool en)
 int drivers::stm32::spi_driver::begin()
 {
 	//return enable(true);
+	return 0;
 }
 
 /*int genos::stm32::spi::select(void *slct, int en)

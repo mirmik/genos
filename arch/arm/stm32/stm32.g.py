@@ -63,13 +63,13 @@ module("genos.hal.stm32f4xx",
 	]
 )
 
-module("genos.hal", impl = "stm32f407", 
+module("genos.hal", impl = "stm32f407vg", 
 	defines = ["CHIP_STM32F407"],
 	mdepends = [
 		"genos.hal.stm32f4xx",	
 		"genos.hal.stm32.common",
 	],
-	ldscripts = "ldscripts/stm32f407.ld",
+	ldscripts = "ldscripts/stm32f407vg.ld",
 )
 
 module("genos.hal", impl = "stm32f401", 

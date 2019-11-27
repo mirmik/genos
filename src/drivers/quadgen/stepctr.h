@@ -14,7 +14,8 @@ namespace genos
 
 	public:
 		quadgen_stepctr(const char* name, const genos::quadgen_differential& q) : 
-			q(q), ralgo::stepctr(name)
+			ralgo::stepctr(name),
+			q(q)
 		{
 
 		}

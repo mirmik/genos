@@ -34,15 +34,15 @@ void board_init()
 	struct stm32_pll_settings pll_settings = {
 		.Mkoeff = 8,
 		.Nkoeff = 336,
-		.Pkoeff = 4,
+		.Pkoeff = 2,
 		.Qkoeff = 7
-	}; //84 000 000 Гц
+	}; //84 000 000 Гц //168 000 000
 
 	stm32_init_pll_clocking(&pll_settings);
-	stm32_systick_config(84000);
+	stm32_systick_config(168000);
 	systime_set_frequency(1000);
 
-	stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 84000000; 
+	stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 168000000; 
 	//stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 84000000;
 	//stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 42000000;
 	
