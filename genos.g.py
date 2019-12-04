@@ -133,8 +133,9 @@ def genos_firmware(sources=[], mdepends=[], **kwargs):
 	if os.path.exists("__configure__.py"):
 		try:
 			import __configure__
-		except:
-			print("Error in configuration file.")		
+		except Exception as ex:
+			print("Error in configuration file.")
+			print(ex)		
 
 	dir_path = licant.modules.mlibrary.get("genos").opts["__dir__"]
 
@@ -143,7 +144,6 @@ def genos_firmware(sources=[], mdepends=[], **kwargs):
 		print("load configuration script for {}".format(board))
 
 		confpath = os.path.join(dir_path, "conf", "conf-" + board + ".py")
-
 
 		shutil.copy(
 			confpath,
