@@ -245,7 +245,7 @@ void crow_uartgate::uartgate_handler(void* arg, int variant)
 	}
 }
 
-void crow_uartgate::init(struct uart_device * uart)
+void crow_uartgate::init(struct uart_device * uart, uint8_t addr)
 {
 	DTRACE();
 	u = uart;
@@ -255,7 +255,7 @@ void crow_uartgate::init(struct uart_device * uart)
 
 	ring_init(&recvring, UARTGATE_RECVRING_SIZE);
 
-	crow::link_gate(this, 0xF4);
+	crow::link_gate(this, addr);
 
 	u->handarg = (void*) this;
 	u->handler = uartgate_handler;

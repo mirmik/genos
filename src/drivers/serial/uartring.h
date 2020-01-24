@@ -8,67 +8,80 @@
 #include <genos/cdev.h>
 #include <drivers/serial/uart.h>
 
+#include <igris/buffer.h>
 #include <igris/datastruct/dlist.h>
 #include <igris/datastruct/ring.h>
 
-struct uartring_device;
+/*struct uartring;
 
 __BEGIN_DECLS
 
-int uartring_device_write(struct serial_device*, const char*, unsigned int len, int flags);
-int uartring_device_read(struct serial_device*, char*, unsigned int len, int flags);
-int uartring_device_room(struct serial_device*);
-int uartring_device_avail(struct serial_device*);
-//int uartring_device_waitread(struct serial_device*);
+int uartring_write(struct serial_device*, const char*, unsigned int len, int flags);
+int uartring_read(struct serial_device*, char*, unsigned int len, int flags);
+int uartring_room(struct serial_device*);
+int uartring_avail(struct serial_device*);
+//int uartring_waitread(struct serial_device*);
 
-void uartring_begin(struct uartring_device * dev, struct uart_device * uart);
+void uartring_begin(struct uartring * dev, struct uart_device * uart);
 
-void uartring_emulate_read(struct uartring_device * dev,
+void uartring_emulate_read(struct uartring * dev,
                            const char*, unsigned int len);
 
 __END_DECLS
 
-extern const struct serial_device_operations uartring_dev_ops;
+extern const struct serial_device_operations uartring_dev_ops;*/
 
-struct uartring_device : public genos::char_device
+namespace genos
 {
-	struct uart_device * udev;
-	char* rxbuffer;
-	char* txbuffer;
-	struct ring_head rxring;
-	struct ring_head txring;
 
-	struct dlist_head txwait = DLIST_HEAD_INIT(txwait);
-	struct dlist_head rxwait = DLIST_HEAD_INIT(rxwait);
+	struct uartring : public genos::char_device
+	{
+		struct uart_device * udev;
+		char* rxbuffer;
+		char* txbuffer;
+		struct ring_head rxring;
+		struct ring_head txring;
 
-	uint8_t debug_mode = 0;
-	int refs = 0;
+		struct dlist_head txwait = DLIST_HEAD_INIT(txwait);
+		struct dlist_head rxwait = DLIST_HEAD_INIT(rxwait);
 
-	uartring_device(const char* name, uart_device * udev,
-	                char* rxbuffer, char* txbuffer,
-	                size_t rxsz, size_t txsz)
-		:
-		genos::char_device(name),
-		udev(udev), rxbuffer(rxbuffer), txbuffer(txbuffer),
-		rxring(RING_HEAD_INIT(rxsz)), txring(RING_HEAD_INIT(txsz))
-	{}
+		uint8_t debug_mode = 0;
+		int refs = 0;
 
-	int read(void* data, size_t size, int flags) override;
-	int write(const void* data, size_t size, int flags) override;
-	int release() override;
-	int open(genos::openres * filp) override;
+		uartring(const char* name, uart_device * udev,
+		         char* rxbuffer, char* txbuffer,
+		         size_t rxsz, size_t txsz)
+			:
+			genos::char_device(name),
+			udev(udev), rxbuffer(rxbuffer), txbuffer(txbuffer),
+			rxring(RING_HEAD_INIT(rxsz)), txring(RING_HEAD_INIT(txsz))
+		{}
 
-	int room() override;
-	int avail() override;
+		uartring(const char* name, uart_device * udev,
+		         igris::buffer rxbuf, igris::buffer txbuf)
+			:
+			genos::char_device(name),
+			udev(udev), rxbuffer(rxbuf.data()), txbuffer(txbuf.data()),
+			rxring(RING_HEAD_INIT(rxbuf.size())), txring(RING_HEAD_INIT(txbuf.size()))
+		{}
 
-	void begin(struct uart_device * udev);
-	void begin() { begin(udev); };
-};
+		int read(void* data, size_t size, int flags) override;
+		int write(const void* data, size_t size, int flags) override;
+		int release() override;
+		int open(genos::openres * filp) override;
+
+		int room() override;
+		int avail() override;
+
+		void begin(struct uart_device * udev);
+		void begin() { begin(udev); };
+	};
+}
 
 #define UARTRING_DECLARE(name, cname, uart, rxsz, txsz)				 			\
 char name##_rxbuffer[rxsz];						 					 			\
 char name##_txbuffer[txsz];						 					 			\
-struct uartring_device name { cname, (struct uart_device*)uart,					\
+struct uartring name { cname, (struct uart_device*)uart,					\
 				name##_rxbuffer, name##_txbuffer,					 			\
 				rxsz, txsz}
 

@@ -29,7 +29,8 @@ void genos::contty::execute()
 			if (debug_mode)
 				dprln("contty: state 0");
 
-			//ret = open_resource(outside, (int)0);
+			ret = open_resource(outside, (int)0);
+			ret = open_resource(outside, (int)0);
 
 			/*if (ret)
 			{
@@ -171,7 +172,6 @@ void genos::contty::execute()
 			break;
 
 		case 5:
-			dprln("state5");
 			state = 1;
 			return;
 

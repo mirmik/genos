@@ -1,44 +1,22 @@
 #ifndef GENOS_SYSCMD_H
 #define GENOS_SYSCMD_H
 
-#include <igris/datastruct/dlist.h>
+#include <igris/shell/conscmd.h>
+#include <utility>
 
-#define SH_INTERNAL_SPLIT 0x01
-
-#define CMDFUNC 0
-#define CMDAUTOM 1
-#define CMDCOOP 2
-
-#define SYSCMD_OK 0
-
-#define SYSCMD_TBLFIN {NULL,NULL,0,NULL}
+#warning "genos syscmd is deprecated. use igris conscmd instead"
 
 namespace genos 
 {
 	using syscmd_func_t = int (*)(int, char**);
 
-	struct syscmd_command 
+	struct system_command : public igris::console_command
 	{
-		const char* name;
-		void * func;
-		uint8_t type;
-		const char* help;
-
-		constexpr syscmd_command(
-			const char* name,
-			int (*func)(int, char**),
-			uint8_t type,
-			const char* help) 
-		:
-			name(name),
-			func((void*)func),
-			type(type),
-			help(help)
-		{}		
+		template<class ... Args>
+		system_command(Args&& ... args) : 		
+			igris::console_command(std::forward<Args>(args) ...) 
+		{}
 	};
 }
-
-#define SYSCMD(name, ...) \
-genos::syscmd_command name[] {__VA_ARGS__, SYSCMD_TBLFIN}
 
 #endif

@@ -39,7 +39,7 @@ int change_directory(int argc, char ** path) { return 0; }
 
 int list_directory(int argc, char ** path) { return 0; }
 
-SYSCMD(genos::navigation_shell_table,
+genos::system_command  genos::navigation_shell_table[] = {
 	{"cd", change_directory, CMDFUNC, nullptr},
 	{"ls", list_directory, CMDFUNC, nullptr}
-);
+};

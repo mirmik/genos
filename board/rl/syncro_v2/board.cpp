@@ -27,6 +27,22 @@ struct gpio_pin extpin[4] =
 	{GPIOB, 1<<15}
 };
 
+void usart6_configure()
+{
+	rcc_enable_gpio(GPIOC);
+	rcc_enable_usart(USART6);
+
+	cpu_delay(100);
+	
+	gpio_settings(GPIOC, (1 << 6 | 1 << 7), GPIO_MODE_ALTERNATE);
+	stm32_gpio_set_maxspeed(GPIOC, (1 << 6 | 1 << 7), STM32_GPIO_SPEED_LEVEL_0);
+	stm32_gpio_set_alternate(GPIOC, (1 << 6 | 1 << 7), GPIO_AF_USART6);
+
+	nvic_enable_irq(STM32_IRQ_USART6);
+
+	stm32_usart_setup(USART6, 115200, 'n', 9, 1);
+}
+
 void board_init() 
 {
 	arch_init();
@@ -63,6 +79,8 @@ void board_init()
 
 	stm32_usart_setup(USART2, 115200, 'n', 8, 1);
 	stm32_diag_init(USART2);	
+
+	usart6_configure();
 
 	//board::sysled0.settings(GPIO_MODE_OUTPUT);
 	//board::sysled1.settings(GPIO_MODE_OUTPUT);

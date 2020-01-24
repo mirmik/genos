@@ -23,10 +23,10 @@ namespace genos
 
 	class syscmd_executor : public executor
 	{
-		syscmd_command ** tbl;
+		system_command ** tbl;
 
 	public:
-		syscmd_executor(genos::syscmd_command** syscmdtbl)
+		syscmd_executor(genos::system_command** syscmdtbl)
 			: tbl(syscmdtbl) {}
 
 		int execute(char * str, int len, int flags, int * retptr) override
@@ -35,8 +35,8 @@ namespace genos
 			int argc;
 			int res;
 			char * argv[10];
-			struct syscmd_command ** it0;
-			struct syscmd_command * it1;
+			struct system_command ** it0;
+			struct system_command * it1;
 
 			if (!(flags & SH_INTERNAL_SPLIT))
 			{
@@ -115,10 +115,10 @@ namespace genos
 
 	class syscmd_executor_onelevel : public executor
 	{
-		syscmd_command * tbl;
+		system_command * tbl;
 
 	public:
-		syscmd_executor_onelevel(genos::syscmd_command* syscmdtbl)
+		syscmd_executor_onelevel(genos::system_command* syscmdtbl)
 			: tbl(syscmdtbl) {}
 
 		int execute(char * str, int len, int flags, int * retptr) override
@@ -127,7 +127,7 @@ namespace genos
 			int argc;
 			int res;
 			char * argv[10];
-			struct syscmd_command * it;
+			struct system_command * it;
 
 			if (!(flags & SH_INTERNAL_SPLIT))
 			{
@@ -150,11 +150,11 @@ namespace genos
 			// Встроенная функция help
 			if (flen == 4 && !strncmp(str, "help", 4))
 			{
-				for (it = tbl; it != nullptr; ++it)
+				for (it = tbl; it->name != NULL; ++it)
 				{
 					if (it->help)
 					{
-						write(0, it->name, strlen(it->name));
+						write(0, it->name, strlen(it->name));			
 						write(0, " - ", 3);
 						write(0, it->help, strlen(it->help));
 						write(0, "\r\n", 2);
@@ -169,9 +169,9 @@ namespace genos
 			}
 
 			// Основной цикл
-			for (it = tbl; it != nullptr; ++it)
+			for (it = tbl; it->name != nullptr; ++it)
 			{
-				if (!strncmp(str, it->name, flen))
+				if (strlen(it->name) == flen && !strncmp(str, it->name, flen))
 				{
 					switch (it->type)
 					{
@@ -201,7 +201,7 @@ namespace genos
 }
 
 #define EXECUTOR(name, ...) \
-genos::syscmd_command* name##_syscmd_table[] {__VA_ARGS__, EXECUTOR_TBLFIN}; \
+genos::system_command* name##_syscmd_table[] {__VA_ARGS__, EXECUTOR_TBLFIN}; \
 genos::executor name{name##_syscmd_table}
 
 #endif

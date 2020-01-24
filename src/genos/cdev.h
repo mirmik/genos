@@ -17,7 +17,7 @@ namespace genos
 			devmngr.link(this);
 		} 
 
-		int print(const char * str, int flags) 
+		int print(const char * str, int flags = 0) 
 		{ 
 			return write(str, strlen(str), flags); 
 		}

@@ -2,19 +2,19 @@
 #define GENOS_DRIVERS_QUADGEN_STEPCTR_H
 
 #include "quadgen.h"
-#include <ralgo/planning/stepctr.h>
+#include <ralgo/heimer/stepctr.h>
 
 namespace genos 
 {
-	class quadgen_stepctr : public ralgo::stepctr
+	class quadgen_stepctr : 
+		public ralgo::heimer::stepctr<float, int64_t, float>
 	{
 	public:
 		genos::quadgen_differential q;
 		bool en = false;
 
 	public:
-		quadgen_stepctr(const char* name, const genos::quadgen_differential& q) : 
-			ralgo::stepctr(name),
+		quadgen_stepctr(const genos::quadgen_differential& q) : 
 			q(q)
 		{
 
@@ -34,11 +34,11 @@ namespace genos
 
 		void set();
 
-		void enable_power(bool en) override 
-		{
-			this->en = en;
+		//void enable_power(bool en) override 
+		//{
+		//	this->en = en;
 			//pass
-		}
+		//}
 
 		/*int64_t target_position() override 
 		{

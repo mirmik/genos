@@ -53,7 +53,7 @@ namespace genos
 		}
 	};
 
-	extern genos::syscmd_command navigation_shell_table[];
+	extern genos::system_command navigation_shell_table[];
 }
 
 

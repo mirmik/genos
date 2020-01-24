@@ -33,7 +33,7 @@ private:
 public:
 	void nblock_onestep() override;
 	void send(crow::packet* pack) override;
-	void init(struct uart_device * uart);
+	void init(struct uart_device * uart, uint8_t addr);
 	
 private:
 	void newline_handler(); 
