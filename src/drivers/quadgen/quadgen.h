@@ -34,7 +34,7 @@ namespace genos
 		void set() 
 		{
 			uint8_t setcode = igris::graycode(state);
-
+			
 			bool a = (bool)(setcode & 0b01);
 			bool b = (bool)(setcode & 0b10);
 
