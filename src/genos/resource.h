@@ -6,6 +6,8 @@
 
 #include <igris/datastruct/dlist.h>
 #include <igris/dprint.h>
+#include <igris/math.h>
+#include <igris/buffer.h>
 
 #include <limits.h>
 
@@ -40,7 +42,7 @@ namespace genos
 
 //	int open_node(genos::node * res, genos::openres * ores);
 //	int open_node(genos::node * res, int flags);
-	int open_resource(genos::resource * res, genos::openres * ores);
+	int open_resource(genos::resource * res, genos::openres * ores, int flags);
 	int open_resource(genos::resource * res, int16_t flags);
 
 	
@@ -141,6 +143,35 @@ namespace genos
 			strncpy(buffer, dlist_entry(onode->dh, named_node, lnk)->name, maxsz);
 		*/	return 0;
 		}
+	};
+
+	class buffer_node : public genos::node
+	{
+	private:
+		char * buf;
+		int cap = 0;
+		int cursor = 0;
+		
+	public:
+		buffer_node(char* buf, int size) 
+			: buf(buf), cap(size)
+		{}
+
+		int write(const void* data, size_t size, int flags) override
+		{ 
+			int sz = MIN(room(), size);
+			memcpy(&buf[cursor], data, sz);
+			cursor += sz;
+			return sz;
+		}
+	
+		int room() override
+		{ 
+			return cap - cursor; 
+		}
+
+		igris::buffer buffer() { return { buf, cursor }; }
+		void reset() { cursor = 0; }
 	};
 }
 

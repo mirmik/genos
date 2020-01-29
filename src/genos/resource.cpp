@@ -3,9 +3,10 @@
 
 #include <igris/util/errno.h>
 
-int genos::open_resource(genos::resource * res, genos::openres * filp) 
+int genos::open_resource(genos::resource * res, genos::openres * filp, int flags) 
 {
 	filp -> res = res;	
+	filp -> flags = flags; // Надо понять, какие флаг вообще бывают.
 	return res->open(filp);
 }
 
@@ -21,10 +22,10 @@ int genos::open_resource(genos::resource * res, int16_t flags)
 
 	filp = current_schedee()->restbl[fd];
 	
-	if ((ans = open_resource(res, filp))) 
+	if ((ans = open_resource(res, filp, flags))) 
 		return ans;
 
-	filp->flags = flags;
+	filp -> flags = flags;
 
 	return fd;
 }

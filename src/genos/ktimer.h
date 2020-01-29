@@ -3,8 +3,8 @@
 
 #include <igris/sync/syslock.h>
 #include <igris/osinter/ctrobj.h>
-
 #include <systime/systime.h>
+#include <time.h>
 
 namespace genos 
 {

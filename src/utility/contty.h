@@ -5,7 +5,7 @@
 #include <igris/shell/readline.h>
 
 #include <genos/schedee/autom.h>
-#include <genos/executor.h>
+#include <igris/shell/executor.h>
 #include <genos/nav.h>
 
 #define CONTTY_LINE_LENGTH 32
@@ -18,7 +18,7 @@ namespace genos
 		struct readline rl;
 
 		node * outside;
-		executor * ex;
+		igris::executor * ex;
 
 		const char * prefix_string = "$ ";
 		char last;
@@ -32,7 +32,7 @@ namespace genos
 		uint8_t debug_mode = 0;
 		bool echo = true;
 
-		contty(genos::node * outside, executor* ex) 
+		contty(genos::node * outside, igris::executor* ex) 
 			: outside(outside), ex(ex)
 		{}
 
