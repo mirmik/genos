@@ -32,8 +32,8 @@ namespace genos
 	public:
 		virtual int write(const void* data, size_t size, int flags) { errno = ENOTSUP; return -1; }
 		virtual int read(void* data, size_t size, int flags) { errno = ENOTSUP; return -1; }
-		virtual int room() { return INT_MAX; }
-		virtual int avail() { return INT_MAX; }
+		virtual size_t room() { return INT_MAX; }
+		virtual size_t avail() { return INT_MAX; }
 		//virtual int write(const void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 		//virtual int read(void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 
@@ -149,8 +149,8 @@ namespace genos
 	{
 	private:
 		char * buf;
-		int cap = 0;
-		int cursor = 0;
+		size_t cap = 0;
+		size_t cursor = 0;
 		
 	public:
 		buffer_node(char* buf, int size) 
@@ -159,13 +159,13 @@ namespace genos
 
 		int write(const void* data, size_t size, int flags) override
 		{ 
-			int sz = MIN(room(), size);
+			size_t sz = MIN(room(), size);
 			memcpy(&buf[cursor], data, sz);
 			cursor += sz;
 			return sz;
 		}
 	
-		int room() override
+		size_t room() override
 		{ 
 			return cap - cursor; 
 		}

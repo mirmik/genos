@@ -70,8 +70,8 @@ namespace genos
 		int release() override;
 		int open(genos::openres * filp) override;
 
-		int room() override;
-		int avail() override;
+		size_t room() override;
+		size_t avail() override;
 
 		void begin(struct uart_device * udev);
 		void begin() { begin(udev); };

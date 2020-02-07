@@ -1,7 +1,7 @@
 #ifndef GENOS_EXECUTOR_H
 #define GENOS_EXECUTOR_H
 
-#include <genos/syscmd.h>
+/*#include <genos/syscmd.h>
 #include <igris/datastruct/argvc.h>
 
 #include <unistd.h>
@@ -203,5 +203,5 @@ namespace genos
 #define EXECUTOR(name, ...) \
 genos::system_command* name##_syscmd_table[] {__VA_ARGS__, EXECUTOR_TBLFIN}; \
 genos::executor name{name##_syscmd_table}
-
+*/
 #endif

@@ -15,7 +15,7 @@ int genos::uartring::write(const void* data,
 	int curwrited;
 	size_t writed = 0;
 
-	if (size == 0) 
+	if (size == 0)
 	{
 		return 0;
 	}
@@ -42,7 +42,7 @@ int genos::uartring::write(const void* data,
 		if (writed == size)
 			break;
 
-		if (flags & IO_HOTLOOP) 
+		if (flags & IO_HOTLOOP)
 		{
 			system_unlock();
 			cpu_delay(1000);
@@ -66,7 +66,6 @@ int genos::uartring::write(const void* data,
 
 }
 
-#warning "wait_current_schedee and system_lock restoring"
 int genos::uartring::read(void* data,
                           unsigned int size, int flags)
 {
@@ -77,7 +76,7 @@ int genos::uartring::read(void* data,
 	while (ring_empty(&rxring))
 	{
 
-		if (flags & IO_NOBLOCK) 
+		if (flags & IO_NOBLOCK)
 		{
 			system_unlock();
 			return 0;
@@ -131,12 +130,12 @@ int genos::uartring::open(genos::openres * ores)
 	return 0;
 }
 
-int genos::uartring::room()
+size_t genos::uartring::room()
 {
 	return ring_room(&txring);
 }
 
-int genos::uartring::avail()
+size_t genos::uartring::avail()
 {
 	return ring_avail(&rxring);
 }

@@ -1,4 +1,3 @@
-//#include <genos/nav.h>
 #include <genos/schedee.h>
 #include <genos/resmngr.h>
 
@@ -39,7 +38,7 @@ int change_directory(int argc, char ** path) { return 0; }
 
 int list_directory(int argc, char ** path) { return 0; }
 
-genos::system_command  genos::navigation_shell_table[] = {
+igris::console_command genos::navigation_shell_table[] = {
 	{"cd", change_directory, CMDFUNC, nullptr},
 	{"ls", list_directory, CMDFUNC, nullptr}
 };

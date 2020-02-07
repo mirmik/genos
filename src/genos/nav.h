@@ -2,9 +2,10 @@
 #define GENOS_NAV_H
 
 #include <igris/util/pathops.h>
+#include <igris/shell/conscmd.h>
 #include <string.h>
 #include <genos/resmngr.h>
-#include <genos/syscmd.h>
+//#include <genos/syscmd.h>
 
 #define MAX_PATH_LEN 32
 
@@ -53,7 +54,7 @@ namespace genos
 		}
 	};
 
-	extern genos::system_command navigation_shell_table[];
+	extern igris::console_command navigation_shell_table[];
 }
 
 
