@@ -37,6 +37,7 @@ public:
 	
 private:
 	void newline_handler(); 
+	void error_handler(); 
 	void init_recv();
 
 	void do_send(crow::packet* pack);

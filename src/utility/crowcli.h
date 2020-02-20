@@ -9,6 +9,8 @@
 #include <igris/sync/syslock.h>
 #include <igris/shell/executor.h>
 
+#define CROWCLI_OTPUT_BUFFER_SIZE 256
+
 namespace genos
 {
 	class crowcli : public genos::schedee, public crow::node
@@ -19,12 +21,12 @@ namespace genos
 		igris::executor * exec;
 
 		int state = 0;
-		char output_buffer[400];
+		char output_buffer[CROWCLI_OTPUT_BUFFER_SIZE];
 		genos::buffer_node output;
 
 		void set_executor(igris::executor * exec) { this->exec = exec; }
 
-		crowcli() : output(output_buffer, 400) 
+		crowcli() : output(output_buffer, CROWCLI_OTPUT_BUFFER_SIZE) 
 		{
 			schedee_init(this, 0);
 			flag.can_displace = 1;
@@ -60,6 +62,7 @@ namespace genos
 						output.reset();
 						crow::packet * cptr = 
 							dlist_first_entry(&msgqueue, crow::packet, ulnk);
+						dlist_del_init(&cptr->ulnk);
 
 						auto data = crow::node_data(cptr);
 						auto rid = crow::node_protocol_cls::sid(cptr);
@@ -67,14 +70,21 @@ namespace genos
 						if (data.data()[data.size()-1]=='\n')
 							data.data()[data.size()-1] = 0;
 
+						memset(output_buffer, 0, CROWCLI_OTPUT_BUFFER_SIZE);
 						int ret1;
 						int ret0 = exec->execute(data.data(), data.size(), 
 							SH_INTERNAL_SPLIT, &ret1);
+						(void) ret0;
 
 						auto outputbuf = output.buffer();
 
-						crow::node_send(id, rid, cptr->addr(), outputbuf, 
-							cptr->qos(), cptr->ackquant());
+						if (outputbuf.size() != 0)
+							crow::node_send(id, rid, cptr->addr(), outputbuf, 
+								cptr->qos(), cptr->ackquant());
+						
+						//DPRINTPTR(cptr);
+						//DPRINT(cptr->f.released_by_world);
+						//DPRINT(cptr->f.released_by_tower);
 						
 						crow::release(cptr);
 						igris::system_unlock();
@@ -86,6 +96,7 @@ namespace genos
 		void incoming_packet(crow::packet * cptr) override
 		{
 			igris::syslock syslock;
+			(void) syslock;
 			dlist_add_tail(&cptr->ulnk, &msgqueue);
 			unwait_one(&waitlink, nullptr);
 		}
