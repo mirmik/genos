@@ -17,7 +17,7 @@ namespace genos
 	{
 	public:
 		dlist_head msgqueue = DLIST_HEAD_INIT(msgqueue);
-		dlist_head waitlink = DLIST_HEAD_INIT(waitlink);;
+		dlist_head waitlink = DLIST_HEAD_INIT(waitlink);
 		igris::executor * exec;
 
 		int state = 0;
@@ -64,6 +64,8 @@ namespace genos
 							dlist_first_entry(&msgqueue, crow::packet, ulnk);
 						dlist_del_init(&cptr->ulnk);
 
+						igris::system_unlock();
+						
 						auto data = crow::node_data(cptr);
 						auto rid = crow::node_protocol_cls::sid(cptr);
 
@@ -72,6 +74,7 @@ namespace genos
 
 						memset(output_buffer, 0, CROWCLI_OTPUT_BUFFER_SIZE);
 						int ret1;
+
 						int ret0 = exec->execute(data.data(), data.size(), 
 							SH_INTERNAL_SPLIT, &ret1);
 						(void) ret0;
@@ -87,7 +90,6 @@ namespace genos
 						//DPRINT(cptr->f.released_by_tower);
 						
 						crow::release(cptr);
-						igris::system_unlock();
 						break;
 					}
 			}
@@ -95,9 +97,9 @@ namespace genos
 
 		void incoming_packet(crow::packet * cptr) override
 		{
-			igris::syslock syslock;
-			(void) syslock;
+			igris::system_lock();
 			dlist_add_tail(&cptr->ulnk, &msgqueue);
+			igris::system_unlock();
 			unwait_one(&waitlink, nullptr);
 		}
 
