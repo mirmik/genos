@@ -1,6 +1,8 @@
 #ifndef STM32_SYSTICK_REGS_H
 #define STM32_SYSTICK_REGS_H
 
+#include <stdint.h>
+
 struct systick_regs 
 {
 	volatile uint32_t CSR;   // Control and status register

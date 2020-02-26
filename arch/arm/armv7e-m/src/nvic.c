@@ -2,6 +2,7 @@
 
 #include <periph/regs/nvic.h>
 #include <periph/irqdefs.h>
+#include <periph/map.h>
 
 #include <igris/dprint.h>
 

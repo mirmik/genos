@@ -14,10 +14,11 @@
 #define NVIC_BASE           (SCS_BASE +  0x0100UL)                    /*!< NVIC Base Address                  */
 #define SCB_BASE            (SCS_BASE +  0x0D00UL)                    /*!< System Control Block Base Address  */
 
+#ifndef STM32G4XX
 #define SysTick_BASE        SYSTICK_BASE                   /*!< SysTick Base Address               */
 
-//#define SCnSCB              ((SCnSCB_Type    *)     SCS_BASE      )   /*!< System control Register not in SCB */
-//#define SCB                 ((SCB_Type       *)     SCB_BASE      )   /*!< SCB configuration struct           */
+#define SCnSCB              ((SCnSCB_Type    *)     SCS_BASE      )   /*!< System control Register not in SCB */
+#define SCB                 ((SCB_Type       *)     SCB_BASE      )   /*!< SCB configuration struct           */
 #define SYSTICK ((struct systick_regs*) SYSTICK_BASE)
 #define SysTick ((SysTick_Type   *)     SysTick_BASE  )   /*!< SysTick configuration struct       */
 #define NVIC    ((struct nvic_regs   *) NVIC_BASE     )   /*!< NVIC configuration struct          */
@@ -26,7 +27,7 @@
 #define TPI       ((TPI_Type       *)     TPI_BASE      )   /*!< TPI configuration struct           */
 #define CoreDebug ((struct coredebug_regs *)     CoreDebug_BASE)   /*!< Core Debug configuration struct    */
 #define SCB       ((SCB_Type       *)     SCB_BASE      )   /*!< SCB configuration struct           */
-
+#endif
 
 ///* Memory mapping of Cortex-M4 Hardware */
 //#define SCS_BASE            (0xE000E000UL)                            /*!< System Control Space Base Address  */

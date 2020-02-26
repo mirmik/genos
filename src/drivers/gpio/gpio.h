@@ -1,13 +1,11 @@
 #ifndef DRIVERS_GPIO_H
 #define DRIVERS_GPIO_H
 
-//#include <__local__/arch_gpio.h>
+#include <asm/gpio.h>
+
 #include <stdint.h>
 #include <sys/cdefs.h>
-
 #include <defs/gpiodefs.h>
-
-#include <asm/gpio.h>
 
 #define GPIO_MODE_IN_SECTION        0x000000FF
 #define GPIO_MODE_OUT_SECTION       0x0000FF00

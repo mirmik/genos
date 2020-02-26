@@ -4,7 +4,8 @@
 #include <assert.h>
 
 #include <asm/gpio.h>
-#include <asm/rcc.h>
+#include <asm/stm32_gpio.h>
+#include <asm/stm32_rcc.h>
 
 void gpio_write(gpio_regs_t* g, unsigned int mask, unsigned char level)
 {
@@ -23,7 +24,7 @@ void gpio_toggle(gpio_regs_t* g, unsigned int mask)
 
 int gpio_settings(gpio_regs_t* g, unsigned int mask, uint32_t mode)
 {
-	struct gpio_regs * gpio = (struct gpio_regs *)(g);
+	gpio_regs_t * gpio = (gpio_regs_t *)(g);
 	int mode_val = 0;
 
 	if ((mode & GPIO_MODE_OUT_SECTION) &&

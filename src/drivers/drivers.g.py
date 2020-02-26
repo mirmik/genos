@@ -55,3 +55,9 @@ licant.module("genos.drivers.crow.uartgate",
 licant.module("genos.drivers.bdev.atmel_dataflash",
 	sources = ["bdev/atmel_dataflash.cpp"]
 )
+
+
+licant.module("drivers.stm32g4",
+	sources = ["gpio/stm32_gpio.c"],
+	mdepends=["genos.drivers.common"]
+)

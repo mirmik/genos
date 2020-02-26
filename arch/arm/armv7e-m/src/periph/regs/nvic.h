@@ -1,6 +1,8 @@
 #ifndef ARMV7EM_NVIC_REGS_H
 #define ARMV7EM_NVIC_REGS_H
 
+#include <stdint.h>
+
 struct nvic_regs 
 {
 	volatile uint32_t ISER[8]; //0xE000E100- 0xE000E11F
