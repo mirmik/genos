@@ -27,7 +27,6 @@ genos::schedee * current_schedee()
 
 void schedee_manager_init()
 {
-	DTRACE();
 
 	for (int i = 0; i < PRIORITY_TOTAL; ++i)
 		dlist_init(&runlist[i]);
@@ -35,19 +34,17 @@ void schedee_manager_init()
 
 void __schedee_run(genos::schedee * sch)
 {
-	DTRACE();
 	dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
 }
 
-void schedee_run(genos::schedee * sch) 
+void schedee_run(genos::schedee * sch)
 {
-	DTRACE();
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_RUN;
 	sch->ctr.type = CTROBJ_SCHEDEE_LIST;
 
-	// detail: Если это объект отличный от schedee_list, благодаря бинарной совместимости перемещение
-	// будет работать корректно. 
+	// detail: Если это объект отличный от schedee_list, благодаря бинарной
+	// совместимости перемещение будет работать корректно.
 	dlist_move_tail(&sch->ctr.lnk, &unstoplist);
 
 	system_unlock();
@@ -55,7 +52,6 @@ void schedee_run(genos::schedee * sch)
 
 void __schedee_wait_for(genos::schedee * parent, genos::schedee * child)
 {
-	DTRACE();
 	system_lock();
 	parent->sch_state = SCHEDEE_STATE_WAIT_SCHEDEE;
 	dlist_move_tail(&parent->ctr.lnk, &waitlist);
@@ -64,7 +60,6 @@ void __schedee_wait_for(genos::schedee * parent, genos::schedee * child)
 
 void __schedee_final(genos::schedee * sch)
 {
-	DTRACE();
 
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_FINAL;
@@ -74,7 +69,6 @@ void __schedee_final(genos::schedee * sch)
 
 void schedee_stop(genos::schedee * sch)
 {
-	DTRACE();
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_STOP;
 	dlist_del_init(&sch->ctr.lnk);
@@ -93,7 +87,6 @@ void schedee_exit()
 
 void __schedee_execute(genos::schedee * sch)
 {
-	DTRACE();
 	__current_schedee = sch;
 	sch->flag.runned = 1;
 
@@ -101,7 +94,7 @@ void __schedee_execute(genos::schedee * sch)
 	if (sch->syslock_counter_save != 0)
 		irqs_disable();
 	else
-		irqs_enable(); 
+		irqs_enable();
 
 #if SCHEDEE_DEBUG_STRUCT
 	++sch->execcounter;
@@ -110,20 +103,19 @@ void __schedee_execute(genos::schedee * sch)
 	sch->execute();
 }
 
-int schedee_manager_total_planed() 
+int schedee_manager_total_planed()
 {
 	int sum = 0;
 	struct dlist_head* sch;
 	for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++)
 	{
 		dlist_for_each(sch, &runlist[priolvl]) { sum++; }
-	}	
+	}
 	return sum;
 }
 
 void schedee_manager_step()
 {
-	DTRACE();
 	genos::schedee* sch;
 
 	// Отрабатываем логику завершения процессов.
@@ -151,15 +143,15 @@ void schedee_manager_step()
 		__schedee_run(sch);
 	}
 	irqs_enable();
-	
+
 
 	for (int priolvl = 0; priolvl < PRIORITY_TOTAL; priolvl++)
 	{
 		if (!dlist_empty(&runlist[priolvl]))
 		{
 			sch = dlist_first_entry(&runlist[priolvl], genos::schedee, ctr.lnk);
-			
-			if (sch->flag.killed) 
+
+			if (sch->flag.killed)
 			{
 				__schedee_final(sch);
 				return;
@@ -178,7 +170,6 @@ void schedee_manager_step()
 
 int __displace__()
 {
-	DTRACE();
 	genos::schedee * sch = current_schedee();
 
 	if (sch->flag.can_displace == 0)
@@ -194,12 +185,12 @@ int __displace__()
 	return sch->displace();
 }
 
-void scheduler_init() 
+void scheduler_init()
 {
 	schedee_manager_init();
 }
 
-void schedee_manager_debug_info() 
+void schedee_manager_debug_info()
 {
 	system_lock();
 
@@ -208,7 +199,7 @@ void schedee_manager_debug_info()
 		genos::schedee * it;
 
 		dprln("priolvl:", priolvl);
-		dlist_for_each_entry(it, &runlist[priolvl], ctr.lnk) 
+		dlist_for_each_entry(it, &runlist[priolvl], ctr.lnk)
 		{
 			dpr("\t"); dprptrln(it);
 		}
@@ -225,3 +216,84 @@ void __context_displace_vector__()
 	syslock_reset();
 	while (1) __schedule__();
 }
+
+const char * schedee_state_string(uint8_t state) 
+{
+	switch (state) 
+	{
+		case SCHEDEE_STATE_RUN: return "RUN";
+		case SCHEDEE_STATE_STOP: return "STOP";
+		case SCHEDEE_STATE_WAIT: return "WAIT";
+		case SCHEDEE_STATE_WAIT_SCHEDEE: return "WAITSCH";
+		case SCHEDEE_STATE_FINAL: return "FINAL";
+		case SCHEDEE_STATE_ZOMBIE: return "ZOMB";
+		default: return "";
+	}
+}
+
+static void ps_command()
+{
+#if SCHEDEE_DEBUG_STRUCT
+	genos::schedee* sch;
+	dlist_for_each_entry(sch, &schedee_list, schedee_list_lnk)
+	{
+		dprptr(sch); dpr(" ");
+
+		if (sch->mnemo)
+			dpr(sch->mnemo);
+		else
+			dpr("unnamed");
+
+		dpr(" exec:"); dpr(sch->execcounter);
+		dpr(" disp:"); dpr(sch->dispcounter);
+		dpr(" state:"); dpr(schedee_state_string(sch->sch_state));
+
+		dprln();
+	}
+#endif
+}
+
+static genos::schedee* get_schedee_by_mnemo(const char* mnemo)
+{
+	genos::schedee* sch;
+	dlist_for_each_entry(sch, &schedee_list, schedee_list_lnk)
+	{
+		if (sch->mnemo && strcmp(sch->mnemo, mnemo) == 0)
+			return sch;
+	}
+	return nullptr;
+}
+
+static int procctr(int argc, char** argv)
+{
+	if (argc != 3)
+	{
+		printf("usage: procctr CMD=run|stop MNEMO\r\n");
+		return 0;
+	}
+
+	genos::schedee * sch;
+	if ((sch = get_schedee_by_mnemo(argv[2])) == nullptr)
+	{
+		printf("unknown schedee\r\n");
+		return 0;
+	}
+
+	if (strcmp(argv[1], "start") == 0)
+	{
+		schedee_run(sch);
+	}
+
+	else if (strcmp(argv[1], "stop") == 0)
+	{
+		schedee_stop(sch);
+	}
+
+	return 0;
+}
+
+igris::console_command schedee_manager_utilities[] =
+{
+	igris::console_command{"ps", ps_command},
+	igris::console_command{"procctr", procctr},
+};

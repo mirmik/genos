@@ -21,6 +21,7 @@ namespace genos
 		igris::executor * ex;
 
 		const char * prefix_string = "$ ";
+		const char * machine_name = "";
 		char last;
 
 		char buffer[CONTTY_LINE_LENGTH];
@@ -34,12 +35,25 @@ namespace genos
 
 		contty(genos::node * outside, igris::executor* ex) 
 			: outside(outside), ex(ex)
-		{}
+		{
+			readline_init(&rl, buffer, CONTTY_LINE_LENGTH);
+			readline_history_init(&rl, hbuffer, CONTTY_HISTORY_SIZE);
+		}
 
-		void set_prefix_string(const char* str) 
+		void set_prefix(const char* str) 
 		{
 			prefix_string = str;
 		} 
+		
+		void set_machine(const char* str) 
+		{
+			machine_name = str;
+		} 
+
+		void push_history(const char * str) 
+		{
+			readline_push_line_to_history(&rl, str);
+		}
 
 		void execute() override;
 	};

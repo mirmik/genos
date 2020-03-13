@@ -59,8 +59,23 @@ int genos::uartring::write(const void* data,
 		wait_current_schedee(&txwait, WAIT_PRIORITY, nullptr);
 		system_lock();
 	}
-
 	system_unlock();
+
+	if (flags & IO_WAITSEND)
+	{
+		// Ждём, пока уйдет последний символ.
+		while (1)
+		{
+			system_lock();
+			if (ring_empty(&txring) && udev->cantx())
+			{
+				system_unlock();
+				break;
+			}
+			system_unlock();
+			cpu_delay(1000);
+		}
+	}
 
 	return writed;
 

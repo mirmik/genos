@@ -3,6 +3,8 @@
 
 #include <genos/schedee.h>
 
+extern igris::console_command schedee_manager_utilities[];
+
 __BEGIN_DECLS
 
 void schedee_run(genos::schedee * sch);

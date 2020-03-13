@@ -8,6 +8,10 @@
 #include <genos/resource.h>
 #include <genos/nav.h>
 
+#ifndef SCHEDEE_DEBUG_STRUCT
+#define SCHEDEE_DEBUG_STRUCT 1
+#endif
+
 #define SCHEDEE_STATE_RUN 			0
 #define SCHEDEE_STATE_WAIT 			2
 #define SCHEDEE_STATE_WAIT_SCHEDEE 	6
@@ -37,6 +41,7 @@ namespace genos
 		uint8_t syslock_counter_save;
 
 #if SCHEDEE_DEBUG_STRUCT
+		const char * mnemo = nullptr;
 		struct dlist_head schedee_list_lnk;
 		uint16_t dispcounter;
 		uint16_t execcounter;
@@ -65,6 +70,13 @@ namespace genos
 
 		schedee() {}
 
+		void set_mnemo(const char* str)
+		{
+			#if SCHEDEE_DEBUG_STRUCT
+				mnemo = str;
+			#endif
+		}
+
 		virtual void execute() = 0;
 		virtual int displace() = 0;
 		virtual void finalize() = 0;
@@ -75,12 +87,11 @@ namespace genos
 
 		void set_navblock(genos::navblock * nav) { navblock = nav; }
 
-		genos::openres * getres(int i) 
+		genos::openres * getres(int i)
 		{
 			return restbl[i];
 		}
 
-		void run() __attribute__((deprecated("you should replace *run* with *start*")));
 		void start();
 		void stop();
 	};

@@ -1,4 +1,6 @@
 #include "contty.h"
+#include <genos/api.h>
+#include <defs/ioflags.h>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -32,16 +34,21 @@ void genos::contty::execute()
 			ret = open_resource(outside, (int)0);
 			ret = open_resource(outside, (int)0);
 
-			/*if (ret)
+			state = 11;
+
+		case 11:
 			{
-				dprln("contty:open_resource", ret);
-				schedee_exit();
-			}*/
-
-			readline_init(&rl, buffer, CONTTY_LINE_LENGTH);
-			readline_history_init(&rl, hbuffer, CONTTY_HISTORY_SIZE);
-			state = 1;
-
+				// Позволяем uart каналу собрать все шумы.
+				state = 12;
+				msleep(10);
+			}
+		case 12:
+			{
+				// Сбрасываем шум.
+				char buf [24];
+				outside->read(buf, 24, IO_NOBLOCK);
+				state = 1;
+			}
 		case 1:
 			if (debug_mode)
 				dprln("contty: state 1");
@@ -49,7 +56,10 @@ void genos::contty::execute()
 			readline_newline_reset(&rl);
 			state = 2;
 			if (echo)
+			{
+				outside->write(machine_name, strlen(machine_name), 0);
 				outside->write(prefix_string, strlen(prefix_string), 0);
+			}
 
 		case 2:
 			if (debug_mode)

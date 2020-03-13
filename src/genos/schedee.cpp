@@ -55,11 +55,6 @@ void schedee_list_debug_info()
 }
 #endif
 
-void genos::schedee::run() 
-{
-	schedee_run(this);
-}
-
 void genos::schedee::start() 
 {
 	schedee_run(this);
