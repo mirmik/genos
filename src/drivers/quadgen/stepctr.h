@@ -15,7 +15,7 @@ namespace genos
 
 	public:
 		quadgen_stepctr(const genos::quadgen_differential& q) : 
-			q(q)
+		 ralgo::heimer::stepctr<float, int64_t, float>(""),	q(q)
 		{
 
 		}

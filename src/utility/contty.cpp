@@ -173,9 +173,30 @@ void genos::contty::execute()
 						break;
 					}
 
+				case READLINE_DELETE:
+					{
+						if (echo)
+						{
+							outside->write(VT100_ERASE_LINE_AFTER_CURSOR, 3, 0);
+						}
+						if (!sline_in_rightpos(&rl.line))
+						{
+							char buf[16];
+
+							if (echo)
+							{
+								outside->write(sline_rightpart(&rl.line), sline_rightsize(&rl.line), 0);
+								ret = vt100_left(buf, sline_rightsize(&rl.line));
+								outside->write(buf, ret, 0);
+							}
+						}
+
+						break;
+					}
+
+
 				default:
-					dprln("retcode:", ret);
-					BUG();
+					dprln("?unr_rl_code?:", ret);
 			}
 
 			state = 2;

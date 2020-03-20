@@ -9,7 +9,7 @@
 #include <genos/nav.h>
 
 #define CONTTY_LINE_LENGTH 32
-#define CONTTY_HISTORY_SIZE 3
+#define CONTTY_HISTORY_SIZE 5
 
 namespace genos
 {
