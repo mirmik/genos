@@ -81,7 +81,7 @@ namespace genos
 #define UARTRING_DECLARE(name, cname, uart, rxsz, txsz)				 			\
 char name##_rxbuffer[rxsz];						 					 			\
 char name##_txbuffer[txsz];						 					 			\
-struct uartring name { cname, (struct uart_device*)uart,					\
+genos::uartring name { cname, (struct uart_device*)uart,					\
 				name##_rxbuffer, name##_txbuffer,					 			\
 				rxsz, txsz}
 
