@@ -12,7 +12,7 @@ static inline void irqs_enable(void) {
 }
 
 static inline irqstate_t irqs_save(void) {
-	register uint32_t r;
+	uint32_t r;
 	__asm__ __volatile__ (
 		"mrs %0, PRIMASK;\n\t"
 		"cpsid i \n\t"
