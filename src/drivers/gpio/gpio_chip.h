@@ -9,9 +9,10 @@ namespace drivers
 	{
 	public:
 		virtual void set_value(int offset, int lvl) = 0; 
-		virtual int get_value(int offset) = 0; 
 		virtual void set_direction(int offset, int dir) = 0;
-		virtual int get_direction(int offset) = 0;
+		
+		virtual int value(int offset) = 0; 
+		virtual int direction(int offset) = 0;
 	};
 
 	class gpio_chip_pin
@@ -30,6 +31,8 @@ namespace drivers
 
 		void set_value(int lvl) { chip->set_value(offset, lvl); }
 		void set_direction(int lvl) { chip->set_direction(offset, lvl); }
+
+		int value() { return chip->value(offset); }
 	};
 }
 

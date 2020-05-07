@@ -132,9 +132,9 @@ public:
     void			writeuint8_t(uint8_t addr, uint8_t data);	
 
     void set_value(int offset, int lvl) override { gpioDigitalWrite(offset, lvl); }
-    int get_value(int offset) override { return gpioDigitalRead(offset); }
+    int value(int offset) override { return gpioDigitalRead(offset); }
 
     void set_direction(int offset, int lvl) override { gpioPinMode(offset, lvl); }
-    int get_direction(int offset) override { BUG(); }
+    int direction(int offset) override { BUG(); }
 };
 #endif
