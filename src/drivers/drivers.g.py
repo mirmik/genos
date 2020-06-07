@@ -58,6 +58,10 @@ licant.module("genos.drivers.bdev.atmel_dataflash",
 
 
 licant.module("drivers.stm32g4",
-	sources = ["gpio/stm32_gpio.c"],
-	mdepends=["genos.drivers.common"]
+	mdepends=[
+		"genos.drivers.common",
+		"genos.drivers.stm32_gpio",
+		"genos.drivers.stm32_usart",
+		"genos.drivers.stm32_spi",
+	]
 )

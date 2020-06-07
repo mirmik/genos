@@ -15,6 +15,8 @@ void stm32_gpio_write(GPIO_TypeDef * gpio, unsigned int mask, uint8_t lvl);
 unsigned int stm32_gpio_read(GPIO_TypeDef * gpio, unsigned int mask);
 void stm32_gpio_toggle(GPIO_TypeDef * gpio, unsigned int mask);
 
+int stm32_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate);
+
 __END_DECLS
 
 #endif

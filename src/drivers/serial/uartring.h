@@ -36,7 +36,7 @@ namespace genos
 
 	struct uartring : public genos::char_device
 	{
-		struct uart_device * udev;
+		genos::uart * udev;
 		char* rxbuffer;
 		char* txbuffer;
 		struct ring_head rxring;
@@ -48,7 +48,7 @@ namespace genos
 		uint8_t debug_mode = 0;
 		int refs = 0;
 
-		uartring(const char* name, uart_device * udev,
+		uartring(const char* name, genos::uart * udev,
 		         char* rxbuffer, char* txbuffer,
 		         size_t rxsz, size_t txsz)
 			:
@@ -57,7 +57,7 @@ namespace genos
 			rxring(RING_HEAD_INIT(rxsz)), txring(RING_HEAD_INIT(txsz))
 		{}
 
-		uartring(const char* name, uart_device * udev,
+		uartring(const char* name, genos::uart * udev,
 		         igris::buffer rxbuf, igris::buffer txbuf)
 			:
 			genos::char_device(name),
@@ -73,7 +73,7 @@ namespace genos
 		size_t room() override;
 		size_t avail() override;
 
-		void begin(struct uart_device * udev);
+		void begin(genos::uart * udev);
 		void begin() { begin(udev); };
 	};
 }

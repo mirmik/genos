@@ -211,7 +211,7 @@ void uartring_emulate_read(struct genos::uartring * dev,
 	system_unlock();
 }
 
-void genos::uartring::begin(struct uart_device * uart)
+void genos::uartring::begin(genos::uart * uart)
 {
 	udev = uart;
 	uart -> handler = uartring_irq_handler;

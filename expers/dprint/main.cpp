@@ -9,6 +9,7 @@ int main()
 
 	while(1) 
 	{
+		board::sysled.toggle();
 		dprln("HelloWorld");
 		cpu_delay(50000);
 	}

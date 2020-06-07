@@ -18,9 +18,9 @@ enum spi_mode_e {
 	SPI_MODE_3
 };
 
-namespace drivers 
+namespace genos
 {
-	class spi_driver
+	class spi
 	{
     	uint8_t locked;
     	dlist_head waits;
@@ -60,11 +60,11 @@ namespace drivers
 
 	class spi_selectable_device 
 	{
-		spi_driver * driver;
+		genos::spi * driver;
 		gpio_pin cs;
 
 	public:
-		spi_selectable_device(spi_driver * driver, gpio_pin slct) 
+		spi_selectable_device(genos::spi * driver, gpio_pin slct) 
 			: driver(driver), cs(slct) 
 		{
 			init_select_pin();
@@ -72,7 +72,7 @@ namespace drivers
 
 		void init_select_pin() 
 		{
-			cs.mode(GPIO_MODE_INPUT || GPIO_MODE_IN_PULL_UP);
+			cs.mode(GPIO_MODE_INPUT | GPIO_MODE_IN_PULL_UP);
 			cs.set(1);
 		}
 

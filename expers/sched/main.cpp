@@ -1,12 +1,16 @@
-#include <gxx/debug/dprint.h>
+#include <igris/dprint.h>
+#include <hal/board.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 
-#include <sched/sched.h>
-#include <sched/api.h>
+#include <genos/sched.h>
+#include <genos/schedee/autom.h>
+#include <genos/api.h>
+
+extern genos::autom_schedee sch0_1;
 
 void* task0_1(void* arg, int* state) {
 	(void) arg;
@@ -32,7 +36,7 @@ void* task0(void* arg, int* state) {
 	{
 		case 0:
 			dprln("task0_0");
-			schedee_run(create_autom_schedee(task0_1, NULL));
+			sch0_1.start();
 			*state = 1;
 			break;
 		case 1:
@@ -59,18 +63,30 @@ void* task1(void* arg, int* state) {
 	}
 }
 
-int main() {
+genos::autom_schedee sch0 {task0, NULL};
+genos::autom_schedee sch1 {task1, NULL};
+genos::autom_schedee sch0_1 {task0_1, NULL};
+
+int main() 
+{
+	board_init();
+	irqs_enable();
+
 	schedee_manager_init();
 
-	schedee_run(create_autom_schedee(task0, NULL));
-	schedee_run(create_autom_schedee(task1, NULL));
+	sch0.start();
+	sch1.start();
 
 	__schedule__();
 }
 
 void __schedule__() {
 	while(1) {
-		if (genos::schedee_manager::total_planed() == 0) exit(0);
-		genos::schedee_manager::step();
+		if (schedee_manager_total_planed() == 0) 
+		{
+			dprln("all good");
+			abort();
+		}
+		schedee_manager_step();
 	}
 }

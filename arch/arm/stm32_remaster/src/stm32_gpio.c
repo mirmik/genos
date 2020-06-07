@@ -94,3 +94,14 @@ void stm32_gpio_toggle(GPIO_TypeDef* g, unsigned int mask)
 //
 //	return 0;
 //}
+
+int stm32_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate)
+{
+	uint16_t lmask = (mask & 0x00FF);
+	uint16_t hmask = (mask & 0xFF00) >> 8;
+	alternate = alternate & 0xF;
+	bits_masked_assign_multimap(g->AFR[0], lmask, alternate, 4);
+	bits_masked_assign_multimap(g->AFR[1], hmask, alternate, 4);
+
+	return 0;
+}

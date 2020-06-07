@@ -58,6 +58,29 @@ module("genos.sched", "impl",
 	default=True,
 )
 
+module("genos.sched", "test",
+	sources = [
+		"src/genos/sched.cpp",
+		"src/genos/schedee.cpp",
+		"src/genos/apitime.cpp",
+		"src/genos/schedee/autom.cpp",
+
+		"src/sched/posix/fcntl_mvfs.cpp",
+		"src/sched/posix/unistd_mvfs.cpp",
+
+		"src/genos/ktimer.cpp",
+
+		#"src/genos/fops.cpp",
+		
+		"src/genos/resource.cpp",
+		"src/genos/resmngr.cpp",
+		"src/genos/nav.cpp",
+		"src/genos/dev.cpp",
+		
+		"src/genos/errno.cpp"
+	]
+)
+
 module("genos.mvfs", 
 	sources = [
 		"src/mvfs/mvfs.c",
@@ -117,23 +140,19 @@ licant.module_default_implementation("nos.current_ostream", "nullptr")
 module("genos",
 	mdepends = 
 	[
-		#"periph.include",
 		"igris.include",
-		"genos.include",
-		
-		#"igris.stdlibs",
-		"genos.irqtable",
-
 		"igris.util",
 		"igris.bug",
 		"igris.dprint",
 		"igris.syslock",
-
-		"genos.sched",
 		"igris.cxx_support",
 		"igris.ctrobj.common",
 
-		"genos.diag"
+		"genos.include",
+		"genos.sched",
+		"genos.irqtable",
+		"genos.diag",
+		"genos.systime"
 	]
 )
 

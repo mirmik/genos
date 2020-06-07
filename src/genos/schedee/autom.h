@@ -34,7 +34,7 @@ namespace genos
 	public:
 		autom_schedee(){}
 
-		autom_schedee(autom_schedee_task_t task, void* arg)
+		autom_schedee(autom_schedee_task_t task, void* arg) : autom_schedee_base()
 		{
 			this -> task = task;
 			this -> arg = arg;

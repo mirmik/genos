@@ -1,13 +1,13 @@
 #include <drivers/serial/stm32_usart.h>
 #include <igris/util/retype.h>
 
-int stm32_usart_device::enable(int en)
+int genos::stm32_usart::enable(int en)
 {
 	stm32_usart_enable(regs, en);
 	return 0;
 }
 
-int stm32_usart_device::ctrirqs(uint8_t cmd)
+int genos::stm32_usart::ctrirqs(uint8_t cmd)
 {	
 	switch (cmd)
 	{
@@ -40,31 +40,31 @@ int stm32_usart_device::ctrirqs(uint8_t cmd)
 
 }
 
-int stm32_usart_device::recvbyte()
+int genos::stm32_usart::recvbyte()
 {
 	return stm32_usart_getc(regs);
 
 }
 
-int stm32_usart_device::sendbyte(int symbol)
+int genos::stm32_usart::sendbyte(int symbol)
 {
 	return stm32_usart_putc(regs, symbol);
 }
 
-int stm32_usart_device::cantx()
+int genos::stm32_usart::cantx()
 {
 	return stm32_usart_room(regs);
 }
 
-int stm32_usart_device::hasrx()
+int genos::stm32_usart::hasrx()
 {
 	return stm32_usart_avail(regs);
 }
 
 static void _irqhandler(void* priv)
 {
-	struct stm32_usart_device * dev = (struct stm32_usart_device *) priv;
-	struct usart_regs * regs = dev->regs;
+	genos::stm32_usart * dev = (genos::stm32_usart *) priv;
+	USART_TypeDef * regs = dev->regs;
 
 	if (stm32_rxirq_status(regs)){
 		dev->handler(dev->handarg, UART_IRQCODE_RX);
@@ -81,12 +81,12 @@ static void _irqhandler(void* priv)
 	}
 }
 
-void stm32_usart_device::irqinit()
+void genos::stm32_usart::irqinit()
 {
 	irqtable_set_handler(irqno, &_irqhandler, (void*) this);
 }
 
-int stm32_usart_device::setup(int32_t baud, char parity,
+int genos::stm32_usart::setup(int32_t baud, char parity,
                              uint8_t databits, uint8_t stopbits)
 {
 	//STM32 count parity bit as one of databit.

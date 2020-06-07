@@ -10,7 +10,7 @@ int main()
 
 	while(1) 
 	{
-		gpio_pin_toggle(&board_led);
-		cpu_delay(50000);
+		board::sysled.toggle();
+		cpu_delay(500000);
 	}
 }

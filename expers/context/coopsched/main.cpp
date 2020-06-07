@@ -19,20 +19,12 @@ void* task(void* arg)
 	while(1) 
 	{
 		dprln("task");
-		gpio_pin_toggle(&board_led);
+		board::sysled.toggle();
 		msleep(1000);
 	}
 }
 
-void* autom_task(void* arg, int* state) 
-{
-	dprln("autom_task");
-	gpio_pin_toggle(&board_led);
-	msleep(1000);
-}
-
 char sch_heap[128];
-genos::autom_schedee asch(autom_task, NULL);
 genos::coopschedee sch(task, NULL, sch_heap, 128);
 
 int main() 
@@ -42,12 +34,8 @@ int main()
 	dprln("init scheduler");
 	scheduler_init();
 	
-	sch.run();
-	asch.run();
-
-	//struct schedee* asch = create_autom_schedee(autom_task, NULL);
-	//schedee_run(asch);
-
+	sch.start();
+	
 	irqs_enable();
 
 	dprln("start schedule");

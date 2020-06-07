@@ -1,12 +1,12 @@
 #include <drivers/spi/stm32-spi.h>
-#include <asm/spi.h>
-#include <asm/rcc.h>
+#include <asm/stm32_spi.h>
+#include <asm/stm32_rcc.h>
 //#include <asm/chip.h>
 
 #include <systime/systime.h>
 #include <errno.h>
 
-int drivers::stm32::spi_driver::enable(bool en)
+int genos::stm32_spi::enable(bool en)
 {
 	#ifdef CHIP_STM32L432XX
 	stm32l4_spi_begin(regs);
@@ -15,7 +15,7 @@ int drivers::stm32::spi_driver::enable(bool en)
 	#endif
 }
 
-int drivers::stm32::spi_driver::begin()
+int genos::stm32_spi::begin()
 {
 	//return enable(true);
 	return 0;
@@ -26,7 +26,7 @@ int drivers::stm32::spi_driver::begin()
 	//return 0;
 }*/
 
-int drivers::stm32::spi_driver::exbyte(int byte)
+int genos::stm32_spi::exbyte(int byte)
 {
 //	dprln("exbyte");
 	uint8_t b = byte;
@@ -38,7 +38,7 @@ int drivers::stm32::spi_driver::exbyte(int byte)
 }
 
 // rxbuf can be nullptr
-int drivers::stm32::spi_driver::exchange(
+int genos::stm32_spi::exchange(
     const void *txbuf, void *rxbuf, int len, char dummy)
 {
 //	dprln("exchange");
@@ -52,12 +52,12 @@ int drivers::stm32::spi_driver::exchange(
 	return 0;
 }
 
-int drivers::stm32::spi_driver::setfrequency(uint32_t freq)
+int genos::stm32_spi::setfrequency(uint32_t freq)
 {
 	return -ENOTSUP;
 }
 
-int drivers::stm32::spi_driver::set_divider(int div) 
+int genos::stm32_spi::set_divider(int div) 
 {
 	#ifdef CHIP_STM32L4XXX
 	return stm32l4_spi_set_divider(regs, div);

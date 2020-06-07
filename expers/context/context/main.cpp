@@ -20,9 +20,9 @@ void blink_loop()
 	irqs_enable();
 	while(1) 
 	{
-		gpio_pin_write(&board_led, 1);
+		board::sysled.set(1);
 		delay(500);
-		gpio_pin_write(&board_led, 0);
+		board::sysled.set(0);
 		delay(500);
 	}
 }
@@ -61,7 +61,7 @@ int main()
 {
 	board_init();
 
-	gpio_pin_write(&board_led, 1);
+	board::sysled.set(1);
 
 	context_init(&cntxt0, (uintptr_t)(stack0 + STACK_SIZE - 1),
 		func0, NULL, false);

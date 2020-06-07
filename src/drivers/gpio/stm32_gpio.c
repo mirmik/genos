@@ -83,12 +83,12 @@ int gpio_settings(gpio_regs_t* g, unsigned int mask, uint32_t mode)
 	return 0;
 }
 
-#ifdef CHIP_STM32
-void gpio_alternate(gpio_regs_t*g, unsigned int mask, uint8_t code) 
+//#ifdef CHIP_STM32
+void gpio_alternate(GPIO_TypeDef * gpio, unsigned int mask, uint8_t code) 
 {
-	struct gpio_regs * gpio = (struct gpio_regs *)(g);
-	rcc_enable_gpio(gpio);
+	//struct gpio_regs * gpio = (struct gpio_regs *)(g);
+	stm32_rcc_enable_gpio(gpio);
 	bits_masked_assign_multimap(gpio->MODER, mask, 0b10, 2);
 	stm32_gpio_set_alternate(gpio, mask, code);	
 } 
-#endif
+//#endif

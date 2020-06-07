@@ -4,7 +4,10 @@
 #define GENOS_SUBST_H
 
 #include "sys/cdefs.h"
+
+#if !__NOARCH
 #include "asm/context.h"
+#endif
 
 struct context;
 

@@ -2,7 +2,12 @@
 
 #include <genos/sched.h>
 
+#if !__NOARCH
 #include <asm/startup.h> // for RESET_STACK
+#else 
+#define RESET_STACK() 
+#endif
+
 #include <util/cpu_delay.h>
 #include <hal/irq.h>
 
@@ -111,6 +116,8 @@ int schedee_manager_total_planed()
 	{
 		dlist_for_each(sch, &runlist[priolvl]) { sum++; }
 	}
+	dlist_for_each(sch, &unstoplist) { sum++; }
+	
 	return sum;
 }
 

@@ -141,7 +141,7 @@ void crow_uartgate::init_recv()
 {
 	system_lock();
 	rpack = (struct crow::packet*) crow::allocate_packet(PACKET_DATAADDR_SIZE_MAX);
-	memset(rpack, 0, PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet::header));
+	memset((void*)rpack, 0, PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet::header));
 	if (rpack == nullptr)
 	{
 		return;
@@ -168,7 +168,7 @@ void crow_uartgate::newline_handler()
 
 void crow_uartgate::error_handler()
 {
-	memset(rpack, 0, PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet::header));
+	memset((void*)rpack, 0, PACKET_DATAADDR_SIZE_MAX + sizeof(crow::packet::header));
 	gstuff_autorecv_setbuf(&recver, (char*)&rpack->header, PACKET_DATAADDR_SIZE_MAX);
 	gstuff_autorecv_reset(&recver);
 }
@@ -235,7 +235,7 @@ void crow_uartgate::uartgate_handler(void* arg, int variant)
 	}
 }
 
-void crow_uartgate::init(struct uart_device * uart, uint8_t addr)
+void crow_uartgate::init(genos::uart* uart, uint8_t addr)
 {
 	DTRACE();
 	u = uart;

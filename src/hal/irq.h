@@ -20,6 +20,13 @@ unsigned char is_interrupt_context();
 
 __END_DECLS
 
+#if !__NOARCH
 #include <asm/irq.h>
+#else
+__BEGIN_DECLS
+void irqs_enable() {}
+void irqs_disable() {}
+__END_DECLS
+#endif
 
 #endif /* HAL_IPL_H_ */

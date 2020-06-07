@@ -1,34 +1,36 @@
-#ifndef GENOS_DRIVERS_QUADGEN_H
-#define GENOS_DRIVERS_QUADGEN_H
+#ifndef GENOS_DRIVERS_DUALGEN_H
+#define GENOS_DRIVERS_DUALGEN_H
 
 #include <igris/util/graycode.h>
 #include <drivers/gpio/pin.h>
 
+// Квадратурный генератор, работающий на дифференциальную пару для случая, 
+// когда выходы аппаратно отображены в дифферентциальную пару.
+
+// Ну, или просто квадратурный генератор.
+
 namespace genos 
 {
-	class quadgen_differential
+	class quadgen
 	{
-		genos::gpio_pin apin0; 
-		genos::gpio_pin apin1; 
-		genos::gpio_pin bpin0; 
-		genos::gpio_pin bpin1;
+		genos::gpio_pin apin; 
+		genos::gpio_pin bpin;
 
 	public:
 		uint8_t state = 0;
 
 	public:
-		quadgen_differential(
-			genos::gpio_pin apin0, genos::gpio_pin apin1, 
-			genos::gpio_pin bpin0, genos::gpio_pin bpin1
+		quadgen(
+			genos::gpio_pin apin, 
+			genos::gpio_pin bpin
 		) 
-			: apin0(apin0), apin1(apin1), bpin0(bpin0), bpin1(bpin1)
+			: apin(apin), bpin(bpin)
 		{}
 
-		quadgen_differential() {}
+		quadgen() {}
 
-		quadgen_differential(const quadgen_differential& q) :
-			apin0(q.apin0), apin1(q.apin1), bpin0(q.bpin0), bpin1(q.bpin1),
-			state(q.state)
+		quadgen(const quadgen& q) :
+			apin(q.apin), bpin(q.bpin), state(q.state)
 		{}
 
 		void set() 
@@ -38,10 +40,8 @@ namespace genos
 			bool a = (bool)(setcode & 0b01);
 			bool b = (bool)(setcode & 0b10);
 
-			apin0.set(a);
-			apin1.set(!a);
-			bpin0.set(b);
-			bpin1.set(!b);
+			apin.set(a);
+			bpin.set(b);
 		}
 
 		void inc() 

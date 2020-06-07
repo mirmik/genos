@@ -1,25 +1,11 @@
 #!/usr/bin/env python3
-#coding:utf-8
 
 import licant
-import licant.libs
-from licant.cxx_modules import application
+import os
 
-licant.libs.include("genos")
-licant.libs.include("gxx")
+licant.include("genos")
 
-application("target",
-	sources = ["main.cpp"],
-
-	mdepends = [ 
-		("gxx"),
-
-		("genos.include"),
-		("genos.sched.cooperative", "__none__"),
-		("genos.sched", "impl"),
-	],
-
-	cc_flags = "-std=gnu11"
+licant.glbfunc.genos_firmware(
+	mdepends=["igris.stdlibs"],
+	sources=["main.cpp"]
 )
-
-licant.ex("target")

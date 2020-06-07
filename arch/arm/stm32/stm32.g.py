@@ -72,20 +72,20 @@ module("genos.hal", impl = "stm32f407vg",
 	ldscripts = "ldscripts/stm32f407vg.ld",
 )
 
-module("genos.hal", impl = "stm32f401", 
-	defines = ["CHIP_STM32F401"],
-	mdepends = [
-		"genos.hal.stm32f4xx",	
-		"genos.hal.stm32.common",
-	],
-	ldscripts = "ldscripts/stm32f401re.ld",
-)
-
-module("genos.stm32.spl.stm32f4xx", 
-	srcdir = "./src/spl",
-	sources = [
-		"stm32f4xx_tim.c"
-	]
+#module("genos.hal", impl = "stm32f401", 
+#	defines = ["CHIP_STM32F401"],
+#	mdepends = [
+#		"genos.hal.stm32f4xx",	
+#		"genos.hal.stm32.common",
+#	],
+#	ldscripts = "ldscripts/stm32f401re.ld",
+#)
+#
+#module("genos.stm32.spl.stm32f4xx", 
+#	srcdir = "./src/spl",
+#	sources = [
+#		"stm32f4xx_tim.c"
+#	]
 
 	#os.listdir(os.path.join(licant.directory(), "src/spl")),
 	#sources = licant.util.find_recursive(
@@ -94,4 +94,4 @@ module("genos.stm32.spl.stm32f4xx",
 	#	hide="HIDE",
 	#	debug=True
 	#)
-)
+#)
