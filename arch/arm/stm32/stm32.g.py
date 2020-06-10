@@ -1,97 +1,63 @@
-import licant
+import licant.modules
 
-module("genos.hal.stm32.common", "base",
-	default=True,
-	include_paths=["src"],
-	srcdir = "src",
+module("arch.stm32_common",
+	include_paths = ["include", "st-device"],
 
-	sources = [
-		"stm32_vectors_rept.S",
-		"stm32_start.c",
-		"stm32_arch.c",
-		"stm32_usart.c",
-		"stm32_gpio.c",
-		"stm32_rcc.c",
-		"stm32_adc.c",
-		"stm32_spi.c",
-		"stm32_diag.c",
+	sources= [
+		"src/stm32_start.c",
+		"src/stm32_vectors.S",
+		"src/stm32_arch.c",
+		"src/stm32_rcc.c",
+		"src/stm32_gpio.c",
+		"src/stm32_usart.c",
+		"src/stm32_diag.c",
+		"src/stm32_systick.c",
+		"src/stm32_clockbus.c",
+		"src/stm32_pll.c",
 	],
+	ldscripts= ["ldscripts/stm32_common.ld"],
 
-	mdepends = [
-		"genos.irqtable",
-		"genos.systime"
-	],
+	cc_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
+	cxx_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
+	ld_flags = "-Os -g -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
 
-	defines = ["CHIP_STM32"],
-
-	cc_flags = "-fno-builtin -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
-	cxx_flags = "-fno-builtin -Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
-	ld_flags = "-fno-builtin -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
-	libs = ["m", "gcc"],
-	ldscripts = "ldscripts/stm32_common.ld",
-)
-
-module("genos.hal.stm32.common", "startup_debug",
-	include_paths=["src"],
-	srcdir = "src",
-
-	sources = [
-		"stm32_vectors_rept.S",
-		#"stm32_start.c",
-		"stm32_arch.c",
-		"stm32_usart.c",
-		"stm32_gpio.c",
-		"stm32_rcc.c",
-		"stm32_adc.c",
-		"stm32_spi.c",
-		"stm32_diag.c",
-	],
-
-	defines = ["CHIP_STM32"],
-
-	cc_flags = "-Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
-	cxx_flags = "-Wl,--gc-sections -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
-	ld_flags = "-nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
 	libs = ["m", "gcc"]
 )
 
+module("arch.stm32g4",
+	defines=["STM32G4XX", "CHIP_STM32G4XX"],
+	sources=["src/stm32g4/stm32g4_sysinit.c"],
+	mdepends = ["arch.cortex-m4", "arch.stm32_common"]
+)
 
-module("genos.hal.stm32f4xx", 
-	mdepends = [
-		"hal.arm.armv7e-m",
-		#"hal.arm"
-	]
+module("arch.stm32f4",
+	defines=["STM32F4XX", "CHIP_STM32F4XX"],
+	sources=["src/stm32f4/stm32f4_sysinit.c"],
+	mdepends = ["arch.cortex-m4", "arch.stm32_common"]
+)
+
+module("arch.stm32g431rb",
+	defines=["STM32G431xx"],
+	mdepends=["arch.stm32g4"],
+	ldscripts=["ldscripts/stm32g431.ld"]
+)
+
+module("arch.stm32g474re",
+	defines=["STM32G474xx"],
+	mdepends=["arch.stm32g4"],
+	ldscripts=["ldscripts/stm32g474re.ld"]
+)
+
+module("genos.hal", impl = "stm32f401", 
+	defines = ["CHIP_STM32F401", "STM32F401xE"],
+	mdepends = [ "arch.stm32f4" ],
+	ldscripts = "ldscripts/stm32f401re.ld",
 )
 
 module("genos.hal", impl = "stm32f407vg", 
-	defines = ["CHIP_STM32F407"],
+	defines = ["CHIP_STM32F407", "STM32F407xx"],
 	mdepends = [
-		"genos.hal.stm32f4xx",	
-		"genos.hal.stm32.common",
+		"arch.stm32f4",	
 	],
 	ldscripts = "ldscripts/stm32f407vg.ld",
 )
-
-#module("genos.hal", impl = "stm32f401", 
-#	defines = ["CHIP_STM32F401"],
-#	mdepends = [
-#		"genos.hal.stm32f4xx",	
-#		"genos.hal.stm32.common",
-#	],
-#	ldscripts = "ldscripts/stm32f401re.ld",
-#)
-#
-#module("genos.stm32.spl.stm32f4xx", 
-#	srcdir = "./src/spl",
-#	sources = [
-#		"stm32f4xx_tim.c"
-#	]
-
-	#os.listdir(os.path.join(licant.directory(), "src/spl")),
-	#sources = licant.util.find_recursive(
-	#	root=os.path.join(licant.directory(), "src/spl"),
-	#	pattern=".c",
-	#	hide="HIDE",
-	#	debug=True
-	#)
-#)

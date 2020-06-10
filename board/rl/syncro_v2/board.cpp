@@ -1,10 +1,13 @@
 #include <hal/board.h>
 #include "curboard.h"
 
-#include <asm/arch.h>
-#include <asm/rcc.h>
-#include <asm/usart.h>
-#include <asm/gpio.h>
+#include <asm/stm32_clockbus.h>
+#include <asm/stm32_rcc.h>
+#include <asm/stm32_pll.h>
+#include <asm/stm32_usart.h>
+#include <asm/stm32_gpio.h>
+#include <asm/stm32_diag.h>
+#include <asm/stm32_systick.h>
 
 #include <drivers/gpio/gpio.h>
 #include <systime/systime.h>
@@ -13,8 +16,8 @@
 
 #include <periph/map.h>
 
-STM32_USART_DEVICE_DECLARE(usart2, USART2, STM32_IRQ_USART2);
-STM32_USART_DEVICE_DECLARE(usart6, USART6, STM32_IRQ_USART6);
+genos::stm32_usart usart2(USART2, USART2_IRQn);
+genos::stm32_usart usart6(USART6, USART6_IRQn);
 
 GPIO_PIN(board_led, GPIOD, 14);
 GPIO_PIN(board_led2, GPIOD, 15);
@@ -29,8 +32,8 @@ struct gpio_pin extpin[4] =
 
 void usart6_configure()
 {
-	rcc_enable_gpio(GPIOC);
-	rcc_enable_usart(USART6);
+	stm32_rcc_enable_gpio(GPIOC);
+	stm32_rcc_enable_usart(USART6);
 
 	cpu_delay(100);
 	
@@ -38,12 +41,12 @@ void usart6_configure()
 	stm32_gpio_set_maxspeed(GPIOC, (1 << 6 | 1 << 7), STM32_GPIO_SPEED_LEVEL_0);
 	stm32_gpio_set_alternate(GPIOC, (1 << 6 | 1 << 7), GPIO_AF_USART6);
 
-	nvic_enable_irq(STM32_IRQ_USART6);
+	nvic_enable_irq(USART6_IRQn);
 
 	stm32_usart_setup(USART6, 115200, 'n', 9, 1);
 }
 
-void board_init() 
+void board_init(int mode) 
 {
 	arch_init();
 	
@@ -58,18 +61,18 @@ void board_init()
 	stm32_systick_config(168000);
 	systime_set_frequency(1000);
 
-	stm32_declared_clockbus_freq[CLOCKBUS_NO_PLL] = 168000000; 
+	stm32_clockbus_freq[CLOCKBUS_PLL] = 168000000; 
 	//stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 84000000;
 	//stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 42000000;
 	
-	stm32_declared_clockbus_freq[CLOCKBUS_NO_APB1] = 42000000;
-	stm32_declared_clockbus_freq[CLOCKBUS_NO_APB2] = 84000000;
+	stm32_clockbus_freq[CLOCKBUS_APB1] = 42000000;
+	stm32_clockbus_freq[CLOCKBUS_APB2] = 84000000;
 
-	rcc_enable_usart(USART2);
-	rcc_enable_usart(USART6);
-	rcc_enable_gpio(GPIOA);
-	rcc_enable_gpio(GPIOC);
-	rcc_enable_gpio(GPIOD);
+	stm32_rcc_enable_usart(USART2);
+	stm32_rcc_enable_usart(USART6);
+	stm32_rcc_enable_gpio(GPIOA);
+	stm32_rcc_enable_gpio(GPIOC);
+	stm32_rcc_enable_gpio(GPIOD);
 
 	cpu_delay(100);
 

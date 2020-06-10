@@ -1,6 +1,7 @@
 #ifndef GENOS_DRIVERS_CROW_UARTGATE_H
 #define GENOS_DRIVERS_CROW_UARTGATE_H
 
+#include <drivers/serial/uart.h>
 #include <crow/gateway.h>
 #include <igris/protocols/gstuff/autorecv.h>
 #include <igris/datastruct/ring.h>

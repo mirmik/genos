@@ -9,17 +9,17 @@
 
 void gpio_write(gpio_regs_t* g, unsigned int mask, unsigned char level)
 {
-	stm32_gpio_write((struct gpio_regs *)(g), mask, level);
+	stm32_gpio_write((GPIO_TypeDef *)(g), mask, level);
 }
 
 unsigned int gpio_read(gpio_regs_t* g, unsigned int mask)
 {
-	return stm32_gpio_read((struct gpio_regs *)(g), mask);
+	return stm32_gpio_read((GPIO_TypeDef *)(g), mask);
 }
 
 void gpio_toggle(gpio_regs_t* g, unsigned int mask)
 {
-	stm32_gpio_toggle((struct gpio_regs *)(g), mask);
+	stm32_gpio_toggle((GPIO_TypeDef *)(g), mask);
 }
 
 int gpio_settings(gpio_regs_t* g, unsigned int mask, uint32_t mode)

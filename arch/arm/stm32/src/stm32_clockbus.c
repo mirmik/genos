@@ -29,12 +29,20 @@ void stm32_clockbus_hse_mode()
 	volatile int i;
 	RCC->CR |= RCC_CR_CSSON;
 	i = 1000; while (--i);
-	
+
+#ifdef RCC_APB1ENR1_PWREN
 	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;              // Power interface clock enable
+#else
+	RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+#endif
+
 	i = 1000; while (--i);
-	while ((RCC->APB1ENR1 & RCC_APB1ENR1_PWREN) != RCC_APB1ENR1_PWREN)
-	{
-	};
+
+#ifdef RCC_APB1ENR1_PWREN
+	while ((RCC->APB1ENR1 & RCC_APB1ENR1_PWREN) != RCC_APB1ENR1_PWREN) {};
+#else
+	while ((RCC->APB1ENR & RCC_APB1ENR_PWREN) != RCC_APB1ENR_PWREN) {};
+#endif
 
 	RCC->CFGR &= ~(RCC_CFGR_HPRE_DIV16 | RCC_CFGR_PPRE1_DIV16 | RCC_CFGR_PPRE2_DIV16);
 	RCC->CFGR |= RCC_CFGR_HPRE_DIV1 

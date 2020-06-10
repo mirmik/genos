@@ -1,6 +1,8 @@
 #include <periph/map.h>
 #include <periph/coremap.h>
 
+#include <asm/stm32_rcc.h>
+
 void stm32_sysinit(void)
 {
 	volatile int i;

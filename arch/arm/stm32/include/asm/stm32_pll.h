@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <sys/cdefs.h>
 
+#ifdef STM32G4XX
 struct stm32_pll_settings
 {
 	uint32_t Mkoeff;
@@ -12,6 +13,15 @@ struct stm32_pll_settings
 	uint32_t Pkoeff;
 	uint32_t Qkoeff;
 };
+#else
+struct stm32_pll_settings
+{
+	uint32_t Mkoeff;
+	uint32_t Nkoeff;
+	uint32_t Pkoeff;
+	uint32_t Qkoeff;
+};
+#endif
 
 __BEGIN_DECLS
 
