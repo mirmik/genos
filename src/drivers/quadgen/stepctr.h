@@ -8,14 +8,16 @@
 namespace genos 
 {
 	class quadgen_differential_stepctr : 
-		public ralgo::heimer::stepctr<float, int64_t, float>
+		public heimer::stepctr<float, int64_t, float>
 	{
 	public:
 		genos::quadgen_differential q;
 
 	public:
+		quadgen_differential_stepctr() {}
+		quadgen_differential_stepctr(const genos::quadgen_differential_stepctr& oth) : q(oth.q) {}
 		quadgen_differential_stepctr(const genos::quadgen_differential& q) : 
-		 ralgo::heimer::stepctr<float, int64_t, float>(""),	q(q)
+			heimer::stepctr<float, int64_t, float>(""),	q(q)
 		{
 
 		}
@@ -33,14 +35,16 @@ namespace genos
 
 
 	class quadgen_stepctr : 
-		public ralgo::heimer::stepctr<float, int64_t, float>
+		public heimer::stepctr<float, int64_t, float>
 	{
 	public:
 		genos::quadgen q;
 
 	public:
+		quadgen_stepctr() {}
+		quadgen_stepctr(const genos::quadgen_stepctr& oth) : q(oth.q) {}
 		quadgen_stepctr(const genos::quadgen& q) : 
-		 ralgo::heimer::stepctr<float, int64_t, float>(""),	q(q)
+			heimer::stepctr<float, int64_t, float>(""),	q(q)
 		{
 
 		}

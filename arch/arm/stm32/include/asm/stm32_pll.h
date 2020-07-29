@@ -5,6 +5,7 @@
 #include <sys/cdefs.h>
 
 #ifdef STM32G4XX
+#define STM32_PLL_VAR1
 struct stm32_pll_settings
 {
 	uint32_t Mkoeff;
@@ -14,6 +15,7 @@ struct stm32_pll_settings
 	uint32_t Qkoeff;
 };
 #else
+#define STM32_PLL_VAR2
 struct stm32_pll_settings
 {
 	uint32_t Mkoeff;
@@ -26,9 +28,13 @@ struct stm32_pll_settings
 __BEGIN_DECLS
 
 unsigned stm32_init_pll_clocking(struct stm32_pll_settings*);
-int stm32_pll_setup(int M, int N, int R, int P, int Q);
 int stm32_clockbus_enable_pll_mode(uint32_t freq);
 
+#if defined(STM32_PLL_VAR1)
+int stm32_pll_setup(int M, int N, int R, int P, int Q);
+#elif defined(STM32_PLL_VAR1)
+int stm32_pll_setup(int M, int N, int P, int Q);
+#endif
 __END_DECLS
 
 #endif

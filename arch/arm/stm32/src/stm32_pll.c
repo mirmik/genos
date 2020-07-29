@@ -4,7 +4,7 @@
 
 #include <igris/util/bits.h>
 
-#ifdef STM32F4xx
+#if defined(STM32F4xx) || defined(CHIP_STM32F4XX) 
 unsigned stm32_init_pll_clocking(struct stm32_pll_settings* s)
 {
 	// Включаем масштабирование регулятора напряжения.
@@ -118,15 +118,25 @@ unsigned stm32_init_pll_clocking(struct stm32_pll_settings* s)
 
 	return 0;
 }
+#else 
+#error "undefined stm32_init_pll_clocking"
 #endif
 
-
+#if defined(STM32_PLL_VAR1)
 int stm32_pll_setup(int M, int N, int R, int P, int Q) 
 {
 	struct stm32_pll_settings koeffs = {M,N,R,P,Q};
 	return stm32_init_pll_clocking(&koeffs);
 }
-
+#elif defined(STM32_PLL_VAR2)
+int stm32_pll_setup(int M, int N, int P, int Q) 
+{
+	struct stm32_pll_settings koeffs = {M,N,P,Q};
+	return stm32_init_pll_clocking(&koeffs);
+}
+#else
+#error "Undefined PLL koefficients"
+#endif
 /*unsigned stm32_init_pll_clocking(struct stm32_pll_settings* s)
 {
 	// Включаем масштабирование регулятора напряжения.

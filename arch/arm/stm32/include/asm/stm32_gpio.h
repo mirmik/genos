@@ -14,7 +14,7 @@ enum stm32_gpio_maxspeed_e
 	STM32_GPIO_50MHZ = 0b11
 };
 #elif defined CHIP_STM32F3XX || defined CHIP_STM32F4XX \
-	|| defined CHIP_STM32L4XX
+	|| defined CHIP_STM32L4XX || defined STM32G4XX
 enum stm32_gpio_maxspeed_e 
 {
 	STM32_GPIO_SPEED_LEVEL_0 = 0b00,

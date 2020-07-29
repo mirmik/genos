@@ -30,6 +30,12 @@ struct gpio_pin extpin[4] =
 	{GPIOB, 1<<15}
 };
 
+namespace board 
+{
+	genos::stm32_usart sysuart(USART2, USART2_IRQn);
+	genos::gpio_pin sysled(GPIOD, 1<<14);
+}
+
 void usart6_configure()
 {
 	stm32_rcc_enable_gpio(GPIOC);

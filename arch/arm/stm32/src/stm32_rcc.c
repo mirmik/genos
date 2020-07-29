@@ -85,6 +85,10 @@ void stm32_rcc_enable_usart(USART_TypeDef * usart)
 		case LPUART1_BASE : RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN; break;
 		#endif
 
+		#ifdef RCC_APB2ENR_USART1EN
+		case USART1_BASE : RCC->APB2ENR |= RCC_APB2ENR_USART1EN; break;
+		#endif
+
 		default: BUG();
 	}
 }
