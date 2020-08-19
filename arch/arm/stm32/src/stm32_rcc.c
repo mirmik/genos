@@ -171,6 +171,27 @@ void stm32_rcc_enable_timer(TIM_TypeDef* t)
 	}
 }
 
+void stm32_rcc_enable_adc(ADC_TypeDef* regs)
+{
+	switch ((uintptr_t)regs)
+	{
+		case ADC1_BASE :
+			RCC->APB2ENR |= RCC_APB2ENR_ADC1EN; break;
+
+#ifdef ADC2_BASE		
+		case ADC2_BASE :
+			RCC->APB2ENR |= RCC_APB2ENR_ADC2EN; break;
+#endif
+
+#ifdef ADC3_BASE
+		case ADC3_BASE :
+			RCC->APB2ENR |= RCC_APB2ENR_ADC3EN; break;
+#endif
+
+		default: BUG();
+	}
+}
+
 void stm32_rcc_enable_spi(SPI_TypeDef * spi);
 
 void stm32_rcc_reset()

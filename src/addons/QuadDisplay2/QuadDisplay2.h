@@ -5,10 +5,11 @@
 #include <inttypes.h> 
 
 #include <defs/arduino.h>
-#include <board/pinout.h>
+#include <pinout.h>
+
+#include <Arduino.h>
 
 #include <systime/systime.h>
-#include <util/arduino_compat.h>
 
 /*
 

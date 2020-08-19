@@ -10,8 +10,8 @@
 #elif BOARD_ARDUINO_UNO
 #include <addons/arduino-compat/arduino-uno.h>
 
-#elif BOARD_NUCLEO_F401RE
-#include <addons/arduino-compat/nucleo-f401.h>
+//#elif BOARD_NUCLEO_F401RE
+//#include <addons/arduino-compat/nucleo-f401.h>
 
 #else
 #include <board/pinout.h>

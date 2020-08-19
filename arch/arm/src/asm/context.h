@@ -1,7 +1,7 @@
 #ifndef ARM_CONTEXT_H
 #define ARM_CONTEXT_H
 
-#include "inttypes.h"
+#include "stdint.h"
 
 struct context {
 	uint32_t r[13];

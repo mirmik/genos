@@ -4,6 +4,8 @@
 #include <drivers/crow/uartgate.h>
 #include <crow/tower.h>
 
+#include <igris/util/crc.h>
+
 #include <igris/sync/syslock.h>
 #include <igris/util/bug.h>
 #include <drivers/serial/uart.h>
@@ -204,14 +206,11 @@ void crow_uartgate::nblock_onestep()
 					newline_handler();
 					break;
 				case GSTUFF_CONTINUE:
-					break;
-				case GSTUFF_DATA_ERROR:
-				case GSTUFF_CRC_ERROR:
-				case GSTUFF_OVERFLOW:
-					error_handler();
+				case GSTUFF_GARBAGE:
 					break;
 				default:
-					BUG();
+					error_handler();
+					break;
 		}
 	}
 }

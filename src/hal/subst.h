@@ -3,7 +3,7 @@
 #ifndef GENOS_SUBST_H
 #define GENOS_SUBST_H
 
-#include "sys/cdefs.h"
+#include "igris/compiler.h"
 
 #if !__NOARCH
 #include "asm/context.h"

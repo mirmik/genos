@@ -3,7 +3,7 @@
 
 #include <drivers/serial/uart.h>
 #include <crow/gateway.h>
-#include <igris/protocols/gstuff/autorecv.h>
+#include <igris/protocols/gstuff.h>
 #include <igris/datastruct/ring.h>
 
 #define PACKET_DATAADDR_SIZE_MAX 64

@@ -10,6 +10,7 @@ __BEGIN_DECLS
 void stm32_rcc_enable_gpio(GPIO_TypeDef * gpio);
 void stm32_rcc_enable_usart(USART_TypeDef * usart);
 void stm32_rcc_enable_spi(SPI_TypeDef * spi);
+void stm32_rcc_enable_adc(ADC_TypeDef * spi);
 void stm32_rcc_enable_timer(TIM_TypeDef * spi);
 
 void stm32_rcc_reset();
