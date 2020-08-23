@@ -49,6 +49,12 @@ module("arch.stm32g474re",
 	ldscripts=["ldscripts/stm32g474re.ld"]
 )
 
+module("arch.stm32f446re",
+	defines=["STM32F446xx"],
+	mdepends=["arch.stm32f4"],
+	ldscripts=["ldscripts/stm32f446re.ld"]
+)
+
 module("genos.hal", impl = "stm32f401", 
 	defines = ["CHIP_STM32F401", "STM32F401xE"],
 	mdepends = [ "arch.stm32f4" ],

@@ -7,12 +7,9 @@ int main()
 {
 	board_init();
 
-	//irqs_enable();
-
 	while(1) 
 	{
 		cpu_delay(100000);
 		board::sysled.toggle();
-		//gpio_pin_toggle(&board_led);
 	}
 }
