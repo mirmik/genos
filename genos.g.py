@@ -1,7 +1,7 @@
 from licant.modules import module
 import traceback
 
-licant.include("periph")
+#licant.include("periph")
 licant.include("igris")
 licant.include("nos")
 
