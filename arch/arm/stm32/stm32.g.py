@@ -37,6 +37,26 @@ module("arch.stm32f4",
 	mdepends = ["arch.cortex-m4", "arch.stm32_common"]
 )
 
+module("arch.stm32f446re",
+	defines=["STM32F446xx"],
+	mdepends=["arch.stm32f4"],
+	ldscripts=["ldscripts/stm32f446re.ld"]
+)
+
+module("arch.stm32f401re", 
+	defines = ["CHIP_STM32F401", "STM32F401xE"],
+	mdepends = [ "arch.stm32f4" ],
+	ldscripts = "ldscripts/stm32f401re.ld",
+)
+
+module("arch.stm32f407vg", 
+	defines = ["CHIP_STM32F407", "STM32F407xx"],
+	mdepends = [
+		"arch.stm32f4",	
+	],
+	ldscripts = "ldscripts/stm32f407vg.ld",
+)
+
 module("arch.stm32g431rb",
 	defines=["STM32G431xx"],
 	mdepends=["arch.stm32g4"],
@@ -47,24 +67,4 @@ module("arch.stm32g474re",
 	defines=["STM32G474xx"],
 	mdepends=["arch.stm32g4"],
 	ldscripts=["ldscripts/stm32g474re.ld"]
-)
-
-module("arch.stm32f446re",
-	defines=["STM32F446xx"],
-	mdepends=["arch.stm32f4"],
-	ldscripts=["ldscripts/stm32f446re.ld"]
-)
-
-module("genos.hal", impl = "stm32f401", 
-	defines = ["CHIP_STM32F401", "STM32F401xE"],
-	mdepends = [ "arch.stm32f4" ],
-	ldscripts = "ldscripts/stm32f401re.ld",
-)
-
-module("genos.hal", impl = "stm32f407vg", 
-	defines = ["CHIP_STM32F407", "STM32F407xx"],
-	mdepends = [
-		"arch.stm32f4",	
-	],
-	ldscripts = "ldscripts/stm32f407vg.ld",
 )

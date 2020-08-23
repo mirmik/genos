@@ -4,7 +4,7 @@ import os
 toolchain = licant.cxx_make.toolchain_gcc("arm-none-eabi-")
 
 mdepends = [
-	("genos.board", "nucleo-f401re"),
+	"board.nucleo-f401re",
 	"genos.drivers.stm32"
 ]
 

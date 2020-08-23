@@ -32,11 +32,11 @@ void board_init(int freqmode)
 	stm32_clockbus_freq[CLOCKBUS_HSE] = BOARD_HSE_FREQ;
 	switch (freqmode)
 	{
-		case 0: //HSI mode
+		case STM32_FREQMODE_HSI: //HSI mode
 			stm32_clockbus_hsi_mode();
 			break;
 
-		case 1: 
+		case STM32_FREQMODE_HSE: 
 			stm32_clockbus_hse_mode();
 			break;
 	}
