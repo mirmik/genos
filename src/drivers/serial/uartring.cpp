@@ -152,7 +152,9 @@ size_t genos::uartring::room()
 
 size_t genos::uartring::avail()
 {
-	return ring_avail(&rxring);
+	igris::syslock_guard lock;
+	int avail = ring_avail(&rxring);
+	return avail;
 }
 
 static void uartring_irq_handler(void* priv, int code)

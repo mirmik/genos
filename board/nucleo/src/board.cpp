@@ -49,16 +49,30 @@ void board_init(int freqmode)
 	stm32_rcc_enable_usart(SYSUART);
 
 	gpio_settings(SYSUART_RX_GPIO, (1 << SYSUART_RX_PIN), GPIO_MODE_ALTERNATE);
-	//stm32_gpio_set_maxspeed(SYSUART_RX_GPIO, (1 << SYSUART_RX_PIN), STM32_GPIO_SPEED_LEVEL_0);
 	stm32_gpio_set_alternate(SYSUART_RX_GPIO, (1 << SYSUART_RX_PIN), SYSUART_RX_AF);
 	
 	gpio_settings(SYSUART_TX_GPIO, (1 << SYSUART_TX_PIN), GPIO_MODE_ALTERNATE);
-	//stm32_gpio_set_maxspeed(SYSUART_TX_GPIO, (1 << SYSUART_TX_PIN), STM32_GPIO_SPEED_LEVEL_0);
 	stm32_gpio_set_alternate(SYSUART_TX_GPIO, (1 << SYSUART_TX_PIN), SYSUART_TX_AF);
 
 	board::sysuart.setup(115200, 'n', 8, 1);
 	stm32_diag_init(SYSUART);
 }
+
+/*void board_enable_arduart() 
+{
+	stm32_rcc_enable_gpio(ARDUART_RX_GPIO);
+	stm32_rcc_enable_gpio(ARDUART_TX_GPIO);
+	stm32_rcc_enable_usart(ARDUART);
+
+	gpio_settings(ARDUART_RX_GPIO, (1 << ARDUART_RX_PIN), GPIO_MODE_ALTERNATE);
+	stm32_gpio_set_alternate(ARDUART_RX_GPIO, (1 << ARDUART_RX_PIN), ARDUART_RX_AF);
+	
+	gpio_settings(ARDUART_TX_GPIO, (1 << ARDUART_TX_PIN), GPIO_MODE_ALTERNATE);
+	stm32_gpio_set_alternate(SYSUART_TX_GPIO, (1 << ARDUART_TX_PIN), ARDUART_TX_AF);
+
+	board::arduart.setup(115200, 'n', 8, 1);
+	stm32_diag_init(ARDUART);	
+}*/
 
 /*void board_init(int freqmode)
 {

@@ -1,6 +1,21 @@
 #include <drivers/serial/stm32_usart.h>
 #include <igris/util/retype.h>
 
+#include <asm/stm32_gpio.h>
+#include <asm/stm32_usart.h>
+
+void genos::stm32_usart::init_gpio(gpio_pin tx, gpio_pin rx, int af)
+{
+	stm32_rcc_enable_gpio(tx.gpio);
+	stm32_rcc_enable_gpio(rx.gpio);
+
+	gpio_settings(tx.gpio, tx.mask, GPIO_MODE_ALTERNATE);
+	gpio_settings(rx.gpio, rx.mask, GPIO_MODE_ALTERNATE);
+
+	stm32_gpio_set_alternate(tx.gpio, tx.mask, af);
+	stm32_gpio_set_alternate(rx.gpio, rx.mask, af);	
+}
+
 int genos::stm32_usart::enable(int en)
 {
 	stm32_usart_enable(regs, en);

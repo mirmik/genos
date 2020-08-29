@@ -8,6 +8,8 @@
 
 #include <hal/irqtable.h>
 
+#include <drivers/gpio/pin.h>
+
 namespace genos 
 {
 	struct stm32_usart : public genos::uart
@@ -28,6 +30,8 @@ namespace genos
 		stm32_usart(USART_TypeDef * regs, uint8_t irqno) :
 			regs(regs), irqno(irqno) 
 		{}
+
+		void init_gpio(gpio_pin tx, gpio_pin rx, int af);
 	};
 }
 
