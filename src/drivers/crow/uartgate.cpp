@@ -1,5 +1,3 @@
-#include <igris/dtrace.h>
-
 #include <drivers/serial/uart.h>
 #include <drivers/crow/uartgate.h>
 #include <crow/tower.h>
@@ -236,7 +234,6 @@ void crow_uartgate::uartgate_handler(void* arg, int variant)
 
 void crow_uartgate::init(genos::uart* uart, uint8_t addr)
 {
-	DTRACE();
 	u = uart;
 	dlist_init(&to_send);
 
