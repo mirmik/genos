@@ -81,14 +81,9 @@ namespace genos
 
 						auto outputbuf = output.buffer();
 
-						if (outputbuf.size() != 0)
-							crow::node_send(id, rid, cptr->addr(), outputbuf, 
-								cptr->qos(), cptr->ackquant());
-						
-						//DPRINTPTR(cptr);
-						//DPRINT(cptr->f.released_by_world);
-						//DPRINT(cptr->f.released_by_tower);
-						
+						crow::node_send(id, rid, cptr->addr(), outputbuf, 
+							cptr->qos(), cptr->ackquant());
+
 						crow::release(cptr);
 						break;
 					}
