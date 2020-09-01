@@ -2,21 +2,14 @@
 #define GENOS_SYSCMD_H
 
 #include <igris/shell/conscmd.h>
-#include <utility>
-
-#warning "genos syscmd is deprecated. use igris conscmd instead"
+#include <igris/shell/executor.h>
 
 namespace genos 
 {
-	using syscmd_func_t = int (*)(int, char**);
+	void set_system_executor(igris::executor * executor);
+	int system(const char * cmd);
 
-	struct system_command : public igris::console_command
-	{
-		template<class ... Args>
-		system_command(Args&& ... args) : 		
-			igris::console_command(std::forward<Args>(args) ...) 
-		{}
-	};
+	extern igris::executor * system_executor;
 }
 
 #endif

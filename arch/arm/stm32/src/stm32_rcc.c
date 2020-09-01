@@ -175,15 +175,17 @@ void stm32_rcc_enable_adc(ADC_TypeDef* regs)
 {
 	switch ((uintptr_t)regs)
 	{
+#ifdef RCC_APB2ENR_ADC1EN
 		case ADC1_BASE :
 			RCC->APB2ENR |= RCC_APB2ENR_ADC1EN; break;
+#endif
 
-#ifdef ADC2_BASE		
+#ifdef RCC_APB2ENR_ADC2EN		
 		case ADC2_BASE :
 			RCC->APB2ENR |= RCC_APB2ENR_ADC2EN; break;
 #endif
 
-#ifdef ADC3_BASE
+#ifdef RCC_APB2ENR_ADC3EN
 		case ADC3_BASE :
 			RCC->APB2ENR |= RCC_APB2ENR_ADC3EN; break;
 #endif

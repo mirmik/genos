@@ -152,9 +152,15 @@ module("genos",
 		"genos.sched",
 		"genos.irqtable",
 		"genos.diag",
-		"genos.systime"
+		"genos.systime",
+		"genos.syscmd",
 	]
 )
+
+module("genos.syscmd",
+	sources=[
+		"src/genos/syscmd.cpp"
+	])
 
 def genos_firmware(sources=[], mdepends=[], **kwargs):
 	import shutil

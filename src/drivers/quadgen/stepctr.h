@@ -14,12 +14,13 @@ namespace genos
 		genos::quadgen_differential q;
 
 	public:
-		quadgen_differential_stepctr() {}
-		quadgen_differential_stepctr(const genos::quadgen_differential_stepctr& oth) : q(oth.q) {}
-		quadgen_differential_stepctr(const genos::quadgen_differential& q) : 
-			heimer::stepctr<float, int64_t, float>(""),	q(q)
-		{
+		quadgen_differential_stepctr(const char * name) : 
+			heimer::stepctr<float, int64_t, float>(name)
+		{}
 
+		void init(genos::quadgen_differential q) 
+		{
+			this->q = q;
 		}
 
 		void inc() override 
@@ -41,12 +42,15 @@ namespace genos
 		genos::quadgen q;
 
 	public:
-		quadgen_stepctr() {}
-		quadgen_stepctr(const genos::quadgen_stepctr& oth) : q(oth.q) {}
-		quadgen_stepctr(const genos::quadgen& q) : 
-			heimer::stepctr<float, int64_t, float>(""),	q(q)
+		quadgen_stepctr(const char * name) : 
+			heimer::stepctr<float, int64_t, float>(name)
 		{
 
+		}
+
+		void init(genos::quadgen q) 
+		{
+			this->q = q;
 		}
 
 		void inc() override 
