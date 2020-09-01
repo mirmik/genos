@@ -107,7 +107,7 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 			switch (*(gate->send_ptr - 1))
 			{
 				case GSTUFF_START: gate->u->sendbyte(GSTUFF_STUB_START); break;
-
+				case GSTUFF_STOP: gate->u->sendbyte(GSTUFF_STUB_STOP); break;
 				case GSTUFF_STUB: gate->u->sendbyte(GSTUFF_STUB_STUB); break;
 			}
 
@@ -115,7 +115,7 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 			return;
 
 		case 2:
-			gate->u->sendbyte(GSTUFF_START);
+			gate->u->sendbyte(GSTUFF_STOP);
 			gate->send_state = 3;
 			return;
 
@@ -128,7 +128,7 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 			switch ((char)gate->send_crc)
 			{
 				case GSTUFF_START: gate->u->sendbyte(GSTUFF_STUB_START); break;
-
+				case GSTUFF_STOP: gate->u->sendbyte(GSTUFF_STUB_STOP); break;
 				case GSTUFF_STUB: gate->u->sendbyte(GSTUFF_STUB_STUB); break;
 			}
 
