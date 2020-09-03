@@ -36,18 +36,21 @@ void stm32_usart_txirq_enable(USART_TypeDef * regs, int en);
 void stm32_usart_tcirq_enable(USART_TypeDef * regs, int en);
 void stm32_usart_rxirq_enable(USART_TypeDef * regs, int en);
 
+void stm32_drop_overrun_flag(USART_TypeDef * regs);
+
 int stm32_usart_putc(USART_TypeDef * usart, char c);
 int stm32_usart_getc(USART_TypeDef * usart);
 int stm32_usart_room(USART_TypeDef * usart);
 int stm32_usart_avail(USART_TypeDef * usart);
+
 int stm32_rxirq_status(USART_TypeDef * usart);
 int stm32_txirq_status(USART_TypeDef * usart);
 int stm32_tcirq_status(USART_TypeDef * usart);
+int stm32_overrun_irq_status(USART_TypeDef * usart);
 
 void stm32_usart_debug_print(USART_TypeDef * usart);
-
-
 void stm32_usart_wait_cantx(USART_TypeDef * usart);
+void stm32_usart_wait_canrx(USART_TypeDef * usart);
 
 __END_DECLS
 

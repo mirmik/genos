@@ -8,7 +8,7 @@
 #include <igris/shell/executor.h>
 #include <genos/nav.h>
 
-#define CONTTY_LINE_LENGTH 32
+#define CONTTY_LINE_LENGTH 64
 #define CONTTY_HISTORY_SIZE 5
 
 namespace genos
@@ -24,6 +24,7 @@ namespace genos
 		const char * machine_name = "";
 		char last;
 
+		// TODO: сделать вариабельными с возможностью отключения истории
 		char buffer[CONTTY_LINE_LENGTH];
 		char hbuffer[CONTTY_LINE_LENGTH * CONTTY_HISTORY_SIZE];
 

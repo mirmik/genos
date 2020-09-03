@@ -10,8 +10,8 @@
 void genos::contty::newline()
 {
 	int ans;
-	char line[48];
-	int len = readline_linecpy(&rl, line, 48);
+	char line[CONTTY_LINE_LENGTH];
+	int len = readline_linecpy(&rl, line, CONTTY_LINE_LENGTH);
 
 	if (ex)
 		ans = ex->execute(line, len, SH_INTERNAL_SPLIT, nullptr);
@@ -45,8 +45,9 @@ void genos::contty::execute()
 		case 12:
 			{
 				// Сбрасываем шум.
-				char buf [24];
-				outside->read(buf, 24, IO_NOBLOCK);
+				char c;
+				while(outside->avail())
+					outside->read(&c, 1, IO_NOBLOCK);
 				state = 1;
 			}
 		case 1:

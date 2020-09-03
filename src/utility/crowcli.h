@@ -75,6 +75,7 @@ namespace genos
 						memset(output_buffer, 0, CROWCLI_OTPUT_BUFFER_SIZE);
 						int ret1;
 
+
 						int ret0 = exec->execute(data.data(), data.size(), 
 							SH_INTERNAL_SPLIT, &ret1);
 						(void) ret0;

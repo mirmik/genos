@@ -12,6 +12,9 @@
 #define UART_IRQCODE_TX 1 // Можно положить следующий байт
 #define UART_IRQCODE_TC 2 // Конвеер завершил свою работу.
 
+#define UART_IRQCODE_ERROR_MASK 0x80
+#define UART_IRQCODE_RX_OVERRUN 0x81
+
 #define UART_CTRIRQS_RXON 0
 #define UART_CTRIRQS_RXOFF 1
 #define UART_CTRIRQS_TXON 2

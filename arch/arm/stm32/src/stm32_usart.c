@@ -14,6 +14,11 @@
 #define USART_ISR_TC USART_SR_TC
 #endif
 
+void stm32_drop_overrun_flag(USART_TypeDef * usart) 
+{
+	usart->ICR |= USART_ICR_ORECF;
+}
+
 void stm32_usart_wait_cantx(USART_TypeDef * usart) 
 {
 	while (!(usart->ISR & (1 << 7)));
@@ -42,19 +47,29 @@ int stm32_usart_avail(USART_TypeDef * usart)
 
 int stm32_rxirq_status(USART_TypeDef * usart) 
 {
-	return usart->ISR & USART_ISR_RXNE;
+	return 
+		(usart->CR1 & USART_CR1_RXNEIE) &&
+		(usart->ISR & USART_ISR_RXNE);
 }
 
 int stm32_txirq_status(USART_TypeDef * usart) 
 {
-	return usart->ISR & USART_ISR_TXE;
+	return 
+		(usart->CR1 & USART_CR1_TXEIE) &&
+		(usart->ISR & USART_ISR_TXE);
 }
 
 int stm32_tcirq_status(USART_TypeDef * usart) 
 {
-	return usart->ISR & USART_ISR_TC;
+	return 
+		(usart->CR1 & USART_CR1_TCIE) &&
+		(usart->ISR & USART_ISR_TC);
 }
 
+int stm32_overrun_irq_status(USART_TypeDef * usart) 
+{
+	return usart->ISR & USART_ISR_ORE;
+}
 
 uint8_t stm32_usart_clockbus(USART_TypeDef * regs)
 {

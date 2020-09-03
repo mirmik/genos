@@ -89,8 +89,20 @@ static void _irqhandler(void* priv)
 		dev->handler(dev->handarg, UART_IRQCODE_TX);
 	}
 
-	else if (stm32_tcirq_status(regs)) {
-		//dev.handler(dev.handarg, UART_IRQCODE_TC);
+	else if (stm32_tcirq_status(regs)) 
+	{
+		dev->handler(dev->handarg, UART_IRQCODE_TC);		
+	}
+
+	else if (stm32_overrun_irq_status(regs)) 
+	{
+		stm32_drop_overrun_flag(regs);
+		dev->handler(dev->handarg, UART_IRQCODE_RX_OVERRUN);	
+	}
+
+	else 
+	{
+		dprln("stm32: unhandled usart irq");
 		stm32_usart_debug_print(regs);
 		BUG();
 	}

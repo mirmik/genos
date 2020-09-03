@@ -13,6 +13,7 @@
 
 void crow_uartgate::do_send(crow::packet* pack)
 {
+	assert(pack);
 	system_lock();
 
 	dlist_del_init(&pack->lnk);
@@ -32,11 +33,12 @@ void crow_uartgate::do_send(crow::packet* pack)
 
 void crow_uartgate::sended()
 {
-	system_lock();
 	crow::packet * tmp = insend;
-
+	assert(tmp);
+	
 	if (dlist_empty(&to_send))
 	{
+		u->ctrirqs(UART_CTRIRQS_TXOFF);
 		insend = nullptr;
 	}
 	else
@@ -45,7 +47,6 @@ void crow_uartgate::sended()
 		do_send(entry);
 	}
 
-	system_unlock();
 	crow::return_to_tower(tmp, CROW_SENDED);
 }
 
@@ -69,6 +70,16 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 {
 	crow_uartgate* gate = (crow_uartgate*) arg;
 	char c;
+
+	// ложный вызов
+	if (gate->insend == nullptr) 
+	{
+		//dpr("a");
+		stm32_usart_debug_print(((genos::stm32_usart*)(gate->u))->regs);
+		BUG();
+		gate->u->ctrirqs(UART_CTRIRQS_TXOFF);
+		return;
+	}
 
 	switch (gate->send_state)
 	{
@@ -120,7 +131,7 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 			return;
 
 		case 3:
-			gate->u->ctrirqs(UART_CTRIRQS_TXOFF);
+			gate->send_state = 0;
 			gate->sended();
 			return;
 
@@ -219,16 +230,32 @@ void crow_uartgate::uartgate_rx_handler(void* arg)
 	ring_putc(&gate->recvring, gate->recvring_buffer, gate->u->recvbyte());
 }
 
+void crow_uartgate::uartgate_error_handler(void * arg, int variant)
+{
+	crow_uartgate* gate = (crow_uartgate*) arg;
+	++gate->usart_error_counter;
+
+	if (variant == UART_IRQCODE_RX_OVERRUN) 
+	{
+	//	gate->u->recvbyte();
+	//	stm32_drop_overrun_flag(gate->u);
+	}
+}
 
 void crow_uartgate::uartgate_handler(void* arg, int variant)
 {
 	switch (variant)
 	{
-		case UART_IRQCODE_RX: uartgate_rx_handler(arg); break;
+		case UART_IRQCODE_RX: uartgate_rx_handler(arg); return;
 
-		case UART_IRQCODE_TX: uartgate_tx_handler(arg); break;
+		case UART_IRQCODE_TX: uartgate_tx_handler(arg); return;
 
-		case UART_IRQCODE_TC: BUG(); break;
+		case UART_IRQCODE_TC: return;
+	}
+
+	if (variant & UART_IRQCODE_ERROR_MASK) 
+	{
+		uartgate_error_handler(arg, variant);
 	}
 }
 
