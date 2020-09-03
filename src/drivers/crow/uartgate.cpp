@@ -87,7 +87,10 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 			if (gate->send_ptr == gate->send_end)
 			{
 
-				if ((char)gate->send_crc == GSTUFF_START || (char)gate->send_crc == GSTUFF_STUB)
+				if (
+					(char)gate->send_crc == GSTUFF_START || 
+					(char)gate->send_crc == GSTUFF_STUB || 
+					(char)gate->send_crc == GSTUFF_STOP)
 				{
 					gate->u->sendbyte(GSTUFF_STUB);
 					gate->send_state = 4;
@@ -102,7 +105,9 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 			c = *gate->send_ptr++;
 			strmcrc8(&gate->send_crc, c);
 
-			if (c == GSTUFF_START || c == GSTUFF_STUB)
+			if (c == GSTUFF_START || 
+				c == GSTUFF_STUB ||
+				c == GSTUFF_STOP)
 			{
 				gate->u->sendbyte(GSTUFF_STUB);
 				gate->send_state = 1;
