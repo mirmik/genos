@@ -193,12 +193,13 @@ static void uartring_irq_handler(void* priv, int code)
 				return;
 			}
 
-		case UART_IRQCODE_TC: //fallthrow
-			BUG();
+		//case UART_IRQCODE_TC: //fallthrow
+			
 
 		default:
-			dprln("code:", code);
-			BUG();
+			dprln("uring:", code);
+			return;
+			//BUG();
 	}
 }
 
