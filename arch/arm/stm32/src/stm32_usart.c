@@ -16,7 +16,9 @@
 
 void stm32_drop_overrun_flag(USART_TypeDef * usart) 
 {
+#if defined(USART_ICR_ORECF)
 	usart->ICR |= USART_ICR_ORECF;
+#endif
 }
 
 void stm32_usart_wait_cantx(USART_TypeDef * usart) 
@@ -68,7 +70,10 @@ int stm32_tcirq_status(USART_TypeDef * usart)
 
 int stm32_overrun_irq_status(USART_TypeDef * usart) 
 {
+#if defined(USART_ISR_ORE)
 	return usart->ISR & USART_ISR_ORE;
+#endif
+	return 0;
 }
 
 uint8_t stm32_usart_clockbus(USART_TypeDef * regs)

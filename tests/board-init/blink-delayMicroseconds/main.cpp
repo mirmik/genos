@@ -2,6 +2,7 @@
 #include <hal/irq.h>
 
 #include <systime/systime.h>
+#include <asm/systime.h>
 
 int main()
 {
@@ -9,10 +10,17 @@ int main()
 
 	irqs_enable();
 
+	int64_t last = 0;
+
+	DPRINT(systime_lomax());
+
+	int i = 0;
+
+	jiffies_pair_t lastpair;// = {10, 16001};
+	//dprln(jiffies_pair_to_micros(pair));
+
 	while(1) 
 	{
-		delayMicroseconds(1000000);
-		dprln(millis());
-		board::sysled.toggle();
+		dprln(micros());
 	}
 }

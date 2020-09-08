@@ -13,6 +13,12 @@
 // Аналог clock_t.
 typedef int64_t jiffies_t;
 
+typedef struct jiffies_pair_s 
+{
+	jiffies_t hi;
+	jiffies_t lo;
+} jiffies_pair_t;
+
 extern volatile jiffies_t __jiffies;
 
 __BEGIN_DECLS
@@ -30,6 +36,10 @@ void system_tick();
 jiffies_t jiffies();
 jiffies_t millis();
 jiffies_t micros();
+
+jiffies_pair_t jiffies_pair();
+int jiffies_pair_compare(jiffies_pair_t a, jiffies_pair_t b);
+jiffies_t jiffies_pair_to_micros(jiffies_pair_t pair);
 
 void delay(double d);
 

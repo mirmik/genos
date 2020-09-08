@@ -4,10 +4,14 @@
 
 #include <asm/nvic.h>
 
+int __systick_config = 1;
+
 int stm32_systick_config(uint32_t ticks)
 {
 	if ((ticks - 1) > SYSTICK_VALUE_MASK)
 		return 1; // reload value impossible
+
+	__systick_config = ticks;
 
 	SysTick->LOAD = ticks - 1; // set reload register
 	SysTick->VAL = 0; // reset current value
