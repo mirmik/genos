@@ -35,6 +35,9 @@ void irqtable_debug_print();
 __END_DECLS
 
 #ifdef __cplusplus
+#include <igris/shell/conscmd.h>
+extern igris::console_command irqtable_utilities[];
+
 namespace genos
 {
 	namespace irqtable 

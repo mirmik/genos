@@ -301,6 +301,7 @@ static int procctr(int argc, char** argv)
 
 igris::console_command schedee_manager_utilities[] =
 {
-	igris::console_command{"ps", ps_command},
-	igris::console_command{"procctr", procctr},
+	{"ps", ps_command},
+	{"procctr", procctr},
+	{nullptr, (void*)nullptr, nullptr}
 };

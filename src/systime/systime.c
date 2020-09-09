@@ -64,7 +64,7 @@ void sysclock_set_frequency(uint32_t freq)
 jiffies_pair_t jiffies_pair()
 {
 	jiffies_pair_t res;
-	jiffies_t lo1, lo2, hi2;
+	jiffies_t lo1, hi2;
 
 	do {
 		system_lock();

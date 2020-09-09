@@ -102,9 +102,8 @@ static void _irqhandler(void* priv)
 
 	else 
 	{
-		dprln("stm32: unhandled usart irq");
-		stm32_usart_debug_print(regs);
-		BUG();
+		dpr("stm32: unh usart irq usart->ISR: ");
+		dprhex(dev->regs->ISR);
 	}
 }
 

@@ -4,6 +4,7 @@
 
 #include <periph/irqdefs.h>
 
+#include <igris/shell/conscmd.h>
 #include <igris/dprint.h>
 
 volatile unsigned char __interrupt_context = 0;
@@ -65,6 +66,22 @@ void irqtable_debug_print()
 	}	
 }
 
+int print_irqtable_command(int argc, char ** argv) 
+{
+	dprln("__irqtable:");
+	for (int i = 0; i < NR_IRQS; ++i)
+	{
+		dpr(i); 
+		dpr(": "); 
+		dprptr((void*)__irqtable[i].handler);
+		dpr(" ");
+		dprptr(__irqtable[i].handler_arg);
+		dpr(" ");
+		dprln(__irqtable[i].count);		
+	}
+	return 0;	
+}
+
 uint16_t genos::irqtable::counter(int irqno) 
 {
 	auto save = irqs_save();	
@@ -73,3 +90,9 @@ uint16_t genos::irqtable::counter(int irqno)
 
 	return count;
 }
+
+igris::console_command irqtable_utilities[] =
+{
+	{"irqtable", print_irqtable_command},
+	{nullptr, (void*)nullptr, nullptr}
+};
