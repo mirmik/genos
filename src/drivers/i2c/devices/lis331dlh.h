@@ -27,7 +27,7 @@ enum LIS331DLH_Range : uint8_t
     RANGE_8G = 8
 };
 
-class LIS331DLH_I2C
+class LIS331DLH_I2C : public genos::i2c_client
 {
     genos::i2c_master * i2c;
 
