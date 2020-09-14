@@ -52,6 +52,8 @@ void stm32_usart_debug_print(USART_TypeDef * usart);
 void stm32_usart_wait_cantx(USART_TypeDef * usart);
 void stm32_usart_wait_canrx(USART_TypeDef * usart);
 
+void stm32_debug_print_usart_interrupt_status_register(USART_TypeDef * regs);
+
 __END_DECLS
 
 #endif

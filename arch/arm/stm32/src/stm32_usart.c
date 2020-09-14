@@ -289,3 +289,8 @@ void stm32_usart_debug_print(USART_TypeDef * usart)
 	DPRINTHEX(usart->CR3);
 	//DPRINTHEX(usart->GTPR);
 }
+
+void stm32_debug_print_usart_interrupt_status_register(USART_TypeDef * regs) 
+{
+	dprhex(regs->ISR);
+}
