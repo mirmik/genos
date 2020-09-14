@@ -8,7 +8,7 @@ namespace genos
 	class i2c_client : public genos::device
 	{
 	public:
-		i2c_master * parent() { return (i2c_master*) genos::device::parent; }
+		i2c_device * dev;
 		uint8_t addr;
 
 		i2c_client(i2c_master * parent, uint8_t addr) : 
@@ -17,14 +17,19 @@ namespace genos
 
 		int write(const void* out, uint16_t olen) 
 		{
-			auto * master = parent();
-
-			master->set_slave_address();
+			dev->lock_bus();
+			dev->set_slave_address(addr);
+			dev->exchange(out, olen, nullptr, 0);
+			dev->unlock_bus();
 		}
 
-		int read(void* in, uint16_t ilen) 
+		int exchange(
+			const void* out, uint16_t olen, 
+			void* in, uint16_t ilen) 
 		{
-			auto * master = parent();
+			dev->lock_bus();
+				
+			dev->unlock_bus();
 		}
 
 		int lock_bus() 

@@ -8,11 +8,11 @@
 
 int genos::stm32_spi::enable(bool en)
 {
-	#ifdef CHIP_STM32L432XX
+#ifdef CHIP_STM32L432XX
 	stm32l4_spi_begin(regs);
-	#else
+#else
 	BUG();
-	#endif
+#endif
 }
 
 int genos::stm32_spi::begin()
@@ -42,13 +42,13 @@ int genos::stm32_spi::exchange(
     const void *txbuf, void *rxbuf, int len, char dummy)
 {
 //	dprln("exchange");
-	#ifdef CHIP_STM32L432XX
+#ifdef CHIP_STM32L432XX
 	stm32l4_spi_exchange(regs,
-	                   (const uint8_t*)txbuf, (uint8_t*)rxbuf,
-	                   len, dummy);
-	#else
+	                     (const uint8_t*)txbuf, (uint8_t*)rxbuf,
+	                     len, dummy);
+#else
 	BUG();
-	#endif
+#endif
 	return 0;
 }
 
@@ -57,11 +57,27 @@ int genos::stm32_spi::setfrequency(uint32_t freq)
 	return -ENOTSUP;
 }
 
-int genos::stm32_spi::set_divider(int div) 
+int genos::stm32_spi::set_divider(int div)
 {
-	#ifdef CHIP_STM32L4XXX
+#ifdef CHIP_STM32L4XXX
 	return stm32l4_spi_set_divider(regs, div);
-	#else
+#else
 	BUG();
-	#endif
+#endif
+}
+
+
+void genos::stm32_spi::irq_handler(void *privarg) 
+{
+	genos::stm32_spi * dev = (genos::stm32_spi *) privarg;	
+
+	
+}
+
+void genos::stm32_spi::init_irq() 
+{
+	irqtable_set_handler(
+		irqno, 
+		&genos::stm32_spi::irq_handler, 
+		(void*) this);
 }

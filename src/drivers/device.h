@@ -7,12 +7,10 @@ namespace genos
 {
 	class device 
 	{
-	public:
-		device * parent;
-	
-		device() : parent(nullptr) {}
-		device(device * par) : parent(par) {}
+		virtual device * parent_device() = 0;
 	};
+
+
 }
 
 #endif
