@@ -1,14 +1,15 @@
 #ifndef GENOS_I2C_H
 #define GENOS_I2C_H
 
-#include <igris/osinter/sem.h>
+#include <drivers/device.h>
+#include <igris/sync/semaphore.h>
 
 namespace genos
 {
 	// linux compatible
 	class i2c_master : genos::device
 	{
-		struct semaphore semlock = SEMAPHORE_INIT(semlock);
+		struct semaphore semlock = SEMAPHORE_INIT(semlock, 1);
 
 	public:
 		virtual int set_slave_address(uint8_t addr) = 0;
@@ -20,8 +21,8 @@ namespace genos
 
 		virtual int set_baudrate(int rate) = 0;
 
-		void lock_bus() { sema_down(&semlock); }
-		void unlock_bus() { sema_up(&semlock); }
+		void lock_bus() { semaphore_down(&semlock); }
+		void unlock_bus() { semaphore_up(&semlock); }
 	};
 }
 

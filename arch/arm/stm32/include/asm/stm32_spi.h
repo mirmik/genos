@@ -52,6 +52,9 @@ int stm32_spi_set_divider(SPI_TypeDef * regs, int divider)
 void stm32_spi_exchange(SPI_TypeDef * spi, 
 	const uint8_t* sbuf, uint8_t *rbuf, uint32_t len, char dummy);
 
+void stm32_spi_send_byte(SPI_TypeDef * regs, uint8_t byte);
+
+uint8_t stm32_spi_recv_byte(SPI_TypeDef * regs);
 
 __END_DECLS
 

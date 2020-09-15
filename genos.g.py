@@ -154,12 +154,18 @@ module("genos",
 		"genos.diag",
 		"genos.systime",
 		"genos.syscmd",
+		"genos.regmap",
 	]
 )
 
 module("genos.syscmd",
 	sources=[
 		"src/genos/syscmd.cpp"
+	])
+
+module("genos.regmap",
+	sources=[
+		"src/drivers/regmap.cpp"
 	])
 
 def genos_firmware(sources=[], mdepends=[], **kwargs):

@@ -50,8 +50,8 @@ namespace genos
 			BUG();
 		}
 
-		void lock_bus() { semaphore_down(&lock_bus); }
-		void unlock_bus() { semaphore_up(&lock_bus); }
+		void lock_bus() { semaphore_down(&__lock_bus); }
+		void unlock_bus() { semaphore_up(&__lock_bus); }
 	};
 
 	

@@ -1,18 +1,21 @@
 #ifndef GENOS_DRIVERS_SPI_CLIENT_H
 #define GENOS_DRIVERS_SPI_CLIENT_H
 
+#include <drivers/spi/spi_device.h>
+#include <drivers/gpio/pin.h>
+
 namespace genos 
 {
 	class spi_client : public genos::device
 	{
-		genos::spi_device * driver;
+		genos::spi_device * parent;
 		gpio_pin cs;
 
 	public:
-		device * parent_device() override { return driver; }
+		device * parent_device() override { return parent; }
 
-		spi_client(genos::spi * driver, gpio_pin slct)
-			: driver(driver), cs(slct)
+		spi_client(genos::spi_device * dev, gpio_pin slct)
+			: parent(dev), cs(slct)
 		{
 			if (cs.gpio != nullptr)
 				init_select_pin();
@@ -24,8 +27,8 @@ namespace genos
 			cs.set(1);
 		}
 
-		void lock_bus() { driver->lock_bus(); }
-		void unlock_bus() { driver->unlock_bus(); }
+		void lock_bus() { parent->lock_bus(); }
+		void unlock_bus() { parent->unlock_bus(); }
 
 		int select(bool en = true) { cs.set(!en); return 0; }
 		int deselect() { return select(false); }

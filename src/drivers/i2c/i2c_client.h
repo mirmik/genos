@@ -1,6 +1,7 @@
 #ifndef GENOS_I2C_CLIENT_H
 #define GENOS_I2C_CLIENT_H
 
+#include <drivers/i2c/i2c_device.h>
 #include <drivers/i2c/i2c_master.h>
 
 namespace genos 
@@ -11,16 +12,20 @@ namespace genos
 		i2c_device * dev;
 		uint8_t addr;
 
-		i2c_client(i2c_master * parent, uint8_t addr) : 
-			device(parent), addr(addr)
+		i2c_client(i2c_device * parent, uint8_t addr) : 
+			addr(addr)
 		{}
+
+		genos::device * parent_device() override { return dev; }
 
 		int write(const void* out, uint16_t olen) 
 		{
-			dev->lock_bus();
+			int ret;
+			
 			dev->set_slave_address(addr);
-			dev->exchange(out, olen, nullptr, 0);
-			dev->unlock_bus();
+			ret = dev->exchange(addr, out, olen, nullptr, 0);
+			
+			return ret;
 		}
 
 		int exchange(
@@ -30,16 +35,18 @@ namespace genos
 			dev->lock_bus();
 				
 			dev->unlock_bus();
+
+			return 0;
 		}
 
-		int lock_bus() 
+		void lock_bus() 
 		{
-			parent()->lock_bus();
+			dev->lock_bus();
 		}
 
-		int unlock_bus() 
+		void unlock_bus() 
 		{
-			parent()->unlock_bus();
+			dev->unlock_bus();
 		}
 	};
 }
