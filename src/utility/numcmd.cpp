@@ -2,6 +2,7 @@
 #include <igris/util/retype.h>
 #include <igris/util/bug.h>
 #include <igris/util/hexascii.h>
+#include <igris/sync/syslock.h>
 
 #include <drivers/cdev/serdev.h>
 
@@ -16,7 +17,9 @@ void numcmd_send_answer(struct numcmd_context * cntxt, int32_t ret)
 
 	numcmd_form_checksum(buf);
 
+	system_lock();
 	cntxt->serdev->write(buf, 14, 0);
+	system_unlock();
 	
 	if (cntxt->debug_mode) 
 	{
