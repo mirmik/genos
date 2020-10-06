@@ -102,7 +102,7 @@ int sysfs_i2c_readreg(genos::device * dev,
 const genos::regmap_operations regmap_ops_spi =
 {
 	.writereg = spi_writereg,
-	.readreg  = spi_readreg
+	.readreg  = spi_readreg,
 	.write = nullptr,
 	.read = nullptr
 };
@@ -110,7 +110,7 @@ const genos::regmap_operations regmap_ops_spi =
 const genos::regmap_operations regmap_ops_i2c =
 {
 	.writereg = i2c_writereg,
-	.readreg  = i2c_readreg
+	.readreg  = i2c_readreg,
 	.write = nullptr,
 	.read = nullptr
 };
@@ -118,7 +118,7 @@ const genos::regmap_operations regmap_ops_i2c =
 const genos::regmap_operations regmap_ops_sysfs_spi =
 {
 	.writereg = sysfs_spi_writereg,
-	.readreg  = sysfs_spi_readreg
+	.readreg  = sysfs_spi_readreg,
 	.write = nullptr,
 	.read = nullptr
 };
