@@ -16,12 +16,12 @@
 	BUG();
 #endif
 }
-
+*/
 int genos::stm32_spi_device::begin()
 {
 	//return enable(true);
 	return 0;
-}*/
+}
 
 /*int genos::stm32::spi::select(void *slct, int en)
 {

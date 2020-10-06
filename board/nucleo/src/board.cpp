@@ -15,7 +15,7 @@
 #include <asm/stm32_clockbus.h>
 
 gpio_pin board::sysled(SYSLED_GPIO, SYSLED_MASK);
-genos::stm32_usart board::sysuart(SYSUART, SYSUART_IRQ);
+genos::stm32_usart_device board::sysuart(SYSUART, SYSUART_IRQ);
 //stm32_usart_device usart6 (USART6, STM32_IRQ_USART6);
 
 

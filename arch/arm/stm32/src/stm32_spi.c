@@ -1,4 +1,4 @@
-#include <asm/spi.h>
+#include <asm/stm32_spi.h>
 #include <igris/dprint.h>
 
 static inline void stm32_spi_rd8(SPI_TypeDef *SPI, void *rx_data)
@@ -10,7 +10,7 @@ static inline void stm32_spi_wr8(SPI_TypeDef *SPI, const void *tx_data)
 {
     *((volatile uint8_t*)&SPI->DR) = *((const uint8_t*)tx_data);
 }
-
+/*
 void stm32_spi_exchange(SPI_TypeDef * spi, 
 	const uint8_t* sbuf, uint8_t *rbuf, uint32_t len)
 {
@@ -32,7 +32,7 @@ void stm32_spi_exchange(SPI_TypeDef * spi,
 	}
 
 	while (spi->SR & SPI_SR_BSY); // Wait until the transmission of the last byte is complete
-}
+}*/
 
 void stm32_spi_send_byte(SPI_TypeDef * regs, uint8_t byte) 
 {

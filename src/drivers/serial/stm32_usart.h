@@ -12,7 +12,7 @@
 
 namespace genos 
 {
-	struct stm32_usart : public genos::uart
+	struct stm32_usart_device : public genos::uart
 	{
 		USART_TypeDef * regs;
 		uint8_t irqno;
@@ -27,7 +27,7 @@ namespace genos
 	
 		void irqinit();
 	
-		stm32_usart(USART_TypeDef * regs, uint8_t irqno) :
+		stm32_usart_device(USART_TypeDef * regs, uint8_t irqno) :
 			regs(regs), irqno(irqno) 
 		{}
 
