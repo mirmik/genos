@@ -7,14 +7,14 @@ namespace genos
 {
 	class lis2mdl : public regmap 
 	{
-		enum class Register : uint8_t 
+		enum Register
 		{
 			// 0x00 - 0x44
 			OFFSET_X_REG_L = 0x45,
 			OFFSET_X_REG_H = 0x46,
 			OFFSET_Y_REG_L = 0x47,
 			OFFSET_Y_REG_H = 0x48,
-			OFFSET_Z_REG_H = 0x49,
+			OFFSET_Z_REG_L = 0x49,
 			OFFSET_Z_REG_H = 0x4A,
 			// 0x4B - 0x4C
 			WHO_AM_IR = 0x4F,
@@ -36,6 +36,22 @@ namespace genos
 			TEMP_OUT_L_REG = 0x6E,
 			TEMP_OUT_H_REG = 0x6F	
 		};
+
+	public:
+		lis2mdl() {}
+		lis2mdl(i2c_client * dev) : regmap(dev) {}
+		lis2mdl(spi_client * dev) : regmap(dev) {}
+
+		void request_raw_magn(uint16_t * ret) 
+		{
+			uint8_t data[6];
+
+			readreg_group(Register::OUTX_L_REG, data, 6);
+
+			ret[0] = data[0] | (data[1] << 8);
+			ret[1] = data[2] | (data[3] << 8);
+			ret[2] = data[4] | (data[5] << 8);
+		}
 	};
 }
 

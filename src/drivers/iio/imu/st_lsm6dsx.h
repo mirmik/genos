@@ -9,7 +9,7 @@ namespace genos
 	{
 	public:
 
-		enum class Register : uint8_t {
+		enum Register {
 			FUNC_CFG_ACCESS  = 0x01,
 			PIN_CTRL         = 0x02,
 			// RESERVED :      0x03
@@ -84,7 +84,7 @@ namespace genos
 			I3C_BUS_AVB              = 0x62,
 			INTERNAL_FREQ_FINE       = 0x63,
 			// RESERVED :       0x64 - 0x6E
-			INT_OIS                  = 0x6F
+			INT_OIS                  = 0x6F,
 			CTRL1_OIS                = 0x70,
 			CTRL2_OIS                = 0x71,
 			CTRL3_OIS                = 0x72,
@@ -101,15 +101,34 @@ namespace genos
 			FIFO_DATA_OUT_Z_H        = 0x7E	
 		};
 
+		st_lsm6dx() {}
 		st_lsm6dx(i2c_client * dev) : regmap(dev) {}
 		st_lsm6dx(spi_client * dev) : regmap(dev) {}
+
+		int request_raw_data(
+			uint16_t* acc, 
+			uint16_t* gyr) 
+		{
+			uint8_t data[12];
+			
+			readreg_group(Register::OUTX_L_G, data, 12);
+
+			gyr[0] = (data[1] << 8) | data[0];  
+			gyr[1] = (data[3] << 8) | data[2];
+			gyr[2] = (data[5] << 8) | data[4];
+
+			acc[0] = (data[7]  << 8) | data[6];  
+			acc[1] = (data[9]  << 8) | data[8];
+			acc[2] = (data[11] << 8) | data[10];
+
+			return 0;
+		}
 
 		int request_raw_accel(uint16_t * vec) 
 		{
 			uint8_t data[6];
-			data[0] = OUTX_L_A;
 
-			read(data, 6);
+			readreg_group(Register::OUTX_L_A, data, 6);
 
 			vec[0] = (data[1] << 8) | data[0];  
 			vec[1] = (data[3] << 8) | data[2];
@@ -121,9 +140,8 @@ namespace genos
 		int request_raw_gyro(uint16_t * vec) 
 		{
 			uint8_t data[6];
-			data[0] = OUTX_L_G;
-
-			read(data, 6);
+			
+			readreg_group(Register::OUTX_L_G, data, 6);
 
 			vec[0] = (data[1] << 8) | data[0];  
 			vec[1] = (data[3] << 8) | data[2];

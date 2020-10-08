@@ -27,12 +27,14 @@ licant.module("genos.drivers.avr",
 licant.module("genos.drivers.stm32_gpio", sources = ["gpio/stm32_gpio.c"], local_headers = [("__local__/arch_gpio.h", "gpio/stm32_gpio.h")])
 licant.module("genos.drivers.stm32_usart", sources = ["serial/stm32_usart.cpp"])
 licant.module("genos.drivers.stm32_spi", sources = ["spi/stm32-spi.cpp"])
+licant.module("genos.drivers.stm32_i2c", sources = ["i2c/stm32_i2c.cpp"])
 licant.module("genos.drivers.stm32", 
 	mdepends = [
 		"genos.drivers.common",
 		"genos.drivers.stm32_gpio",
 		"genos.drivers.stm32_usart",
 		"genos.drivers.stm32_spi",
+		"genos.drivers.stm32_i2c",
 	]
 )
 

@@ -37,8 +37,8 @@ namespace genos
 		static void _irq_handler(void * arg);
 		void init_irq_handler();
 
-		void lock_bus() { semaphore_down(&__lock); }
-		void unlock_bus() { semaphore_up(&__lock); }
+		void lock_bus() override { semaphore_down(&__lock); }
+		void unlock_bus() override { semaphore_up(&__lock); }
 	};
 }
 

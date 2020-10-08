@@ -17,11 +17,6 @@ namespace genos
 			devmngr.link(this);
 		} 
 
-		int print(const char * str, int flags = 0) 
-		{ 
-			return write(str, strlen(str), flags); 
-		}
-
 		int print(int32_t arg, int flags) 
 		{ 
 			char buf[32];
@@ -29,14 +24,7 @@ namespace genos
 			return write(buf, eptr - buf, flags); 
 		}
 
-		template<typename T>
-		int println(const T& arg, int flags) 
-		{
-			int ret = 0;
-			ret += print(arg,flags);
-			ret += print("\r\n",flags);
-			return ret;
-		}	
+		using node::print;
 	};
 }
 

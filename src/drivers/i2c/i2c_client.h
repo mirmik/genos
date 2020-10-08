@@ -12,9 +12,16 @@ namespace genos
 		i2c_device * dev;
 		uint8_t addr;
 
+		i2c_client() {}
 		i2c_client(i2c_device * parent, uint8_t addr) : 
-			addr(addr)
+			dev(parent), addr(addr)
 		{}
+
+		void init(i2c_device * parent, uint8_t addr) 
+		{
+			this->dev = parent;
+			this->addr = addr;
+		}
 
 		genos::device * parent_device() override { return dev; }
 

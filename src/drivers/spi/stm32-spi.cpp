@@ -8,20 +8,13 @@
 #include <systime/systime.h>
 #include <errno.h>
 
-/*int genos::stm32_spi_device::enable(bool en)
-{
-#ifdef CHIP_STM32L432XX
-	stm32l4_spi_begin(regs);
-#else
-	BUG();
-#endif
-}
-*/
 int genos::stm32_spi_device::begin()
 {
-	//return enable(true);
+	//init_irq_handler();
+	stm32_spi_enable(regs, true);
 	return 0;
 }
+
 
 /*int genos::stm32::spi::select(void *slct, int en)
 {

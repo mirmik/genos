@@ -68,3 +68,16 @@ int genos::restbl::get_available_fd()
 
 	return SET_ERRNO(-EMFILE);
 }
+
+int genos::node::print(const char * data, int flags)
+{
+	return write(data, strlen(data), flags);
+}
+
+int genos::node::println(const char * data, int flags)
+{
+	int ret = 0;
+	ret += write(data, strlen(data), flags);
+	ret += write("\r\n", 2, flags);
+	return ret;
+}

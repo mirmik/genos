@@ -29,6 +29,8 @@ namespace genos
 		int (*readreg) (genos::device *, unsigned int reg, unsigned int * val);
 		int (*write)(genos::device *, unsigned int start_reg, uint8_t * val, int len);
 		int (*read) (genos::device *, unsigned int start_reg, uint8_t * val, int len);
+		int (*lock)(genos::device *);
+		int (*unlock)(genos::device *);
 	};
 
 	class regmap
@@ -36,6 +38,11 @@ namespace genos
 		genos::device * dev; // Устройство, через которое осуществляется доступ
 		regmap_bustype bustype;
 		const regmap_operations * r_ops;
+
+	public:
+		regmap() {}
+		regmap(genos::spi_client * spi) { init_spi(spi); }
+		regmap(genos::i2c_client * i2c) { init_i2c(i2c); }
 
 		void init_spi(genos::spi_client * spi);
 		void init_i2c(genos::i2c_client * i2c);
@@ -51,6 +58,19 @@ namespace genos
 		{
 			return r_ops->readreg(dev, reg, val);
 		}
+
+		int writereg_group(unsigned int start_reg, uint8_t * val, int len) 
+		{
+			return r_ops->write(dev, start_reg, val, len);
+		}
+
+		int readreg_group (unsigned int start_reg, uint8_t * val, int len) 
+		{
+			return r_ops->read(dev, start_reg, val, len);
+		}
+
+		int lock() { return r_ops->lock(dev); }
+		int unlock() { return r_ops->unlock(dev); }
 	};
 
 	extern const regmap_operations regmap_ops_spi;
