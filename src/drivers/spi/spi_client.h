@@ -9,28 +9,28 @@ namespace genos
 	class spi_client : public genos::device
 	{
 		genos::spi_device * parent;
-		gpio_pin cs;
+		gpio_pin * cs;
 
 	public:
 		device * parent_device() override { return parent; }
 
-		spi_client(genos::spi_device * dev, gpio_pin slct)
+		spi_client(genos::spi_device * dev, gpio_pin * slct)
 			: parent(dev), cs(slct)
 		{
-			if (cs.gpio != nullptr)
+			if (cs != nullptr)
 				init_select_pin();
 		}
 
 		void init_select_pin()
 		{
-			cs.mode(GPIO_MODE_INPUT | GPIO_MODE_IN_PULL_UP);
-			cs.set(1);
+			cs->mode(GPIO_MODE_INPUT | GPIO_MODE_IN_PULL_UP);
+			cs->set(1);
 		}
 
 		void lock_bus() { parent->lock_bus(); }
 		void unlock_bus() { parent->unlock_bus(); }
 
-		int select(bool en = true) { cs.set(!en); return 0; }
+		int select(bool en = true) { cs->set(!en); return 0; }
 		int deselect() { return select(false); }
 	};
 }

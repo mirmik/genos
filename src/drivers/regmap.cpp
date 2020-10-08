@@ -6,34 +6,6 @@
 
 #include <igris/util/bug.h>
 
-void genos::regmap::init_spi(genos::spi_client * client)
-{
-	bustype = regmap_bustype::SPI;
-	dev = client;
-	r_ops = &regmap_ops_spi;
-}
-
-void genos::regmap::init_i2c(genos::i2c_client * client)
-{
-	bustype = regmap_bustype::I2C;
-	dev = client;
-	r_ops = &regmap_ops_i2c;
-}
-
-void genos::regmap::init_sysfs_spi(genos::sysfs_spi_client * client)
-{
-	bustype = regmap_bustype::SYSFS_SPI;
-	dev = client;
-	r_ops = &regmap_ops_sysfs_spi;
-}
-
-void genos::regmap::init_sysfs_i2c(genos::sysfs_i2c_client * client)
-{
-	bustype = regmap_bustype::SYSFS_I2C;
-	dev = client;
-	r_ops = &regmap_ops_sysfs_i2c;
-}
-
 int spi_writereg(genos::device * dev,
                  unsigned int reg,
                  unsigned int val)
@@ -130,3 +102,31 @@ const genos::regmap_operations regmap_ops_sysfs_i2c =
 	.write = nullptr,
 	.read = nullptr
 };
+
+void genos::regmap::init_spi(genos::spi_client * client)
+{
+	bustype = regmap_bustype::SPI;
+	dev = client;
+	r_ops = &regmap_ops_spi;
+}
+
+void genos::regmap::init_i2c(genos::i2c_client * client)
+{
+	bustype = regmap_bustype::I2C;
+	dev = client;
+	r_ops = &regmap_ops_i2c;
+}
+
+void genos::regmap::init_sysfs_spi(genos::sysfs_spi_client * client)
+{
+	bustype = regmap_bustype::SYSFS_SPI;
+	dev = client;
+	r_ops = &regmap_ops_sysfs_spi;
+}
+
+void genos::regmap::init_sysfs_i2c(genos::sysfs_i2c_client * client)
+{
+	bustype = regmap_bustype::SYSFS_I2C;
+	dev = client;
+	r_ops = &regmap_ops_sysfs_i2c;
+}

@@ -73,10 +73,10 @@ namespace genos
 		int unlock() { return r_ops->unlock(dev); }
 	};
 
-	extern const regmap_operations regmap_ops_spi;
-	extern const regmap_operations regmap_ops_i2c;
-	extern const regmap_operations regmap_ops_sysfs_spi;
-	extern const regmap_operations regmap_ops_sysfs_i2c;
+	//extern const regmap_operations regmap_ops_spi;
+	//extern const regmap_operations regmap_ops_i2c;
+	//extern const regmap_operations regmap_ops_sysfs_spi;
+	//extern const regmap_operations regmap_ops_sysfs_i2c;
 }
 
 #endif
