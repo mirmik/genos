@@ -10,7 +10,8 @@
 
 int genos::stm32_spi_device::begin()
 {
-	//init_irq_handler();
+	stm32_spi_rcc_enable(regs, true);
+	stm32_spi_set_divider(regs, 16);
 	stm32_spi_enable(regs, true);
 	return 0;
 }
@@ -43,12 +44,17 @@ int genos::stm32_spi_device::exchange(
 
 	while (len--)
 	{
-		while ((regs->SR & SPI_SR_RXNE)) {};
+		dprln(1);
+		//while ((regs->SR & SPI_SR_RXNE)) {};
+		dprln(2);
 		while (!(regs->SR & SPI_SR_TXE)) {};
+		dprln(3);
 
 		stm32_spi_send_byte(regs, *txbuf++);
 
+		dprln(4);
 		while (!(regs->SR & SPI_SR_RXNE)) {};
+		dprln(5);
 
 		c = stm32_spi_recv_byte(regs);
 		if (rxbuf)

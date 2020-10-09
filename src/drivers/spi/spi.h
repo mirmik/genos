@@ -1,4 +1,4 @@
-#ifndef GENOS_DRIVERS_SPI_H
+/*#ifndef GENOS_DRIVERS_SPI_H
 #define GENOS_DRIVERS_SPI_H
 
 #include <sys/cdefs.h>
@@ -40,10 +40,11 @@ namespace genos
 		// При этом,
 		// если txbuf==NULL, вместо данных спамится байт dummy
 		// если rxbuf==NULL, процедура чтения опускается
-//		virtual int exchange (
-//		    const void *txbuf,
-//		    void *rxbuf,
-//		    int len) = 0;
+
+		virtual int exchange (
+		    const void *txbuf,
+		    void *rxbuf,
+		    int len) = 0;
 
 		virtual int setfrequency (uint32_t freq)
 		{
@@ -61,4 +62,4 @@ namespace genos
 	};
 }
 
-#endif
+#endif*/

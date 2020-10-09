@@ -7,10 +7,17 @@
 
 #include <igris/util/bits.h>
 #include <periph/map.h>
+#include <asm/stm32_rcc.h>
 
 typedef SPI_TypeDef spi_regs_t;
 
 __BEGIN_DECLS
+
+static inline
+void stm32_spi_rcc_enable(SPI_TypeDef * regs, bool en) 
+{
+	stm32_rcc_enable_spi(regs);
+}
 
 static inline
 void stm32_spi_enable(SPI_TypeDef * regs, bool en) 
@@ -49,8 +56,8 @@ int stm32_spi_set_divider(SPI_TypeDef * regs, int divider)
 
 // if rxbuf == NULL, - send only
 // rxbuf can be equal to txbuf
-void stm32_spi_exchange(SPI_TypeDef * spi, 
-	const uint8_t* sbuf, uint8_t *rbuf, uint32_t len, char dummy);
+//void stm32_spi_exchange(SPI_TypeDef * spi, 
+//	const uint8_t* sbuf, uint8_t *rbuf, uint32_t len, char dummy);
 
 void stm32_spi_send_byte(SPI_TypeDef * regs, uint8_t byte);
 
