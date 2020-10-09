@@ -38,9 +38,16 @@ namespace genos
 		};
 
 	public:
-		lis2mdl() {}
+		lis2mdl() 
+		{  
+			
+		}
+		
 		lis2mdl(i2c_client * dev) : regmap(dev) {}
 		lis2mdl(spi_client * dev) : regmap(dev) {}
+
+		float mul[3] = {1,1,1};
+		float add[3] = {0,0,0};
 
 		void request_raw_magn(uint16_t * ret) 
 		{
@@ -51,6 +58,21 @@ namespace genos
 			ret[0] = data[0] | (data[1] << 8);
 			ret[1] = data[2] | (data[3] << 8);
 			ret[2] = data[4] | (data[5] << 8);
+		}
+
+		void request_magn(float * ret) 
+		{
+			uint16_t data[3];
+
+			request_raw_magn(data);
+
+			for (int i = 0; i < 3; ++i)
+				ret[i] = data[i] * mul[i] + add[i];
+		}
+
+		void set_discrete_mode() 
+		{
+
 		}
 	};
 }

@@ -8,9 +8,10 @@
 #include <systime/systime.h>
 #include <errno.h>
 
-int genos::stm32_spi_device::begin()
+int genos::stm32_spi_device::begin_master()
 {
 	stm32_spi_rcc_enable(regs, true);
+	stm32_spi_set_master_mode(regs, true);
 	stm32_spi_set_divider(regs, 16);
 	stm32_spi_enable(regs, true);
 	return 0;
@@ -47,13 +48,13 @@ int genos::stm32_spi_device::exchange(
 		dprln(1);
 		//while ((regs->SR & SPI_SR_RXNE)) {};
 		dprln(2);
-		while (!(regs->SR & SPI_SR_TXE)) {};
+		stm32_spi_wait_for_tx_empty(regs);
 		dprln(3);
 
 		stm32_spi_send_byte(regs, *txbuf++);
 
 		dprln(4);
-		while (!(regs->SR & SPI_SR_RXNE)) {};
+		stm32_spi_wait_for_rx_not_empty(regs);
 		dprln(5);
 
 		c = stm32_spi_recv_byte(regs);
@@ -63,7 +64,8 @@ int genos::stm32_spi_device::exchange(
 		}
 	}
 
-	while (regs->SR & SPI_SR_BSY); // Wait until the transmission of the last byte is complete
+	// Wait until the transmission of the last byte is complete
+	stm32_spi_wait_until_busy(regs);
 
 	return 0;
 }

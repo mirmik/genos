@@ -27,7 +27,15 @@ int spi_writereg(genos::device * dev,
                  unsigned int reg,
                  unsigned int val)
 {
-	BUG();
+	genos::spi_client * client = (genos::spi_client *) dev;
+
+	uint8_t tx_data[2];
+	uint8_t rx_data[2];
+
+	tx_data[0] = reg;
+	tx_data[1] = val;
+
+	client -> exchange(tx_data, rx_data, 2);
 	return 0;
 }
 

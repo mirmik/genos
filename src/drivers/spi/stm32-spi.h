@@ -24,7 +24,9 @@ namespace genos
 
 		device * parent_device() override { return nullptr; }
 
-		int begin();
+		int begin_master();
+		int begin_slave();
+
 		//int enable 			(bool en = true) override;
 		//int select   		(void *slct, int en) override;
 		//int exbyte 			(int byte) override;
