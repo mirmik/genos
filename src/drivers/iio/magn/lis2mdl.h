@@ -74,6 +74,22 @@ namespace genos
 		{
 
 		}
+
+		void init_4pin() 
+		{
+			writereg(Register::CFG_REG_C, (1<<2) | (1<<5)); //I2S_DIS | 4WSPI
+		}
+
+		void print_status() 
+		{
+			unsigned int ret;
+			readreg(Register::WHO_AM_IR, &ret);
+			dprln("WHO_AM_IR:", ret);
+
+			readreg(Register::STATUS_REG, &ret);
+			dprln("STATUS_REG:", ret);
+		}
+
 	};
 }
 

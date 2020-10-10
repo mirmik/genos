@@ -76,6 +76,7 @@ extern int gpio_settings(gpio_regs_t *gpio, unsigned int mask, uint32_t mode);
 extern int gpio_mode_fast(gpio_regs_t *gpio, unsigned int mask, uint32_t mode);
 
 extern void gpio_write(gpio_regs_t *gpio, unsigned int mask, uint8_t level);
+extern void gpio_pull_up(gpio_regs_t *gpio, unsigned int mask, uint8_t level);
 extern unsigned int gpio_read(gpio_regs_t *gpio, unsigned int mask);
 
 extern void gpio_toggle(gpio_regs_t *gpio, unsigned int mask);

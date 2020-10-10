@@ -37,7 +37,7 @@ namespace genos
 		void lock_bus() { parent->lock_bus(); }
 		void unlock_bus() { parent->unlock_bus(); }
 
-		int select(bool en = true) { cs->set(!en); return 0; }
+		int select(bool en = true) { cs->pull_up(!en); return 0; }
 		int deselect() { return select(false); }
 	};
 }

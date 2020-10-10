@@ -38,6 +38,8 @@ int stm32_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate);
 void stm32_gpio_set_maxspeed(GPIO_TypeDef* g, uint16_t map,
                              enum stm32_gpio_maxspeed_e maxspeed);
 
+void stm32_gpio_pull_up(GPIO_TypeDef * gpio, unsigned int mask, uint8_t lvl);
+
 __END_DECLS
 
 #endif

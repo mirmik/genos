@@ -23,6 +23,7 @@ struct gpio_pin
 	gpio_pin() : gpio(nullptr), mask(0) {}
 	
 	void set(int lvl) const { gpio_write(gpio, mask, lvl); }
+	void pull_up(int lvl) const { gpio_pull_up(gpio, mask, lvl); }
 	void toggle() const { gpio_toggle(gpio, mask); }
 	void tgl()  const { gpio_toggle(gpio, mask); }
 	uint8_t get() const { return !!gpio_read(gpio, mask); }
@@ -60,6 +61,11 @@ static inline void gpio_pin_init(struct gpio_pin * pin, gpio_regs_t * io, uint8_
 static inline void gpio_pin_write(struct gpio_pin * ptr, uint8_t lvl)
 {
 	gpio_write(ptr->gpio, ptr->mask, lvl);
+}
+
+static inline void gpio_pin_pull_up(struct gpio_pin * ptr, uint8_t lvl)
+{
+	gpio_pull_up(ptr->gpio, ptr->mask, lvl);
 }
 
 static inline void gpio_pin_toggle(struct gpio_pin * ptr)

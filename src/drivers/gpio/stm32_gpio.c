@@ -12,6 +12,11 @@ void gpio_write(gpio_regs_t* g, unsigned int mask, unsigned char level)
 	stm32_gpio_write((GPIO_TypeDef *)(g), mask, level);
 }
 
+void gpio_pull_up(gpio_regs_t* g, unsigned int mask, unsigned char level)
+{
+	stm32_gpio_pull_up((GPIO_TypeDef *)(g), mask, level);
+}
+
 unsigned int gpio_read(gpio_regs_t* g, unsigned int mask)
 {
 	return stm32_gpio_read((GPIO_TypeDef *)(g), mask);

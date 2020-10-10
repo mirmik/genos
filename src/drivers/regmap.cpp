@@ -5,6 +5,7 @@
 #include <drivers/i2c/sysfs_i2c_client.h>
 
 #include <igris/util/bug.h>
+#include <util/cpu_delay.h>
 
 int spi_writereg_group(genos::device * dev,
                  unsigned int reg,
@@ -23,6 +24,23 @@ int spi_writereg_group(genos::device * dev,
 	return 0;
 }
 
+int spi_readreg_group(genos::device * dev,
+                 unsigned int reg,
+                 uint8_t * val, 
+                 int len)
+{
+	genos::spi_client * client = (genos::spi_client *) dev;
+
+	uint8_t tx_data[len + 1];
+	uint8_t rx_data[len + 1];
+
+	tx_data[0] = 0x80 | reg;
+	memcpy(tx_data + 1, val, len);
+
+	client -> exchange(tx_data, rx_data, len + 1);
+	return 0;
+}
+
 int spi_writereg(genos::device * dev,
                  unsigned int reg,
                  unsigned int val)
@@ -35,7 +53,32 @@ int spi_writereg(genos::device * dev,
 	tx_data[0] = reg;
 	tx_data[1] = val;
 
+	client -> select();
 	client -> exchange(tx_data, rx_data, 2);
+	client -> deselect();
+
+	return 0;
+}
+
+int spi_readreg(genos::device * dev,
+                 unsigned int reg,
+                 unsigned int * val)
+{
+	genos::spi_client * client = (genos::spi_client *) dev;
+
+	uint8_t tx_data[2];
+	uint8_t rx_data[2];
+
+	tx_data[0] = 0x80 | reg;
+	tx_data[1] = 0;
+
+	client -> select();
+	cpu_delay(100);
+	client -> exchange(tx_data, rx_data, 2);
+	cpu_delay(100);
+	client -> deselect();
+
+	*val = rx_data[1];
 	return 0;
 }
 
@@ -58,15 +101,6 @@ int sysfs_spi_writereg(genos::device * dev,
 int sysfs_i2c_writereg(genos::device * dev,
                  unsigned int reg,
                  unsigned int val)
-{
-	BUG();
-	return 0;
-}
-
-
-int spi_readreg(genos::device * dev,
-                 unsigned int reg,
-                 unsigned int * val)
 {
 	BUG();
 	return 0;
@@ -150,7 +184,7 @@ const genos::regmap_operations regmap_ops_spi =
 	.writereg = spi_writereg,
 	.readreg  = spi_readreg,
 	.write = spi_writereg_group,
-	.read = spi_writereg_group,
+	.read = spi_readreg_group,
 	.lock = spi_lock,
 	.unlock = spi_unlock
 };

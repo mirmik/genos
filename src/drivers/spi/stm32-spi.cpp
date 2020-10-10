@@ -5,15 +5,36 @@
 #include <asm/stm32_rcc.h>
 //#include <asm/chip.h>
 
+#include <util/cpu_delay.h>
+
 #include <systime/systime.h>
 #include <errno.h>
 
 int genos::stm32_spi_device::begin_master()
 {
 	stm32_spi_rcc_enable(regs, true);
+	cpu_delay(1000);
+
 	stm32_spi_set_master_mode(regs, true);
-	stm32_spi_set_divider(regs, 16);
+	//dprln(1);
+	stm32_spi_debug_print(regs);
+	stm32_spi_set_divider(regs, 256);
+	//dprln(2);
+
+	stm32_spi_disable_nss(regs, true);
+	stm32_spi_set_mode(regs, false, false);
+	//dprln(4);	
+	stm32_spi_debug_print(regs);
 	stm32_spi_enable(regs, true);
+	//dprln(3);
+	stm32_spi_debug_print(regs);
+
+	cpu_delay(1000);
+	//dprln(6);
+	//stm32_spi_debug_print(regs);
+
+	//dprln();dprln();
+
 	return 0;
 }
 
@@ -45,17 +66,17 @@ int genos::stm32_spi_device::exchange(
 
 	while (len--)
 	{
-		dprln(1);
+		//dprln(1);
 		//while ((regs->SR & SPI_SR_RXNE)) {};
-		dprln(2);
+		//dprln(2);
 		stm32_spi_wait_for_tx_empty(regs);
-		dprln(3);
+		//dprln(3);
 
 		stm32_spi_send_byte(regs, *txbuf++);
 
-		dprln(4);
+		//dprln(4);
 		stm32_spi_wait_for_rx_not_empty(regs);
-		dprln(5);
+		//dprln(5);
 
 		c = stm32_spi_recv_byte(regs);
 		if (rxbuf)

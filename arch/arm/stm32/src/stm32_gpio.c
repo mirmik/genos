@@ -6,7 +6,7 @@
 void stm32_gpio_set_output(GPIO_TypeDef * gpio, unsigned int mask)
 {
 	uint8_t mode_val = 0b01;
-	
+
 	bits_clr(gpio->OTYPER, mask);
 	bits_masked_assign_multimap(gpio->OSPEEDR, mask, 0b11, 2);
 	bits_masked_assign_multimap(gpio->MODER, mask, mode_val, 2);
@@ -94,6 +94,16 @@ void stm32_gpio_toggle(GPIO_TypeDef* g, unsigned int mask)
 //
 //	return 0;
 //}
+
+void stm32_gpio_pull_up(GPIO_TypeDef * gpio, unsigned int mask, uint8_t lvl)
+{
+	if (lvl)
+		bits_masked_assign_multimap(gpio->PUPDR, mask, 0b01, 2);
+
+	else
+		bits_masked_assign_multimap(gpio->PUPDR, mask, 0b10, 2);
+}
+
 
 int stm32_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate)
 {

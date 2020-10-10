@@ -60,14 +60,14 @@ int stm32_spi_set_divider(SPI_TypeDef * regs, int divider)
 
 	switch (divider)
 	{
-		case 2: divcode = 0b000;
-		case 4: divcode = 0b001;
-		case 8: divcode = 0b010;
-		case 16: divcode = 0b011;
-		case 32: divcode = 0b100;
-		case 64: divcode = 0b101;
-		case 128: divcode = 0b110;
-		case 256: divcode = 0b111;
+		case 2: divcode = 0b000; break;
+		case 4: divcode = 0b001; break;
+		case 8: divcode = 0b010; break;
+		case 16: divcode = 0b011; break;
+		case 32: divcode = 0b100; break;
+		case 64: divcode = 0b101; break;
+		case 128: divcode = 0b110; break;
+		case 256: divcode = 0b111; break;
 		default: return -1;
 	}
 
@@ -109,6 +109,33 @@ void stm32_spi_wait_until_busy(SPI_TypeDef * regs)
 	{
 		spidebug2("WAIT BSY:", regs->SR);
 	} 
+}
+
+static inline 
+void stm32_spi_set_mode(SPI_TypeDef * regs, bool cpol, bool cpha) 
+{
+	uint8_t dat = (((uint8_t)cpol) << 1) | (((uint8_t)cpha) << 0);
+
+	bits_assign_bias(regs->CR1, 0b11, dat, 0);
+}
+
+static inline 
+void stm32_spi_debug_print(SPI_TypeDef * regs) 
+{
+	dpr("SPI SR:");
+	dprhex((uint16_t)regs->SR); 
+	dpr(" CR1:");
+	dprhex((uint16_t)regs->CR1);
+	dpr(" CR2:");
+	dprhex((uint16_t)regs->CR2);
+	dln();
+}
+
+static inline
+void stm32_spi_disable_nss(SPI_TypeDef * regs, bool en) 
+{
+	regs->CR1 |= SPI_CR1_SSM;
+	regs->CR1 |= SPI_CR1_SSI;
 }
 
 __END_DECLS
