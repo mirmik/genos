@@ -20,7 +20,9 @@ int spi_writereg_group(genos::device * dev,
 	tx_data[0] = reg;
 	memcpy(tx_data + 1, val, len);
 
+	client -> select();
 	client -> exchange(tx_data, rx_data, len + 1);
+	client -> deselect();
 	return 0;
 }
 
@@ -35,9 +37,12 @@ int spi_readreg_group(genos::device * dev,
 	uint8_t rx_data[len + 1];
 
 	tx_data[0] = 0x80 | reg;
-	memcpy(tx_data + 1, val, len);
+	dprln("HERE");
+	memset(tx_data + 1, 0, len);
 
+	client -> select();
 	client -> exchange(tx_data, rx_data, len + 1);
+	client -> deselect();
 	return 0;
 }
 
@@ -73,9 +78,7 @@ int spi_readreg(genos::device * dev,
 	tx_data[1] = 0;
 
 	client -> select();
-	//cpu_delay(100);
 	client -> exchange(tx_data, rx_data, 2);
-	//cpu_delay(100);
 	client -> deselect();
 
 	*val = rx_data[1];

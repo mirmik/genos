@@ -66,6 +66,7 @@ namespace genos
 
 		int readreg_group (unsigned int start_reg, uint8_t * val, int len) 
 		{
+			dprln("READREG GROUP");
 			return r_ops->read(dev, start_reg, val, len);
 		}
 
