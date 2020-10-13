@@ -84,10 +84,10 @@ namespace genos
 		{
 			unsigned int ret;
 			readreg(Register::WHO_AM_IR, &ret);
-			dprln("WHO_AM_IR:", ret);
+			//dprln("WHO_AM_IR:", ret);
 
 			readreg(Register::STATUS_REG, &ret);
-			dprln("STATUS_REG:", ret);
+			//dprln("STATUS_REG:", ret);
 		}
 
 	};

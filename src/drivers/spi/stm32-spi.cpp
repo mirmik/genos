@@ -18,7 +18,7 @@ int genos::stm32_spi_device::begin_master()
 	stm32_spi_set_master_mode(regs, true);
 	//dprln(1);
 	stm32_spi_debug_print(regs);
-	stm32_spi_set_divider(regs, 256);
+	stm32_spi_set_divider(regs, 16);
 	//dprln(2);
 
 	stm32_spi_disable_nss(regs, true);

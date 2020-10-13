@@ -73,9 +73,9 @@ int spi_readreg(genos::device * dev,
 	tx_data[1] = 0;
 
 	client -> select();
-	cpu_delay(100);
+	//cpu_delay(100);
 	client -> exchange(tx_data, rx_data, 2);
-	cpu_delay(100);
+	//cpu_delay(100);
 	client -> deselect();
 
 	*val = rx_data[1];
