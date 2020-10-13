@@ -37,12 +37,15 @@ int spi_readreg_group(genos::device * dev,
 	uint8_t rx_data[len + 1];
 
 	tx_data[0] = 0x80 | reg;
-	dprln("HERE");
+	//dprln("HERE");
 	memset(tx_data + 1, 0, len);
 
 	client -> select();
 	client -> exchange(tx_data, rx_data, len + 1);
 	client -> deselect();
+
+	memcpy(val, rx_data, len);
+
 	return 0;
 }
 

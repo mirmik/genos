@@ -4,6 +4,8 @@
 #include <drivers/device.h>
 #include <stdint.h>
 
+#include <igris/dprint.h>
+
 /*
 	Register map acess API
 */
@@ -66,7 +68,7 @@ namespace genos
 
 		int readreg_group (unsigned int start_reg, uint8_t * val, int len) 
 		{
-			dprln("READREG GROUP");
+			//dprln("READREG GROUP");
 			return r_ops->read(dev, start_reg, val, len);
 		}
 
