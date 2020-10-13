@@ -88,27 +88,21 @@ static inline
 void stm32_spi_wait_for_tx_empty(SPI_TypeDef * regs)
 {
 	while (!(regs->SR & SPI_SR_TXE)) 
-	{
-		spidebug2("WAIT !TXE:", regs->SR);
-	}
+	{}
 }
 
 static inline
 void stm32_spi_wait_for_rx_not_empty(SPI_TypeDef * regs)
 {
 	while (!(regs->SR & SPI_SR_RXNE)) 
-	{
-		spidebug2("WAIT !RXNE:", regs->SR);
-	}
+	{}
 }
 
 static inline 
 void stm32_spi_wait_until_busy(SPI_TypeDef * regs)
 {
 	while (regs->SR & SPI_SR_BSY) 
-	{
-		spidebug2("WAIT BSY:", regs->SR);
-	} 
+	{} 
 }
 
 static inline 

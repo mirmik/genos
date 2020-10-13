@@ -29,9 +29,9 @@ namespace genos
 
 		int exchange(void * tx, void * rx, int len) 
 		{
-			dprln("exchange");
+			//dprln("exchange");
 			return parent->exchange(tx, rx, len);
-			dprln("exchange ... ok");
+			//dprln("exchange ... ok");
 		}
 
 		void lock_bus() { parent->lock_bus(); }
