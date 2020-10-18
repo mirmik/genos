@@ -85,35 +85,34 @@ int genos::uartring::read(void* data,
                           unsigned int size, int flags)
 {
 	int ret;
+	irqstate_t save;
 
-	system_lock();
-
+	save = irqs_save();
 	while (ring_empty(&rxring))
 	{
 
 		if (flags & IO_NOBLOCK)
 		{
-			system_unlock();
+			irqs_restore(save);
 			return 0;
 		}
 
-		system_unlock();
 		if (wait_current_schedee(&rxwait, 0, nullptr) == SCHEDEE_DISPLACE_VIRTUAL)
 		{
-			system_unlock();
+			irqs_restore(save);
 			return 0;
 		}
 	}
 
-	system_unlock();
-
+	irqs_restore(save);
+			
 	if (flags & IO_ONLYWAIT)
 		return 0;
 
-	system_lock();
-	ret = ring_read(&rxring, rxbuffer, (char*)data, size);
-	system_unlock();
-
+	save = irqs_save();
+	ret = ring_read(&rxring, rxbuffer, (char*)data, size);		
+	irqs_restore(save);
+	
 	return ret;
 }
 
