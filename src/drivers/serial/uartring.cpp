@@ -8,6 +8,8 @@
 #include <genos/wait.h>
 #include <util/cpu_delay.h>
 
+#include <hal/irq.h>
+
 int genos::uartring::write(const void* data,
                            unsigned int size,
                            int flags)

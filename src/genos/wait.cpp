@@ -5,6 +5,8 @@
 #include <igris/util/macro.h>
 #include <igris/sync/syslock.h>
 
+#include <hal/irq.h>
+
 int unwait_schedee_waiter(struct waiter* w) 
 {
 	genos::schedee * sch = mcast_out(w, genos::schedee, waiter);
