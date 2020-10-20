@@ -1,3 +1,4 @@
+#include <genos/api.h>
 #include <genos/wait.h>
 #include <genos/sched.h>
 #include <genos/schedee.h>
@@ -36,4 +37,20 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 	system_unlock();
 
 	return __displace__();
+}
+
+int waitchild() 
+{
+	genos::schedee * sch;
+	sch = current_schedee();
+
+	sch->sch_state = SCHEDEE_STATE_WAIT_SCHEDEE;
+
+	system_lock();
+	dlist_del_init(&sch->ctr.lnk);
+	system_unlock();
+
+	__displace__();
+
+	return 0;
 }

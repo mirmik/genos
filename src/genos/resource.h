@@ -12,7 +12,7 @@
 #include <limits.h>
 
 #define GENOS_RESOURCE_FILE 1
-#define GENOS_RESOURCE_DIRECTORY 1
+#define GENOS_RESOURCE_DIRECTORY 2
 
 namespace genos
 {
@@ -37,10 +37,10 @@ namespace genos
 		//virtual int write(const void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 		//virtual int read(void* data, size_t size, genos::openres* onode) { return ENOTSUP; }
 
-		int print(const char * data, int flags=0);
-		int println(const char * data, int flags=0);
+		int print(const char * data, int flags = 0);
+		int println(const char * data, int flags = 0);
 
-		int gettype() override { return GENOS_RESOURCE_FILE; } 
+		int gettype() override { return GENOS_RESOURCE_FILE; }
 	};
 
 //	int open_node(genos::node * res, genos::openres * ores);
@@ -48,66 +48,89 @@ namespace genos
 	int open_resource(genos::resource * res, genos::openres * ores, int flags);
 	int open_resource(genos::resource * res, int16_t flags);
 
-	
+
 	class directory : public resource
 	{
 	public:
 		virtual int iterate(char* buffer, size_t maxsz, genos::openres* onode) { return ENOTSUP; }
 		virtual int mknode(const char* childname, genos::openres* onode) { return ENOTSUP; }
 		virtual int rmnode(const char* childname, genos::openres* onode) { return ENOTSUP; }
-	
-		int gettype() override { return GENOS_RESOURCE_DIRECTORY; } 
+
+		int gettype() override { return GENOS_RESOURCE_DIRECTORY; }
 	};
 
 	int open_directory(genos::directory * res);
 	int open_directory(genos::directory * res, genos::openres * ores);
 
-	
+
 	class openres
 	{
 	public:
-		union {
+		union
+		{
 			genos::resource * res;
 			genos::node * node;
 			genos::directory * dir;
 		};
 		int16_t flags;
-	};
 
-#define RESTBL_SIZE 4
+		void close()
+		{
+			node->release();
+			node = nullptr;
+		}
+	};
 
 	struct restbl
 	{
-//		genos::openres * tbl;
-//		uint8_t tblsz;
+		genos::openres * tbl = nullptr;
+		int tblsize = 0;
+		int refs = 0;
+		void(*deleter)(restbl*) = nullptr;
 
-		genos::openres tbl[RESTBL_SIZE];
-	
 	public:
-		restbl() 
+		restbl() {}
+
+		int size()
 		{
-			memset(tbl, 0, sizeof(tbl));
+			return tblsize;
 		}
 
-		int size() 
+		void up()
 		{
-			return RESTBL_SIZE;
+			refs++;
 		}
 
-/*		void set_table(genos::openres * tbl, uint8_t tblsz)
+		void down()
 		{
-			this->tbl = tbl;
-			this->tblsz = tblsz;
+			refs--;
 
-			memset(tbl, 0, sizeof(genos::openres) * tblsz);
-		}*/
+			if (refs == 0)
+			{
+				for (int i = 0; i < tblsize; ++i)
+				{
+					tbl[i].close();
+				}
+				tblsize = 0;
+			}
+		}
 
-		genos::openres * operator[](int i) 
+		genos::openres * operator[](int i)
 		{
-			if (i >= RESTBL_SIZE) 
+			assert(tbl);
+			assert(tblsize > i);
+
+			if (i >= tblsize)
 				return nullptr;
 
 			return &tbl[i];
+		}
+
+		void attach_restbl(genos::openres * _tbl, int _tblsz)
+		{
+			tbl = _tbl;
+			tblsize = _tblsz;
+			memset(tbl, 0, sizeof(genos::openres) * tblsize);
 		}
 
 		int get_available_fd();
@@ -132,19 +155,19 @@ namespace genos
 
 		int iterate(char* buffer, size_t maxsz, genos::openres* onode) override
 		{
-		/*	if (onode->dh == nullptr)
-				onode->dh = list.next;
-			else
-				onode->dh = onode->dh->next;
+			/*	if (onode->dh == nullptr)
+					onode->dh = list.next;
+				else
+					onode->dh = onode->dh->next;
 
-			if (onode->dh == &list)
-			{
-				buffer[0] = 0;
-				return 0;
-			}
+				if (onode->dh == &list)
+				{
+					buffer[0] = 0;
+					return 0;
+				}
 
-			strncpy(buffer, dlist_entry(onode->dh, named_node, lnk)->name, maxsz);
-		*/	return 0;
+				strncpy(buffer, dlist_entry(onode->dh, named_node, lnk)->name, maxsz);
+			*/	return 0;
 		}
 	};
 
@@ -154,23 +177,23 @@ namespace genos
 		char * buf;
 		size_t cap = 0;
 		size_t cursor = 0;
-		
+
 	public:
-		buffer_node(char* buf, int size) 
+		buffer_node(char* buf, int size)
 			: buf(buf), cap(size)
 		{}
 
 		int write(const void* data, size_t size, int flags) override
-		{ 
+		{
 			size_t sz = MIN(room(), size);
 			memcpy(&buf[cursor], data, sz);
 			cursor += sz;
 			return sz;
 		}
-	
+
 		size_t room() override
-		{ 
-			return cap - cursor; 
+		{
+			return cap - cursor;
 		}
 
 		igris::buffer buffer() { return { buf, cursor }; }

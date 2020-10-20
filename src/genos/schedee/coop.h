@@ -25,15 +25,17 @@ namespace genos
 		coopschedee(void* (*task) (void*),
 		          void * arg,
 		          void * heap,
-		          int heapsize) 
+		          int heapsize,
+		          int flags=0) 
 		{
-			init(task, arg, heap, heapsize);
+			init(task, arg, heap, heapsize, flags);
 		}
 
 		void init(void* (*task) (void*),
 		          void * arg,
 		          void * heap,
-		          int heapsize);
+		          int heapsize,
+		          int flags);
 
 		void execute() override;
 		int displace() override;

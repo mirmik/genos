@@ -4,6 +4,7 @@
 #include <sys/cdefs.h>
 #include <igris/shell/readline.h>
 
+#include <genos/signal.h>
 #include <genos/schedee/autom.h>
 #include <igris/shell/executor.h>
 #include <genos/nav.h>
@@ -40,6 +41,8 @@ namespace genos
 			readline_init(&rl, buffer, CONTTY_LINE_LENGTH);
 			readline_history_init(&rl, hbuffer, CONTTY_HISTORY_SIZE);
 		}
+
+		void signal_handler(int sig) override;
 
 		void set_prefix(const char* str) 
 		{

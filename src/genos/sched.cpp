@@ -44,6 +44,7 @@ void __schedee_run(genos::schedee * sch)
 
 void schedee_run(genos::schedee * sch)
 {
+	//dprln("SCHEDEE_RUN");
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_RUN;
 	sch->ctr.type = CTROBJ_SCHEDEE_LIST;
@@ -65,7 +66,6 @@ void __schedee_wait_for(genos::schedee * parent, genos::schedee * child)
 
 void __schedee_final(genos::schedee * sch)
 {
-
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_FINAL;
 	dlist_move_tail(&sch->ctr.lnk, &finallist);
@@ -121,6 +121,42 @@ int schedee_manager_total_planed()
 	return sum;
 }
 
+const char * schedee_state_string(uint8_t state) 
+{
+	switch (state) 
+	{
+		case SCHEDEE_STATE_RUN: return "RUN";
+		case SCHEDEE_STATE_STOP: return "STOP";
+		case SCHEDEE_STATE_WAIT: return "WAIT";
+		case SCHEDEE_STATE_WAIT_SCHEDEE: return "WAITSCH";
+		case SCHEDEE_STATE_FINAL: return "FINAL";
+		case SCHEDEE_STATE_ZOMBIE: return "ZOMB";
+		default: return "";
+	}
+}
+
+static void ps_command()
+{
+#if SCHEDEE_DEBUG_STRUCT
+	genos::schedee* sch;
+	dlist_for_each_entry(sch, &schedee_list, schedee_list_lnk)
+	{
+		if (sch->mnemo)
+			dpr(sch->mnemo);
+		else
+			dpr("unnamed");
+
+		dpr(" pid:"); dpr(sch->pid);
+		dpr(" gid:"); dpr(sch->gid);
+		dpr(" exec:"); dpr(sch->execcounter);
+		dpr(" disp:"); dpr(sch->dispcounter);
+		dpr(" state:"); dpr(schedee_state_string(sch->sch_state));
+
+		dprln();
+	}
+#endif
+}
+
 void schedee_manager_step()
 {
 	genos::schedee* sch;
@@ -134,9 +170,10 @@ void schedee_manager_step()
 
 		irqs_enable();
 
-		schedee_notify_finalize(sch);
 		sch->sch_state = SCHEDEE_STATE_ZOMBIE;
-		sch->finalize();
+		sch->common_finalize();
+
+		schedee_notify_finalize(sch);
 
 		irqs_disable();
 	}
@@ -222,42 +259,6 @@ void __context_displace_vector__()
 	irqs_enable();
 	syslock_reset();
 	while (1) __schedule__();
-}
-
-const char * schedee_state_string(uint8_t state) 
-{
-	switch (state) 
-	{
-		case SCHEDEE_STATE_RUN: return "RUN";
-		case SCHEDEE_STATE_STOP: return "STOP";
-		case SCHEDEE_STATE_WAIT: return "WAIT";
-		case SCHEDEE_STATE_WAIT_SCHEDEE: return "WAITSCH";
-		case SCHEDEE_STATE_FINAL: return "FINAL";
-		case SCHEDEE_STATE_ZOMBIE: return "ZOMB";
-		default: return "";
-	}
-}
-
-static void ps_command()
-{
-#if SCHEDEE_DEBUG_STRUCT
-	genos::schedee* sch;
-	dlist_for_each_entry(sch, &schedee_list, schedee_list_lnk)
-	{
-		dprptr(sch); dpr(" ");
-
-		if (sch->mnemo)
-			dpr(sch->mnemo);
-		else
-			dpr("unnamed");
-
-		dpr(" exec:"); dpr(sch->execcounter);
-		dpr(" disp:"); dpr(sch->dispcounter);
-		dpr(" state:"); dpr(schedee_state_string(sch->sch_state));
-
-		dprln();
-	}
-#endif
 }
 
 static genos::schedee* get_schedee_by_mnemo(const char* mnemo)

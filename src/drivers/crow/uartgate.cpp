@@ -74,9 +74,6 @@ void crow_uartgate::uartgate_tx_handler(void* arg)
 	// ложный вызов
 	if (gate->insend == nullptr) 
 	{
-		//dpr("a");
-		stm32_usart_debug_print(((genos::stm32_usart*)(gate->u))->regs);
-		BUG();
 		gate->u->ctrirqs(UART_CTRIRQS_TXOFF);
 		return;
 	}

@@ -16,11 +16,13 @@ int genos::open_resource(genos::resource * res, int16_t flags)
 	int fd;
 	genos::openres * filp;
 
-	fd = current_schedee()->restbl.get_available_fd();
+	assert(current_schedee()->restbl);
+
+	fd = (*current_schedee()->restbl).get_available_fd();
 	if (fd < 0) 
 		return -1;
 
-	filp = current_schedee()->restbl[fd];
+	filp = (*current_schedee()->restbl)[fd];
 	
 	if ((ans = open_resource(res, filp, flags))) 
 		return ans;
@@ -37,11 +39,11 @@ int genos::open_directory(genos::directory * res)
 	int fd;
 	genos::openres * filp;
 
-	fd = current_schedee()->restbl.get_available_fd();
+	fd = (*current_schedee()->restbl).get_available_fd();
 	if (fd < 0) 
 		return -1;
 
-	filp = current_schedee()->restbl[fd];
+	filp = (*current_schedee()->restbl)[fd];
 	
 	filp -> dir = res;
 	
@@ -58,7 +60,11 @@ int genos::open_directory(genos::directory * res)
 
 int genos::restbl::get_available_fd() 
 {
-	for (int i = 0; i < RESTBL_SIZE; ++i) 
+	assert(
+		(tbl == nullptr && tblsize == 0) || 
+		(tbl != nullptr && tblsize != 0));
+
+	for (int i = 0; i < tblsize; ++i) 
 	{
 		if (tbl[i].node == nullptr) 
 		{

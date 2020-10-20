@@ -9,9 +9,10 @@ __BEGIN_DECLS
 
 void schedee_run(genos::schedee * sch);
 void schedee_wait(genos::schedee * sch);
-void __schedee_wait_for(genos::schedee * parent, genos::schedee * child);
+//void __schedee_wait_for(genos::schedee * parent, genos::schedee * child);
 void schedee_stop(genos::schedee * sch);
 //void schedee_final(genos::schedee * sch);
+void __schedee_final(genos::schedee * sch);
 
 void schedee_exit();
 

@@ -23,7 +23,7 @@ namespace genos
 	public:
 		int displace() override;
 		void finalize() override {}
-		void signal_handler(int sig) override {}	
+		//void signal_handler(int sig) override {}	
 	};
 
 	class autom_schedee : public autom_schedee_base

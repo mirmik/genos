@@ -58,6 +58,11 @@ module("genos.sched", "impl",
 	default=True,
 )
 
+module(
+	"genos.makeproc", 
+	sources=["src/genos/schedee/oneshoot_makeproc.cpp"]
+)
+
 module("genos.sched", "test",
 	sources = [
 		"src/genos/sched.cpp",
@@ -155,6 +160,8 @@ module("genos",
 		"genos.systime",
 		"genos.syscmd",
 		"genos.regmap",
+
+		"genos.makeproc"
 	]
 )
 

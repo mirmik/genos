@@ -9,6 +9,8 @@ int msleep(unsigned int milliseconds);
 
 int readdir(int fd, char* buf, size_t maxsz);
 
+int waitchild();
+
 __END_DECLS
 
 #endif

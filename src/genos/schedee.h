@@ -8,6 +8,8 @@
 #include <genos/resource.h>
 #include <genos/nav.h>
 
+#include <signal.h>
+
 #ifndef SCHEDEE_DEBUG_STRUCT
 #define SCHEDEE_DEBUG_STRUCT 1
 #endif
@@ -20,6 +22,8 @@
 #define SCHEDEE_STATE_ZOMBIE 		5
 
 #define SCHEDEE_FDMAX 5
+
+#define SCHEDEE_USE_PARENT_GID 1
 
 extern struct dlist_head schedee_list;
 
@@ -39,6 +43,9 @@ namespace genos
 		uint8_t prio;
 		uint8_t sch_state;
 		uint8_t syslock_counter_save;
+
+		uint16_t pid;
+		uint16_t gid;
 
 #if SCHEDEE_DEBUG_STRUCT
 		const char * mnemo = nullptr;
@@ -65,22 +72,45 @@ namespace genos
 
 		// Ресурсы должны принадлежать процессу специального вида (процесс-пользователь).
 		// всем schedee ресурсы не нужны.
-		genos::restbl restbl;
+		genos::restbl * restbl     = nullptr;
 		genos::navblock * navblock = nullptr;
 
 		schedee() {}
 
 		void set_mnemo(const char* str)
 		{
-			#if SCHEDEE_DEBUG_STRUCT
-				mnemo = str;
-			#endif
+#if SCHEDEE_DEBUG_STRUCT
+			mnemo = str;
+#endif
 		}
 
 		virtual void execute() = 0;
 		virtual int displace() = 0;
 		virtual void finalize() = 0;
-		virtual void signal_handler(int sig) {}
+		virtual void signal_handler(int sig);
+
+		void common_finalize()
+		{
+			if (restbl)
+				restbl->down();
+
+			finalize();
+
+			restbl = nullptr;
+			navblock = nullptr;
+		}
+
+		void attach_restbl(genos::restbl * tbl)
+		{
+			restbl = tbl;
+			restbl->up();
+		}
+
+		void release_restbl()
+		{
+			if (restbl)
+				restbl->down();
+		}
 
 		//void set_restbl(genos::openres* tbl, uint8_t tblsize)
 		//{ restbl.set_table(tbl, tblsize); }
@@ -89,7 +119,8 @@ namespace genos
 
 		genos::openres * getres(int i)
 		{
-			return restbl[i];
+			assert(restbl);
+			return (*restbl)[i];
 		}
 
 		void start();
@@ -109,9 +140,15 @@ void schedee_copy_parent_files(genos::schedee* sch);
 
 void schedee_debug_print_fds(genos::schedee* sch);
 
+uint16_t generate_new_pid();
+uint16_t generate_new_gid();
+
 /// Проинициализировать основные поля процесса.
 static inline
-void schedee_init(genos::schedee* sch, int prio)
+void schedee_init(
+    genos::schedee* sch,
+    int prio,
+    int flags = 0)
 {
 
 #if SCHEDEE_DEBUG_STRUCT
@@ -128,6 +165,13 @@ void schedee_init(genos::schedee* sch, int prio)
 	{
 		dlist_del_init(&sch->ctr.lnk);
 	}
+
+	sch->pid = generate_new_pid();
+
+	if (flags & SCHEDEE_USE_PARENT_GID)
+		sch->gid = current_schedee()->gid;
+	else
+		sch->gid = generate_new_gid();
 
 	sch->dispcounter = 0;
 	sch->execcounter = 0;

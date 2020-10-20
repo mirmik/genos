@@ -14,14 +14,15 @@ static
 genos::openres * _get_schedee_file(int fd) 
 {
 	genos::schedee* sch = current_schedee();
-	
-	if (fd >= sch->restbl.size())
+	assert(sch->restbl);
+
+	if (fd >= sch->restbl->size())
 	{
 		errno = EBADF;
 		return nullptr;
 	}
 
-	return sch->restbl[fd];
+	return (*sch->restbl)[fd];
 }
 
 ssize_t write(int fd, const void* data, size_t size) 
@@ -86,7 +87,7 @@ int open(const char * path, int flags, ...)
 
 	sch = current_schedee();
 
-	fd = sch->restbl.get_available_fd();
+	fd = (*sch->restbl).get_available_fd();
 	if (fd < 0)
 		return -1;
 

@@ -8,31 +8,31 @@ void stm32_rcc_enable_gpio(GPIO_TypeDef * gpio)
 	switch ((uintptr_t)gpio)
 	{
 #ifdef RCC_AHB1ENR_GPIOAEN
-	case GPIOA_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; break;
+		case GPIOA_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; break;
 #endif
 
 #ifdef RCC_AHB2ENR_GPIOAEN
-	case GPIOA_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN; break;
+		case GPIOA_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN; break;
 #endif
 
 #ifdef RCC_AHB1ENR_GPIOBEN
-	case GPIOB_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN; break;
+		case GPIOB_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN; break;
 #endif
 
 #ifdef RCC_AHB2ENR_GPIOBEN
-	case GPIOB_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN; break;
+		case GPIOB_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN; break;
 #endif
 
 #ifdef RCC_AHB1ENR_GPIOCEN
-	case GPIOC_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN; break;
+		case GPIOC_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN; break;
 #endif
 
 #ifdef RCC_AHB2ENR_GPIOCEN
-	case GPIOC_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN; break;
+		case GPIOC_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN; break;
 #endif
 
 #ifdef RCC_AHB1ENR_GPIODEN
-	case GPIOD_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN; break;
+		case GPIOD_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN; break;
 #endif
 
 #ifdef RCC_AHB2ENR_GPIODEN
@@ -40,23 +40,23 @@ void stm32_rcc_enable_gpio(GPIO_TypeDef * gpio)
 #endif
 
 #ifdef RCC_AHB1ENR_GPIOEEN
-	case GPIOE_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN; break;
+		case GPIOE_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN; break;
 #endif
 
 #ifdef RCC_AHB2ENR_GPIOFEN
-	case GPIOF_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOFEN; break;
+		case GPIOF_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOFEN; break;
 #endif
 
 #ifdef RCC_AHB1ENR_GPIOFEN
-	case GPIOF_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN; break;
+		case GPIOF_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOFEN; break;
 #endif
 
 #ifdef RCC_AHB1ENR_GPIOGEN
-	case GPIOG_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN; break;
+		case GPIOG_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN; break;
 #endif
 
 #ifdef RCC_AHB1ENR_GPIOHEN
-	case GPIOH_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN; break;
+		case GPIOH_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOHEN; break;
 #endif
 
 #ifdef RCC_AHB2ENR_GPIOHEN
@@ -71,23 +71,23 @@ void stm32_rcc_enable_usart(USART_TypeDef * usart)
 {
 	switch ((uintptr_t)usart)
 	{
-		#ifdef RCC_APB1ENR_USART2EN
+#ifdef RCC_APB1ENR_USART2EN
 		case USART2_BASE : RCC->APB1ENR |= RCC_APB1ENR_USART2EN; break;
-		#elif defined(RCC_APB1ENR1_USART2EN)
+#elif defined(RCC_APB1ENR1_USART2EN)
 		case USART2_BASE : RCC->APB1ENR1 |= RCC_APB1ENR1_USART2EN; break;
-		#endif
+#endif
 
-		#ifdef RCC_APB2ENR_USART6EN
+#ifdef RCC_APB2ENR_USART6EN
 		case USART6_BASE : RCC->APB2ENR |= RCC_APB2ENR_USART6EN; break;
-		#endif
+#endif
 
-		#ifdef RCC_APB1ENR2_LPUART1EN
+#ifdef RCC_APB1ENR2_LPUART1EN
 		case LPUART1_BASE : RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN; break;
-		#endif
+#endif
 
-		#ifdef RCC_APB2ENR_USART1EN
+#ifdef RCC_APB2ENR_USART1EN
 		case USART1_BASE : RCC->APB2ENR |= RCC_APB2ENR_USART1EN; break;
-		#endif
+#endif
 
 		default: BUG();
 	}
@@ -100,7 +100,7 @@ void stm32_rcc_enable_timer(TIM_TypeDef* t)
 		case TIM1_BASE:
 			RCC->APB2ENR |= RCC_APB2ENR_TIM1EN; break;
 
-		
+
 #ifdef RCC_APB1ENR_TIM2EN
 		case TIM2_BASE: RCC->APB1ENR |= RCC_APB1ENR_TIM2EN; break;
 #endif
@@ -180,7 +180,7 @@ void stm32_rcc_enable_adc(ADC_TypeDef* regs)
 			RCC->APB2ENR |= RCC_APB2ENR_ADC1EN; break;
 #endif
 
-#ifdef RCC_APB2ENR_ADC2EN		
+#ifdef RCC_APB2ENR_ADC2EN
 		case ADC2_BASE :
 			RCC->APB2ENR |= RCC_APB2ENR_ADC2EN; break;
 #endif
@@ -198,8 +198,10 @@ void stm32_rcc_enable_i2c(I2C_TypeDef* regs)
 {
 	switch ((uintptr_t)regs)
 	{
+#ifdef RCC_APB1ENR_I2C1EN
 		case I2C1_BASE :
 			RCC->APB1ENR |= RCC_APB1ENR_I2C1EN; break;
+#endif
 
 		default: BUG();
 	}
@@ -209,14 +211,20 @@ void stm32_rcc_enable_spi(SPI_TypeDef* regs)
 {
 	switch ((uintptr_t)regs)
 	{
+#ifdef RCC_APB2ENR_SPI1EN
 		case SPI1_BASE :
 			RCC->APB2ENR |= RCC_APB2ENR_SPI1EN; break;
+#endif
 
+#ifdef RCC_APB1ENR_SPI3EN
 		case SPI3_BASE :
 			RCC->APB1ENR |= RCC_APB1ENR_SPI3EN; break;
+#endif
 
+#ifdef RCC_APB2ENR_SPI4EN
 		case SPI4_BASE :
 			RCC->APB2ENR |= RCC_APB2ENR_SPI4EN; break;
+#endif
 
 		default: BUG();
 	}

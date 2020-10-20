@@ -13,11 +13,25 @@ void genos::contty::newline()
 	char line[CONTTY_LINE_LENGTH];
 	int len = readline_linecpy(&rl, line, CONTTY_LINE_LENGTH);
 
+	if (strcmp(line, "$debug") == 0) 
+	{
+		debug_mode = !debug_mode;
+		return;
+	}
+
 	if (ex)
 		ans = ex->execute(line, len, SH_INTERNAL_SPLIT, nullptr);
-
-	if (ans == EXECUTOR_PROCESS_STARTED)
+			
+	if (ans == EXECUTOR_PROCESS_STARTED) 
+	{
 		state = 5;
+	}
+}
+
+void genos::contty::signal_handler(int sig) 
+{
+	if (sig == SIGINT) return;
+	schedee::signal_handler(sig);
 }
 
 void genos::contty::execute()
@@ -31,8 +45,12 @@ void genos::contty::execute()
 			if (debug_mode)
 				dprln("contty: state 0");
 
-			ret = open_resource(outside, (int)0);
-			ret = open_resource(outside, (int)0);
+			assert(current_schedee()->restbl);
+			assert(current_schedee()->restbl->tbl);
+			assert(current_schedee()->restbl->tblsize >= 2);
+
+			ret = open_resource(outside, (int)0); // fd: 0
+			ret = open_resource(outside, (int)0); // fd: 1
 
 			state = 11;
 
@@ -82,6 +100,16 @@ void genos::contty::execute()
 				dprhex(c);
 				dln();
 				state = 2;
+				return;
+			}
+
+			// CTRL + C
+			if (c == 3) 
+			{
+				if (echo) 
+					ret = outside->write("^C\r\n", 4, 0);
+				state = 1;
+				raise_signal_group(current_schedee()->gid, SIGINT);
 				return;
 			}
 
@@ -205,6 +233,7 @@ void genos::contty::execute()
 
 		case 5:
 			state = 1;
+			waitchild();
 			return;
 
 		default:
