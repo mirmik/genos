@@ -39,6 +39,7 @@ namespace genos
 
 		int print(const char * data, int flags=0);
 		int println(const char * data, int flags=0);
+		int readline(char * data, int flags=0);
 
 		int gettype() override { return GENOS_RESOURCE_FILE; } 
 	};

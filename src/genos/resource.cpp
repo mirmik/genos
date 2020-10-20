@@ -81,3 +81,20 @@ int genos::node::println(const char * data, int flags)
 	ret += write("\r\n", 2, flags);
 	return ret;
 }
+
+int genos::node::readline(char * data, int flags) 
+{
+	int count = 0;
+	char c;
+
+	while(1) 
+	{
+		read(&c, 1, flags);
+		data[count] = c;
+		count++;
+		if (c == '\n') break;
+	}
+
+	data[count] = '\0';
+	return count;
+}
