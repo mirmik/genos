@@ -6,6 +6,8 @@
 #include <igris/util/macro.h>
 #include <igris/sync/syslock.h>
 
+#include <hal/irq.h>
+
 int unwait_schedee_waiter(struct waiter* w) 
 {
 	genos::schedee * sch = mcast_out(w, genos::schedee, waiter);
@@ -26,7 +28,7 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 	sch->ctr.type = CTROBJ_WAITER_SCHEDEE;
 	sch->sch_state = SCHEDEE_STATE_WAIT;
 
-	system_lock();
+	irqstate_t save = irqs_save();
 	dlist_del_init(&sch->ctr.lnk);
 
 	if (priority) 
@@ -34,7 +36,7 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 	else 
 		dlist_move_tail(&sch->ctr.lnk, head);
 
-	system_unlock();
+	irqs_restore(save);
 
 	return __displace__();
 }

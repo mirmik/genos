@@ -96,6 +96,10 @@ uint8_t stm32_usart_clockbus(USART_TypeDef * regs)
 		case LPUART1_BASE : return CLOCKBUS_APB1; break;
 		#endif
 
+		#ifdef RCC_APB1ENR_UART5EN
+		case UART5_BASE : return CLOCKBUS_APB1; break;
+		#endif
+
 		default: BUG();
 	};
 	return 0;

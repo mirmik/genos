@@ -1,173 +1,298 @@
-#ifndef DRIVERS_ST_LSM6DSX_H
-#define DRIVERS_ST_LSM6DSX_H
+/*
+ ******************************************************************************
+ * @file    lsm6dso_reg.h
+ * @author  Sensor Solutions Software Team
+ * @brief   This file contains all the functions prototypes for the
+ *          lsm6dso_reg.c driver.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; COPYRIGHT(c) 2018 STMicroelectronics</center></h2>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *   1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in the
+ *      documentation and/or other materials provided with the distribution.
+ *   3. Neither the name of STMicroelectronics nor the names of its
+ *      contributors may be used to endorse or promote products derived from
+ *      this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+*/
 
-#include <igris/dprint.h>
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef LSM6DSO_DRIVER_H
+#define LSM6DSO_DRIVER_H
 
-#include <drivers/regmap.h>
-#include <drivers/iio/imu/lsm6dso_map.h>
+#ifdef __cplusplus
+  extern "C" {
+#endif
 
-namespace genos
-{
-	class st_lsm6dx : public genos::regmap
-	{
-	public:
+/* Includes ------------------------------------------------------------------*/
+#include <stdint.h>
+#include <math.h>
 
-		enum Register {
-			FUNC_CFG_ACCESS  = 0x01,
-			PIN_CTRL         = 0x02,
-			// RESERVED :      0x03
-			S4S_TPH_L        = 0x04,
-			S4S_TPH_H        = 0x05,
-			S4S_RR           = 0x06,
-			FIFO_CTRL1       = 0x07,
-			FIFO_CTRL2       = 0x08,
-			FIFO_CTRL3       = 0x09,
-			FIFO_CTRL4       = 0x0A,
-			COUNTER_BDR_REG1 = 0x0B,
-			COUNTER_BDR_REG2 = 0x0C,
-			INT1_CTRL        = 0x0D,
-			INT2_CTRL        = 0x0E,
-			WHO_AM_I         = 0x0F,
-			CTRL1_XL         = 0x10,
-			CTRL2_G          = 0x11,
-			CTRL3_C          = 0x12,
-			CTRL4_C          = 0x13,
-			CTRL5_C          = 0x14,
-			CTRL6_C          = 0x15,
-			CTRL7_G          = 0x16,
-			CTRL8_XL         = 0x17,
-			CTRL9_XL         = 0x18,
-			CTRL10_C         = 0x19,
-			ALL_INT_SRC      = 0x1A,
-			WAKE_UP_SRC      = 0x1B,
-			TAP_SRC          = 0x1C,
-			D6D_SRC          = 0x1D,
-			STATUS_REG       = 0x1E,
-			// RESERVED :      0x1F
-			OUT_TEMP_L       = 0x20,
-			OUT_TEMP_H       = 0x21,
-			OUTX_L_G         = 0x22,
-			OUTX_H_G         = 0x23,
-			OUTY_L_G         = 0x24,
-			OUTY_H_G         = 0x25,
-			OUTZ_L_G         = 0x26,
-			OUTZ_H_G         = 0x27,
-			OUTX_L_A         = 0x28,
-			OUTX_H_A         = 0x29,
-			OUTY_L_A         = 0x2A,
-			OUTY_H_A         = 0x2B,
-			OUTZ_L_A         = 0x2C,
-			OUTZ_H_A         = 0x2D,
-			// RESERVED : 0x2E-0x34
-			EMB_FUNC_STATUS_MAINPAGE = 0x35,
-			FSM_STATUS_A_MAINPAGE    = 0x36,
-			FSM_STATUS_B_MAINPAGE    = 0x37,
-			MLC_STATUS_MAINPAGE      = 0x38,
-			STATUS_MASTER_MAINPAGE   = 0x39,
-			FIFO_STATUS1             = 0x3A,
-			FIFO_STATUS2             = 0x3B,
-			// RESERVED :       0x3C - 0x3F
-			TIMESTAMP0               = 0x40,
-			TIMESTAMP1               = 0x41,
-			TIMESTAMP2               = 0x42,
-			TIMESTAMP3               = 0x43,
-			// RESERVED :       0x44 - 0x55
-			TAP_CFG0                 = 0x56,
-			TAP_CFG1                 = 0x57,
-			TAP_CFG2                 = 0x58,
-			TAP_THS_6D               = 0x59,
-			INT_DUR2                 = 0x5A,
-			WAKE_UP_THS              = 0x5B,
-			WAKE_UP_DUR              = 0x5C,
-			FREE_FALL                = 0x5D,
-			MD1_CFG                  = 0x5E,
-			MD2_CFG                  = 0x5F,
-			S4S_ST_CMD_CODE          = 0x60,
-			S4S_DT_REG               = 0x61,
-			I3C_BUS_AVB              = 0x62,
-			INTERNAL_FREQ_FINE       = 0x63,
-			// RESERVED :       0x64 - 0x6E
-			INT_OIS                  = 0x6F,
-			CTRL1_OIS                = 0x70,
-			CTRL2_OIS                = 0x71,
-			CTRL3_OIS                = 0x72,
-			X_OFS_USR                = 0x73,
-			Y_OFS_USR                = 0x74,
-			Z_OFS_USR                = 0x75,
-			// RESERVED :       0x76 - 0x77
-			FIFO_DATA_OUT_TAG        = 0x78,
-			FIFO_DATA_OUT_X_L        = 0x79,
-			FIFO_DATA_OUT_X_H        = 0x7A,
-			FIFO_DATA_OUT_Y_L        = 0x7B,
-			FIFO_DATA_OUT_Y_H        = 0x7C,
-			FIFO_DATA_OUT_Z_L        = 0x7D,
-			FIFO_DATA_OUT_Z_H        = 0x7E	
-		};
+/** @addtogroup LSM6DSO
+  * @{
+  *
+  */
 
-		st_lsm6dx() {}
-		st_lsm6dx(i2c_client * dev) : regmap(dev) {}
-		st_lsm6dx(spi_client * dev) : regmap(dev) {}
+/** @defgroup LSM6DSO_sensors_common_types
+  * @{
+  *
+  */
 
-		int request_raw_data(
-			uint16_t* acc, 
-			uint16_t* gyr) 
-		{
-			uint8_t data[12];
-			
-			readreg_group(Register::OUTX_L_G, data, 12);
+#ifndef MEMS_SHARED_TYPES
+#define MEMS_SHARED_TYPES
 
-			gyr[0] = (data[1] << 8) | data[0];  
-			gyr[1] = (data[3] << 8) | data[2];
-			gyr[2] = (data[5] << 8) | data[4];
+/**
+  * @defgroup axisXbitXX_t
+  * @brief    These unions are useful to represent different sensors data type.
+  *           These unions are not need by the driver.
+  *
+  *           REMOVING the unions you are compliant with:
+  *           MISRA-C 2012 [Rule 19.2] -> " Union are not allowed "
+  *
+  * @{
+  *
+  */
 
-			acc[0] = (data[7]  << 8) | data[6];  
-			acc[1] = (data[9]  << 8) | data[8];
-			acc[2] = (data[11] << 8) | data[10];
+typedef union{
+  int16_t i16bit[3];
+  uint8_t u8bit[6];
+} axis3bit16_t;
 
-			return 0;
-		}
+typedef union{
+  int16_t i16bit;
+  uint8_t u8bit[2];
+} axis1bit16_t;
 
-		int request_raw_accel(uint16_t * vec) 
-		{
-			uint8_t data[6];
+typedef union{
+  int32_t i32bit[3];
+  uint8_t u8bit[12];
+} axis3bit32_t;
 
-			readreg_group(Register::OUTX_L_A, data, 6);
+typedef union{
+  int32_t i32bit;
+  uint8_t u8bit[4];
+} axis1bit32_t;
 
-			vec[0] = (data[1] << 8) | data[0];  
-			vec[1] = (data[3] << 8) | data[2];
-			vec[2] = (data[5] << 8) | data[4];
+/**
+  * @}
+  *
+  */
 
-			return 0;
-		}
+typedef struct{
+  uint8_t bit0       : 1;
+  uint8_t bit1       : 1;
+  uint8_t bit2       : 1;
+  uint8_t bit3       : 1;
+  uint8_t bit4       : 1;
+  uint8_t bit5       : 1;
+  uint8_t bit6       : 1;
+  uint8_t bit7       : 1;
+} bitwise_t;
 
-		int request_raw_gyro(uint16_t * vec) 
-		{
-			uint8_t data[6];
-			
-			readreg_group(Register::OUTX_L_G, data, 6);
+#define PROPERTY_DISABLE                (0U)
+#define PROPERTY_ENABLE                 (1U)
 
-			vec[0] = (data[1] << 8) | data[0];  
-			vec[1] = (data[3] << 8) | data[2];
-			vec[2] = (data[5] << 8) | data[4];
+#endif /* MEMS_SHARED_TYPES */
 
-			return 0;
-		}
+/**
+  * @}
+  *
+  */
 
-		void print_status() 
-		{
-			
-			unsigned int ret;
-			readreg(Register::WHO_AM_I, &ret);
-			dprln("WHO_AM_IR:", ret);
-			dprbinln(ret);
+/** @addtogroup  LSM6DSO_Interfaces_Functions
+  * @brief       This section provide a set of functions used to read and
+  *              write a generic register of the device.
+  *              MANDATORY: return 0 -> no Error.
+  * @{
+  *
+  */
 
-			readreg(Register::STATUS_REG, &ret);
-			dprln("STATUS_REG:", ret);
-		}
-	};
-}
+typedef int32_t (*lsm6dso_write_ptr)(void *, uint8_t, uint8_t*, uint16_t);
+typedef int32_t (*lsm6dso_read_ptr) (void *, uint8_t, uint8_t*, uint16_t);
 
-typedef genos::st_lsm6dx lsm6dso_ctx_t;
+typedef struct {
+  /** Component mandatory fields **/
+  lsm6dso_write_ptr  write_reg;
+  lsm6dso_read_ptr   read_reg;
+  /** Customizable optional pointer **/
+  void *handle;
+} lsm6dso_ctx_t;
+
+/**
+  * @}
+  *
+  */
+
+/** @defgroup LSM6DSO_Infos
+  * @{
+  *
+  */
+
+/** I2C Device Address 8 bit format  if SA0=0 -> D5 if SA0=1 -> D7 **/
+#define LSM6DSO_I2C_ADD_L                    0xD5
+#define LSM6DSO_I2C_ADD_H                    0xD7
+
+
+/**
+  * @defgroup LSM6DSO_Register_Union
+  * @brief    This union group all the registers that has a bitfield
+  *           description.
+  *           This union is useful but not need by the driver.
+  *
+  *           REMOVING this union you are compliant with:
+  *           MISRA-C 2012 [Rule 19.2] -> " Union are not allowed "
+  *
+  * @{
+  *
+  */
+typedef union{
+  lsm6dso_func_cfg_access_t               func_cfg_access;
+  lsm6dso_pin_ctrl_t                      pin_ctrl;
+  lsm6dso_fifo_ctrl1_t                    fifo_ctrl1;
+  lsm6dso_fifo_ctrl2_t                    fifo_ctrl2;
+  lsm6dso_fifo_ctrl3_t                    fifo_ctrl3;
+  lsm6dso_fifo_ctrl4_t                    fifo_ctrl4;
+  lsm6dso_counter_bdr_reg1_t              counter_bdr_reg1;
+  lsm6dso_counter_bdr_reg2_t              counter_bdr_reg2;
+  lsm6dso_int1_ctrl_t                     int1_ctrl;
+  lsm6dso_int2_ctrl_t                     int2_ctrl;
+  lsm6dso_ctrl1_xl_t                      ctrl1_xl;
+  lsm6dso_ctrl2_g_t                       ctrl2_g;
+  lsm6dso_ctrl3_c_t                       ctrl3_c;
+  lsm6dso_ctrl4_c_t                       ctrl4_c;
+  lsm6dso_ctrl5_c_t                       ctrl5_c;
+  lsm6dso_ctrl6_c_t                       ctrl6_c;
+  lsm6dso_ctrl7_g_t                       ctrl7_g;
+  lsm6dso_ctrl8_xl_t                      ctrl8_xl;
+  lsm6dso_ctrl9_xl_t                      ctrl9_xl;
+  lsm6dso_ctrl10_c_t                      ctrl10_c;
+  lsm6dso_all_int_src_t                   all_int_src;
+  lsm6dso_wake_up_src_t                   wake_up_src;
+  lsm6dso_tap_src_t                       tap_src;
+  lsm6dso_d6d_src_t                       d6d_src;
+  lsm6dso_status_reg_t                    status_reg;
+  lsm6dso_status_spiaux_t                 status_spiaux;
+  lsm6dso_fifo_status1_t                  fifo_status1;
+  lsm6dso_fifo_status2_t                  fifo_status2;
+  lsm6dso_tap_cfg0_t                      tap_cfg0;
+  lsm6dso_tap_cfg1_t                      tap_cfg1;
+  lsm6dso_tap_cfg2_t                      tap_cfg2;
+  lsm6dso_tap_ths_6d_t                    tap_ths_6d;
+  lsm6dso_int_dur2_t                      int_dur2;
+  lsm6dso_wake_up_ths_t                   wake_up_ths;
+  lsm6dso_wake_up_dur_t                   wake_up_dur;
+  lsm6dso_free_fall_t                     free_fall;
+  lsm6dso_md1_cfg_t                       md1_cfg;
+  lsm6dso_md2_cfg_t                       md2_cfg;
+  lsm6dso_i3c_bus_avb_t                   i3c_bus_avb;
+  lsm6dso_internal_freq_fine_t            internal_freq_fine;
+  lsm6dso_int_ois_t                       int_ois;
+  lsm6dso_ctrl1_ois_t                     ctrl1_ois;
+  lsm6dso_ctrl2_ois_t                     ctrl2_ois;
+  lsm6dso_ctrl3_ois_t                     ctrl3_ois;
+  lsm6dso_fifo_data_out_tag_t             fifo_data_out_tag;
+  lsm6dso_page_sel_t                      page_sel;
+  lsm6dso_emb_func_en_a_t                 emb_func_en_a;
+  lsm6dso_emb_func_en_b_t                 emb_func_en_b;
+  lsm6dso_page_address_t                  page_address;
+  lsm6dso_page_value_t                    page_value;
+  lsm6dso_emb_func_int1_t                 emb_func_int1;
+  lsm6dso_fsm_int1_a_t                    fsm_int1_a;
+  lsm6dso_fsm_int1_b_t                    fsm_int1_b;
+  lsm6dso_emb_func_int2_t                 emb_func_int2;
+  lsm6dso_fsm_int2_a_t                    fsm_int2_a;
+  lsm6dso_fsm_int2_b_t                    fsm_int2_b;
+  lsm6dso_emb_func_status_t               emb_func_status;
+  lsm6dso_fsm_status_a_t                  fsm_status_a;
+  lsm6dso_fsm_status_b_t                  fsm_status_b;
+  lsm6dso_page_rw_t                       page_rw;
+  lsm6dso_emb_func_fifo_cfg_t	            emb_func_fifo_cfg;
+  lsm6dso_fsm_enable_a_t                  fsm_enable_a;
+  lsm6dso_fsm_enable_b_t                  fsm_enable_b;
+  lsm6dso_fsm_long_counter_clear_t        fsm_long_counter_clear;
+  lsm6dso_fsm_outs1_t                     fsm_outs1;
+  lsm6dso_fsm_outs2_t                     fsm_outs2;
+  lsm6dso_fsm_outs3_t                     fsm_outs3;
+  lsm6dso_fsm_outs4_t                     fsm_outs4;
+  lsm6dso_fsm_outs5_t                     fsm_outs5;
+  lsm6dso_fsm_outs6_t                     fsm_outs6;
+  lsm6dso_fsm_outs7_t                     fsm_outs7;
+  lsm6dso_fsm_outs8_t                     fsm_outs8;
+  lsm6dso_fsm_outs9_t                     fsm_outs9;
+  lsm6dso_fsm_outs10_t                    fsm_outs10;
+  lsm6dso_fsm_outs11_t                    fsm_outs11;
+  lsm6dso_fsm_outs12_t                    fsm_outs12;
+  lsm6dso_fsm_outs13_t                    fsm_outs13;
+  lsm6dso_fsm_outs14_t                    fsm_outs14;
+  lsm6dso_fsm_outs15_t                    fsm_outs15;
+  lsm6dso_fsm_outs16_t                    fsm_outs16;
+  lsm6dso_emb_func_odr_cfg_b_t            emb_func_odr_cfg_b;
+  lsm6dso_emb_func_src_t                  emb_func_src;
+  lsm6dso_emb_func_init_a_t               emb_func_init_a;
+  lsm6dso_emb_func_init_b_t               emb_func_init_b;
+  lsm6dso_mag_cfg_a_t                     mag_cfg_a;
+  lsm6dso_mag_cfg_b_t                     mag_cfg_b;
+  lsm6dso_pedo_cmd_reg_t                  pedo_cmd_reg;
+  lsm6dso_sensor_hub_1_t                  sensor_hub_1;
+  lsm6dso_sensor_hub_2_t                  sensor_hub_2;
+  lsm6dso_sensor_hub_3_t                  sensor_hub_3;
+  lsm6dso_sensor_hub_4_t                  sensor_hub_4;
+  lsm6dso_sensor_hub_5_t                  sensor_hub_5;
+  lsm6dso_sensor_hub_6_t                  sensor_hub_6;
+  lsm6dso_sensor_hub_7_t                  sensor_hub_7;
+  lsm6dso_sensor_hub_8_t                  sensor_hub_8;
+  lsm6dso_sensor_hub_9_t                  sensor_hub_9;
+  lsm6dso_sensor_hub_10_t                 sensor_hub_10;
+  lsm6dso_sensor_hub_11_t                 sensor_hub_11;
+  lsm6dso_sensor_hub_12_t                 sensor_hub_12;
+  lsm6dso_sensor_hub_13_t                 sensor_hub_13;
+  lsm6dso_sensor_hub_14_t                 sensor_hub_14;
+  lsm6dso_sensor_hub_15_t                 sensor_hub_15;
+  lsm6dso_sensor_hub_16_t                 sensor_hub_16;
+  lsm6dso_sensor_hub_17_t                 sensor_hub_17;
+  lsm6dso_sensor_hub_18_t                 sensor_hub_18;
+  lsm6dso_master_config_t                 master_config;
+  lsm6dso_slv0_add_t                      slv0_add;
+  lsm6dso_slv0_subadd_t                   slv0_subadd;
+  lsm6dso_slv0_config_t                   slv0_config;
+  lsm6dso_slv1_add_t                      slv1_add;
+  lsm6dso_slv1_subadd_t                   slv1_subadd;
+  lsm6dso_slv1_config_t                   slv1_config;
+  lsm6dso_slv2_add_t                      slv2_add;
+  lsm6dso_slv2_subadd_t                   slv2_subadd;
+  lsm6dso_slv2_config_t                   slv2_config;
+  lsm6dso_slv3_add_t                      slv3_add;
+  lsm6dso_slv3_subadd_t                   slv3_subadd;
+  lsm6dso_slv3_config_t                   slv3_config;
+  lsm6dso_datawrite_src_mode_sub_slv0_t   datawrite_src_mode_sub_slv0;
+  lsm6dso_status_master_t                 status_master;
+  bitwise_t                               bitwise;
+  uint8_t                                 byte;
+} lsm6dso_reg_t;
+
+/**
+  * @}
+  *
+  */
 
 int32_t lsm6dso_read_reg(lsm6dso_ctx_t *ctx, uint8_t reg, uint8_t* data,
                          uint16_t len);
@@ -1286,5 +1411,15 @@ int32_t lsm6dso_sh_slv3_cfg_read(lsm6dso_ctx_t *ctx,
 int32_t lsm6dso_sh_status_get(lsm6dso_ctx_t *ctx,
                               lsm6dso_status_master_t *val);
 
+/**
+  * @}
+  *
+  */
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif /*LSM6DSO_DRIVER_H */
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

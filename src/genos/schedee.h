@@ -182,6 +182,7 @@ void schedee_init(
 	sch->prio = prio;
 	sch->sch_state = SCHEDEE_STATE_STOP;
 	sch->flags = 0;
+	sch->syslock_counter_save = 0;
 
 	sch->parent = current_schedee();
 
