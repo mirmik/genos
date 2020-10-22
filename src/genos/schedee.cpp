@@ -96,7 +96,6 @@ void schedee_notify_finalize(genos::schedee * sch)
 		schedee_run(sch->parent);
 	}*/
 
-	assert(sch->parent);
 	if (sch->parent)
 		sch->parent->signal_handler(SIGCHLD);
 }
