@@ -25,13 +25,14 @@ namespace genos
 
 		genos::device * parent_device() override { return dev; }
 
-		int write(const void* out, uint16_t olen) 
+		int write_memory(uint8_t memaddr, const void* out, uint16_t olen) 
 		{
 			int ret;
 			
-			dev->set_slave_address(addr);
-			ret = dev->exchange(addr, out, olen, nullptr, 0);
-			
+			//dev->set_slave_address(addr);
+			//ret = dev->exchange(addr, out, olen, nullptr, 0);
+			dev->write_memory(addr, memaddr, out, olen);
+
 			return ret;
 		}
 
@@ -39,10 +40,6 @@ namespace genos
 			const void* out, uint16_t olen, 
 			void* in, uint16_t ilen) 
 		{
-			dev->lock_bus();
-				
-			dev->unlock_bus();
-
 			return 0;
 		}
 
