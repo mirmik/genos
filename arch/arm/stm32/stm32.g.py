@@ -70,3 +70,12 @@ module("arch.stm32g474re",
 	mdepends=["arch.stm32g4"],
 	ldscripts=["ldscripts/stm32g474re.ld"]
 )
+
+
+module("genos.hal", impl = "stm32l432", 
+	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX"],
+	mdepends = [	
+		"genos.hal.stm32.common",
+	],
+	ldscripts = "ldscripts/stm32l432.ld",
+)
