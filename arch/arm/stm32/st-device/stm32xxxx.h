@@ -5,6 +5,10 @@
 #include "stm32g4xx.h"
 #elif defined(STM32F4XX)
 #include "stm32f4xx.h"
+#elif defined(STM32L4XX)
+#include "stm32l4xx.h"
+#else 
+#error "undefined arch"
 #endif
 
 #endif
