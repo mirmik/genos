@@ -27,6 +27,9 @@ module("arch.stm32_common",
 	libs = ["m", "gcc"]
 )
 
+module("arch.stm32_usb",
+	sources = ["src/stm32_usb.c"])
+
 module("arch.stm32g4",
 	defines=["STM32G4XX", "CHIP_STM32G4XX"],
 	sources=["src/stm32g4/stm32g4_sysinit.c"],
@@ -55,6 +58,7 @@ module("arch.stm32f407vg",
 	defines = ["CHIP_STM32F407", "STM32F407xx"],
 	mdepends = [
 		"arch.stm32f4",	
+		"arch.stm32_usb"
 	],
 	ldscripts = "ldscripts/stm32f407vg.ld",
 )
