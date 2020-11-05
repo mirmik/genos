@@ -15,6 +15,8 @@
 #define HSI_FREQ 16000000
 #elif STM32G4XX
 #define HSI_FREQ 16000000
+#elif STM32L4XX
+#define HSI_FREQ 16000000
 #else
 #error "undefined HSI frequency"
 #endif

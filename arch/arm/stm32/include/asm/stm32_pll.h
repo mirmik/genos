@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <sys/cdefs.h>
 
-#ifdef STM32G4XX
+#if defined(STM32G4XX) || defined(STM32L4XX) 
 #define STM32_PLL_VAR1
 struct stm32_pll_settings
 {

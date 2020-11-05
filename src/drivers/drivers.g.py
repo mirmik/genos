@@ -38,12 +38,13 @@ licant.module("genos.drivers.stm32",
 	]
 )
 
-licant.module("genos.drivers.stm32l4_usart", sources = ["serial/stm32l4_usart.cpp"])
+#licant.module("genos.drivers.stm32l4_usart", sources = ["serial/stm32l4_usart.cpp"])
 licant.module("genos.drivers.stm32l4", 
 	mdepends = [
 		"genos.drivers.common",
 		"genos.drivers.stm32_spi",
-		"genos.drivers.stm32l4_usart",
+		"genos.drivers.stm32_gpio",
+		"genos.drivers.stm32_usart",
 	]
 )
 
