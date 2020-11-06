@@ -24,7 +24,7 @@ namespace genos
 		uint8_t type;
 		const char* help;
 
-		constexpr syscmd_command(
+		syscmd_command(
 			const char* name,
 			int (*func)(int, char**),
 			uint8_t type,
