@@ -153,7 +153,7 @@ void stm32_usart_set_databits(USART_TypeDef * regs, uint8_t databits)
 {
 	switch (databits)
 	{
-	#ifdef STM32F4XX
+	#if defined(STM32F4XX) || defined(STM32L4XX)
 		case 8:
 			bits_clr(regs->CR1, USART_CR1_M);
 			break;

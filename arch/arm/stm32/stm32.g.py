@@ -1,8 +1,6 @@
 import licant.modules
 
-module("arch.stm32_common",
-	include_paths = ["include", "st-device"],
-
+module("arch.stm32_common.sources", 	
 	sources= [
 		"src/stm32_start.c",
 		"src/stm32_vectors.S",
@@ -18,6 +16,28 @@ module("arch.stm32_common",
 		"src/stm32_clockbus.c",
 		"src/stm32_pll.c",
 	],
+)
+
+module("arch.stm32_common.sources_l4", 	
+	sources= [
+		"src/stm32_start.c",
+		"src/stm32_vectors.S",
+		"src/stm32_arch.c",
+	#	"src/stm32_adc.c",
+		"src/stm32_rcc.c",
+		"src/stm32_gpio.c",
+		"src/stm32_spi.c",
+		"src/stm32_usart.c",
+		"src/stm32_diag.c",
+		"src/stm32_systick.c",
+		"src/stm32_clockbus.c",
+		"src/stm32_pll.c",
+	],
+)
+
+module("arch.stm32_common",
+	include_paths = ["include", "st-device"],
+
 	ldscripts= ["ldscripts/stm32_common.ld"],
 
 	cc_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
@@ -30,13 +50,19 @@ module("arch.stm32_common",
 module("arch.stm32g4",
 	defines=["STM32G4XX", "CHIP_STM32G4XX"],
 	sources=["src/stm32g4/stm32g4_sysinit.c"],
-	mdepends = ["arch.cortex-m4", "arch.stm32_common"]
+	mdepends = ["arch.cortex-m4", "arch.stm32_common", "arch.stm32_common.sources"]
 )
 
 module("arch.stm32f4",
 	defines=["STM32F4XX", "CHIP_STM32F4XX"],
 	sources=["src/stm32f4/stm32f4_sysinit.c"],
-	mdepends = ["arch.cortex-m4", "arch.stm32_common"]
+	mdepends = ["arch.cortex-m4", "arch.stm32_common", "arch.stm32_common.sources"]
+)
+
+module("arch.stm32l4",
+	defines=["STM32L4XX", "CHIP_STM32L4XX"],
+	sources=["src/stm32l4/stm32l4_sysinit.c"],
+	mdepends = ["arch.cortex-m4", "arch.stm32_common", "arch.stm32_common.sources_l4"]
 )
 
 module("arch.stm32f446re",
@@ -73,9 +99,7 @@ module("arch.stm32g474re",
 
 
 module("genos.hal", impl = "stm32l432", 
-	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX"],
-	mdepends = [	
-		"genos.hal.stm32.common",
-	],
+	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX", "STM32L432xx"],
+	mdepends=["arch.stm32l4"],
 	ldscripts = "ldscripts/stm32l432.ld",
 )

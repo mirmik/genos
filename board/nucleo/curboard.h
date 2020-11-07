@@ -11,6 +11,8 @@
 #elif defined(BOARD_NUCLEO_G474RE)
 #include <nucleo-g474re-curboard.h>
 #include <nucleo-g474re-pinout.h>
+#elif defined(BOARD_NUCLEO_L432KC)
+#include <nucleo-l432kc-curboard.h>
 #else
 #error "undefined nucleo board"
 #endif

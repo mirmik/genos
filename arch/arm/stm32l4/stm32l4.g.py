@@ -37,11 +37,3 @@ module("genos.hal", impl = "stm32l412",
 	],
 	ldscripts = "ldscripts/stm32l412.ld",
 )
-
-module("genos.hal", impl = "stm32l432", 
-	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX"],
-	mdepends = [	
-		"genos.hal.stm32l4.common",
-	],
-	ldscripts = "ldscripts/stm32l432.ld",
-)
