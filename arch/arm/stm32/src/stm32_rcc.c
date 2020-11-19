@@ -89,6 +89,10 @@ void stm32_rcc_enable_usart(USART_TypeDef * usart)
 		case USART1_BASE : RCC->APB2ENR |= RCC_APB2ENR_USART1EN; break;
 #endif
 
+#ifdef RCC_APB1ENR_USART3EN
+		case USART3_BASE : RCC->APB1ENR |= RCC_APB1ENR_USART3EN; break;
+#endif
+
 		#ifdef RCC_APB1ENR_UART5EN
 		case UART5_BASE : RCC->APB1ENR |= RCC_APB1ENR_UART5EN; break;
 		#endif
