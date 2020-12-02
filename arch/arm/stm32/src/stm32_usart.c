@@ -14,14 +14,14 @@
 #define USART_ISR_TC USART_SR_TC
 #endif
 
-void stm32_drop_overrun_flag(USART_TypeDef * usart) 
+void stm32_drop_overrun_flag(USART_TypeDef * usart)
 {
 #if defined(USART_ICR_ORECF)
 	usart->ICR |= USART_ICR_ORECF;
 #endif
 }
 
-void stm32_usart_wait_cantx(USART_TypeDef * usart) 
+void stm32_usart_wait_cantx(USART_TypeDef * usart)
 {
 	while (!(usart->ISR & (1 << 7)));
 }
@@ -39,7 +39,7 @@ int stm32_usart_getc(USART_TypeDef * usart)
 
 int stm32_usart_room(USART_TypeDef * usart)
 {
-	return usart->ISR & USART_ISR_TXE; 
+	return usart->ISR & USART_ISR_TXE;
 }
 
 int stm32_usart_avail(USART_TypeDef * usart)
@@ -47,28 +47,28 @@ int stm32_usart_avail(USART_TypeDef * usart)
 	return usart->ISR & USART_ISR_RXNE;
 }
 
-int stm32_rxirq_status(USART_TypeDef * usart) 
+int stm32_rxirq_status(USART_TypeDef * usart)
 {
-	return 
-		(usart->CR1 & USART_CR1_RXNEIE) &&
-		(usart->ISR & USART_ISR_RXNE);
+	return
+	    (usart->CR1 & USART_CR1_RXNEIE) &&
+	    (usart->ISR & USART_ISR_RXNE);
 }
 
-int stm32_txirq_status(USART_TypeDef * usart) 
+int stm32_txirq_status(USART_TypeDef * usart)
 {
-	return 
-		(usart->CR1 & USART_CR1_TXEIE) &&
-		(usart->ISR & USART_ISR_TXE);
+	return
+	    (usart->CR1 & USART_CR1_TXEIE) &&
+	    (usart->ISR & USART_ISR_TXE);
 }
 
-int stm32_tcirq_status(USART_TypeDef * usart) 
+int stm32_tcirq_status(USART_TypeDef * usart)
 {
-	return 
-		(usart->CR1 & USART_CR1_TCIE) &&
-		(usart->ISR & USART_ISR_TC);
+	return
+	    (usart->CR1 & USART_CR1_TCIE) &&
+	    (usart->ISR & USART_ISR_TC);
 }
 
-int stm32_overrun_irq_status(USART_TypeDef * usart) 
+int stm32_overrun_irq_status(USART_TypeDef * usart)
 {
 #if defined(USART_ISR_ORE)
 	return usart->ISR & USART_ISR_ORE;
@@ -88,17 +88,21 @@ uint8_t stm32_usart_clockbus(USART_TypeDef * regs)
 		case USART2_BASE: return CLOCKBUS_APB1;
 #endif
 
-#ifdef USART6 
+#ifdef USART6
 		case USART6_BASE: return CLOCKBUS_APB2;
 #endif
 
-		#ifdef RCC_APB1ENR2_LPUART1EN
-		case LPUART1_BASE : return CLOCKBUS_APB1; break;
-		#endif
+#ifdef RCC_APB1ENR_USART3EN
+		case USART3_BASE : return CLOCKBUS_APB1; break;
+#endif
 
-		#ifdef RCC_APB1ENR_UART5EN
+#ifdef RCC_APB1ENR2_LPUART1EN
+		case LPUART1_BASE : return CLOCKBUS_APB1; break;
+#endif
+
+#ifdef RCC_APB1ENR_UART5EN
 		case UART5_BASE : return CLOCKBUS_APB1; break;
-		#endif
+#endif
 
 		default: BUG();
 	};
@@ -110,13 +114,15 @@ void stm32_usart_set_baudrate(USART_TypeDef * regs, uint32_t baud)
 	uint32_t busfreq = stm32_clockbus_freq[stm32_usart_clockbus(regs)];
 
 #ifdef LPUART1
-	if (regs == LPUART1) 
-		regs->BRR = ((double)(busfreq) / baud * 256);	
+	if (regs == LPUART1)
+		//regs->BRR = ((double)(busfreq) / baud * 256);	 //190 //200
+		//regs->BRR = ((double)(busfreq) / baud * 256);
+		regs->BRR = ((double)(busfreq) / baud * 200);
 	else
 		regs->BRR = busfreq / baud;
 #else
 	regs->BRR = busfreq / baud;
-#endif	
+#endif
 
 }
 
@@ -125,20 +131,20 @@ void stm32_usart_set_parity(USART_TypeDef * regs, char parity)
 	switch (parity)
 	{
 		case 'n':
-			bits_clr(regs->CR1, 
-				USART_CR1_PCE | USART_CR1_PS);
+			bits_clr(regs->CR1,
+			         USART_CR1_PCE | USART_CR1_PS);
 			break;
 
 		case 'e':
-			bits_assign(regs->CR1, 
-				USART_CR1_PCE | USART_CR1_PS,
+			bits_assign(regs->CR1,
+			            USART_CR1_PCE | USART_CR1_PS,
 			            USART_CR1_PCE);
 			break;
 
 		case 'o':
-			bits_assign(regs->CR1, 
-				USART_CR1_PCE | USART_CR1_PS,
-			    USART_CR1_PCE | USART_CR1_PS);
+			bits_assign(regs->CR1,
+			            USART_CR1_PCE | USART_CR1_PS,
+			            USART_CR1_PCE | USART_CR1_PS);
 			break;
 
 		default:
@@ -153,7 +159,7 @@ void stm32_usart_set_databits(USART_TypeDef * regs, uint8_t databits)
 {
 	switch (databits)
 	{
-	#if defined(STM32F4XX) || defined(STM32L4XX)
+#if defined(STM32F4XX) || defined(STM32L4XX)
 		case 8:
 			bits_clr(regs->CR1, USART_CR1_M);
 			break;
@@ -161,8 +167,8 @@ void stm32_usart_set_databits(USART_TypeDef * regs, uint8_t databits)
 		case 9:
 			bits_set(regs->CR1, USART_CR1_M);
 			break;
-	
-	#elif defined(STM32G4XX)
+
+#elif defined(STM32G4XX)
 		case 7:
 			bits_clr(regs->CR1, USART_CR1_M0);
 			bits_set(regs->CR1, USART_CR1_M1);
@@ -177,9 +183,9 @@ void stm32_usart_set_databits(USART_TypeDef * regs, uint8_t databits)
 			bits_set(regs->CR1, USART_CR1_M0);
 			bits_clr(regs->CR1, USART_CR1_M1);
 			break;
-	#else
-	#error "undefined arch"
-	#endif
+#else
+#error "undefined arch"
+#endif
 
 
 		default:
@@ -220,48 +226,48 @@ void stm32_usart_enable(USART_TypeDef * regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_UE)
-	else
-		bits_clr(regs->CR1, USART_CR1_UE);
+		else
+			bits_clr(regs->CR1, USART_CR1_UE);
 }
 
 void stm32_usart_enable_rx(USART_TypeDef * regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_RE)
-	else
-		bits_clr(regs->CR1, USART_CR1_RE);
+		else
+			bits_clr(regs->CR1, USART_CR1_RE);
 }
 
 void stm32_usart_enable_tx(USART_TypeDef * regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_TE)
-	else
-		bits_clr(regs->CR1, USART_CR1_TE);
+		else
+			bits_clr(regs->CR1, USART_CR1_TE);
 }
 
 void stm32_usart_rxirq_enable(USART_TypeDef * regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_RXNEIE)
-	else
-		bits_clr(regs->CR1, USART_CR1_RXNEIE);
+		else
+			bits_clr(regs->CR1, USART_CR1_RXNEIE);
 }
 
 void stm32_usart_txirq_enable(USART_TypeDef * regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_TXEIE)
-	else
-		bits_clr(regs->CR1, USART_CR1_TXEIE);
+		else
+			bits_clr(regs->CR1, USART_CR1_TXEIE);
 }
 
-void stm32_usart_tcirq_enable(USART_TypeDef * regs, int en) 
+void stm32_usart_tcirq_enable(USART_TypeDef * regs, int en)
 {
 	if (en)
 		bits_set(regs->CR1, USART_CR1_TCIE)
-	else
-		bits_clr(regs->CR1, USART_CR1_TCIE);
+		else
+			bits_clr(regs->CR1, USART_CR1_TCIE);
 }
 
 int stm32_usart_setup(
@@ -278,12 +284,12 @@ int stm32_usart_setup(
 	stm32_usart_set_databits(regs, databits);
 	stm32_usart_set_stopbits(regs, stopbits);
 
-	regs->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE; 
+	regs->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 
 	return 0;
 }
 
-void stm32_usart_debug_print(USART_TypeDef * usart) 
+void stm32_usart_debug_print(USART_TypeDef * usart)
 {
 	DPRINTHEX(usart->ISR);
 	DPRINTHEX(usart->RDR);
@@ -294,7 +300,7 @@ void stm32_usart_debug_print(USART_TypeDef * usart)
 	//DPRINTHEX(usart->GTPR);
 }
 
-void stm32_debug_print_usart_interrupt_status_register(USART_TypeDef * regs) 
+void stm32_debug_print_usart_interrupt_status_register(USART_TypeDef * regs)
 {
 	dprhex(regs->ISR);
 }
