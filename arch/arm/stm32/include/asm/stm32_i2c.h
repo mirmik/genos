@@ -71,7 +71,7 @@ void stm32_i2c_set_stop(I2C_TypeDef * i2c)
 }
 
 static inline
-void stm32_i2c_debug_print_status(I2C_TypeDef * i2c) 
+void stm32_i2c_debug_print_registers(I2C_TypeDef * i2c) 
 {
 	DPRINT(i2c->CR1);
 	DPRINT(i2c->CR2);
@@ -79,5 +79,11 @@ void stm32_i2c_debug_print_status(I2C_TypeDef * i2c)
 	DPRINT(i2c->TRISE);
 	DPRINT(i2c->CCR);
 }
+
+__BEGIN_DECLS
+
+void stm32_i2c_debug_print_status(I2C_TypeDef * i2c);
+
+__END_DECLS
 
 #endif

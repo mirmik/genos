@@ -11,19 +11,6 @@
 
 #include <util/cpu_delay.h>
 
-#define I2C_DUTYCYCLE_2                 0x00000000U
-#define I2C_DUTYCYCLE_16_9              I2C_CCR_DUTY
-
-#define I2C_MIN_PCLK_FREQ(__PCLK__, __SPEED__)             (((__SPEED__) <= 100000U) ? ((__PCLK__) < I2C_MIN_PCLK_FREQ_STANDARD) : ((__PCLK__) < I2C_MIN_PCLK_FREQ_FAST))
-#define I2C_CCR_CALCULATION(__PCLK__, __SPEED__, __COEFF__)     (((((__PCLK__) - 1U)/((__SPEED__) * (__COEFF__))) + 1U) & I2C_CCR_CCR)
-#define I2C_FREQRANGE(__PCLK__)                            ((__PCLK__)/1000000U)
-#define I2C_RISE_TIME(__FREQRANGE__, __SPEED__)            (((__SPEED__) <= 100000U) ? ((__FREQRANGE__) + 1U) : ((((__FREQRANGE__) * 300U) / 1000U) + 1U))
-#define I2C_SPEED_STANDARD(__PCLK__, __SPEED__)            ((I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 2U) < 4U)? 4U:I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 2U))
-#define I2C_SPEED_FAST(__PCLK__, __SPEED__, __DUTYCYCLE__) (((__DUTYCYCLE__) == I2C_DUTYCYCLE_2)? I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 3U) : (I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 25U) | I2C_DUTYCYCLE_16_9))
-#define I2C_SPEED(__PCLK__, __SPEED__, __DUTYCYCLE__)      (((__SPEED__) <= 100000U)? (I2C_SPEED_STANDARD((__PCLK__), (__SPEED__))) : \
-                                                                  ((I2C_SPEED_FAST((__PCLK__), (__SPEED__), (__DUTYCYCLE__)) & I2C_CCR_CCR) == 0U)? 1U : \
-                                                                  ((I2C_SPEED_FAST((__PCLK__), (__SPEED__), (__DUTYCYCLE__))) | I2C_CCR_FS))
-
 namespace genos
 {
 	class stm32_i2c_device : public genos::i2c_device
@@ -54,35 +41,78 @@ namespace genos
 
 		int write_memory(uint8_t devaddr, uint8_t memaddr, const void * buf, int len) override
 		{
-			//uint8_t addr = devaddr << 1;
-			uint8_t * cbuf = (uint8_t * ) buf;
+			int count = 0;
 
-			stm32_i2c_debug_print_status(regs);
+			uint8_t * cbuf = (uint8_t * ) buf;
 
 			stm32_i2c_set_start(regs);
 
 			// Wait until SB flag is set
-			if (!stm32_i2c_status_start_bit(regs)) { BUG();}
+			count = 0;
+			while (!stm32_i2c_status_start_bit(regs)) 
+			{
+				if (count++ > 1000)  
+				{
+					dprln("fault");
+					return -1;
+				}
+			}
 
 			// 7 bit and write(0) command
 			stm32_i2c_send_byte(regs, devaddr << 1);
 
-			if (!stm32_i2c_status_addr(regs)) { BUG(); }
+			count = 0;
+			while (!stm32_i2c_status_addr(regs)) 
+			{
+				if (count++ > 1000) 
+				{
+					dprln("fault");
+					return -1;
+				}
+			}
 
-			while (len)
+			// сбрасываем флаг установки адреса.
+			char sr1 = regs->SR1;
+			char sr2 = regs->SR2;
+
+			// send memory address
+			{
+				stm32_i2c_wait_txe_flag(regs);
+				stm32_i2c_send_byte(regs, memaddr);
+				stm32_i2c_wait_btf_flag(regs);
+			}
+
+			// send data
+			while (len--)
 			{
 				stm32_i2c_wait_txe_flag(regs);
 				stm32_i2c_send_byte(regs, *cbuf++);
+				stm32_i2c_wait_btf_flag(regs);
 			}
 
 			stm32_i2c_wait_btf_flag(regs);
 			stm32_i2c_set_stop(regs);
-
+			
 			return 0;
 		}
 
 		void lock_bus() override { semaphore_down(&__lock); }
 		void unlock_bus() override { semaphore_up(&__lock); }
+
+
+
+#define I2C_DUTYCYCLE_2                 0x00000000U
+#define I2C_DUTYCYCLE_16_9              I2C_CCR_DUTY
+
+#define I2C_MIN_PCLK_FREQ(__PCLK__, __SPEED__)             (((__SPEED__) <= 100000U) ? ((__PCLK__) < I2C_MIN_PCLK_FREQ_STANDARD) : ((__PCLK__) < I2C_MIN_PCLK_FREQ_FAST))
+#define I2C_CCR_CALCULATION(__PCLK__, __SPEED__, __COEFF__)     (((((__PCLK__) - 1U)/((__SPEED__) * (__COEFF__))) + 1U) & I2C_CCR_CCR)
+#define I2C_FREQRANGE(__PCLK__)                            ((__PCLK__)/1000000U)
+#define I2C_RISE_TIME(__FREQRANGE__, __SPEED__)            (((__SPEED__) <= 100000U) ? ((__FREQRANGE__) + 1U) : ((((__FREQRANGE__) * 300U) / 1000U) + 1U))
+#define I2C_SPEED_STANDARD(__PCLK__, __SPEED__)            ((I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 2U) < 4U)? 4U:I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 2U))
+#define I2C_SPEED_FAST(__PCLK__, __SPEED__, __DUTYCYCLE__) (((__DUTYCYCLE__) == I2C_DUTYCYCLE_2)? I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 3U) : (I2C_CCR_CALCULATION((__PCLK__), (__SPEED__), 25U) | I2C_DUTYCYCLE_16_9))
+#define I2C_SPEED(__PCLK__, __SPEED__, __DUTYCYCLE__)      (((__SPEED__) <= 100000U)? (I2C_SPEED_STANDARD((__PCLK__), (__SPEED__))) : \
+                                                                  ((I2C_SPEED_FAST((__PCLK__), (__SPEED__), (__DUTYCYCLE__)) & I2C_CCR_CCR) == 0U)? 1U : \
+                                                                  ((I2C_SPEED_FAST((__PCLK__), (__SPEED__), (__DUTYCYCLE__))) | I2C_CCR_FS))
 
 		void begin_master()
 		{
@@ -98,7 +128,7 @@ namespace genos
 			cpu_delay(100);
 
 			pclk1 = 8000000;//HAL_RCC_GetPCLK1Freq();
-			freqrange = I2C_FREQRANGE(pclk1);
+			freqrange = 0b00010;
 
 			int clock_speed = 1000000;
 			int duty_cycle = 100;

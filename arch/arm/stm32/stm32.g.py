@@ -59,6 +59,12 @@ module("arch.stm32f4",
 	mdepends = ["arch.cortex-m4", "arch.stm32_common", "arch.stm32_common.sources"]
 )
 
+module("arch.stm32f7",
+	defines=["STM32F7XX", "CHIP_STM32F7XX"],
+	sources=["src/stm32f7/stm32f7_sysinit.c"],
+	mdepends = ["arch.cortex-m4", "arch.stm32_common", "arch.stm32_common.sources"]
+)
+
 module("arch.stm32l4",
 	defines=["STM32L4XX", "CHIP_STM32L4XX"],
 	sources=["src/stm32l4/stm32l4_sysinit.c"],
@@ -102,4 +108,10 @@ module("genos.hal", impl = "stm32l432",
 	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX", "STM32L432xx"],
 	mdepends=["arch.stm32l4"],
 	ldscripts = "ldscripts/stm32l432.ld",
+)
+
+module("arch.stm32f746ng",
+	defines=["STM32F746xx"],
+	mdepends=["arch.stm32f7"],
+	ldscripts=["ldscripts/stm32f746ng.ld"]
 )
