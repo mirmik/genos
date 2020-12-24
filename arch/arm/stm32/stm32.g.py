@@ -59,12 +59,6 @@ module("arch.stm32f4",
 	mdepends = ["arch.cortex-m4", "arch.stm32_common", "arch.stm32_common.sources"]
 )
 
-module("arch.stm32f7",
-	defines=["STM32F7XX", "CHIP_STM32F7XX"],
-	sources=["src/stm32f7/stm32f7_sysinit.c"],
-	mdepends = ["arch.cortex-m4", "arch.stm32_common", "arch.stm32_common.sources"]
-)
-
 module("arch.stm32l4",
 	defines=["STM32L4XX", "CHIP_STM32L4XX"],
 	sources=["src/stm32l4/stm32l4_sysinit.c"],

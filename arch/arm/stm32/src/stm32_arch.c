@@ -11,11 +11,7 @@
 #include <systime/systime.h>
 #include <hal/irqtable.h>
 
-#ifdef STM32F4XX
-#define HSI_FREQ 16000000
-#elif STM32G4XX
-#define HSI_FREQ 16000000
-#elif STM32L4XX
+#if defined(STM32F4XX) || defined(STM32G4XX) || defined(STM32L4XX) || defined(STM32F7XX)
 #define HSI_FREQ 16000000
 #else
 #error "undefined HSI frequency"

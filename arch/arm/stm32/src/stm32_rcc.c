@@ -62,6 +62,10 @@ void stm32_rcc_enable_gpio(GPIO_TypeDef * gpio)
 #ifdef RCC_AHB2ENR_GPIOHEN
 		case GPIOH_BASE : RCC->AHB2ENR |= RCC_AHB2ENR_GPIOHEN; break;
 #endif
+		
+#ifdef RCC_AHB1ENR_GPIOIEN
+		case GPIOI_BASE : RCC->AHB1ENR |= RCC_AHB1ENR_GPIOIEN; break;
+#endif
 
 		default: BUG();
 	}

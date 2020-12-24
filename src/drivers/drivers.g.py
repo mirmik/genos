@@ -68,3 +68,10 @@ licant.module("drivers.stm32g4",
 		"genos.drivers.stm32_spi",
 	]
 )
+
+licant.module("genos.drivers.stm32f7", 
+	sources=[
+		"gpio/stm32_gpio.c",
+		"serial/stm32_usart.cpp",
+	]
+)

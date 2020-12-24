@@ -5,7 +5,7 @@ toolchain = licant.cxx_make.toolchain_gcc("arm-none-eabi-")
 
 mdepends = [
 	"board.stm32f746g-disco",
-	"genos.drivers.stm32"
+	"genos.drivers.stm32f7"
 ]
 
 def install(file, *args):

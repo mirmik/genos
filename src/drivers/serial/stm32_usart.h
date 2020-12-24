@@ -10,29 +10,26 @@
 
 #include <drivers/gpio/pin.h>
 
-namespace genos 
+struct stm32_usart_device : public genos::uart
 {
-	struct stm32_usart_device : public genos::uart
-	{
-		USART_TypeDef * regs;
-		uint8_t irqno;
-	
-		int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
-		int enable(int en) override;
-		int ctrirqs(uint8_t cmd) override;
-		int recvbyte() override;
-		int sendbyte(int c) override;
-		int cantx() override;
-		int hasrx() override;
-	
-		void irqinit();
-	
-		stm32_usart_device(USART_TypeDef * regs, uint8_t irqno) :
-			regs(regs), irqno(irqno) 
-		{}
+	USART_TypeDef * regs;
+	uint8_t irqno;
 
-		void init_gpio(gpio_pin tx, gpio_pin rx, int af);
-	};
-}
+	int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
+	int enable(int en) override;
+	int ctrirqs(uint8_t cmd) override;
+	int recvbyte() override;
+	int sendbyte(int c) override;
+	int cantx() override;
+	int hasrx() override;
+
+	void irqinit();
+
+	stm32_usart_device(USART_TypeDef * regs, uint8_t irqno) :
+		regs(regs), irqno(irqno)
+	{}
+
+	void init_gpio(gpio_pin tx, gpio_pin rx, int af);
+};
 
 #endif

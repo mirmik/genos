@@ -4,7 +4,7 @@
 #include <asm/stm32_gpio.h>
 #include <asm/stm32_usart.h>
 
-void genos::stm32_usart_device::init_gpio(gpio_pin tx, gpio_pin rx, int af)
+void stm32_usart_device::init_gpio(gpio_pin tx, gpio_pin rx, int af)
 {
 	stm32_rcc_enable_gpio(tx.gpio);
 	stm32_rcc_enable_gpio(rx.gpio);
@@ -16,13 +16,13 @@ void genos::stm32_usart_device::init_gpio(gpio_pin tx, gpio_pin rx, int af)
 	stm32_gpio_set_alternate(rx.gpio, rx.mask, af);	
 }
 
-int genos::stm32_usart_device::enable(int en)
+int stm32_usart_device::enable(int en)
 {
 	stm32_usart_enable(regs, en);
 	return 0;
 }
 
-int genos::stm32_usart_device::ctrirqs(uint8_t cmd)
+int stm32_usart_device::ctrirqs(uint8_t cmd)
 {	
 	switch (cmd)
 	{
@@ -55,30 +55,30 @@ int genos::stm32_usart_device::ctrirqs(uint8_t cmd)
 
 }
 
-int genos::stm32_usart_device::recvbyte()
+int stm32_usart_device::recvbyte()
 {
 	return stm32_usart_getc(regs);
 
 }
 
-int genos::stm32_usart_device::sendbyte(int symbol)
+int stm32_usart_device::sendbyte(int symbol)
 {
 	return stm32_usart_putc(regs, symbol);
 }
 
-int genos::stm32_usart_device::cantx()
+int stm32_usart_device::cantx()
 {
 	return stm32_usart_room(regs);
 }
 
-int genos::stm32_usart_device::hasrx()
+int stm32_usart_device::hasrx()
 {
 	return stm32_usart_avail(regs);
 }
 
 static void _irqhandler(void* priv)
 {
-	genos::stm32_usart_device * dev = (genos::stm32_usart_device *) priv;
+	stm32_usart_device * dev = (stm32_usart_device *) priv;
 	USART_TypeDef * regs = dev->regs;
 
 	if (stm32_rxirq_status(regs)){
@@ -107,12 +107,12 @@ static void _irqhandler(void* priv)
 	}
 }
 
-void genos::stm32_usart_device::irqinit()
+void stm32_usart_device::irqinit()
 {
 	irqtable_set_handler(irqno, &_irqhandler, (void*) this);
 }
 
-int genos::stm32_usart_device::setup(int32_t baud, char parity,
+int stm32_usart_device::setup(int32_t baud, char parity,
                              uint8_t databits, uint8_t stopbits)
 {
 	//STM32 count parity bit as one of databit.
