@@ -9,11 +9,9 @@ int stm32_diag_putchar(void* priv_usart, char c)
 {
 	USART_TypeDef * usart = (USART_TypeDef *) priv_usart;
 	
-	//while (!(usart->SR & (1 << 7)));
 	stm32_usart_wait_cantx(usart);
 	stm32_usart_putc(usart, c);
 	stm32_usart_wait_cantx(usart);
-	//while (!(usart->SR & (1 << 7)));
 
 	return 1;
 }

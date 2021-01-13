@@ -75,6 +75,7 @@ namespace genos
 
 		void begin(genos::uart * udev);
 		void begin() { begin(udev); };
+		void clear();
 	};
 }
 
