@@ -31,7 +31,7 @@ module("board.rl.syncro_v2",
 	sources = ["rl/syncro_v2/board.cpp"],
 	include_paths = "rl/syncro_v2",
 	mdepends = [
-		("genos.hal", "stm32f407vg"),
+		"arch.stm32f407vg",
 		"genos.drivers.stm32",
 	],
 	defines=["BOARD_RL_SYNCRO_V2"]

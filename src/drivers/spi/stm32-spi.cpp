@@ -61,11 +61,15 @@ int genos::stm32_spi_device::exchange(
     const void *txbuf_v, void *rxbuf_v, int len)
 {
 	int l = len;
+	(void ) l;
 	char c;
 	uint8_t * txbuf = (uint8_t*) txbuf_v;
 	uint8_t * rxbuf = (uint8_t*) rxbuf_v;
 	uint8_t * txbuf2 = (uint8_t*) txbuf_v;
 	uint8_t * rxbuf2 = (uint8_t*) rxbuf_v;
+
+	(void) txbuf2;
+	(void) rxbuf2;
 
 	while (len--)
 	{

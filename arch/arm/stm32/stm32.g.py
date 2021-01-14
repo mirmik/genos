@@ -83,8 +83,7 @@ module("arch.stm32f401re",
 module("arch.stm32f407vg", 
 	defines = ["CHIP_STM32F407", "STM32F407xx"],
 	mdepends = [
-		"arch.stm32f4",	
-		"arch.stm32_usb"
+		"arch.stm32f4"
 	],
 	ldscripts = "ldscripts/stm32f407vg.ld",
 )
@@ -104,6 +103,6 @@ module("arch.stm32g474re",
 
 module("genos.hal", impl = "stm32l432", 
 	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX", "STM32L432xx"],
-	mdepends=["arch.stm32l4"],
+	mdepends=["arch.stm32l4", "arch.stm32_usb"],
 	ldscripts = "ldscripts/stm32l432.ld",
 )
