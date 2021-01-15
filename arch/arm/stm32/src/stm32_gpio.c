@@ -119,7 +119,7 @@ int stm32_gpio_set_alternate(GPIO_TypeDef* g, uint32_t mask, int32_t alternate)
 void stm32_gpio_set_maxspeed(GPIO_TypeDef* regs, uint16_t map,
                              enum stm32_gpio_maxspeed_e maxspeed)
 {
-#if defined CHIP_STM32F1XX || defined CHIP_STM32F2XX
+#if defined CHIP_STM32F1XX || defined CHIP_STM32F2XX 
 
 	uint8_t hmap = (map & 0xFF00) >> 8;
 	uint8_t lmap = map & 0x00FF;
@@ -127,7 +127,11 @@ void stm32_gpio_set_maxspeed(GPIO_TypeDef* regs, uint16_t map,
 	bits_masked_assign_multimap(regs->CRL, lmap, maxspeed, 4);
 	bits_masked_assign_multimap(regs->CRH, hmap, maxspeed, 4);
 
-#elif defined CHIP_STM32F3XX || defined CHIP_STM32F4XX || defined CHIP_STM32L4XX || defined STM32G4XX
+#elif defined CHIP_STM32F3XX || \
+	defined CHIP_STM32F4XX || \
+	defined CHIP_STM32L4XX || \
+	defined STM32G4XX || \
+	defined STM32F7XX
 	bits_masked_assign_multimap(regs->OSPEEDR, map, maxspeed, 2);
 
 #else

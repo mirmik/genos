@@ -13,8 +13,8 @@
 namespace board 
 {
 	extern gpio_pin sysled;
-	extern genos::stm32_usart_device sysuart;
-	extern genos::stm32_usart_device arduart;
+	extern stm32_usart_device sysuart;
+	extern stm32_usart_device arduart;
 }
 
 __BEGIN_DECLS

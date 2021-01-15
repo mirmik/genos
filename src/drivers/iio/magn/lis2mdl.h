@@ -8,6 +8,7 @@
 
 class lis2mdl_device : public genos::regmap
 {
+public:
 	enum Register
 	{
 		// 0x00 - 0x44

@@ -31,7 +31,7 @@ namespace genos
 			
 			//dev->set_slave_address(addr);
 			//ret = dev->exchange(addr, out, olen, nullptr, 0);
-			dev->write_memory(addr, memaddr, out, olen);
+			ret = dev->write_memory(addr, memaddr, out, olen);
 
 			return ret;
 		}

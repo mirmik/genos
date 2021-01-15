@@ -23,7 +23,6 @@
 #define I2C_SPEED(__PCLK__, __SPEED__, __DUTYCYCLE__)      (((__SPEED__) <= 100000)? (I2C_SPEED_STANDARD((__PCLK__), (__SPEED__))) : \
                                                                   ((I2C_SPEED_FAST((__PCLK__), (__SPEED__), (__DUTYCYCLE__)) & I2C_CCR_CCR) == 0U)? 1U : \
                                                                   ((I2C_SPEED_FAST((__PCLK__), (__SPEED__), (__DUTYCYCLE__))) | I2C_CCR_FS))
-
 namespace genos
 {
 	class stm32_i2c_device : public genos::i2c_device
@@ -54,30 +53,59 @@ namespace genos
 
 		int write_memory(uint8_t devaddr, uint8_t memaddr, const void * buf, int len) override
 		{
-			//uint8_t addr = devaddr << 1;
-			uint8_t * cbuf = (uint8_t * ) buf;
+			int count = 0;
 
-			stm32_i2c_debug_print_status(regs);
+			uint8_t * cbuf = (uint8_t * ) buf;
 
 			stm32_i2c_set_start(regs);
 
 			// Wait until SB flag is set
-			if (!stm32_i2c_status_start_bit(regs)) { BUG();}
+			count = 0;
+			while (!stm32_i2c_status_start_bit(regs)) 
+			{
+				if (count++ > 1000)  
+				{
+					dprln("fault");
+					return -1;
+				}
+			}
 
 			// 7 bit and write(0) command
 			stm32_i2c_send_byte(regs, devaddr << 1);
 
-			if (!stm32_i2c_status_addr(regs)) { BUG(); }
+			count = 0;
+			while (!stm32_i2c_status_addr(regs)) 
+			{
+				if (count++ > 1000) 
+				{
+					dprln("fault");
+					return -1;
+				}
+			}
 
-			while (len)
+			// сбрасываем флаг установки адреса.
+			char sr1 = regs->SR1;
+			char sr2 = regs->SR2;
+			(void) sr1; (void) sr2;
+
+			// send memory address
+			{
+				stm32_i2c_wait_txe_flag(regs);
+				stm32_i2c_send_byte(regs, memaddr);
+				stm32_i2c_wait_btf_flag(regs);
+			}
+
+			// send data
+			while (len--)
 			{
 				stm32_i2c_wait_txe_flag(regs);
 				stm32_i2c_send_byte(regs, *cbuf++);
+				stm32_i2c_wait_btf_flag(regs);
 			}
 
 			stm32_i2c_wait_btf_flag(regs);
 			stm32_i2c_set_stop(regs);
-
+			
 			return 0;
 		}
 
@@ -102,7 +130,7 @@ namespace genos
 			cpu_delay(100);
 
 			pclk1 = 8000000;//HAL_RCC_GetPCLK1Freq();
-			freqrange = I2C_FREQRANGE(pclk1);
+			freqrange = 0b00010;
 
 			int clock_speed = 1000000;
 			int duty_cycle = 100;

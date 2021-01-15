@@ -158,6 +158,12 @@ size_t genos::uartring::avail()
 	return avail;
 }
 
+void genos::uartring::clear() 
+{
+	igris::syslock_guard lock;
+	ring_clean(&rxring);
+}
+
 static void uartring_irq_handler(void* priv, int code)
 {
 	struct genos::uartring* uring = (struct genos::uartring*) priv;

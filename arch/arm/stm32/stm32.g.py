@@ -106,3 +106,9 @@ module("genos.hal", impl = "stm32l432",
 	mdepends=["arch.stm32l4", "arch.stm32_usb"],
 	ldscripts = "ldscripts/stm32l432.ld",
 )
+
+module("arch.stm32f746ng",
+	defines=["STM32F746xx"],
+	mdepends=["arch.stm32f7"],
+	ldscripts=["ldscripts/stm32f746ng.ld"]
+)
