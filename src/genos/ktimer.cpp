@@ -10,7 +10,11 @@
 
 DLIST_HEAD(ktimer_list);
 
-void ktimer_base_init(struct ktimer_base * tim, clock_t start, clock_t interval, uint8_t ctrtype)
+void ktimer_base_init(
+	struct ktimer_base * tim, 
+	clock_t start, 
+	clock_t interval, 
+	uint8_t ctrtype)
 {
 	ctrobj_init(&tim->ctr, ctrtype);
 	tim->start = start;

@@ -34,7 +34,7 @@ licant.module("genos.drivers.stm32",
 		"genos.drivers.stm32_gpio",
 		"genos.drivers.stm32_usart",
 		"genos.drivers.stm32_spi",
-		"genos.drivers.stm32_i2c",
+#		"genos.drivers.stm32_i2c",
 	]
 )
 

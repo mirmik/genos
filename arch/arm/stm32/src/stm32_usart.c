@@ -116,8 +116,8 @@ void stm32_usart_set_baudrate(USART_TypeDef * regs, uint32_t baud)
 #ifdef LPUART1
 	if (regs == LPUART1)
 		//regs->BRR = ((double)(busfreq) / baud * 256);	 //190 //200
-		//regs->BRR = ((double)(busfreq) / baud * 256);
-		regs->BRR = ((double)(busfreq) / baud * 200);
+		regs->BRR = ((double)(busfreq) / baud * 256);
+		//regs->BRR = ((double)(busfreq) / baud * 200);
 	else
 		regs->BRR = busfreq / baud;
 #else
