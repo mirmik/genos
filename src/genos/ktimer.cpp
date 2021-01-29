@@ -23,7 +23,7 @@ void ktimer_base_init(
 
 void ktimer_init(genos::ktimer * tim, ktimer_callback_t act, void* arg, clock_t start, clock_t interval)
 {
-	ktimer_base_init(tim, start, interval, CTROBJ_KTIMER_DELEGATE);
+	ktimer_base_init(&tim->tim, start, interval, CTROBJ_KTIMER_DELEGATE);
 	tim->act = act;
 	tim->arg = arg;
 }
@@ -101,7 +101,7 @@ void ktimer_execute(struct ktimer_base * tim)
 	{
 		case CTROBJ_KTIMER_DELEGATE: 
 		{
-			genos::ktimer * t = (genos::ktimer*) tim;
+			genos::ktimer * t = mcast_out(tim, genos::ktimer, tim);
 			dlist_del_init(&tim->ctr.lnk);
 			t->act(t->arg, t);
 			break;
