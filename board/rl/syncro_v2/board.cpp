@@ -16,8 +16,8 @@
 
 #include <periph/map.h>
 
-genos::stm32_usart_device usart2(USART2, USART2_IRQn);
-genos::stm32_usart_device usart6(USART6, USART6_IRQn);
+stm32_usart_device usart2(USART2, USART2_IRQn);
+stm32_usart_device usart6(USART6, USART6_IRQn);
 
 GPIO_PIN(board_led, GPIOD, 14);
 GPIO_PIN(board_led2, GPIOD, 15);
@@ -32,7 +32,7 @@ struct gpio_pin extpin[4] =
 
 namespace board 
 {
-	genos::stm32_usart_device sysuart(USART2, USART2_IRQn);
+	stm32_usart_device sysuart(USART2, USART2_IRQn);
 	genos::gpio_pin sysled(GPIOD, 1<<14);
 }
 
@@ -49,7 +49,7 @@ void usart6_configure()
 
 	nvic_enable_irq(USART6_IRQn);
 
-	stm32_usart_setup(USART6, 115200, 'n', 9, 1);
+	stm32_usart_setup(USART6, 115200, 'n', 8, 1);
 }
 
 void board_init(int mode) 

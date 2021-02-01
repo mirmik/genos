@@ -32,7 +32,7 @@ int stm32_clockbus_enable_pll_mode(uint32_t freq);
 
 #if defined(STM32_PLL_VAR1)
 int stm32_pll_setup(int M, int N, int R, int P, int Q);
-#elif defined(STM32_PLL_VAR1)
+#elif defined(STM32_PLL_VAR2)
 int stm32_pll_setup(int M, int N, int P, int Q);
 #endif
 __END_DECLS
