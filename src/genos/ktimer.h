@@ -6,6 +6,8 @@
 #include <systime/systime.h>
 #include <time.h>
 
+extern struct dlist_head ktimer_list;
+
 namespace genos 
 {
 	struct ktimer;
@@ -48,16 +50,21 @@ struct ktimer_base
 
 namespace genos
 {
-	struct ktimer : public ktimer_base
+	struct ktimer 
 	{
+		struct ktimer_base tim;
+
 		ktimer_callback_t act;
 		void * arg;
 
 		ktimer(ktimer_callback_t act, void* arg, clock_t interval) : 
-			ktimer_base(0, interval),
+			tim(0, interval),
 			act(act),
 			arg(arg)
 		{}
+
+		void plan() { tim.plan(); }
+		void replan() { tim.replan(); }
 	};
 }
 

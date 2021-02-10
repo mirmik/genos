@@ -9,7 +9,7 @@ module("arch.stm32_common.sources",
 		"src/stm32_rcc.c",
 		"src/stm32_gpio.c",
 		"src/stm32_spi.c",
-		"src/stm32_i2c.c",
+	#	"src/stm32_i2c.c",
 		"src/stm32_usart.c",
 		"src/stm32_diag.c",
 		"src/stm32_systick.c",
@@ -47,6 +47,9 @@ module("arch.stm32_common",
 	libs = ["m", "gcc"]
 )
 
+module("arch.stm32_usb",
+	sources = ["src/stm32_usb.c"])
+
 module("arch.stm32g4",
 	defines=["STM32G4XX", "CHIP_STM32G4XX"],
 	sources=["src/stm32g4/stm32g4_sysinit.c"],
@@ -80,7 +83,7 @@ module("arch.stm32f401re",
 module("arch.stm32f407vg", 
 	defines = ["CHIP_STM32F407", "STM32F407xx"],
 	mdepends = [
-		"arch.stm32f4",	
+		"arch.stm32f4"
 	],
 	ldscripts = "ldscripts/stm32f407vg.ld",
 )
@@ -100,7 +103,7 @@ module("arch.stm32g474re",
 
 module("genos.hal", impl = "stm32l432", 
 	defines = ["CHIP_STM32L432", "CHIP_STM32L432XX", "STM32L432xx"],
-	mdepends=["arch.stm32l4"],
+	mdepends=["arch.stm32l4", "arch.stm32_usb"],
 	ldscripts = "ldscripts/stm32l432.ld",
 )
 

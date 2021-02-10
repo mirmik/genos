@@ -10,8 +10,8 @@
 #define GPIO_AF_USART2 0x07
 #define GPIO_AF_USART6 0x08
 
-extern genos::stm32_usart usart2;
-extern genos::stm32_usart usart6;
+extern genos::stm32_usart_device usart2;
+extern genos::stm32_usart_device usart6;
 
 extern struct gpio_pin board_led;
 extern struct gpio_pin board_led2;
@@ -19,7 +19,7 @@ extern struct gpio_pin extpin[4];
 
 namespace board 
 {
-	extern genos::stm32_usart sysuart;
+	extern genos::stm32_usart_device sysuart;
 	extern genos::gpio_pin sysled;
 }
 
