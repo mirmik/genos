@@ -1,5 +1,6 @@
 /*	STM32 Start Label */
 
+#include <periph/map.h>
 #include <asm/irq.h>
 #include <string.h>
 

@@ -65,3 +65,9 @@ void nvic_enable_irq(uint32_t irqno)
 
 	NVIC->ISER[regno] |= 1 << bitno;
 };
+
+void nvic_set_priority(int irqno, int32_t prio) 
+{
+	irqno = NVIC_IRQNO(irqno);
+	NVIC->IP[irqno] = prio;
+}
