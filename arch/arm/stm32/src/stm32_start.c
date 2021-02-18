@@ -3,7 +3,6 @@
 #include <periph/map.h>
 #include <asm/irq.h>
 #include <string.h>
-#include "stm32f4xx.h"
 
 typedef void (*func_ptr)(void);
 
@@ -38,7 +37,6 @@ void cxx_invoke_fini_array(void)
 void __start(void)
 {
 	irqs_disable();
-	SCB->CPACR |= ((3UL << 10 * 2) | (3UL << 11 * 2));
 
 	/*data section copy*/
 	memcpy(&_sdata, &_sidata, (unsigned int) (&_edata - &_sdata));
