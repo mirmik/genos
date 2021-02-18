@@ -17,7 +17,7 @@ int stm32_systick_config(uint32_t ticks)
 	SysTick->VAL = 0; // reset current value
 
 	// set max priority for systick interrupt
-	//nvic_set_priority(SysTick_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
+	nvic_set_priority(SysTick_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
 	// enable systick irq and systick timer
 	SysTick->CTRL  = SYSTICK_CTRL_CLKSOURCE |

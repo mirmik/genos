@@ -9,6 +9,7 @@ __BEGIN_DECLS
 
 void dprint_dump_nvic();
 void nvic_enable_irq(uint32_t irqno);
+void nvic_set_priority(int irqno, int32_t prio);
 
 __END_DECLS
 

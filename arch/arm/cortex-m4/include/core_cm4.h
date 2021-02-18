@@ -73,91 +73,91 @@
 /** __FPU_USED indicates whether an FPU is used or not.
     For this, __FPU_PRESENT has to be checked prior to making use of FPU specific registers and functions.
 */
-#if defined ( __CC_ARM )
-  #if defined __TARGET_FPU_VFP
-    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-      #define __FPU_USED       1U
-    #else
-      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-      #define __FPU_USED       0U
-    #endif
-  #else
-    #define __FPU_USED         0U
-  #endif
-
-#elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-  #if defined __ARM_PCS_VFP
-    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-      #define __FPU_USED       1U
-    #else
-      #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-      #define __FPU_USED       0U
-    #endif
-  #else
-    #define __FPU_USED         0U
-  #endif
-
-#elif defined ( __GNUC__ )
-  #if defined (__VFP_FP__) && !defined(__SOFTFP__)
-    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-      #define __FPU_USED       1U
-    #else
-      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-      #define __FPU_USED       0U
-    #endif
-  #else
-    #define __FPU_USED         0U
-  #endif
-
-#elif defined ( __ICCARM__ )
-  #if defined __ARMVFP__
-    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-      #define __FPU_USED       1U
-    #else
-      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-      #define __FPU_USED       0U
-    #endif
-  #else
-    #define __FPU_USED         0U
-  #endif
-
-#elif defined ( __TI_ARM__ )
-  #if defined __TI_VFP_SUPPORT__
-    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-      #define __FPU_USED       1U
-    #else
-      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-      #define __FPU_USED       0U
-    #endif
-  #else
-    #define __FPU_USED         0U
-  #endif
-
-#elif defined ( __TASKING__ )
-  #if defined __FPU_VFP__
-    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-      #define __FPU_USED       1U
-    #else
-      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-      #define __FPU_USED       0U
-    #endif
-  #else
-    #define __FPU_USED         0U
-  #endif
-
-#elif defined ( __CSMC__ )
-  #if ( __CSMC__ & 0x400U)
-    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-      #define __FPU_USED       1U
-    #else
-      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
-      #define __FPU_USED       0U
-    #endif
-  #else
-    #define __FPU_USED         0U
-  #endif
-
-#endif
+//#if defined ( __CC_ARM )
+//  #if defined __TARGET_FPU_VFP
+//    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+//      #define __FPU_USED       1U
+//    #else
+//      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+//      #define __FPU_USED       0U
+//    #endif
+//  #else
+//    #define __FPU_USED         0U
+//  #endif
+//
+//#elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+//  #if defined __ARM_PCS_VFP
+//    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+//      #define __FPU_USED       1U
+//    #else
+//      #warning "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+//      #define __FPU_USED       0U
+//    #endif
+//  #else
+//    #define __FPU_USED         0U
+//  #endif
+//
+//#elif defined ( __GNUC__ )
+//  #if defined (__VFP_FP__) && !defined(__SOFTFP__)
+//    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+//      #define __FPU_USED       1U
+//    #else
+//      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+//      #define __FPU_USED       0U
+//    #endif
+//  #else
+//    #define __FPU_USED         0U
+//  #endif
+//
+//#elif defined ( __ICCARM__ )
+//  #if defined __ARMVFP__
+//    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+//      #define __FPU_USED       1U
+//    #else
+//      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+//      #define __FPU_USED       0U
+//    #endif
+//  #else
+//    #define __FPU_USED         0U
+//  #endif
+//
+//#elif defined ( __TI_ARM__ )
+//  #if defined __TI_VFP_SUPPORT__
+//    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+//      #define __FPU_USED       1U
+//    #else
+//      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+//      #define __FPU_USED       0U
+//    #endif
+//  #else
+//    #define __FPU_USED         0U
+//  #endif
+//
+//#elif defined ( __TASKING__ )
+//  #if defined __FPU_VFP__
+//    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+//      #define __FPU_USED       1U
+//    #else
+//      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+//      #define __FPU_USED       0U
+//    #endif
+//  #else
+//    #define __FPU_USED         0U
+//  #endif
+//
+//#elif defined ( __CSMC__ )
+//  #if ( __CSMC__ & 0x400U)
+//    #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
+//      #define __FPU_USED       1U
+//    #else
+//      #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
+//      #define __FPU_USED       0U
+//    #endif
+//  #else
+//    #define __FPU_USED         0U
+//  #endif
+//
+//#endif
 
 #include "cmsis_compiler.h"               /* CMSIS compiler specific defines */
 

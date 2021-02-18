@@ -23,7 +23,7 @@ int genos::stm32_spi_device::begin_master()
 
 	stm32_spi_disable_nss(regs, true);
 	stm32_spi_set_mode(regs, false, false);
-	//dprln(4);	
+	//dprln(4);
 	stm32_spi_debug_print(regs);
 	stm32_spi_enable(regs, true);
 	//dprln(3);
@@ -63,22 +63,18 @@ int genos::stm32_spi_device::exchange(
 	char c;
 	uint8_t * txbuf = (uint8_t*) txbuf_v;
 	uint8_t * rxbuf = (uint8_t*) rxbuf_v;
-	//uint8_t * txbuf2 = (uint8_t*) txbuf_v;
-	//uint8_t * rxbuf2 = (uint8_t*) rxbuf_v;
+
+#if SPI_DEBUG >= 1
+	int l = len;
+	uint8_t * txbuf2 = (uint8_t*) txbuf_v;
+	uint8_t * rxbuf2 = (uint8_t*) rxbuf_v;
+#endif
 
 	while (len--)
 	{
-		//dprln(1);
-		//while ((regs->SR & SPI_SR_RXNE)) {};
-		//dprln(2);
 		stm32_spi_wait_for_tx_empty(regs);
-		//dprln(3);
-
 		stm32_spi_send_byte(regs, *txbuf++);
-
-		//dprln(4);
 		stm32_spi_wait_for_rx_not_empty(regs);
-		//dprln(5);
 
 		c = stm32_spi_recv_byte(regs);
 		if (rxbuf)
@@ -87,18 +83,20 @@ int genos::stm32_spi_device::exchange(
 		}
 	}
 
-	#if SPI_DEBUG>=1
-		dpr("send: ");
-		for (int i=0; i < l; ++i) {
-			dprhex(txbuf2[i]);
-		}
+#if SPI_DEBUG>=1
+	dpr("send: ");
+	for (int i = 0; i < l; ++i)
+	{
+		dprhex(txbuf2[i]);
+	}
 
-		dpr(" recv: ");
-		for (int i=0; i < l; ++i) {
-			dprhex(rxbuf2[i]);
-		}
-		dln();
-	#endif
+	dpr(" recv: ");
+	for (int i = 0; i < l; ++i)
+	{
+		dprhex(rxbuf2[i]);
+	}
+	dln();
+#endif
 
 	// Wait until the transmission of the last byte is complete
 	stm32_spi_wait_until_busy(regs);

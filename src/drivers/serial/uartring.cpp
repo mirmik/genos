@@ -107,14 +107,14 @@ int genos::uartring::read(void* data,
 	}
 
 	irqs_restore(save);
-			
+
 	if (flags & IO_ONLYWAIT)
 		return 0;
 
 	save = irqs_save();
-	ret = ring_read(&rxring, rxbuffer, (char*)data, size);		
+	ret = ring_read(&rxring, rxbuffer, (char*)data, size);
 	irqs_restore(save);
-	
+
 	return ret;
 }
 
@@ -158,7 +158,7 @@ size_t genos::uartring::avail()
 	return avail;
 }
 
-void genos::uartring::clear() 
+void genos::uartring::clear()
 {
 	igris::syslock_guard lock;
 	ring_clean(&rxring);
@@ -167,7 +167,7 @@ void genos::uartring::clear()
 static void uartring_irq_handler(void* priv, int code)
 {
 	struct genos::uartring* uring = (struct genos::uartring*) priv;
-
+			
 	switch (code)
 	{
 		case UART_IRQCODE_TX:
@@ -201,7 +201,7 @@ static void uartring_irq_handler(void* priv, int code)
 			}
 
 		//case UART_IRQCODE_TC: //fallthrow
-			
+
 
 		default:
 			dprln("uring:", code);

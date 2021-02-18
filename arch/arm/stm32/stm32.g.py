@@ -40,9 +40,9 @@ module("arch.stm32_common",
 
 	ldscripts= ["ldscripts/stm32_common.ld"],
 
-	cc_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 ",
-	cxx_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4  -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
-	ld_flags = "-Os -g -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
+	cc_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__FPU_USED=1",
+	cxx_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fno-threadsafe-statics  -D__FPU_USED=1 -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
+	ld_flags = "-Os -g -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16",
 
 	libs = ["m", "gcc"]
 )
