@@ -16,24 +16,14 @@ int genos::stm32_spi_device::begin_master()
 	cpu_delay(1000);
 
 	stm32_spi_set_master_mode(regs, true);
-	//dprln(1);
-	stm32_spi_debug_print(regs);
 	stm32_spi_set_divider(regs, 16);
-	//dprln(2);
 
 	stm32_spi_disable_nss(regs, true);
 	stm32_spi_set_mode(regs, false, false);
-	//dprln(4);
-	stm32_spi_debug_print(regs);
+
 	stm32_spi_enable(regs, true);
-	//dprln(3);
-	stm32_spi_debug_print(regs);
 
 	cpu_delay(1000);
-	//dprln(6);
-	//stm32_spi_debug_print(regs);
-
-	//dprln();dprln();
 
 	return 0;
 }

@@ -1,6 +1,7 @@
 #ifndef GENOS_SPI_DEVICE_H
 #define GENOS_SPI_DEVICE_H
 
+#include <stdint.h>
 #include <drivers/device.h>
 
 namespace genos 

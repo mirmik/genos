@@ -2,6 +2,7 @@
 #define GENOS_UTILITY_CONTTY_H
 
 #include <sys/cdefs.h>
+#include <igris/dprint.h>
 #include <igris/shell/readline.h>
 
 #include <genos/signal.h>
@@ -60,6 +61,13 @@ namespace genos
 		}
 
 		void execute() override;
+
+		void debug_print_history_buffer()
+		{
+			//char* hb = hbuffer;
+			//dprptr(hb);
+			//debug_print_dump(hb, 2);
+		}
 	};
 }
 
