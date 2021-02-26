@@ -1,9 +1,0 @@
-#ifndef GENOS_SERVICE_ERRNO_H
-#define GENOS_SERVICE_ERRNO_H
-
-#define ERROR_WRONG_RECEIVER		-1000
-//#define ERROR_WRONG_SENDER			-1001
-
-
-#define ERROR_WRONG_RECEIVER_MSG	"WrongReceiver"
-#endif
