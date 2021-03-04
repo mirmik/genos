@@ -113,6 +113,7 @@ SECTIONS
 	.heap :
 	{
 		. = ALIGN(4);
+		_heap_start = .;
 		. = . + _minimum_heap_size;
 		. = ALIGN(4);
 	} >RAM

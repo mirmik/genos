@@ -75,3 +75,13 @@ licant.module("genos.drivers.stm32f7",
 		"serial/stm32_usart.cpp",
 	]
 )
+
+
+licant.module("arduino.sd_driver", 
+	sources=[
+		"sd/SdFile.cpp",
+		"sd/SdVolume.cpp",
+		"sd/SD.cpp",
+		"sd/File.cpp",
+	]
+)
