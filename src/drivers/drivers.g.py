@@ -85,3 +85,9 @@ licant.module("arduino.sd_driver",
 		"sd/File.cpp",
 	]
 )
+
+licant.module("adafruit_ssd1306", 
+	sources=[
+		"display/Adafruit_SSD1306.cpp",
+	]
+)

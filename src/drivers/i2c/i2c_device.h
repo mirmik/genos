@@ -14,6 +14,15 @@ namespace genos
 			uint8_t memaddr,
 			const void * buffer, int buflen) = 0;
 
+
+		virtual int write(
+			uint8_t devaddr,
+			const void * buffer, int buflen) = 0;
+
+		virtual int read(
+			uint8_t devaddr,
+			const void * buffer, int buflen) = 0;
+
 		//virtual int exchange(uint8_t addr, 
 		//	const void * txdata, int txsize,
 		//	void * rxdata, int rxsize) = 0;

@@ -13,6 +13,13 @@ void stm32_clockbus_hsi_mode()
 	//volatile int i;
 	//RCC->CR = RCC_CR_HSION;
 	//i = 1000; while (--i);
+
+	RCC->CFGR &= ~(RCC_CFGR_HPRE_DIV16 | RCC_CFGR_PPRE1_DIV16 | RCC_CFGR_PPRE2_DIV16);
+	RCC->CFGR |= RCC_CFGR_HPRE_DIV1 
+	             | RCC_CFGR_PPRE1_DIV1
+	             | RCC_CFGR_PPRE2_DIV1;
+	stm32_clockbus_set_dividers(1, 1);
+
 	__active_mode = 0;
 	__systembus = CLOCKBUS_HSI;
 	stm32_clockbus_reevaluate();

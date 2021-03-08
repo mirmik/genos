@@ -3,7 +3,8 @@
 
 // Source: Amperka troyka library
 
-#include "drivers/i2c/linux_i2c.h"
+#include "drivers/i2c/i2c_client.h"
+#include <stdint.h>
 
 #define LIS331DLH_I2C_ADDRESS     0b0011000
 #define LIS331DLH_I2C_ADDRESS_V2  0b0011001
@@ -27,9 +28,9 @@ enum LIS331DLH_Range : uint8_t
     RANGE_8G = 8
 };
 
-class LIS331DLH_I2C : public genos::i2c_client
+class lis331dlh_device
 {
-    genos::i2c_master * i2c;
+    genos::i2c_client * client;
 
     uint8_t ctrl_reg1_mirror = 0;
     uint8_t ctrl_reg4_mirror = 0;
@@ -46,7 +47,7 @@ class LIS331DLH_I2C : public genos::i2c_client
     float z_bias=0;
 
 public:
-    LIS331DLH_I2C(genos::i2c_master * i2c, uint8_t addr = LIS331DLH_I2C_ADDRESS);
+    lis331dlh_device(genos::i2c_client * i2c);
 
     void begin();
 
@@ -81,7 +82,7 @@ public:
 
 	void set_calibration_x(float a, float b) { x_bias = (a+b)/2; x_mul = 1/((b-a)/2); }
 	void set_calibration_y(float a, float b) { y_bias = (a+b)/2; y_mul = 1/((b-a)/2); }
-        void set_calibration_z(float a, float b) { z_bias = (a+b)/2; z_mul = 1/((b-a)/2); }
+    void set_calibration_z(float a, float b) { z_bias = (a+b)/2; z_mul = 1/((b-a)/2); }
 };
 
 #endif

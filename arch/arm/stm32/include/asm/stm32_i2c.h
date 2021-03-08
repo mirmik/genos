@@ -62,6 +62,12 @@ void stm32_i2c_send_byte(I2C_TypeDef * i2c, char c)
 }
 
 static inline
+uint8_t stm32_i2c_recv_byte(I2C_TypeDef * i2c) 
+{
+	return i2c->DR;
+}
+
+static inline
 void stm32_i2c_set_start(I2C_TypeDef * i2c) 
 {
 	i2c->CR1 |= I2C_CR1_START;

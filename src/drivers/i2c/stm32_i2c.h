@@ -109,6 +109,115 @@ namespace genos
 			return 0;
 		}
 
+		int write(uint8_t devaddr, const void * buf, int len) override
+		{
+			dprln("Write");
+			dprdump(buf, len);
+
+			int count = 0;
+
+			uint8_t * cbuf = (uint8_t * ) buf;
+
+			stm32_i2c_set_start(regs);
+
+			// Wait until SB flag is set
+			count = 0;
+			while (!stm32_i2c_status_start_bit(regs)) 
+			{
+				if (count++ > 1000)  
+				{
+					dprln("fault1");
+					return -1;
+				}
+			}
+
+			// 7 bit and write(0) command
+			stm32_i2c_send_byte(regs, devaddr << 1);
+
+			count = 0;
+			while (!stm32_i2c_status_addr(regs)) 
+			{
+				if (count++ > 1000) 
+				{
+					dprln("fault2");
+					return -1;
+				}
+			}
+
+			// сбрасываем флаг установки адреса.
+			char sr1 = regs->SR1;
+			char sr2 = regs->SR2;
+			(void) sr1; (void) sr2;
+
+			// send data
+			while (len--)
+			{
+				stm32_i2c_wait_txe_flag(regs);
+				stm32_i2c_send_byte(regs, *cbuf++);
+				stm32_i2c_wait_btf_flag(regs);
+			}
+
+			stm32_i2c_wait_btf_flag(regs);
+			stm32_i2c_set_stop(regs);
+			
+			return 0;
+		}
+
+		int read(uint8_t devaddr, const void * buf, int len) override
+		{
+			dprln("Read");
+			dprdump(buf, len);
+
+			int count = 0;
+
+			uint8_t * cbuf = (uint8_t * ) buf;
+
+			stm32_i2c_set_start(regs);
+
+			// Wait until SB flag is set
+			count = 0;
+			while (!stm32_i2c_status_start_bit(regs)) 
+			{
+				if (count++ > 1000)  
+				{
+					dprln("fault1");
+					return -1;
+				}
+			}
+
+			// 7 bit and write(0) command
+			stm32_i2c_send_byte(regs, devaddr << 1 | 1); //read command
+
+			count = 0;
+			while (!stm32_i2c_status_addr(regs)) 
+			{
+				if (count++ > 1000) 
+				{
+					dprln("fault2");
+					return -1;
+				}
+			}
+
+			// сбрасываем флаг установки адреса.
+			char sr1 = regs->SR1;
+			char sr2 = regs->SR2;
+			(void) sr1; (void) sr2;
+
+			// recv data
+			while (len--)
+			{
+				stm32_i2c_wait_rxne_flag(regs);
+				*cbuf++ = stm32_i2c_recv_byte(regs);
+				//stm32_i2c_wait_btf_flag(regs);
+			}
+
+			//stm32_i2c_wait_btf_flag(regs);
+			stm32_i2c_set_stop(regs);
+			
+			return 0;
+		}
+
+
 		void lock_bus() override { semaphore_down(&__lock); }
 		void unlock_bus() override { semaphore_up(&__lock); }
 
@@ -118,38 +227,35 @@ namespace genos
 			BUG();
 			#else
 
-			uint32_t freqrange;
-			uint32_t pclk1;
+			//uint32_t freqrange;
+			//uint32_t pclk1;
 
 			stm32_rcc_enable_i2c(regs);
 			cpu_delay(100);
-			regs->CR1 &= ~I2C_CR1_PE;
+			regs->CR1 &= ~I2C_CR1_PE; // disable
 
-			regs->CR1 |= I2C_CR1_SWRST;
-			regs->CR1 &= ~I2C_CR1_SWRST;
+			regs->CR1 |= I2C_CR1_SWRST;  // software reset 
+			regs->CR1 &= ~I2C_CR1_SWRST; // software reset
 			cpu_delay(100);
 
-			pclk1 = 8000000;//HAL_RCC_GetPCLK1Freq();
-			freqrange = 0b00010;
-
-			int clock_speed = 1000000;
-			int duty_cycle = 100;
 
 			//MODIFY_REG(hi2c->Instance->CR2, I2C_CR2_FREQ, freqrange);
-			bits_assign(regs->CR2, 0b11111, 0b00010);
+			//bits_assign(regs->CR2, 0b11111, 0b00010); 
+			bits_assign(regs->CR2, 0b11111, 8); 
 
 			/*---------------------------- I2Cx TRISE Configuration --------------------*/
 			/* Configure I2Cx: Rise Time */
 			//MODIFY_REG(hi2c->Instance->TRISE, I2C_TRISE_TRISE, I2C_RISE_TIME(freqrange, hi2c->Init.ClockSpeed));
-			bits_assign(regs->TRISE, I2C_TRISE_TRISE, I2C_RISE_TIME(freqrange, clock_speed));
+			bits_assign(regs->TRISE, I2C_TRISE_TRISE, 9);
+			regs->CCR = 40;
 
 			/*---------------------------- I2Cx CCR Configuration ----------------------*/
 			/* Configure I2Cx: Speed */
-			uint16_t _I2C_SPEED = I2C_SPEED(pclk1, clock_speed, duty_cycle);
-			bits_assign(
-				regs->CCR, 
-				(I2C_CCR_FS | I2C_CCR_DUTY | I2C_CCR_CCR), 
-				_I2C_SPEED);
+			//uint16_t _I2C_SPEED = I2C_SPEED(pclk1, clock_speed, duty_cycle);
+			//bits_assign(
+			//	regs->CCR, 
+			//	(I2C_CCR_FS | I2C_CCR_DUTY | I2C_CCR_CCR), 
+			//	_I2C_SPEED);
 
 			/*---------------------------- I2Cx CR1 Configuration ----------------------*/
 			/* Configure I2Cx: Generalcall and NoStretch mode */

@@ -28,11 +28,28 @@ namespace genos
 		int write_memory(uint8_t memaddr, const void* out, uint16_t olen) 
 		{
 			int ret;
+
+			dprln("write_memory");
 			
 			//dev->set_slave_address(addr);
 			//ret = dev->exchange(addr, out, olen, nullptr, 0);
 			ret = dev->write_memory(addr, memaddr, out, olen);
 
+			return ret;
+		}
+
+
+		int write(const void* out, uint16_t olen) 
+		{
+			int ret;
+			ret = dev->write(addr, out, olen);
+			return ret;
+		}
+
+		int read(const void* out, uint16_t olen) 
+		{
+			int ret;
+			ret = dev->read(addr, out, olen);
 			return ret;
 		}
 
@@ -42,6 +59,8 @@ namespace genos
 		{
 			return 0;
 		}
+
+		void init() {}
 
 		void lock_bus() 
 		{
