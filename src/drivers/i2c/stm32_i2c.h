@@ -111,8 +111,8 @@ namespace genos
 
 		int write(uint8_t devaddr, const void * buf, int len) override
 		{
-			dprln("Write");
-			dprdump(buf, len);
+			//dprln("Write");
+			//dprdump(buf, len);
 
 			int count = 0;
 

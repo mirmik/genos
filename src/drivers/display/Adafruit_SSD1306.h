@@ -110,6 +110,7 @@ class Adafruit_SSD1306 : public display_device
 	uint8_t             vccstate;
 
 	uint8_t buffer[SSD1306_LCDWIDTH*(SSD1306_LCDHEIGHT/8)];
+public:
 	const int HEIGHT = SSD1306_LCDHEIGHT;
 	const int WIDTH = SSD1306_LCDWIDTH;	
 
@@ -122,8 +123,12 @@ public:
 	void         display(void);
 	void         clearDisplay(void);
 	void         invertDisplay(bool i);
+	void 		 fill(uint32_t color) override;
 	void         dim(bool dim);
-	void         drawPixel(int16_t x, int16_t y, uint16_t color);
+	
+	void         draw_pixel(int16_t x, int16_t y, uint32_t color) override;
+	void         update() override { display(); }
+	
 	virtual void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 	virtual void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 	void         startscrollright(uint8_t start, uint8_t stop);
@@ -134,6 +139,9 @@ public:
 	void         ssd1306_command(uint8_t c);
 	bool      getPixel(int16_t x, int16_t y);
 	uint8_t     *getBuffer(void);
+
+	int16_t width() override { return WIDTH; }
+	int16_t height() override { return HEIGHT; }
 
 private:
 	void         drawFastHLineInternal(int16_t x, int16_t y, int16_t w,

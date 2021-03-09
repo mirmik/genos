@@ -19,15 +19,13 @@ namespace genos
 			uint8_t devaddr,
 			const void * buffer, int buflen) = 0;
 
+		//virtual int write_start(uint8_t devaddr);
+		//virtual int write_finish(uint8_t devaddr);
+
+
 		virtual int read(
 			uint8_t devaddr,
 			const void * buffer, int buflen) = 0;
-
-		//virtual int exchange(uint8_t addr, 
-		//	const void * txdata, int txsize,
-		//	void * rxdata, int rxsize) = 0;
-	
-		//virtual void set_slave_address(uint8_t addr) = 0;
 
 		virtual void lock_bus() = 0;
 		virtual void unlock_bus() = 0;

@@ -1,5 +1,6 @@
 #include "Adafruit_SSD1306.h"
 #include <string.h>
+#include <systime/systime.h>
 
 #define TRANSACTION_START
 #define TRANSACTION_END
@@ -28,7 +29,7 @@ void Adafruit_SSD1306::ssd1306_command1(uint8_t c)
 void Adafruit_SSD1306::ssd1306_commandList(const uint8_t *c, uint8_t n)
 {
 	uint8_t cmd[n + 1];
-	memset(cmd, 0, n * 2);
+	memset(cmd, 0, n+1);
 	for (int i = 0; i < n ; ++i)
 	{
 		cmd[i + 1] = c[i];
@@ -93,33 +94,9 @@ void Adafruit_SSD1306::ssd1306_command(uint8_t c)
 */
 bool Adafruit_SSD1306::begin(uint8_t vcs)
 {
-	dprln("BEGIN");
-
-	//if ((!buffer) && !(buffer = (uint8_t *)malloc(WIDTH * ((HEIGHT + 7) / 8))))
-	//	return false;
-
 	clearDisplay();
-	/*if (HEIGHT > 32)
-	{
-		drawBitmap((WIDTH - splash1_width) / 2, (HEIGHT - splash1_height) / 2,
-		           splash1_data, splash1_width, splash1_height, 1);
-	}
-	else
-	{
-		drawBitmap((WIDTH - splash2_width) / 2, (HEIGHT - splash2_height) / 2,
-		           splash2_data, splash2_width, splash2_height, 1);
-	}*/
-
-	memset(buffer, 0, sizeof(buffer));
-	for (int j = 0; j < 128; ++j)
-	{
-		//int i = j % 32;
-		//buffer[i*128 + j] = 255;
-	}
 
 	vccstate = vcs;
-
-
 	TRANSACTION_START
 
 	// Init sequence
@@ -131,6 +108,7 @@ bool Adafruit_SSD1306::begin(uint8_t vcs)
 		SSD1306_SETMULTIPLEX
 	};               // 0xA8
 	ssd1306_commandList(init1, sizeof(init1));
+	delay(5);
 	ssd1306_command1(HEIGHT - 1);
 
 	static const uint8_t init2[] =
@@ -140,10 +118,12 @@ bool Adafruit_SSD1306::begin(uint8_t vcs)
 		SSD1306_SETSTARTLINE | 0x0,           // line #0
 		SSD1306_CHARGEPUMP
 	};                 // 0x8D
-	ssd1306_commandList(init2, sizeof(init2));
 
+	delay(5);
+	ssd1306_commandList(init2, sizeof(init2));
 	ssd1306_command1((vccstate == SSD1306_EXTERNALVCC) ? 0x10 : 0x14);
 
+	delay(5);
 	static const uint8_t init3[] =
 	{
 		SSD1306_MEMORYMODE,                   // 0x20
@@ -152,6 +132,7 @@ bool Adafruit_SSD1306::begin(uint8_t vcs)
 		SSD1306_COMSCANDEC
 	};
 	ssd1306_commandList(init3, sizeof(init3));
+	delay(5);
 
 	uint8_t comPins = 0x02;
 	contrast = 0x8F;
@@ -183,6 +164,8 @@ bool Adafruit_SSD1306::begin(uint8_t vcs)
 
 	ssd1306_command1(SSD1306_SETPRECHARGE); // 0xd9
 	ssd1306_command1((vccstate == SSD1306_EXTERNALVCC) ? 0x22 : 0xF1);
+	delay(5);
+	
 	static const uint8_t init5[] =
 	{
 		SSD1306_SETVCOMDETECT,               // 0xDB
@@ -193,9 +176,7 @@ bool Adafruit_SSD1306::begin(uint8_t vcs)
 		SSD1306_DISPLAYON
 	};                 // Main screen turn on
 	ssd1306_commandList(init5, sizeof(init5));
-
-	TRANSACTION_END
-
+	
 	return true; // Success
 }
 
@@ -216,17 +197,17 @@ bool Adafruit_SSD1306::begin(uint8_t vcs)
 						Follow up with a call to display(), or with other graphics
 						commands as needed by one's own application.
 */
-void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, uint16_t color)
+void Adafruit_SSD1306::draw_pixel(int16_t x, int16_t y, uint32_t color)
 {
 	if ((x >= 0) && (x < WIDTH) && (y >= 0) && (y < HEIGHT))
 	{
 		if (color)
 		{
-			buffer[x + (y / 8)*WIDTH] |=  (1 << (y & 7)); break;
+			buffer[x + (y / 8)*WIDTH] |=  (1 << (y & 7));
 		}
 		else
 		{
-			buffer[x + (y / 8)*WIDTH] &= ~(1 << (y & 7)); break;
+			buffer[x + (y / 8)*WIDTH] &= ~(1 << (y & 7));
 		}
 	}
 }
@@ -240,9 +221,14 @@ void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, uint16_t color)
 */
 void Adafruit_SSD1306::clearDisplay(void)
 {
-	dprln("clearDisplay");
-	memset(buffer, 0, WIDTH * ((HEIGHT + 7) / 8));
+	memset(buffer, 0, WIDTH * ((HEIGHT) / 8));
 }
+
+void Adafruit_SSD1306::fill(uint32_t color)
+{
+	memset(buffer, color ? 0xff : 0, WIDTH * ((HEIGHT) / 8));
+}
+
 
 /*!
 		@brief  Draw a horizontal line. This is also invoked by the Adafruit_GFX
@@ -525,10 +511,14 @@ uint8_t *Adafruit_SSD1306::getBuffer(void)
 						called. Call after each graphics command, or after a whole set
 						of graphics commands, as best needed by one's own application.
 */
-void Adafruit_SSD1306::display(void)
+void Adafruit_SSD1306::display()
 {
-	TRANSACTION_START
-	static const uint8_t dlist1[] =
+	const int BUFSIZE = 128;
+	uint16_t count = WIDTH * ((HEIGHT) / 8);
+	char cmd [count];
+	const uint8_t * ptr = buffer;
+	
+	static const uint8_t dlist1[5] =
 	{
 		SSD1306_PAGEADDR,
 		0,                         // Page start address
@@ -538,19 +528,30 @@ void Adafruit_SSD1306::display(void)
 	};                       // Column start address
 	ssd1306_commandList(dlist1, sizeof(dlist1));
 	ssd1306_command1(WIDTH - 1); // Column end address
+	
+	uint16_t prefix = 1;
+	uint16_t iter = 0;
+	cmd[0] = 0x40;
+	
+	/*while (count != 0)
+	{
+		int toout = count > BUFSIZE ? BUFSIZE : count;
+		//DPRINT(toout);
+		memcpy(cmd + prefix % BUFSIZE, buffer+iter, toout);
+		client->write(cmd, toout);
 
-	uint16_t count = WIDTH * ((HEIGHT) / 8);
-	uint8_t *ptr   = buffer;
+		iter += toout;
+		prefix = 0;
+		count -= toout;
+	}*/
 
-	char cmd [count + 1];
+
 	cmd[0] = 0x40;
 	for (int i = 0; i < count; ++i)
 	{
-		cmd[i + 1] = 0b10100101; //*ptr++;
+		cmd[i + 1] = *ptr++;
 	}
 	client->write(cmd, count + 1);
-
-	TRANSACTION_END
 }
 
 // SCROLLING FUNCTIONS -----------------------------------------------------
