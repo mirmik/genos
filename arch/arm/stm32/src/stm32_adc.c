@@ -8,9 +8,9 @@ void stm32_adc_enable(ADC_TypeDef * regs, int en)
 	bits_lvl(regs->CR2, ADC_CR2_ADON, en);
 }
 
-void stm32_adc_enable_clocking(ADC_TypeDef * regs) 
+void stm32_adc_set_channel(ADC_TypeDef * regs, int ch) 
 {
-	stm32_rcc_enable_adc(regs);
+	bits_assign(regs->CR1, 0b11111, ch);
 }
 
 

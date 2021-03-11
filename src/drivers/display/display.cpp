@@ -200,10 +200,6 @@ static const unsigned char font[] =
 	0x3C, 0x00, 0x00, 0x00, 0x00, 0x00 // #255 NBSP
 };
 
-
-
-
-
 void display_device::draw_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h,
                                     uint16_t color)
 {
@@ -220,10 +216,74 @@ void display_device::draw_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h,
 
 
 
+void display_device::display_draw_monochrome_bmp(
+    int x, int y,
+    int w, int h,
+    const uint8_t * arr,
+    uint16_t color, uint16_t bg,
+    int size_x, int size_y)
+{
+	for (int j = 0; j < h; ++j)
+	{
+		for (int i = 0; i < w; ++i)
+		{
+			uint32_t no = j * w + i;
+			uint32_t byteno = no / 8;
+			uint32_t bitno = no % 8;
+
+			uint32_t byte = arr[byteno];
+			uint32_t var = byte & (1 << (7 - bitno));
+
+			if (size_x == 1 && size_y == 1)
+			{
+				draw_pixel(i + x, j + y, var ? color : bg);
+			}
+			else
+			{
+				draw_fill_rect(x + i * size_x, y + j * size_y, size_x, size_y, var ? color : bg);
+			}
+		}
+	}
+}
 
 
+void display_device::display_draw_battery(
+    int x, int y,
+    int w, int h,
+    const uint8_t * arr,
+    uint16_t color, uint16_t bg,
+    int size_x, int size_y, float procent)
+{
+	display_draw_monochrome_bmp(x, y, w, h, arr, color, bg, size_x, size_y);
 
+	int charge_height = h - 5 - 2;
+	float lineno = (float)charge_height * (100 - procent) / 100.;
 
+	for (int i = 3; i < w - 1; i++)
+	{
+		for (int j = 5; j < h - 2; ++j)
+		{
+			if (j - 5 >= lineno) draw_pixel(x + i, y + j, 1);
+		}
+	}
+}
+
+// Быстрый вариант для изображений, ширина которых меньше 32 бит.
+void display_device::display_draw_monochrome_bmp2(
+    uint8_t x0, uint8_t y0,
+    uint8_t height, uint8_t width,
+    long int * image)
+{
+	uint8_t x, y;
+
+	for (y = 0; y < height ; y++)
+	{
+		for (x = 0; x < width ; x++)
+		{
+			draw_pixel(width + x0 - x, y + y0, (uint32_t)((image [y] >> (x)) & 0x00000001));
+		}
+	}
+}
 
 
 
@@ -257,7 +317,6 @@ void display_device::draw_char(int16_t x, int16_t y, unsigned char c,
 				}
 				else
 				{
-					//dprln("writeFillRect");
 					draw_fill_rect(x + i * size_x, y + j * size_y, size_x, size_y, color);
 				}
 			}
@@ -279,8 +338,7 @@ void display_device::draw_char(int16_t x, int16_t y, unsigned char c,
 	{
 		if (size_x == 1 && size_y == 1)
 		{
-			dprln("writeFastVLine");
-			//writeFastVLine(x + 5, y, 8, bg);
+			draw_fill_rect(x + 5, y, 1, 8, bg);
 		}
 		else
 		{
@@ -307,9 +365,77 @@ int display_device::write(uint8_t c)
 			cursor_y += textsize_y * 8; // advance y one line
 		}
 		draw_char(cursor_x, cursor_y, c, textcolor, textbgcolor, textsize_x,
-		         textsize_y);
+		          textsize_y);
 		cursor_x += textsize_x * 6; // Advance x one char
 	}
 
 	return 0;
+}
+
+
+
+
+
+
+
+
+
+// Draw 1 char to the screen buffer
+// ch       => char om weg te schrijven
+// Font     => Font waarmee we gaan schrijven
+// color    => Black or White
+char display_device::draw_char2(char ch, struct font_head Font, uint32_t color)
+{
+	uint32_t i, b, j;
+
+	// Check if character is valid
+	if (ch < 32 || ch > 126)
+		return 0;
+
+	// Use the font to write
+	for (i = 0; i < Font.FontHeight; i++)
+	{
+		b = Font.data[(ch - 32) * Font.FontHeight + i];
+		for (j = 0; j < Font.FontWidth; j++)
+		{
+			if ((b << j) & 0x8000)
+			{
+				draw_pixel(cursor_x + j, (cursor_y + i), color);
+			}
+			else
+			{
+				draw_pixel(cursor_x + j, (cursor_y + i), !color);
+			}
+		}
+	}
+
+	cursor_x += Font.FontWidth;
+
+	// Return written char for validation
+	return ch;
+}
+
+
+
+
+
+
+// Write full string to screenbuffer
+char display_device::print2(char* str, struct font_head Font, uint32_t color)
+{
+	// Write until null-byte
+	while (*str)
+	{
+		if (draw_char2(*str, Font, color) != *str)
+		{
+			// Char could not be written
+			return *str;
+		}
+
+		// Next char
+		str++;
+	}
+
+	// Everything ok
+	return *str;
 }

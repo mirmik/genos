@@ -10,12 +10,19 @@
 __BEGIN_DECLS
 
 void stm32_adc_enable(ADC_TypeDef * regs, int en);
-void stm32_adc_enable_clocking(ADC_TypeDef * regs);
+void stm32_adc_set_channel(ADC_TypeDef * regs, int ch);
 
 static inline
 void stm32_adc_start_single_conversion(ADC_TypeDef * regs) 
 {
 	bits_set(regs->CR2, ADC_CR2_SWSTART);
+}
+
+
+static inline
+void stm32_adc_enable_analog_watchdog(ADC_TypeDef * regs) 
+{
+	bits_set(regs->CR1, ADC_CR1_AWDEN);
 }
 
 static inline

@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <drivers/display/font.h>
+
 class display_device
 {
 public:
@@ -16,7 +18,7 @@ public:
 	               uint8_t size_y);
 
 	void draw_fill_rect(int16_t x, int16_t y, int16_t w, int16_t h,
-                                    uint16_t color);
+	                    uint16_t color);
 
 	int write(uint8_t c);
 
@@ -29,24 +31,64 @@ public:
 	virtual int16_t width() = 0;
 	virtual int16_t height() = 0;
 
-	void print(const char* str) 
+	void print(const char* str)
 	{
 		int len = strlen(str);
-		while(len--) 
+		while (len--)
 		{
 			write(*str++);
 		}
 	}
 
-	int16_t textsize_y = 3;
-	int16_t textsize_x = 2;
+	void display_draw_monochrome_bmp2(
+	    uint8_t x0, uint8_t y0,
+	    uint8_t height, uint8_t width,
+	    long int * image);
+
+	void display_draw_monochrome_bmp(
+	    int x, int y,
+	    int w, int h,
+	    const uint8_t * arr,
+	    uint16_t color, uint16_t bg,
+	    int size_x, int size_y);
+
+	void display_draw_battery(
+	    int x, int y,
+	    int w, int h,
+	    const uint8_t * arr,
+	    uint16_t color, uint16_t bg,
+	    int size_x, int size_y, float procent);
+
+	int16_t textsize_y = 2;
+	int16_t textsize_x = 1;
 	int textbgcolor = 0;
 	int textcolor = 1;
 
 	int cursor_x = 0;
 	int cursor_y = 0;
 
-	int wrap = 0;
-};
+	void set_cursor_position(int x, int y)
+	{
+		cursor_x = x;
+		cursor_y = y;
+	}
 
+	void set_font_size(int x, int y)
+	{
+		textsize_x = x;
+		textsize_y = y;
+	}
+
+	int wrap = 0;
+
+
+
+
+
+
+
+
+	char draw_char2(char ch, struct font_head Font, uint32_t color);
+	char print2(char* str, struct font_head Font, uint32_t color);
+};
 #endif
