@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <sys/cdefs.h>
 
-#if defined(STM32G4XX) || defined(STM32L4XX) 
+#if defined(RCC_PLLCFGR_PLLR)
 #define STM32_PLL_VAR1
 struct stm32_pll_settings
 {
@@ -27,14 +27,15 @@ struct stm32_pll_settings
 
 __BEGIN_DECLS
 
-unsigned stm32_init_pll_clocking(struct stm32_pll_settings*);
+
+unsigned stm32_pll_setup(struct stm32_pll_settings*);
 int stm32_clockbus_enable_pll_mode(uint32_t freq);
 
-#if defined(STM32_PLL_VAR1)
+/*#if defined(STM32_PLL_VAR1)
 int stm32_pll_setup(int M, int N, int R, int P, int Q);
 #elif defined(STM32_PLL_VAR2)
 int stm32_pll_setup(int M, int N, int P, int Q);
-#endif
+#endif*/
 __END_DECLS
 
 #endif

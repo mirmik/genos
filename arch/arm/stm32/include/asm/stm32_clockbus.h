@@ -19,10 +19,11 @@ void stm32_clockbus_hsi_mode();
 void stm32_clockbus_hse_mode();
 
 void stm32_clockbus_reevaluate();
-
 void stm32_clockbus_systime_setup();
 
-void stm32_clockbus_set_dividers(int a, int b);
+void stm32_clockbus_set_hrpe_divider(int div);
+void stm32_clockbus_set_ppre1_divider(int div);
+void stm32_clockbus_set_ppre2_divider(int div); 
 
 __END_DECLS
 

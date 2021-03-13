@@ -53,8 +53,6 @@
  
 /* May be changed by the user only before the first malloc() call.  */
 
-static igris::syslock lock;
-
 extern char _heap_start;
 
 //size_t __malloc_margin = 32;
@@ -69,7 +67,7 @@ extern "C" void * malloc(size_t len) __attribute__((used));
 void *
 malloc(size_t len)
 {
-	std::lock_guard<igris::syslock> lguard(lock);
+	igris::syslock_guard lguard;
 
 	struct __freelist *fp1, *fp2, *sfp1, *sfp2;
 	char *cp;
@@ -195,7 +193,7 @@ extern "C" void free(void *p) __attribute__((used));
 void
 free(void *p)
 {
-	std::lock_guard<igris::syslock> lguard(lock);
+	igris::syslock_guard lguard;
 
 	struct __freelist *fp1, *fp2, *fpnew;
 	char *cp1, *cp2, *cpnew;
