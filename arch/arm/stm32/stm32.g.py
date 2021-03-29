@@ -31,7 +31,7 @@ module("arch.stm32_common.sources_l4",
 		"src/stm32_diag.c",
 		"src/stm32_systick.c",
 		"src/stm32_clockbus.c",
-		"src/stm32_pll.c",
+		#"src/stm32_pll.c",
 	],
 )
 
