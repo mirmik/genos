@@ -1,7 +1,7 @@
 #include <genos/api.h>
 #include <genos/ktimer.h>
 
-//#include <igris/dprint.h>
+#include <igris/util/bug.h>
 
 int msleep(unsigned int ms)
 {
@@ -12,8 +12,7 @@ int msleep(unsigned int ms)
 
 	if (sch == NULL || !sch->flag.can_displace)
 	{
-		delay(ms);
-		return 0;
+		BUG();
 	}
 
 	timer = &sch->ktimer;
