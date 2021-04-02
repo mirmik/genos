@@ -135,7 +135,7 @@ module("genos.diag", "impl", sources = ["src/diag/diag_impl.c"], default=True)
 licant.module("igris.dprint", "diag", 
 	srcdir="src/diag",
 	sources = ["dprint_diag.c"],
-	mdepends = [("igris.dprint.common","impl"), "genos.diag"],
+	mdepends = ["igris.dprint.common", "genos.diag"],
 )
 
 licant.module_default_implementation("igris.dprint", "diag")
