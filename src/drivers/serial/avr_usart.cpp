@@ -1,5 +1,5 @@
 #include <drivers/serial/avr_usart.h>
-#include <asm/usart.h>
+#include <asm/avr_usart.h>
 
 #include <igris/dprint.h>
 #include <hal/irqtable.h>

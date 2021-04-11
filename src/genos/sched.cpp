@@ -306,3 +306,6 @@ igris::console_command schedee_manager_utilities[] =
 	{"procctr", procctr},
 	{nullptr, (void*)nullptr, nullptr}
 };
+
+__attribute__((weak))
+void __schedule__() { BUG(); }

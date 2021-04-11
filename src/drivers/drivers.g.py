@@ -9,12 +9,7 @@ licant.module("genos.drivers.common",
 	]
 )
 
-licant.module("genos.drivers.avr.gpio", sources = [ "gpio/avr_gpio.c" ], 
-	local_headers = [
-		("__local__/arch_gpio.h", "gpio/avr_gpio.h")
-	]
-)
-licant.module("genos.drivers.avr.spi", sources = ["spi/avr_spi.cpp"])
+#licant.module("genos.drivers.avr.spi", sources = ["spi/avr_spi.cpp"])
 licant.module("genos.drivers.avr.usart", sources = [ "serial/avr_usart.cpp" ])
 licant.module("genos.drivers.avr.timer", sources = [ "timer/avr_timer.cpp" ])
 licant.module("genos.drivers.avr",
@@ -23,7 +18,6 @@ licant.module("genos.drivers.avr",
 		#"genos.drivers.avr.spi", 
 		"genos.drivers.avr.usart",
 		"genos.drivers.avr.timer",
-		"genos.drivers.avr.gpio",
 	],
 )
 

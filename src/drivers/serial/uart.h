@@ -41,4 +41,6 @@ namespace genos
 	};
 }
 
+using uart_device = genos::uart;
+
 #endif

@@ -18,8 +18,8 @@ module("genos.hal.avr.common",
 		"arch.c",
 		#"drivers_up.c",
 
-		#"periph/gpio.c",
-		"periph/timer.c",
+		"avr_gpio.c",
+		"avr_timer.c",
 		"debug_blink.S"
 	],
 	mdepends=["avr.diag",
@@ -35,9 +35,9 @@ module("genos.hal", impl = "atmega2560",
 	ldscripts = ["ldscripts/atmega2560.ld"],
 
 	defines = ["CHIP_ATMEGA2560"],
-	cxx_flags = "-nostdlib -Os -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
-	cc_flags = "-nostdlib -Os -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
-	ld_flags = "-nostdlib -Os -mmcu=atmega2560 -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
+	cxx_flags = "-nostdlib -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
+	cc_flags = "-nostdlib -mmcu=atmega2560 -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
+	ld_flags = "-nostdlib -mmcu=atmega2560 -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
 	libs = ["m", "gcc"],
 )
 
@@ -46,96 +46,30 @@ module("genos.hal", impl = "atmega328p",
 	ldscripts = ["ldscripts/atmega328p.ld"],
 
 	defines = ["CHIP_ATMEGA328P"],
-	cxx_flags = "-nostdlib -Os -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
-	cc_flags = "-nostdlib -Os -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
-	ld_flags = "-nostdlib -Os -mmcu=atmega328p -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
+	cxx_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
+	cc_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
+	ld_flags = "-nostdlib -mmcu=atmega328p -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
 	libs = ["m", "gcc"],
 )
 
-#Module("genos.arch.avr.head", {
-#	sources = {
-#		cc = {
-#			"src/asm/atmega/vectors.S", 
-#			"src/asm/atmega/irqcall.S", 
-#			"src/asm/atmega/start.S",  
-#			"src/asm/atmega/end_of_programm.c", 
-#			"src/asm/context.c", 
-#			"src/asm/switch_context.S",
-#		}
-#	}
-#})
-#
-#Module("genos.arch.atmega2560", {
-#	modules = {
-#		{name = "genos.arch.avr.head"}
-#	},
-#
-#	sources = {
-#		cc = {
-#			"src/drivers/gpio.c",
-#			"src/asm/diag.c",
-#			"src/asm/arch.c",
-#			"src/drivers/timer_device.c",
-#			"src/asm/systime.c"
-#		}
-#	}
-#})
-#
-#Module("genos.include.arch.atmega2560", {
-#	includePaths = "include atmega2560/include",
-#	ldscripts = "atmega2560/ldscripts/flash.ld",
-#	depends = "genos.arch.atmega2560"
-#}) 
-#
-#Module("gxx.avr", {
-#	sources = {
-#		cxx = {"gxx/atomic.cpp"}
-#	}
-#}) 
-#
-#--[[regmodule {
-#	name = "arch.avr2560",
-#	sources = {
-#		cc = {"src/asm/systime.c", "src/asm/arch.c", "src/asm/procdelay.c", "atmega2560/src/periph/devices.c"},
-#	},
-#	modules = {
-#	--	{name = "avr_gpio"},
-#		{name = "avr_periph_usart"},
-#		{name = "avr_periph_tc"},
-#	},
-#}
-#
-#regmodule {
-#	name = "avr_periph_usart",
-#	sources = {
-#		cc = {"src/dev/usart.c"},
-#	},
-#}
-#
-#regmodule {
-#	name = "avr_periph_tc",
-#	sources = {
-#		cc = {"src/drivers/timer_device.c"},
-#	},
-#}
-#
-#regmodule {
-#	name = "arch_diag.avr2560",
-#	sources = {
-#		cc = {"src/asm/diag.c"},
-#	}
-#}
-#
-#regmodule {
-#	name = "subst.avr2560",
-#	sources = {
-#		cc = {"src/asm/context.c", "src/asm/switch_context.S"},
-#	}
-#}
-#
-#regmodule {
-#	name = "avr_gpio",
-#	sources = {
-#		cc = {"src/drivers/gpio.c"},
-#	},
-#}]]#
+module("genos.hal", impl = "atmega328",
+	mdepends = ["genos.hal.avr.common"],
+	ldscripts = ["ldscripts/atmega328p.ld"],
+
+	defines = ["CHIP_ATMEGA328"],
+	cxx_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
+	cc_flags = "-nostdlib -mmcu=atmega328p -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
+	ld_flags = "-nostdlib -mmcu=atmega328p -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
+	libs = ["m", "gcc"],
+)
+
+module("genos.hal", impl = "atmega168",
+	mdepends = ["genos.hal.avr.common"],
+	ldscripts = ["ldscripts/atmega168.ld"],
+
+	defines = ["CHIP_ATMEGA168"],
+	cxx_flags = "-nostdlib -Os -mmcu=atmega168 -Wl,--gc-sections -fdata-sections -fpermissive -DNDEBUG -fno-threadsafe-statics -ffunction-sections -fno-rtti -flto",
+	cc_flags = "-nostdlib -Os -mmcu=atmega168 -Wl,--gc-sections -fdata-sections -DNDEBUG  -ffunction-sections -flto",
+	ld_flags = "-nostdlib -Os -mmcu=atmega168 -fdata-sections -ffunction-sections -flto -Wl,--gc-sections ",
+	libs = ["m", "gcc"],
+)

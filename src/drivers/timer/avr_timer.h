@@ -1,8 +1,8 @@
 #ifndef GENOS_DRIVERS_AVR_TIMER_H
 #define GENOS_DRIVERS_AVR_TIMER_H
 
-#include <periph/regs/avr/timer.h>
-#include <periph/irqdefs.h>
+#include <asm/avr_timer.h>
+#include <periph/map.h>
 
 #include <hal/irqtable.h>
 #include <igris/util/bits.h>
@@ -337,7 +337,7 @@ namespace genos
 		extern genos::avr::timer16 timer3;
 		extern genos::avr::timer16 timer4;
 		extern genos::avr::timer16 timer5;
-#elif defined (CHIP_ATMEGA328P)
+#elif defined (CHIP_ATMEGA328P) || defined (CHIP_ATMEGA328) 
 		extern genos::avr::timer8 timer0;
 		extern genos::avr::timer8 timer2;
 		extern genos::avr::timer16 timer1;

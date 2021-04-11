@@ -10,7 +10,7 @@ int main()
 
 	while(1) 
 	{
-		board::sysled.toggle();
+		board_sysled.toggle();
 		cpu_delay(500000);
 	}
 }

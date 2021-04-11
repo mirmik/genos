@@ -2,23 +2,20 @@
 #include <asm/irq.h>
 #include <systime/systime.h>
 
-#include <drivers/gpio/pin.h>
-//#include <drivers/serial/avr_usart.h>
-#include <periph/irqdefs.h>
+#include <drivers/gpio/avr_gpio.h>
+#include <periph/map.h>
 
 #include <igris/dprint/dprint.h>
 
-GPIO_PIN(board_led, SYSLED_GPIO, SYSLED_PIN);
+avr_gpio_pin board_sysled(SYSLED_GPIO, SYSLED_PIN);
 
 AVR_USART_DEVICE_DECLARE(usart0, USART0, ATMEGA_IRQ_U0RX);
 
 void board_init() {
 	arch_init();
-	dprln("arch_inited");
 
-	//arch_uart_init();	
-	gpio_pin_settings(&board_led, GPIO_MODE_OUTPUT);
-	gpio_pin_write(&board_led, 1);
+	board_sysled.setup(GPIO_MODE_OUTPUT);
+	board_sysled.set(1);
 }
 
 void board_shutdown(arch_shutdown_mode_t mode) {

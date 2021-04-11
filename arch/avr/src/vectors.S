@@ -135,7 +135,7 @@
 	.global	atmega_u3rx			/* 0x006C USART3 RX USART3 Rx Complete */
 	.global	atmega_u3dre		/* 0x006E USART3 UDRE USART3 Data Register Empty */
 	.global	atmega_u3tx			/* 0x0070 USART3 TX USART3 Tx Complete */
-#elif defined(CHIP_ATMEGA328P)
+#elif defined(CHIP_ATMEGA328P) || defined(CHIP_ATMEGA328)  || defined (CHIP_ATMEGA168)
 	.global	atmega_int0			/* 0x0002 INT0 External Interrupt Request 0 */
 	.global	atmega_int1			/* 0x0004 INT1 External Interrupt Request 1 */
 	.global	atmega_pcint0		/* 0x0006 PCINT0 Pin Change Interrupt Req 0 */
@@ -312,7 +312,7 @@ vectortab:
 	vector	atmega_u3rx			/* 0x006C USART3 RX USART3 Rx Complete */
 	vector	atmega_u3dre		/* 0x006E USART3 UDRE USART3 Data Register Empty */
 	vector	atmega_u3tx			/* 0x0070 USART3 TX USART3 Tx Complete */
-#elif defined(CHIP_ATMEGA328P)
+#elif defined(CHIP_ATMEGA328P) || defined(CHIP_ATMEGA328) || defined (CHIP_ATMEGA168)
 	vector	atmega_int0			/* 0x0002 INT0 External Interrupt Request 0 */
 	vector	atmega_int1			/* 0x0004 INT1 External Interrupt Request 1 */
 	vector	atmega_pcint0		/* 0x0006 PCINT0 Pin Change Interrupt Req 0 */
