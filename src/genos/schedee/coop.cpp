@@ -7,9 +7,9 @@
 #include <igris/util/bug.h>
 #include <igris/dprint.h>
 
-void genos::coopschedee::starter (void * sch)
+void genos::coop_schedee::starter (void * sch)
 {
-	struct genos::coopschedee * csch = (struct genos::coopschedee *) sch;
+	struct genos::coop_schedee * csch = (struct genos::coop_schedee *) sch;
 
 	void* ret = csch->task(csch->arg);
 	csch->ret = ret;
@@ -17,7 +17,7 @@ void genos::coopschedee::starter (void * sch)
 	schedee_exit();
 }
 
-void genos::coopschedee::init(void* (*task) (void*),
+void genos::coop_schedee::init(void* (*task) (void*),
                               void * arg,
                               void * heap,
                               int heapsize, 
@@ -43,19 +43,19 @@ void genos::coopschedee::init(void* (*task) (void*),
 	this -> flag.can_displace = 1;
 }
 
-void genos::coopschedee::execute()
+void genos::coop_schedee::execute()
 {
 	context_load(&cntxt);
 }
 
-int genos::coopschedee::displace()
+int genos::coop_schedee::displace()
 {
 	flag.runned = 0;
 	context_save_and_displace(&cntxt);
 	return SCHEDEE_DISPLACE_REAL;
 }
 
-void genos::coopschedee::finalize()
+void genos::coop_schedee::finalize()
 {
 	if (flag.dynamic_heap)
 		BUG();

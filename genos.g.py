@@ -32,6 +32,19 @@ module("genos.sched", "stub",
 	sources = ["src/sched/waitstub.c"],
 )
 
+module("genos.schedee_manager",
+	sources = [
+		"src/genos/sched.cpp",
+		"src/genos/schedee.cpp",
+	],
+)
+
+module("genos.ktimer_manager",
+	sources = [
+		"src/genos/ktimer.cpp",
+	],
+)
+
 module("genos.sched", "impl",
 	sources = [
 		"src/genos/sched.cpp",
@@ -135,7 +148,7 @@ module("genos.diag", "impl", sources = ["src/diag/diag_impl.c"], default=True)
 licant.module("igris.dprint", "diag", 
 	srcdir="src/diag",
 	sources = ["dprint_diag.c"],
-	mdepends = [("igris.dprint.common","impl"), "genos.diag"],
+	mdepends = ["igris.dprint.common", "genos.diag"],
 )
 
 licant.module_default_implementation("igris.dprint", "diag")

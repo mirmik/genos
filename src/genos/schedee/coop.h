@@ -7,7 +7,7 @@
 namespace genos
 {
 
-	class coopschedee : public schedee
+	class coop_schedee : public schedee
 	{
 		struct context cntxt;
 
@@ -20,9 +20,9 @@ namespace genos
 
 	public:
 
-		coopschedee(){}
+		coop_schedee(){}
 
-		coopschedee(void* (*task) (void*),
+		coop_schedee(void* (*task) (void*),
 		          void * arg,
 		          void * heap,
 		          int heapsize,
@@ -44,7 +44,10 @@ namespace genos
 		static void starter(void * sch);
 	};
 
+	using coopschedee = coop_schedee;
 }
+
+using coop_schedee = genos::coop_schedee;
 
 #define COOPSCHEDEE_DECLARE(name, task, arg, heapsize) 			\
 	uint8_t name##_heap[heapsize];								\

@@ -12,8 +12,8 @@ DLIST_HEAD(ktimer_list);
 
 void ktimer_base_init(
 	struct ktimer_base * tim, 
-	clock_t start, 
-	clock_t interval, 
+	int64_t start, 
+	int64_t interval, 
 	uint8_t ctrtype)
 {
 	ctrobj_init(&tim->ctr, ctrtype);
@@ -21,7 +21,7 @@ void ktimer_base_init(
 	tim->interval = interval;
 }
 
-void ktimer_init(genos::ktimer * tim, ktimer_callback_t act, void* arg, clock_t start, clock_t interval)
+void ktimer_init(genos::ktimer * tim, ktimer_callback_t act, void* arg, int64_t start, int64_t interval)
 {
 	ktimer_base_init(&tim->tim, start, interval, CTROBJ_KTIMER_DELEGATE);
 	tim->act = act;
@@ -29,7 +29,7 @@ void ktimer_init(genos::ktimer * tim, ktimer_callback_t act, void* arg, clock_t 
 }
 
 static inline 
-uint8_t ktimer_check(struct ktimer_base * tim, clock_t now)
+uint8_t ktimer_check(struct ktimer_base * tim, int64_t now)
 {
 	return now - tim->start >= tim->interval;
 }
@@ -45,7 +45,7 @@ void ktimer_init_for_milliseconds(genos::ktimer * tim, ktimer_callback_t act, vo
 }
 
 void ktimer_base::set_start_now() { start = jiffies(); }
-void ktimer_base::set_interval_ms(clock_t t) { interval = ms2jiffies(t); }
+void ktimer_base::set_interval_ms(int64_t t) { interval = ms2jiffies(t); }
 
 void ktimer_list_debug_print() 
 {
@@ -70,8 +70,8 @@ void ktimer_base::plan()
 {
 	struct ktimer_base * it;
 	struct dlist_head * sit = nullptr;
-	clock_t it_final;
-	clock_t final;
+	int64_t it_final;
+	int64_t final;
 
 	final = start + interval;
 	sit = NULL;
@@ -123,7 +123,7 @@ void ktimer_execute(struct ktimer_base * tim)
 
 void ktimer_manager_step()
 {
-	clock_t now;
+	int64_t now;
 
 	now = jiffies();
 

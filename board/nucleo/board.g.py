@@ -11,6 +11,14 @@ module("board.nucleo-f401re",
 	defines=["BOARD_NUCLEO_F401RE"]
 )
 
+module("board.nucleo-g431rb",
+	mdepends = [
+		"board.nucleo", 
+		"arch.stm32g431rb",
+	],
+	defines=["BOARD_NUCLEO_G431RB"]
+)
+
 module("board.nucleo-f446re",
 	mdepends = [
 		"board.nucleo", 

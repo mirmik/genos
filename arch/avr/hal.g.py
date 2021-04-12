@@ -16,9 +16,6 @@ module("genos.hal.avr.common",
 		"end_of_programm.c",
 
 		"arch.c",
-		#"drivers_up.c",
-
-		#"periph/gpio.c",
 		"periph/timer.c",
 		"debug_blink.S"
 	],
@@ -29,6 +26,19 @@ module("genos.hal.avr.common",
 
 	include_paths = ["include"]
 )
+
+module("cpu.avr.common",
+	include_paths = ["include"]	
+)
+
+module("cpu.avr.atmega2560",
+	mdepends = ["cpu.avr.common"],
+	defines = ["CHIP_ATMEGA2560"],
+	cxx_flags = "-mmcu=atmega2560",
+	cc_flags = "-mmcu=atmega2560",
+	ld_flags = "-mmcu=atmega2560",
+)
+
 
 module("genos.hal", impl = "atmega2560",
 	mdepends = ["genos.hal.avr.common"],

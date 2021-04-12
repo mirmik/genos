@@ -36,6 +36,7 @@ private:
 public:
 	void nblock_onestep() override;
 	void send(crow::packet* pack) override;
+	void finish() override {}
 	void init(genos::uart * uart, uint8_t addr);
 	
 private:

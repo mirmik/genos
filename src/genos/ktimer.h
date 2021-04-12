@@ -4,7 +4,6 @@
 #include <igris/sync/syslock.h>
 #include <igris/osinter/ctrobj.h>
 #include <systime/systime.h>
-#include <time.h>
 
 extern struct dlist_head ktimer_list;
 
@@ -19,10 +18,10 @@ struct ktimer_base
 {
 	struct ctrobj ctr;
 
-	clock_t start;
-	clock_t interval;
+	int64_t start;
+	int64_t interval;
 
-	ktimer_base(clock_t start, clock_t interval) : 
+	ktimer_base(int64_t start, int64_t interval) : 
 			ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)),
 			start(start), 
 			interval(interval)
@@ -45,7 +44,7 @@ struct ktimer_base
 	void unplan();	
 
 	void set_start_now();
-	void set_interval_ms(clock_t t);
+	void set_interval_ms(int64_t t);
 };
 
 namespace genos
@@ -57,7 +56,7 @@ namespace genos
 		ktimer_callback_t act;
 		void * arg;
 
-		ktimer(ktimer_callback_t act, void* arg, clock_t interval) : 
+		ktimer(ktimer_callback_t act, void* arg, int64_t interval) : 
 			tim(0, interval),
 			act(act),
 			arg(arg)

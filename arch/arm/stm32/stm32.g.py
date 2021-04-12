@@ -14,6 +14,7 @@ module("arch.stm32_common.sources",
 		"src/stm32_diag.c",
 		"src/stm32_systick.c",
 		"src/stm32_clockbus.c",
+		"src/stm32_watchdog.c",
 		"src/stm32_pll.c",
 	],
 )
@@ -40,9 +41,10 @@ module("arch.stm32_common",
 
 	ldscripts= ["ldscripts/stm32_common.ld"],
 
-	cc_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__FPU_USED=1",
-	cxx_flags = "-Os -g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fno-threadsafe-statics  -D__FPU_USED=1 -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
-	ld_flags = "-Os -g -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16",
+	cc_flags = "-g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__FPU_USED=1",
+	cxx_flags = "-g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fno-threadsafe-statics  -D__FPU_USED=1 -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
+	ld_flags = "-g -nostdlib -mthumb -mcpu=cortex-m4 -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16",
+	optimize= "-Os",
 
 	libs = ["m", "gcc"]
 )

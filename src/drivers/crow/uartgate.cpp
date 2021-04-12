@@ -270,7 +270,7 @@ void crow_uartgate::init(genos::uart* uart, uint8_t addr)
 
 	ring_init(&recvring, UARTGATE_RECVRING_SIZE);
 
-	crow::link_gate(this, addr);
+	this->bind(addr);
 
 	u->handarg = (void*) this;
 	u->handler = uartgate_handler;

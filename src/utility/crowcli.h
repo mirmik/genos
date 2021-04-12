@@ -50,11 +50,11 @@ namespace genos
 					break;
 				case 1:
 					{
-						igris::system_lock();
+						system_lock();
 
 						if (dlist_empty(&msgqueue))
 						{
-							igris::system_unlock();
+							system_unlock();
 							wait_current_schedee(&waitlink, 0, nullptr);
 							return;
 						}
@@ -64,7 +64,7 @@ namespace genos
 							dlist_first_entry(&msgqueue, crow::packet, ulnk);
 						dlist_del_init(&cptr->ulnk);
 
-						igris::system_unlock();
+						system_unlock();
 						
 						auto data = crow::node_data(cptr);
 						auto rid = crow::node_protocol_cls::sid(cptr);
@@ -93,9 +93,9 @@ namespace genos
 
 		void incoming_packet(crow::packet * cptr) override
 		{
-			igris::system_lock();
+			system_lock();
 			dlist_add_tail(&cptr->ulnk, &msgqueue);
-			igris::system_unlock();
+			system_unlock();
 			unwait_one(&waitlink, nullptr);
 		}
 

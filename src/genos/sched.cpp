@@ -2,7 +2,7 @@
 
 #include <genos/sched.h>
 
-#if !__NOARCH
+#if __has_include("asm/startup.h")
 #include <asm/startup.h> // for RESET_STACK
 #else 
 #define RESET_STACK() 
@@ -14,9 +14,12 @@
 #include <igris/sync/syslock.h>
 #include <igris/dtrace.h>
 #include <igris/defs/schedee.h>
-//#include <igris/util/stub.h>
 
 #define PRIORITY_TOTAL 4
+
+#ifndef SCHED_DEBUG
+#define SCHED_DEBUG 0
+#endif
 
 struct dlist_head runlist[PRIORITY_TOTAL];
 DLIST_HEAD(unstoplist);
@@ -202,6 +205,11 @@ void schedee_manager_step()
 			}
 
 			dlist_move_tail(&sch->ctr.lnk, &runlist[priolvl]);
+
+#if SCHED_DEBUG
+			dprln("execute:", (uintptr_t)sch, sch->mnemo);
+#endif
+
 			__schedee_execute(sch);
 
 			return;

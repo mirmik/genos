@@ -14,6 +14,10 @@
 #define GENOS_RESOURCE_FILE 1
 #define GENOS_RESOURCE_DIRECTORY 2
 
+#ifndef ENOTSUP
+#define ENOTSUP ENOENT
+#endif
+
 namespace genos
 {
 	class openres;

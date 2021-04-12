@@ -3,11 +3,7 @@
 
 #include <inttypes.h>
 #include <sys/cdefs.h>
-
-#if __NOARCH
-#else
-#include <asm/delay.h> // Аппаратная поддержка малотактных задержек.
-#endif
+#include <asm/delay.h>
 
 // Обязательно должен быть знаковым.
 // Аналог clock_t.
@@ -48,10 +44,12 @@ jiffies_t ms2jiffies(uint32_t ms);
 __END_DECLS
 
 
+/*static inline void delay_us(uint32_t us);
+
 #if __NOARCH
 static inline void delayMicroseconds(uint32_t us) { delay(us/1000); }
 #else
 static inline void delayMicroseconds(uint32_t us) { delay_us(us); }
-#endif
+#endif*/
 
 #endif
