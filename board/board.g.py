@@ -9,6 +9,25 @@ module("genos.board", impl = "arduino_mega",
 	]
 )
 
+module("genos.board", impl = "arduino_nano_328", 
+	sources = ["arduino/board.cpp"],
+	include_paths = "arduino",
+	defines = ["F_CPU=16000000", "BOARD_ARDUINO_NANO"],
+	mdepends = [
+		("genos.hal", "atmega328"),
+	]
+)
+
+module("genos.board", impl = "arduino_nano_168", 
+	sources = ["arduino/board.cpp"],
+	include_paths = "arduino",
+	defines = ["F_CPU=16000000", "BOARD_ARDUINO_NANO"],
+	mdepends = [
+		("genos.hal", "atmega168"),
+	]
+)
+
+
 module("genos.board", impl = "crius_aiop2", 
 	sources = ["arduino/board.cpp"],
 	include_paths = "arduino",

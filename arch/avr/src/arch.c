@@ -1,7 +1,7 @@
 #include <hal/arch.h>
 #include <hal/irqtable.h>
 
-#include <asm/timer.h>
+#include <asm/avr_timer.h>
 #include <systime/systime.h>
 
 #include <diag/diag.h>
@@ -20,8 +20,8 @@ void arch_init()
 	diag_setup(&usart0_diag, NULL);
 
 	irqtable_set_handler(ATMEGA_IRQ_TIM0_OVF, system_tick, NULL);
-	tc_8bit_interruptOverflowEnable(&timer0, 1);
-	tc_8bit_divider(&timer0, 64);
+	avr_timer8_ovfirq_enable(TIMER0, 1);
+	avr_timer8_divider(TIMER0, 64);
 
 	systime_set_frequency(F_CPU / 256 / 64);
 }

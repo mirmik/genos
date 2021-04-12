@@ -10,7 +10,7 @@
 #if defined(CHIP_ATMEGA2560)
 #	define HAVE_RAMPZ
 #	define HAVE_EIND
-#elif defined(CHIP_ATMEGA328P)
+#elif defined(CHIP_ATMEGA328P) || defined (CHIP_ATMEGA328)  || defined (CHIP_ATMEGA168)
 #else 
 #	error "unrecognized chip"
 #endif

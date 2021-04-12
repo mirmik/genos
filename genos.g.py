@@ -172,7 +172,7 @@ module("genos",
 		"genos.diag",
 		"genos.systime",
 		"genos.syscmd",
-		"genos.regmap",
+		#"genos.regmap",
 
 		"genos.makeproc"
 	]
@@ -183,10 +183,10 @@ module("genos.syscmd",
 		"src/genos/syscmd.cpp"
 	])
 
-module("genos.regmap",
-	sources=[
-		"src/drivers/regmap.cpp"
-	])
+#module("genos.regmap",
+#	sources=[
+#		"src/drivers/regmap.cpp"
+#	])
 
 def genos_firmware(sources=[], mdepends=[], **kwargs):
 	import shutil

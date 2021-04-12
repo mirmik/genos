@@ -2,17 +2,15 @@
 #define GENOS_DRIVERS_AVR_UART
 
 #include <drivers/serial/uart.h>
-#include <periph/regs/avr/usart.h>
-
+#include <asm/avr_usart.h>
 #include <hal/irqtable.h>
 
-extern const struct uart_device_operations avr_usart_device_operations;
-
-struct avr_usart_device : public uart_device
+class avr_usart_device : public uart_device
 {	
 	struct usart_regs * regs;
 	uint8_t base_irq;
 
+public:
 	int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
 	int enable(int en) override;
 	int ctrirqs(uint8_t cmd) override;

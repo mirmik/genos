@@ -1,4 +1,4 @@
-#include "periph/irqdefs.h"
+#include "periph/map.h"
 #include "excptmacros.h"
 
 /********************************************************************************************
@@ -140,7 +140,7 @@
 	HANDLER	atmega_u3rx, ATMEGA_IRQ_U3RX, excpt_common					/* 0x006C USART3 RX USART3 Rx Complete */
 	HANDLER	atmega_u3dre, ATMEGA_IRQ_U3DRE, excpt_common				/* 0x006E USART3 UDRE USART3 Data Register Empty */
 	HANDLER	atmega_u3tx, ATMEGA_IRQ_U3TX, excpt_common					/* 0x0070 USART3 TX USART3 Tx Complete */
-#elif defined(CHIP_ATMEGA328P)
+#elif defined(CHIP_ATMEGA328P) || defined(CHIP_ATMEGA328)  || defined (CHIP_ATMEGA168)
 	HANDLER	atmega_int0,		ATMEGA_IRQ_INT0 	  , excpt_common /* 0x0002 INT0 External Interrupt Request 0 */
 	HANDLER	atmega_int1,		ATMEGA_IRQ_INT1 	  , excpt_common /* 0x0004 INT1 External Interrupt Request 1 */
 	HANDLER	atmega_pcint0,		ATMEGA_IRQ_PCINT0 	  , excpt_common /* 0x0006 PCINT0 Pin Change Interrupt Req 0 */

@@ -13,6 +13,42 @@
 	.func	__start
 __start:
 
+	ldi	r16,0xFF
+	out	DDRB,r16
+
+	ldi	r16,0x00
+	out	PORTB,r16
+
+	rjmp __start
+
+	clr	r17			; clear led register
+	ldi	r16,(1<<5)		; load 00000001 into mask register
+	out	DDRB,r16		; set PINB0 to output
+
+start:	
+	eor	r17,r16		; toggle PINB0 in led register
+	out	PORTB,r17		; write led register to PORTB
+
+	ldi	r18,71		; initialize outer loop count
+
+oLoop:	
+	ldi	r24,255	; intialize inner loop count in inner
+	ldi	r25,15	; loop high and low registers
+
+iLoop:	
+	sbiw	r24,1		; decrement inner loop registers
+	brne	iLoop			; branch to iLoop if iLoop registers != 0
+
+	dec	r18			; decrement outer loop register
+	brne	oLoop			; branch to oLoop if outer loop register != 0
+
+	rjmp	start			; jump back to start
+
+
+
+
+
+
 	/* disable interrupts. Useful for software reset by jumping to address 0 */
 	cli
 	clr r0
