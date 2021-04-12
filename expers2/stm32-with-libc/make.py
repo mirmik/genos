@@ -4,7 +4,7 @@ import licant
 import os
 from licant.cxx_make import toolchain_gcc
 
-TOOLCHAIN = toolchain_gcc("avr-")
+TOOLCHAIN = toolchain_gcc("arm-none-eabi-")
 
 licant.include("genos")
 licant.include("igris")
@@ -15,24 +15,27 @@ licant.cxx_application("firmware.elf",
 	
 	mdepends = [
 		"genos.include",
+		"genos.compat.newlib-syscalls.stm32",
 
 		"genos.ktimer_manager",
 		"genos.schedee_manager",
 		"genos.systime",
 
-		"igris.compat.std",
-		"igris.compat.posix",
+		#"igris.compat.std",
+		#"igris.compat.posix",
 
 		"igris.syslock",
-		"igris.flags.clean",
+		#"igris.flags.clean",
 		"igris.dprint",
+		"igris.bug",
+		"igris.util",
 
-		"cpu.avr.atmega2560"
+		"cpu.stm32.stm32f401re"
 	],
 
-	cxx_flags="-mmcu=atmega2560",
-	cc_flags="-mmcu=atmega2560",
-	ld_flags="-mmcu=atmega2560"
+	cxx_flags="",
+	cc_flags="",
+	ld_flags=""
 )
 
 licant.objcopy(

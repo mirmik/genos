@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 #include <igris/datastruct/dlist.h>
 #include <igris/dprint.h>

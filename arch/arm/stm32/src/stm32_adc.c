@@ -3,6 +3,7 @@
 
 #include <igris/util/bits.h>
 
+#if 0
 void stm32_adc_enable(ADC_TypeDef * regs, int en) 
 {
 	bits_lvl(regs->CR2, ADC_CR2_ADON, en);
@@ -12,7 +13,7 @@ void stm32_adc_set_channel(ADC_TypeDef * regs, int ch)
 {
 	bits_assign(regs->CR1, 0b11111, ch);
 }
-
+#endif
 
 /*void stm32_adc_start_single_conversion(struct stm32_adc_regs * regs) 
 {

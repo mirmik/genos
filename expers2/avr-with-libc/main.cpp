@@ -1,17 +1,9 @@
 #include <genos/ktimer.h>
-
-void foo(void * priv, genos::ktimer * tim) 
-{
-
-}
-
-genos::ktimer tim(foo, nullptr, 1000);
+#include <avr/io.h>
 
 int main() 
 {
-
-	while(1) 
-	{
-		ktimer_manager_step();
-	}
+	DDRB = 0xFF;
+	PORTB= 0xFF;
+	while(1);
 }

@@ -114,3 +114,31 @@ module("arch.stm32f746ng",
 	mdepends=["arch.stm32f7"],
 	ldscripts=["ldscripts/stm32f746ng.ld"]
 )
+
+
+
+
+
+
+
+
+
+
+
+module("cpu.stm32.common",
+	include_paths = ["include", "st-device"],	
+	ldscripts=["ldscripts/stm32_common_alt.ld"],
+	sources=["src/stm32_systick.c"]
+)
+
+module("cpu.stm32.stm32f401re",
+	mdepends = ["cpu.stm32.common", "cpu.arm.cortex-m4"],
+	defines = ["CHIP_STM32F401", "STM32F401xE", "STM32F4XX"],
+	cxx_flags = "-mthumb  -mcpu=cortex-m4",
+	cc_flags = "-mthumb  -mcpu=cortex-m4",
+	ld_flags = "-mthumb  -mcpu=cortex-m4",
+	ldscripts=["ldscripts/stm32f401re.ld"]
+)
+
+
+
