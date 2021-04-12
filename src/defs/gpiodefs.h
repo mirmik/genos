@@ -48,6 +48,11 @@
 #define GPIO_MODE_ANALOG_INPUT      0x00020000
 #endif
 
+#ifndef GPIO_MODE_ALTERNATE
+#define GPIO_MODE_ALTERNATE     	0x00010000
+#endif
+
+
 /*
 #ifndef GPIO_MODE_IN_INT_EN
 #define GPIO_MODE_IN_INT_EN         (1 << 31)

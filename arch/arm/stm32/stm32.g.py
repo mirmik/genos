@@ -127,8 +127,40 @@ module("arch.stm32f746ng",
 
 module("cpu.stm32.common",
 	include_paths = ["include", "st-device"],	
+	sources=[
+		"src/stm32_systick.c",
+		"src/stm32_usart.c",
+		"src/stm32_gpio.c",
+		"src/stm32_start.c",
+		"src/stm32_rcc.c",
+		"src/stm32_diag.c",
+		"src/stm32_arch.c",
+		"src/stm32_clockbus.c",
+		"src/stm32g4/stm32g4_sysinit.c",
+	],
+	mdepends = [
+		"cpu.stm32.irqtable", 
+	]
+)
+
+module("cpu.stm32.irqtable",
+	sources=[
+		"src/stm32_vectors.S",
+	],
 	ldscripts=["ldscripts/stm32_common_alt.ld"],
-	sources=["src/stm32_systick.c"]
+)
+
+module("cpu.stm32.stm32f4",
+	defines = ["STM32F4XX"],
+	mdepends = [
+		"cpu.stm32.common", 
+		"cpu.arm.cortex-m4",
+		"cpu.stm32.irqtable"],
+)
+
+module("cpu.stm32.stm32g4",
+	defines = ["STM32G4XX", "STM32G4xx"],
+	mdepends = ["cpu.stm32.common", "cpu.arm.cortex-m4"],
 )
 
 module("cpu.stm32.stm32f401re",
@@ -140,5 +172,14 @@ module("cpu.stm32.stm32f401re",
 	ldscripts=["ldscripts/stm32f401re.ld"]
 )
 
+module("cpu.stm32.stm32g474re",
+	defines = ["CHIP_STM32G474xx", "STM32G474xx"],
+	mdepends = ["cpu.stm32.stm32g4"],
+	
+	cxx_flags = "-mthumb  -mcpu=cortex-m4",
+	cc_flags = "-mthumb  -mcpu=cortex-m4",
+	ld_flags = "-mthumb  -mcpu=cortex-m4",
+	ldscripts=["ldscripts/stm32g474re.ld"]
+)
 
 

@@ -1,6 +1,8 @@
 #ifndef NUCLEO_BOARDS
 #define NUCLEO_BOARDS
 
+#include <periph/map.h>
+
 #   define BOARD_HSE_FREQ 8000000
 #	define SYSLED_GPIO GPIOA
 #	define SYSLED_MASK (1<<5)
@@ -23,7 +25,7 @@
 #	define ARDUART_TX_AF 7
 #	define ARDUART_RX_AF 7*/
 
-static
+/*static
 const struct gpio_pin PINOUT[] = 
 {
 	//CN9
@@ -57,6 +59,6 @@ const struct gpio_pin PINOUT_A[] =
 	{GPIOB, 1<<0}, //a3
 	{GPIOC, 1<<1}, //a4
 	{GPIOC, 1<<0}  //a5
-};
+};*/
 
 #endif

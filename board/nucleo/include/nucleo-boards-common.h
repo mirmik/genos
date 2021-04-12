@@ -7,19 +7,11 @@
 #define STM32_FREQMODE_PLL_LOW 3
 
 #include <sys/cdefs.h>
-#include <drivers/gpio/pin.h>
-#include <drivers/serial/stm32_usart.h>
-
-namespace board 
-{
-	extern gpio_pin sysled;
-	extern stm32_usart_device sysuart;
-	extern stm32_usart_device arduart;
-}
 
 __BEGIN_DECLS
 
 void board_init(int freqmode = STM32_FREQMODE_HSI);
+void blink_test_cpudelay(int cpudelay);
 
 __END_DECLS
 

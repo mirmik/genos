@@ -35,6 +35,13 @@ module("board.nucleo-g474re",
 	defines=["BOARD_NUCLEO_G474RE"]
 )
 
+module("board.nucleo-g474.init", 
+	mdepends = [ 
+		"board.nucleo",
+	], 
+	defines=["BOARD_NUCLEO_G474RE"]
+)
+
 module("genos.board", impl = "nucleo-l412rb", 
 	mdepends = [ "board.nucleo", ("genos.hal", "stm32l412") ], 
 	defines=["BOARD_NUCLEO_L412RB"])

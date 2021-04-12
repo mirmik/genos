@@ -15,21 +15,17 @@ _minimum_stack_size = 0x400; /* required amount of stack */
 
 _estack = ORIGIN(RAM) + LENGTH(RAM) - 4;
 
-ENTRY(_start)
+ENTRY(__start)
 
 /* define output sections */
 SECTIONS
 {
-	/* The startup code goes first into FLASH */
-	.vectors :
+	.text :
 	{
 		. = ALIGN(4);
 		KEEP(*(.vectors)) /* Startup code */
 		. = ALIGN(4);
-	} >FLASH
 
-	/* The program code and other data goes into FLASH */.text :
-	{
 		. = ALIGN(4);
 		*(.text)
 		*(.text*)
@@ -124,12 +120,6 @@ SECTIONS
 		. = ALIGN(4);
 		. = . + _minimum_stack_size;
 		. = ALIGN(4);
-	} >RAM
-
-	.ARM.exidx : {
-    	__exidx_start = .;
-    	*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    	__exidx_end = .;
 	} >RAM
 
 	/* Remove information from the standard libraries */

@@ -7,10 +7,5 @@
 int main() 
 {
 	board_init();
-
-	while(1) 
-	{
-		board_sysled.toggle();
-		cpu_delay(500000);
-	}
+	blink_test_cpudelay(500000);
 }

@@ -18,10 +18,12 @@ licant.cxx_application("firmware.elf",
 
 		"genos.ktimer_manager",
 		"genos.schedee_manager",
+		"genos.irqtable",
 		"genos.systime",
 
 		"igris.compat.std",
 		"igris.compat.posix",
+		"igris.util",
 
 		"igris.syslock",
 		"igris.flags.clean",
@@ -29,6 +31,8 @@ licant.cxx_application("firmware.elf",
 
 		"cpu.avr.atmega2560"
 	],
+
+	defines = ["F_CPU=16000000"],
 
 	cxx_flags="-mmcu=atmega2560",
 	cc_flags="-mmcu=atmega2560",

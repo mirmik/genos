@@ -19,30 +19,44 @@ licant.cxx_application("firmware.elf",
 
 		"genos.ktimer_manager",
 		"genos.schedee_manager",
-		"genos.systime",
+		"genos.systime",	
+		"genos.irqtable",	
 
-		#"igris.compat.std",
-		#"igris.compat.posix",
+		"igris.compat.std",
+		"igris.compat.posix",
+		"igris.compat.libc",
 
 		"igris.syslock",
-		#"igris.flags.clean",
+		"igris.flags.clean",
 		"igris.dprint",
 		"igris.bug",
 		"igris.util",
 
-		"cpu.stm32.stm32f401re"
+		"cpu.stm32.stm32g474re",
+		"board.nucleo-g474.init",
 	],
 
-	cxx_flags="",
-	cc_flags="",
-	ld_flags=""
+	cc_flags = "-g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto",
+	cxx_flags = "-g -Wl,--gc-sections -nostdlib -nostdinc -fdata-sections -ffunction-sections -Wl,--gc-sections -flto -fno-rtti -fno-exceptions -fno-threadsafe-statics   -ffunction-sections -fno-rtti -flto -fno-use-cxa-atexit",
+	ld_flags = "-g -nostdlib -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -flto -Wl,--gc-sections -fno-use-cxa-atexit",
+	optimize = "-Os",
 )
 
 licant.objcopy(
 	toolchain=TOOLCHAIN,
 	src="firmware.elf",
-	tgt="firmware.hex", 
-	format="ihex",
-	sections=[".text"])
+	tgt="firmware.bin", 
+	format="binary",
+	sections=[".text", ".data"])
 
-licant.ex("firmware.hex")
+@licant.routine(deps=["firmware.bin"])
+def install():
+	#os.system("st-flash erase")
+	os.system("st-flash --reset write firmware.bin 0x8000000")
+	#os.system("st-flash reset")
+
+@licant.routine
+def terminal(path="/dev/ttyACM0"):
+	os.system("gtkterm -p {} -s 115200 --parity none".format(path))
+
+licant.ex("firmware.bin")
