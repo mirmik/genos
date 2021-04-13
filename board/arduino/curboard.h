@@ -3,10 +3,8 @@
 
 #define RED_LED 13
 
+#include <periph/map.h>
 #include <sys/cdefs.h>
-#include <drivers/gpio/avr_gpio.h>
-#include <drivers/gpio/pin2.h>
-#include <drivers/serial/avr_usart.h>
 
 #if defined(BOARD_ARDUINO_UNO)
 #	define RED_LED_GPIO GPIOB
@@ -44,13 +42,12 @@
 #define SYSLED_MASK RED_LED_MASK
 #define SYSLED_PIN  RED_LED_PIN
 
-extern avr_gpio_pin board_sysled;
-extern avr_usart_device usart0;
+#define SYSUSART USART0
 
 __BEGIN_DECLS
 
-void emergency_stop();
 void board_init();
+void board_test();
 
 __END_DECLS
 

@@ -17,22 +17,22 @@ public:
 		: regs(regs), mask(mask)
 	{}
 
-	int setup(uint32_t mode) 
+	int mode(uint32_t mode) override
 	{
-		return avr_gpio_setup(regs, mask, mode);
+		return avr_gpio_mode(regs, mask, mode);
 	}
 	
-	int set(uint8_t level = 1) 
+	int set(uint8_t level = 1) override
 	{
 		return avr_gpio_set(regs, mask, level);
 	}
 	
-	int get() 
+	int get() override
 	{
 		return !!avr_gpio_get(regs, mask);
 	}
 
-	int toggle() 
+	int toggle() override
 	{
 		return avr_gpio_toggle(regs, mask);
 	}

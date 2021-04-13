@@ -30,7 +30,8 @@ module("genos.hal.avr.common",
 )
 
 module("cpu.avr.common",
-	include_paths = ["include"]	
+	include_paths = ["include"],
+	sources=["src/avr_gpio.c"]
 )
 
 module("cpu.avr.atmega2560",

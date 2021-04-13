@@ -22,7 +22,7 @@ int avr_gpio_toggle(struct gpio_regs* g, uint16_t mask)
 	return 0;
 }
 
-int avr_gpio_setup(struct gpio_regs* g, uint16_t mask, int32_t mode)
+int avr_gpio_mode(struct gpio_regs* g, uint16_t mask, int32_t mode)
 {
 	if ((mode & GPIO_MODE_OUT_SECTION) &&
 	        (mode & GPIO_MODE_IN_SECTION))   /* mode is incorrect */

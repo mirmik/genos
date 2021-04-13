@@ -11,7 +11,7 @@ public:
 	virtual int get() = 0;
 	virtual int toggle() = 0;
 
-	virtual int setup(uint32_t _mode) = 0;
+	virtual int mode(uint32_t _mode) = 0;
 	virtual int alternate(uint8_t fn) { return -1; }
 };
 

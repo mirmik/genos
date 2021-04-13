@@ -16,20 +16,15 @@ licant.cxx_application("firmware.elf",
 	mdepends = [
 		"genos.include",
 
-		"genos.ktimer_manager",
-		"genos.schedee_manager",
-		"genos.irqtable",
-		"genos.systime",
-
 		"igris.compat.std",
 		"igris.compat.posix",
 		"igris.util",
-
-		"igris.syslock",
-		"igris.flags.clean",
 		"igris.dprint",
+		"igris.cxx_support",
 
-		"cpu.avr.atmega2560"
+		"igris.flags.clean",
+		"cpu.avr.atmega2560",
+		"board.arduino_mega"
 	],
 
 	defines = ["F_CPU=16000000"],
@@ -45,5 +40,13 @@ licant.objcopy(
 	tgt="firmware.hex", 
 	format="ihex",
 	sections=[".text"])
+
+@licant.routine(deps=["firmware.hex"])
+def install():
+	os.system("avrdude avrdude -P/dev/ttyACM0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.hex -u")
+
+@licant.routine
+def terminal(path="/dev/ttyACM0"):
+	os.system("sudo gtkterm -p {} -s 115200 --parity none".format(path))
 
 licant.ex("firmware.hex")

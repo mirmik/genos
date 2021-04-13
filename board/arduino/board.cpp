@@ -1,43 +1,30 @@
 #include <hal/board.h>
 #include <asm/irq.h>
-#include <systime/systime.h>
 
 #include <drivers/gpio/avr_gpio.h>
-#include <periph/map.h>
 
-#include <igris/dprint/dprint.h>
+#include <igris/util/cpu_delay.h>
 
-avr_gpio_pin board_sysled(SYSLED_GPIO, SYSLED_PIN);
+void board_init() 
+{
+	avr_gpio_mode(SYSLED_GPIO, SYSLED_MASK, GPIO_MODE_OUTPUT);
+	avr_gpio_set(SYSLED_GPIO, SYSLED_MASK, 0);
 
-AVR_USART_DEVICE_DECLARE(usart0, USART0, ATMEGA_IRQ_U0RX);
-
-void board_init() {
-	arch_init();
-
-	board_sysled.setup(GPIO_MODE_OUTPUT);
-	board_sysled.set(1);
+	avr_usart_setup(SYSUSART, 115200, 'n', 8, 1);
+	avr_usart_enable_tx(SYSUSART, 1);
 }
 
-void board_shutdown(arch_shutdown_mode_t mode) {
-	emergency_stop();
-	switch(mode)
+#define CPU_DELAY_ARGUMENT 50000
+void board_test() 
+{
+	irqs_disable();
+	while(1) 
 	{
-		case ARCH_SHUTDOWN_MODE_HALT:
-		break;
-		case ARCH_SHUTDOWN_MODE_REBOOT:
-		break;
-		case ARCH_SHUTDOWN_MODE_ABORT:
-			irqs_disable();
-			//board::led.mode(genos::hal::gpio::output);
-			
-			debug_print("arch_shutdown\n");
-			while(1) {
-			//	board::led.set();
-				while(1);
-			}
-		break;
-	};
-	arch_shutdown(mode);	
-}
+		avr_gpio_set(SYSLED_GPIO, SYSLED_MASK, 1);
+		cpu_delay(CPU_DELAY_ARGUMENT);
+		avr_gpio_set(SYSLED_GPIO, SYSLED_MASK, 0);
+		cpu_delay(CPU_DELAY_ARGUMENT);
 
-__attribute__((weak)) void emergency_stop() {}
+		avr_usart_sendbyte(SYSUSART, 'A');
+	}
+}
