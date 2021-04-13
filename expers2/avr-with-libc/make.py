@@ -21,10 +21,12 @@ licant.cxx_application("firmware.elf",
 		"igris.util",
 		"igris.dprint",
 		"igris.cxx_support",
-
 		"igris.flags.clean",
+
 		"cpu.avr.atmega2560",
-		"board.arduino_mega"
+		"board.arduino_mega",
+
+		"genos.drivers.avr"
 	],
 
 	defines = ["F_CPU=16000000"],

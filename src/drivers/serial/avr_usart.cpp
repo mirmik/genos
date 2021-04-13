@@ -9,11 +9,11 @@
 
 int avr_usart_device::enable(int en)
 {
-	usart_regs_enable_rx(regs, en);
-	usart_regs_enable_tx(regs, en);
-	usart_regs_tcirq(regs, false);
-	usart_regs_txirq(regs, false);
-	usart_regs_rxirq(regs, en);
+	avr_usart_enable_rx(regs, en);
+	avr_usart_enable_tx(regs, en);
+	avr_usart_tcirq(regs, false);
+	avr_usart_txirq(regs, false);
+	avr_usart_rxirq(regs, en);
 
 	cpu_delay(10000);
 
@@ -25,27 +25,27 @@ int avr_usart_device::ctrirqs(uint8_t cmd)
 	switch (cmd)
 	{
 		case UART_CTRIRQS_TXON:
-			usart_regs_txirq(regs, true);
+			avr_usart_txirq(regs, true);
 			return 0;
 
 		case UART_CTRIRQS_TXOFF:
-			usart_regs_txirq(regs, false);
+			avr_usart_txirq(regs, false);
 			return 0;
 
 		case UART_CTRIRQS_RXON:
-			usart_regs_rxirq(regs, true);
+			avr_usart_rxirq(regs, true);
 			return 0;
 
 		case UART_CTRIRQS_RXOFF:
-			usart_regs_rxirq(regs, false);
+			avr_usart_rxirq(regs, false);
 			return 0;
 
 		case UART_CTRIRQS_TCON:
-			usart_regs_tcirq(regs, true);
+			avr_usart_tcirq(regs, true);
 			return 0;
 
 		case UART_CTRIRQS_TCOFF:
-			usart_regs_tcirq(regs, false);
+			avr_usart_tcirq(regs, false);
 			return 0;
 	}
 
@@ -54,22 +54,22 @@ int avr_usart_device::ctrirqs(uint8_t cmd)
 
 int avr_usart_device::recvbyte()
 {
-	return usart_regs_recvbyte(regs);
+	return avr_usart_recvbyte(regs);
 }
 
 int avr_usart_device::sendbyte(int symbol)
 {
-	return usart_regs_sendbyte(regs, symbol);
+	return avr_usart_sendbyte(regs, symbol);
 }
 
 int avr_usart_device::cantx()
 {
-	return usart_regs_cansend(regs);
+	return avr_usart_cansend(regs);
 }
 
 int avr_usart_device::hasrx()
 {
-	return usart_regs_canrecv(regs);
+	return avr_usart_canrecv(regs);
 }
 
 static void _rx_handler(void * arg)
@@ -94,6 +94,7 @@ static void _tx_handler(void * arg)
 	if (usart->handler) usart->handler(usart->handarg, UART_IRQCODE_TC);
 }
 
+#if defined DRIVERS_WITH_IRQTABLE 
 int avr_usart_device::irqinit()
 {
 	irqtable_set_handler(base_irq    , _rx_handler, this);
@@ -102,19 +103,18 @@ int avr_usart_device::irqinit()
 
 	return 0;
 }
+#endif
 
 int avr_usart_device::setup(int32_t baud,
                            char parity,
                            uint8_t databits,
                            uint8_t stopbits)
 {
-	usart_regs_enable_tx(regs, 1);
-	usart_regs_enable_rx(regs, 1);
+	avr_usart_enable_tx(regs, 1);
+	avr_usart_enable_rx(regs, 1);
 
-	usart_regs_setup(regs, baud, parity, databits, stopbits);
-	irqinit();
-
-	usart_regs_rxirq(regs, true);
+	avr_usart_setup(regs, baud, parity, databits, stopbits);
+	avr_usart_rxirq(regs, true);
 
 	return 0;
 }
