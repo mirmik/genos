@@ -1,7 +1,11 @@
 #ifndef GENOS_ARDUINO_MEGA_PINOUT_H
 #define GENOS_ARDUINO_MEGA_PINOUT_H
 
-const struct gpio_pin PINOUT[] = 
+#include <drivers/gpio/avr_gpio.h>
+
+typedef avr_gpio_pin arduino_gpio_pin;
+
+const struct avr_gpio_pin PINOUT[] = 
 {
 	{GPIOE, 1 << 0}, //0
 	{GPIOE, 1 << 1}, //1

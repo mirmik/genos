@@ -5,14 +5,12 @@
 #include <systime/systime.h>
 
 #include <defs/arduino.h>
-#include <drivers/gpio/pin.h>
-
 #include <addons/arduino-compat/pinout.h>
 
 #include <igris/dprint.h>
 
 static inline 
-gpio_pin getPin(int pin) 
+arduino_gpio_pin getPin(int pin) 
 {
     return PINOUT[pin];
 } 

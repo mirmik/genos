@@ -1,5 +1,5 @@
 import licant
 
-licant.module("arduino-compat", 
+licant.module("genos.arduino_compat", 
 	include_paths=["."], 
 	defines=["ARDUINO=100"])

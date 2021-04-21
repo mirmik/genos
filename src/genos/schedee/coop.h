@@ -35,7 +35,7 @@ namespace genos
 		          void * arg,
 		          void * heap,
 		          int heapsize,
-		          int flags);
+		          int flags=0);
 
 		void execute() override;
 		int displace() override;
