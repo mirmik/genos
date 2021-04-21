@@ -18,7 +18,8 @@
 #ifndef _Adafruit_MS_PWMServoDriver_H
 #define _Adafruit_MS_PWMServoDriver_H
 
-#include <drivers/i2c/i2c.h>
+#include <drivers/i2c/i2c_device.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define PCA9685_SUBADR1 0x2

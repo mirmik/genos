@@ -12,7 +12,7 @@
 #include <igris/buffer.h>
 //#include <igris/panic.h>
 
-#include <drivers/i2c/i2c.h>
+#include <drivers/i2c/i2c_device.h>
 
 #include <hal/irqtable.h>
 #include <periph/irqdefs.h>

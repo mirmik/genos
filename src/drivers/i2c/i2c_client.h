@@ -4,74 +4,71 @@
 #include <drivers/i2c/i2c_device.h>
 #include <drivers/i2c/i2c_master.h>
 
-namespace genos 
+class i2c_client : public genos::device
 {
-	class i2c_client : public genos::device
+public:
+	i2c_device * dev;
+	uint8_t addr;
+
+	i2c_client() {}
+	i2c_client(i2c_device * parent, uint8_t addr) :
+		dev(parent), addr(addr)
+	{}
+
+	void init(i2c_device * parent, uint8_t addr)
 	{
-	public:
-		i2c_device * dev;
-		uint8_t addr;
+		this->dev = parent;
+		this->addr = addr;
+	}
 
-		i2c_client() {}
-		i2c_client(i2c_device * parent, uint8_t addr) : 
-			dev(parent), addr(addr)
-		{}
+	genos::device * parent_device() override { return dev; }
 
-		void init(i2c_device * parent, uint8_t addr) 
-		{
-			this->dev = parent;
-			this->addr = addr;
-		}
+	int write_memory(uint8_t memaddr, const void* out, uint16_t olen)
+	{
+		int ret;
 
-		genos::device * parent_device() override { return dev; }
+		dprln("write_memory");
 
-		int write_memory(uint8_t memaddr, const void* out, uint16_t olen) 
-		{
-			int ret;
+		//dev->set_slave_address(addr);
+		//ret = dev->exchange(addr, out, olen, nullptr, 0);
+		ret = dev->write_memory(addr, memaddr, out, olen);
 
-			dprln("write_memory");
-			
-			//dev->set_slave_address(addr);
-			//ret = dev->exchange(addr, out, olen, nullptr, 0);
-			ret = dev->write_memory(addr, memaddr, out, olen);
-
-			return ret;
-		}
+		return ret;
+	}
 
 
-		int write(const void* out, uint16_t olen) 
-		{
-			int ret;
-			ret = dev->write(addr, out, olen);
-			return ret;
-		}
+	int write(const void* out, uint16_t olen)
+	{
+		int ret;
+		ret = dev->write(addr, out, olen);
+		return ret;
+	}
 
-		int read(const void* out, uint16_t olen) 
-		{
-			int ret;
-			ret = dev->read(addr, out, olen);
-			return ret;
-		}
+	int read(const void* out, uint16_t olen)
+	{
+		int ret;
+		ret = dev->read(addr, out, olen);
+		return ret;
+	}
 
-		int exchange(
-			const void* out, uint16_t olen, 
-			void* in, uint16_t ilen) 
-		{
-			return 0;
-		}
+	int exchange(
+	    const void* out, uint16_t olen,
+	    void* in, uint16_t ilen)
+	{
+		return 0;
+	}
 
-		void init() {}
+	void init() {}
 
-		void lock_bus() 
-		{
-			dev->lock_bus();
-		}
+	void lock_bus()
+	{
+		dev->lock_bus();
+	}
 
-		void unlock_bus() 
-		{
-			dev->unlock_bus();
-		}
-	};
-}
+	void unlock_bus()
+	{
+		dev->unlock_bus();
+	}
+};
 
 #endif

@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <hal/arch.h>
 #include <hal/irqtable.h>
 

@@ -3,7 +3,6 @@
 
 #include <sys/cdefs.h>
 #include <defs/uartdefs.h>
-#include <igris/util/retype.h>
 
 #include <stdint.h>
 #include <stdbool.h>

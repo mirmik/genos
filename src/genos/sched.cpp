@@ -1,6 +1,7 @@
 #define NODTRACE 1
 
 #include <genos/sched.h>
+#include <stdio.h>
 
 #if __has_include("asm/startup.h")
 #include <asm/startup.h> // for RESET_STACK
