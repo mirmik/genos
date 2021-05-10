@@ -23,17 +23,17 @@ licant.cxx_application("firmware.elf",
 		"igris.cxx_support",
 		"igris.flags.clean",
 
-		"cpu.avr.atmega2560",
-		"board.arduino_mega",
+		"cpu.avr.atmega168",
+		"board.arduino_nano_168",
 
 		"genos.drivers.avr"
 	],
 
 	defines = ["F_CPU=16000000"],
 
-	cxx_flags="-mmcu=atmega2560",
-	cc_flags="-mmcu=atmega2560",
-	ld_flags="-mmcu=atmega2560"
+	cxx_flags="-mmcu=atmega168",
+	cc_flags="-mmcu=atmega168",
+	ld_flags="-mmcu=atmega168"
 )
 
 licant.objcopy(
@@ -45,7 +45,7 @@ licant.objcopy(
 
 @licant.routine(deps=["firmware.hex"])
 def install():
-	os.system("avrdude avrdude -P/dev/ttyACM0 -v -cwiring -patmega2560 -b115200 -D -Uflash:w:./firmware.hex -u")
+	os.system("avrdude avrdude -P/dev/ttyACM0 -v -cwiring -patmega168 -b115200 -D -Uflash:w:./firmware.hex -u")
 
 @licant.routine
 def terminal(path="/dev/ttyACM0"):

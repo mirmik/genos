@@ -1,5 +1,4 @@
 #include <drivers/serial/stm32_usart.h>
-#include <igris/util/retype.h>
 
 #include <asm/stm32_gpio.h>
 #include <asm/stm32_usart.h>

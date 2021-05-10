@@ -1,6 +1,12 @@
 #ifndef NUCLEO_BOARDS
 #define NUCLEO_BOARDS
 
+#include <periph/map.h>
+#include <stddef.h>
+
+#include <stdlib.h>
+#include <drivers/gpio/pin.h>
+
 #define BOARD_HSE_FREQ 8000000
 
 #define SYSLED_GPIO GPIOB

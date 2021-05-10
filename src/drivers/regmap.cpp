@@ -7,6 +7,8 @@
 #include <igris/util/bug.h>
 #include <util/cpu_delay.h>
 
+#include <string.h>
+
 int spi_writereg_group(genos::device * dev,
                  unsigned int reg,
                  uint8_t * val, 

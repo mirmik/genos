@@ -42,6 +42,13 @@ module("cpu.avr.atmega2560",
 	ld_flags = "-mmcu=atmega2560",
 )
 
+module("cpu.avr.atmega168",
+	mdepends = ["cpu.avr.common"],
+	defines = ["CHIP_ATMEGA168"],
+	cxx_flags = "-mmcu=atmega168",
+	cc_flags = "-mmcu=atmega168",
+	ld_flags = "-mmcu=atmega168",
+)
 
 module("genos.hal", impl = "atmega2560",
 	mdepends = ["genos.hal.avr.common"],

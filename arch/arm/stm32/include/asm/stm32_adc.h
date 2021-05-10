@@ -9,7 +9,6 @@
 
 __BEGIN_DECLS
 
-#if 0
 void stm32_adc_enable(ADC_TypeDef * regs, int en);
 void stm32_adc_set_channel(ADC_TypeDef * regs, int ch);
 
@@ -122,7 +121,6 @@ void stm32_adc_regular_channel_rank(ADC_TypeDef * regs, int ch, int rank)
 	bits_assign_bias(*sqr, 0b11111, ch, bias);
 }
 
-#endif
 __END_DECLS
 
 #endif
