@@ -54,3 +54,5 @@ jjj
 
 __configure__.py
 *.pyc
+
+*.elf

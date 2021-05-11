@@ -23,7 +23,7 @@ application("runtests",
 targets.append("runtests")
 
 def avr_application(chip, board, target):
-	application(target+"_firmware",
+	application(target+"_firmware.elf",
 		toolchain=licant.cxx_make.toolchain_gcc("avr-"),
 		builddir="build_"+target,
 		sources=[
@@ -45,10 +45,10 @@ def avr_application(chip, board, target):
 			"drivers.avr.gpio",
 		]
 	)
-	targets.append(target+"_firmware")
+	targets.append(target+"_firmware.elf")
 
 def stm32_application(chip, board, target):
-	application(target+"_firmware",
+	application(target+"_firmware.elf",
 		toolchain=licant.cxx_make.toolchain_gcc("arm-none-eabi-"),
 		builddir="build_"+target,
 		sources=[
@@ -70,7 +70,7 @@ def stm32_application(chip, board, target):
 			("igris.syslock", "genos.atomic")
 		]
 	)
-	targets.append(target+"_firmware")
+	targets.append(target+"_firmware.elf")
 	
 stm32_application(board="board.nucleo-f401re", chip="cpu.stm32.stm32f401re", target="stm32f401re")
 stm32_application(board="board.nucleo-g474re", chip="cpu.stm32.stm32g474re", target="stm32g474re")
