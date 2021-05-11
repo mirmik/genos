@@ -10,9 +10,7 @@ public:
 	virtual int set(uint8_t lvl) = 0;
 	virtual int get() = 0;
 	virtual int toggle() = 0;
-
-	virtual int mode(uint32_t _mode) = 0;
-	virtual int alternate(uint8_t fn) { return -1; }
+	virtual int mode(uint32_t _mode, int arg) = 0;
 };
 
 #endif

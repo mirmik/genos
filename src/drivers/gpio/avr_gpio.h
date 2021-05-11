@@ -17,7 +17,7 @@ public:
 		: regs(regs), mask(mask)
 	{}
 
-	int mode(uint32_t mode) override
+	int mode(uint32_t mode, int arg) override
 	{
 		return avr_gpio_mode(regs, mask, mode);
 	}
