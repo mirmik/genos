@@ -17,7 +17,7 @@ licant.module("genos.drivers.avr",
 		"genos.drivers.common",
 		#"genos.drivers.avr.spi", 
 		"genos.drivers.avr.usart",
-		"genos.drivers.avr.timer",
+#		"genos.drivers.avr.timer",
 	],
 )
 

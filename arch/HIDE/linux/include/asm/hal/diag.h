@@ -1,4 +1,0 @@
-#ifndef GENOS_LINUX64_DIAG
-#define GENOS_LINUX64_DIAG
-
-#endif
