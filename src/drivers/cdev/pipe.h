@@ -1,7 +1,7 @@
 #ifndef GENOS_DRIVERS_PIPE_H
 #define GENOS_DRIVERS_PIPE_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <drivers/cdev/cdev.h>
 #include <igris/datastruct/ring.h>
 

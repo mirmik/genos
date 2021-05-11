@@ -6,10 +6,10 @@
 class gpio_device 
 {
 public:
-	virtual int mode(unsigned int mask, uint32_t mode, int arg=0) = 0;
-	virtual void set(unsigned int mask, uint8_t level) = 0;
-	virtual void toggle(unsigned int mask) = 0;
-	virtual unsigned int get(unsigned int mask) = 0;
+	virtual int mode(uint32_t mask, uint32_t mode, int arg=0) = 0;
+	virtual int set(uint32_t mask, uint32_t level) = 0;
+	virtual int toggle(uint32_t mask) = 0;
+	virtual int get(uint32_t mask, uint32_t * result) = 0;
 };
 
 #endif

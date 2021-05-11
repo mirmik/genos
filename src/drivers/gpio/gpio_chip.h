@@ -1,4 +1,4 @@
-#ifndef GENOS_DRIVERS_GPIO_CHIP_H
+/*#ifndef GENOS_DRIVERS_GPIO_CHIP_H
 #define GENOS_DRIVERS_GPIO_CHIP_H
 
 namespace drivers 
@@ -34,4 +34,4 @@ namespace drivers
 	};
 }
 
-#endif
+#endif*/

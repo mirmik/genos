@@ -1,4 +1,5 @@
 #include <hal/board.h>
+#include <hal/arch.h>
 #include "curboard.h"
 
 #include <drivers/gpio/gpio.h>

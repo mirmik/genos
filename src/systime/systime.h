@@ -2,7 +2,7 @@
 #define GENOS_KERNEL_SYSTIME_H
 
 #include <inttypes.h>
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <asm/delay.h>
 
 // Обязательно должен быть знаковым.

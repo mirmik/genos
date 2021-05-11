@@ -1,7 +1,7 @@
 #ifndef GXX_HAL_DO_IRQ_H
 #define GXX_HAL_DO_IRQ_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <inttypes.h>
 
 __BEGIN_DECLS

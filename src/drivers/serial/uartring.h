@@ -1,7 +1,7 @@
 #ifndef GENOS_DATASTRUCT_UARTRING_H
 #define GENOS_DATASTRUCT_UARTRING_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 #include <drivers/cdev/serdev.h>
 

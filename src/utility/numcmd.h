@@ -1,7 +1,7 @@
 #ifndef GENOS_UTILITY_NUMCMD_AUTOMATE_H
 #define GENOS_UTILITY_NUMCMD_AUTOMATE_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <igris/protocols/numcmd/numcmd.h>
 #include <igris/datastruct/sline.h>
 

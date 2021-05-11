@@ -1,9 +1,10 @@
 #include <hal/board.h>
-#include <asm/irq.h>
 
-#include <drivers/gpio/avr_gpio.h>
+#include <asm/irq.h>
+#include <asm/avr_gpio.h>
 
 #include <igris/util/cpu_delay.h>
+#include <defs/gpiodefs.h>
 
 void board_init() 
 {

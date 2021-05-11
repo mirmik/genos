@@ -136,11 +136,13 @@ module("cpu.stm32.common",
 		"src/stm32_diag.c",
 		"src/stm32_arch.c",
 		"src/stm32_clockbus.c",
-		"src/stm32g4/stm32g4_sysinit.c",
 	],
 	mdepends = [
 		"cpu.stm32.irqtable", 
-	]
+	],
+	cxx_flags = "-mthumb  -mcpu=cortex-m4 -fno-exceptions -fno-rtti -fno-threadsafe-statics -mfloat-abi=hard -mfpu=fpv4-sp-d16  -D__FPU_USED=1",
+	cc_flags = "-mthumb  -mcpu=cortex-m4   -mfloat-abi=hard -mfpu=fpv4-sp-d16  -D__FPU_USED=1",
+	ld_flags = "-mthumb  -mcpu=cortex-m4 -fno-exceptions -fno-rtti  -mfloat-abi=hard -mfpu=fpv4-sp-d16  -D__FPU_USED=1",
 )
 
 module("cpu.stm32.irqtable",
@@ -152,23 +154,28 @@ module("cpu.stm32.irqtable",
 
 module("cpu.stm32.stm32f4",
 	defines = ["STM32F4XX"],
-	mdepends = [
+	mdepends = 
+	[
 		"cpu.stm32.common", 
 		"cpu.arm.cortex-m4",
-		"cpu.stm32.irqtable"],
+		"cpu.stm32.irqtable"
+	],
+	sources = ["src/stm32f4/stm32f4_sysinit.c"]
 )
 
 module("cpu.stm32.stm32g4",
 	defines = ["STM32G4XX", "STM32G4xx"],
-	mdepends = ["cpu.stm32.common", "cpu.arm.cortex-m4"],
+	mdepends = 
+	[
+		"cpu.stm32.common", 
+		"cpu.arm.cortex-m4"
+	],
+	sources = [ "src/stm32f4/stm32g4_sysinit.c" ]
 )
 
 module("cpu.stm32.stm32f401re",
-	mdepends = ["cpu.stm32.common", "cpu.arm.cortex-m4"],
+	mdepends = ["cpu.stm32.stm32f4"],
 	defines = ["CHIP_STM32F401", "STM32F401xE", "STM32F4XX"],
-	cxx_flags = "-mthumb  -mcpu=cortex-m4",
-	cc_flags = "-mthumb  -mcpu=cortex-m4",
-	ld_flags = "-mthumb  -mcpu=cortex-m4",
 	ldscripts=["ldscripts/stm32f401re.ld"]
 )
 

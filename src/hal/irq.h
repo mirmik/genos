@@ -1,7 +1,7 @@
 #ifndef HAL_IPL_H_
 #define HAL_IPL_H_
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 typedef void(*irq_handler_t)(void*);
 

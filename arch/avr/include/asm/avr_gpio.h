@@ -2,7 +2,7 @@
 #define AVR_GPIO_H
 
 #include "inttypes.h"
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 struct gpio_regs {
 	volatile uint8_t pin;

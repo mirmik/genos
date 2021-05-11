@@ -2,7 +2,7 @@
 #define DRIVERS_ATMEL_DATAFLASH_H
 
 #include <stdint.h>
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <drivers/spi/spi.h>
 #include <drivers/gpio/pin.h>
 

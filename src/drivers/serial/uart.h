@@ -1,7 +1,7 @@
 #ifndef UART_DEVICE_H_
 #define UART_DEVICE_H_
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <defs/uartdefs.h>
 
 #include <stdint.h>

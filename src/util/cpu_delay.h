@@ -2,7 +2,7 @@
 #define GENOS_CPU_DELAY_H
 
 #include <stdint.h>
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 __BEGIN_DECLS
 

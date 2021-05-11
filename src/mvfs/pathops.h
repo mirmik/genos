@@ -5,7 +5,7 @@
 #ifndef MVFS_PATHOPS_H
 #define MVFS_PATHOPS_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 __BEGIN_DECLS
 

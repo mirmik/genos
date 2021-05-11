@@ -1,7 +1,7 @@
 /*#ifndef GENOS_DRIVERS_SPI_H
 #define GENOS_DRIVERS_SPI_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <igris/util/bug.h>
 #include <igris/sync/semaphore.h>
 

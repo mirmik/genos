@@ -2,7 +2,7 @@
 #define AVR2560_TIMER_REGS
 
 #include <inttypes.h>
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 struct timsk_array {
 #if defined (CHIP_ATMEGA2560)

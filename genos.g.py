@@ -1,7 +1,6 @@
 from licant.modules import module
 import traceback
 
-#licant.include("periph")
 licant.include("igris")
 licant.include("nos")
 
@@ -151,9 +150,9 @@ licant.module("igris.dprint", "diag",
 	mdepends = ["igris.dprint.common", "genos.diag"],
 )
 
-licant.module_default_implementation("igris.dprint", "diag")
-licant.module_default_implementation("igris.syslock", "genos.atomic")
-licant.module_default_implementation("nos.current_ostream", "nullptr")
+#licant.module_default_implementation("igris.dprint", "diag")
+#licant.module_default_implementation("igris.syslock", "genos.atomic")
+#licant.module_default_implementation("nos.current_ostream", "nullptr")
 
 module("genos",
 	mdepends = 
@@ -182,6 +181,8 @@ module("genos.syscmd",
 	sources=[
 		"src/genos/syscmd.cpp"
 	])
+
+module("genos.newlib_bind", sources=["src/genos/newlib_bind.c"])
 
 #module("genos.regmap",
 #	sources=[

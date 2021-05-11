@@ -4,7 +4,7 @@
 #include <asm/gpio.h>
 
 #include <stdint.h>
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <defs/gpiodefs.h>
 
 #define GPIO_MODE_IN_SECTION        0x000000FF

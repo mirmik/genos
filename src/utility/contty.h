@@ -1,7 +1,7 @@
 #ifndef GENOS_UTILITY_CONTTY_H
 #define GENOS_UTILITY_CONTTY_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 #include <igris/dprint.h>
 #include <igris/shell/readline.h>
 

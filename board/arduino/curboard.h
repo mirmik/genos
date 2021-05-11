@@ -4,7 +4,7 @@
 #define RED_LED 13
 
 #include <periph/map.h>
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 #if defined(BOARD_ARDUINO_UNO)
 #	define RED_LED_GPIO GPIOB

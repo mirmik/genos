@@ -6,7 +6,7 @@ module("board.nucleo",
 module("board.nucleo-f401re",
 	mdepends = [
 		"board.nucleo", 
-		"arch.stm32f401re",
+#		"arch.stm32f401re",
 	],
 	defines=["BOARD_NUCLEO_F401RE"]
 )
@@ -14,7 +14,7 @@ module("board.nucleo-f401re",
 module("board.nucleo-g431rb",
 	mdepends = [
 		"board.nucleo", 
-		"arch.stm32g431rb",
+#		"arch.stm32g431rb",
 	],
 	defines=["BOARD_NUCLEO_G431RB"]
 )
@@ -22,7 +22,7 @@ module("board.nucleo-g431rb",
 module("board.nucleo-f446re",
 	mdepends = [
 		"board.nucleo", 
-		"arch.stm32f446re",
+#		"arch.stm32f446re",
 	],
 	defines=["BOARD_NUCLEO_F446RE"]
 )
@@ -30,7 +30,7 @@ module("board.nucleo-f446re",
 module("board.nucleo-g474re", 
 	mdepends = [ 
 		"board.nucleo", 
-		"arch.stm32g474re"
+#		"arch.stm32g474re"
 	], 
 	defines=["BOARD_NUCLEO_G474RE"]
 )

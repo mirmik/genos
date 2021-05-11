@@ -69,7 +69,7 @@ A1,A0 tied to ground = 0x20
 #include <drivers/gpio/gpio_chip.h>
 
 //#include "_utility/SPI.parameters.h"
-class mcp23s08 : public drivers::gpio_chip
+class mcp23s08 : public gpio_chip_device
 {
 	drivers::spi_driver* SPI;
 
