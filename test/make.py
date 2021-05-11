@@ -8,6 +8,8 @@ from licant.libs import include
 
 licant.execute("../genos.g.py")
 
+targets = []
+
 application("runtests",
 	sources = [
 		"main.cpp",
@@ -18,79 +20,66 @@ application("runtests",
 	include_paths = ["."],
 	mdepends = [ "igris", "genos.include" ],
 )
+targets.append("runtests")
 
-application("atmega_firmware",
-	toolchain=licant.cxx_make.toolchain_gcc("avr-"),
-	builddir="build_avr",
-	sources=[
-		"atmega_main.cpp"
-	],
-	mdepends=[
-		"genos.include",
+def avr_application(chip, board, target):
+	application(target+"_firmware",
+		toolchain=licant.cxx_make.toolchain_gcc("avr-"),
+		builddir="build_"+target,
+		sources=[
+			"avr_main.cpp"
+		],
+		mdepends=[
+			"genos.include",
+			"genos.systime",
+			"genos.sched",
 
-		"board.arduino_mega",
-		"cpu.avr.atmega2560",
+			board,
+			chip,
+	
+			("igris.dprint", "diag"),
+			"igris.bug",
+			"igris.cxx_support",
+			("igris.syslock", "genos.atomic"),
+	
+			"drivers.avr.gpio",
+		]
+	)
+	targets.append(target+"_firmware")
 
-		("igris.dprint", "diag"),
-		"igris.bug",
-		"igris.cxx_support",
+def stm32_application(chip, board, target):
+	application(target+"_firmware",
+		toolchain=licant.cxx_make.toolchain_gcc("arm-none-eabi-"),
+		builddir="build_"+target,
+		sources=[
+			"stm32_main.cpp"
+		],
+		mdepends=[
+			"genos.include",
+			"genos.irqtable",
+			"genos.systime",
+			"genos.newlib_bind",
+			"genos.sched",
+		
+			chip,
+			board,
 
-		"drivers.avr.gpio",
-	]
-)
+			("igris.dprint", "diag"),
+			"igris.bug",
+			"igris.cxx_support",
+			("igris.syslock", "genos.atomic")
+		]
+	)
+	targets.append(target+"_firmware")
+	
+stm32_application(board="board.nucleo-f401re", chip="cpu.stm32.stm32f401re", target="stm32f401re")
+stm32_application(board="board.nucleo-g474re", chip="cpu.stm32.stm32g474re", target="stm32g474re")
+stm32_application(board="board.nucleo-g431rb", chip="cpu.stm32.stm32g431rb", target="stm32g431rb")
 
-application("atmega_firmware",
-	toolchain=licant.cxx_make.toolchain_gcc("avr-"),
-	builddir="build_avr",
-	sources=[
-		"atmega_main.cpp"
-	],
-	mdepends=[
-		"genos.include",
+avr_application(board="board.arduino_mega", chip="cpu.avr.atmega2560", target="arduino_mega_2560")
+avr_application(board="board.arduino_uno", chip="cpu.avr.atmega328p", target="arduino_uno_328p")
 
-		"board.arduino_mega",
-		"cpu.avr.atmega2560",
-
-		("igris.dprint", "diag"),
-		"igris.bug",
-		"igris.cxx_support",
-
-		"drivers.avr.gpio",
-	]
-)
-
-application("stm32f401_firmware",
-	toolchain=licant.cxx_make.toolchain_gcc("arm-none-eabi-"),
-	builddir="build_stm32f401",
-	sources=[
-		"stm32f401_main.cpp"
-	],
-	mdepends=[
-		"genos.include",
-
-		"board.nucleo-f401re",
-		"cpu.stm32.stm32f401re",
-
-		("igris.dprint", "diag"),
-		"igris.bug",
-		"igris.cxx_support",
-		("igris.syslock", "genos.atomic"),
-		#"igris.compat.libc",
-
-		#"drivers.avr.gpio",
-		"genos.irqtable",
-		"genos.systime",
-		"genos.newlib_bind",
-		"genos.sched",
-	]
-)
-
-
-licant.fileset("all", [
-	"runtests", 
-	"atmega_firmware",
-	"stm32f401_firmware"
-])
+licant.fileset("all", targets)
 
 licant.ex("all")
 

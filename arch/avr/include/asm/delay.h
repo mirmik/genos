@@ -1,7 +1,7 @@
 #ifndef AVR__DELAY_H
 #define AVR__DELAY_H
 
-#include <sys/cdefs.h>
+#include <igris/compiler.h>
 
 __BEGIN_DECLS
 

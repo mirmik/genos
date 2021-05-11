@@ -1,9 +1,12 @@
 #ifndef GENOS_SIGNAL_H
 #define GENOS_SIGNAL_H
 
-#include <genos/sched.h>
+//#include <genos/sched.h>
 
-namespace genos 
+#define SIGCHLD -33
+#define SIGINT -22
+
+/*namespace genos 
 {
 	static inline
 	void raise_signal_group(int gid, int sig) 
@@ -17,6 +20,6 @@ namespace genos
 			}
 		}
 	}
-}
+}*/
 
 #endif
