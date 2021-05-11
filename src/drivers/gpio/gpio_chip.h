@@ -1,11 +1,9 @@
 #ifndef GENOS_DRIVERS_GPIO_CHIP_H
 #define GENOS_DRIVERS_GPIO_CHIP_H
 
-#include <drivers/gpio/abstract.h>
-
 namespace drivers 
 {
-	class gpio_chip //: public gpio_pin_abstract
+	class gpio_chip 
 	{
 	public:
 		virtual void set_value(int offset, int lvl) = 0; 
