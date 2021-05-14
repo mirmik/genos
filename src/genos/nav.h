@@ -1,19 +1,9 @@
 #ifndef GENOS_NAV_H
 #define GENOS_NAV_H
 
-#include <igris/util/pathops.h>
-#include <igris/shell/conscmd.h>
-#include <string.h>
-#include <genos/resmngr.h>
-//#include <genos/syscmd.h>
-
 #define MAX_PATH_LEN 32
 
-/**
-	Модуль, отвечающий за запоминания текущей директории.
-*/
-
-namespace genos
+/*namespace genos
 {
 	class navblock
 	{
@@ -55,6 +45,15 @@ namespace genos
 	};
 
 	extern igris::console_command navigation_shell_table[];
+}*/
+
+struct schedee;
+
+struct navigation_block 
+{
+	struct schedee * sch;
+	uint8_t flags;
+	char * pwd;
 }
 
 
