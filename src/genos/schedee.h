@@ -25,7 +25,7 @@
 
 extern struct dlist_head schedee_list;
 
-namespace genos
+/*namespace genos
 {
 	struct schedee
 	{
@@ -125,10 +125,74 @@ namespace genos
 		void stop();
 	};
 }
+*/
+
+struct schedee
+{
+	struct schedee * parent;
+
+	union
+	{
+		struct ctrobj      ctr;
+		struct waiter      waiter;
+		struct ktimer_base ktimer;
+	};
+
+	uint8_t prio;
+	uint8_t sch_state;
+	uint8_t syslock_counter_save;
+
+	uint16_t pid;
+	uint16_t gid;
+
+#if SCHEDEE_DEBUG_STRUCT
+	const char * mnemo = nullptr;
+	struct dlist_head schedee_list_lnk;
+	uint16_t dispcounter;
+	uint16_t execcounter;
+#endif
+
+	union
+	{
+		uint8_t flags;
+		struct
+		{
+			uint8_t runned 			: 1;
+			uint8_t can_displace 	: 1;
+			uint8_t has_context 	: 1;
+			uint8_t dynamic 		: 1;
+			uint8_t dynamic_heap 	: 1;
+			uint8_t killed			: 1;
+		} flag;
+	};
+
+	int local_errno;
+
+	// Ресурсы должны принадлежать процессу специального вида (процесс-пользователь).
+	// всем schedee ресурсы не нужны.
+	struct resource_table * restbl;
+	struct navigation_block * navblock;
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 __BEGIN_DECLS
 
-genos::schedee * current_schedee();
+
+
+
+
+/*genos::schedee * current_schedee();
 
 /// Уведомить родителя (если он есть), что процесс завершен.
 void schedee_notify_finalize(genos::schedee * sch);
@@ -139,7 +203,7 @@ void schedee_copy_parent_files(genos::schedee* sch);
 void schedee_debug_print_fds(genos::schedee* sch);
 
 uint16_t generate_new_pid();
-uint16_t generate_new_gid();
+uint16_t generate_new_gid();*/
 
 /// Проинициализировать основные поля процесса.
 static inline
