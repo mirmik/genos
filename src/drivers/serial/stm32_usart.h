@@ -1,35 +1,35 @@
 #ifndef GENOS_DRIVERS_STM32_USART_H
 #define GENOS_DRIVERS_STM32_USART_H
 
-#include <drivers/serial/uart.h>
-#include <periph/irqdefs.h>
-#include <asm/stm32_usart.h>
-#include <asm/nvic.h>
+#include <drivers/serial/uart_device.h>
+#include <drivers/gpio/gpio_pin.h>
 
-#include <hal/irqtable.h>
-
-#include <drivers/gpio/pin.h>
-
-struct stm32_usart_device : public genos::uart
+namespace genos
 {
-	USART_TypeDef * regs;
-	uint8_t irqno;
+	class USART_TypeDef;
 
-	int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
-	int enable(int en) override;
-	int ctrirqs(uint8_t cmd) override;
-	int recvbyte() override;
-	int sendbyte(int c) override;
-	int cantx() override;
-	int hasrx() override;
+	struct stm32_usart : public genos::uart_device
+	{
+		USART_TypeDef * regs;
+		uint8_t irqno;
 
-	void irqinit();
+		int setup(int32_t baud, char parity,
+		          uint8_t databits, uint8_t stopbits) override;
+		int enable(int en) override;
+		int ctrirqs(uint8_t cmd) override;
+		int recvbyte() override;
+		int sendbyte(int c) override;
+		int cantx() override;
+		int hasrx() override;
 
-	stm32_usart_device(USART_TypeDef * regs, uint8_t irqno) :
-		regs(regs), irqno(irqno)
-	{}
+		void irqinit();
 
-	void init_gpio(gpio_pin tx, gpio_pin rx, int af);
-};
+		stm32_usart(USART_TypeDef * regs, uint8_t irqno) :
+			regs(regs), irqno(irqno)
+		{}
+
+		void init_gpio(gpio_pin tx, gpio_pin rx, int af);
+	};
+}
 
 #endif

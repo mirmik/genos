@@ -8,8 +8,6 @@
 #include <genos/resource.h>
 #include <genos/nav.h>
 
-#include <genos/signal.h>
-
 #ifndef SCHEDEE_DEBUG_STRUCT
 #define SCHEDEE_DEBUG_STRUCT 1
 #endif

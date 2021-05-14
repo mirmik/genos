@@ -2,10 +2,9 @@
 #define BOARD_NUCLEO_L4XX_PINOUT_H
 
 #include <stdlib.h>
-#include <drivers/gpio/pin.h>
 
 #if defined(BOARD_NUCLEO_L432KC)
-const gpio_pin PINOUT[] =
+const stm32_pin PINOUT[] =
 {
 	{GPIOA, 1 << 10}, //0
 	{GPIOA, 1 << 9}, //1
@@ -36,7 +35,7 @@ const gpio_pin PINOUT[] =
 
 #elif defined(BOARD_NUCLEO_L412RB)
 #warning "PINOUT_D is undefined"
-const gpio_pin PINOUT[] =
+const stm32_pin PINOUT[] =
 {
 	{GPIOA, 1 << 10}, //0
 	{GPIOA, 1 << 9}, //1

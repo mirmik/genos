@@ -13,12 +13,15 @@ targets = []
 application("runtests",
 	sources = [
 		"main.cpp",
-		"drivers_gpio_devices.cpp",
+		"drivers_gpio_devices.cpp"
 	],
 	cxx_flags = "-g",
 	cc_flags = "-g",
 	include_paths = ["."],
-	mdepends = [ "igris", "genos.include" ],
+	mdepends = [ 
+		"igris", 
+		"genos.include"
+	],
 )
 targets.append("runtests")
 
@@ -71,6 +74,16 @@ def stm32_application(chip, board, target):
 		]
 	)
 	targets.append(target+"_firmware.elf")
+
+application("automate", 
+	sources=["automate_main.cpp"],
+	mdepends=[
+		"genos.include", 
+		"genos.autom_starter"
+	],
+	libs=["igris"]
+)
+targets.append("automate")
 	
 stm32_application(board="board.nucleo-f401re", chip="cpu.stm32.stm32f401re", target="stm32f401re")
 stm32_application(board="board.nucleo-g474re", chip="cpu.stm32.stm32g474re", target="stm32g474re")

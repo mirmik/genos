@@ -1,6 +1,7 @@
 #include "contty.h"
 #include <genos/api.h>
 #include <defs/ioflags.h>
+#include <genos/signal.h>
 
 #include <fcntl.h>
 #include <unistd.h>

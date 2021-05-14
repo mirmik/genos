@@ -3,7 +3,10 @@
 
 #include <inttypes.h>
 #include <igris/compiler.h>
+
+#if __has_include(<asm/delay.h>)
 #include <asm/delay.h>
+#endif
 
 // Обязательно должен быть знаковым.
 // Аналог clock_t.

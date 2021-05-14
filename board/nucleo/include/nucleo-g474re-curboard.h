@@ -1,10 +1,6 @@
 #ifndef NUCLEO_BOARDS
 #define NUCLEO_BOARDS
 
-#include <sys/cdefs.h>
-#include <drivers/gpio/pin.h>
-#include <drivers/serial/stm32_usart.h>
-
 #define BOARD_HSE_FREQ 24000000
 #define SYSLED_GPIO GPIOA
 #define SYSLED_MASK (1<<5)

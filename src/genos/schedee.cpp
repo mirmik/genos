@@ -1,5 +1,6 @@
 #include <genos/schedee.h>
 #include <genos/sched.h>
+#include <genos/signal.h>
 #include <errno.h>
 
 #include <igris/dprint.h>

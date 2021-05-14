@@ -50,15 +50,12 @@ module("genos.sched", "impl",
 		"src/genos/schedee.cpp",
 		"src/genos/apitime.cpp",
 		"src/genos/schedee/autom.cpp",
-		"src/genos/schedee/coop.cpp",
 
 		"src/sched/posix/fcntl_mvfs.cpp",
 		"src/sched/posix/unistd_mvfs.cpp",
 
 		"src/genos/wait.cpp",
 		"src/genos/ktimer.cpp",
-
-		"src/genos/fops.cpp",
 		
 		"src/genos/resource.cpp",
 		"src/genos/resmngr.cpp",
@@ -68,6 +65,23 @@ module("genos.sched", "impl",
 		"src/genos/errno.cpp"
 	],
 	default=True,
+)
+
+module("genos.autom_starter",
+	sources = [
+		"src/genos/adapter/autom_starter.c"])
+
+module("genos.schedee",
+	sources = [
+		"src/genos/schedee.cpp",
+		"src/genos/adapter/autom_starter.c"])
+
+module("genos.fops",
+	sources=["src/genos/fops.cpp"]
+)
+
+module("genos.coopschedee",
+	sources=["src/genos/schedee/coop.cpp"]
 )
 
 module(
