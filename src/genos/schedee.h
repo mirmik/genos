@@ -3,7 +3,7 @@
 
 #include <igris/osinter/ctrobj.h>
 #include <igris/osinter/wait.h>
-//#include <genos/ktimer.h>
+#include <igris/osinter/ktimer.h>
 
 #ifndef SCHEDEE_DEBUG_STRUCT
 #define SCHEDEE_DEBUG_STRUCT 1
@@ -26,15 +26,27 @@ extern struct dlist_head schedee_list;
 struct resource_table;
 struct navigation_block;
 
+struct schedee;
+
+struct schedee_operations 
+{
+	void (* execute)(struct schedee *);
+	void (* finalize)(struct schedee *);
+};
+
+
 struct schedee
 {
 	struct schedee * parent;
+	const struct schedee_operations * ops;
+
+	void (*signal_handler) (int sig);
 
 	union
 	{
 		struct ctrobj      ctr;
 		struct waiter      waiter;
-		struct ktimer_base ktimer;
+		struct ktimer_head ktimer;
 	};
 
 	uint8_t prio;
@@ -45,7 +57,7 @@ struct schedee
 	uint16_t gid;
 
 #if SCHEDEE_DEBUG_STRUCT
-	const char * mnemo = nullptr;
+	const char * mnemo;
 	struct dlist_head schedee_list_lnk;
 	uint16_t dispcounter;
 	uint16_t execcounter;
@@ -73,82 +85,20 @@ struct schedee
 	struct navigation_block * navblock;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 __BEGIN_DECLS
 
 
-
-
-
-/*genos::schedee * current_schedee();
-
-/// Уведомить родителя (если он есть), что процесс завершен.
-void schedee_notify_finalize(genos::schedee * sch);
-
-/// Переоткрыть родительские файлы от своего имени.
-void schedee_copy_parent_files(genos::schedee* sch);
-
-void schedee_debug_print_fds(genos::schedee* sch);
-
-uint16_t generate_new_pid();
-uint16_t generate_new_gid();*/
-
-/// Проинициализировать основные поля процесса.
-static inline
 void schedee_init(
-    genos::schedee* sch,
+    struct schedee* sch,
     int prio,
-    int flags = 0)
-{
+    int flags,
+    const struct schedee_operations * ops);
 
-#if SCHEDEE_DEBUG_STRUCT
+void schedee_manager_init();
+void schedee_manager_step();
 
-	// В дальнейшем эту провеку следует убрать, так как нод
-	// должен отстыковываться от списка по завершению работы.
-	if (!dlist_in(&sch->schedee_list_lnk, &schedee_list))
-	{
-		ctrobj_init(&sch->ctr, CTROBJ_SCHEDEE_LIST);
-		dlist_add(&sch->schedee_list_lnk, &schedee_list);
-	}
-
-	else
-	{
-		dlist_del_init(&sch->ctr.lnk);
-	}
-
-	sch->pid = generate_new_pid();
-
-	if (flags & SCHEDEE_USE_PARENT_GID)
-		sch->gid = current_schedee()->gid;
-	else
-		sch->gid = generate_new_gid();
-
-	sch->dispcounter = 0;
-	sch->execcounter = 0;
-#else
-	ctrobj_init(&sch->ctr, CTROBJ_SCHEDEE_LIST);
-#endif
-
-	sch->prio = prio;
-	sch->sch_state = SCHEDEE_STATE_STOP;
-	sch->flags = 0;
-	sch->syslock_counter_save = 0;
-
-	sch->parent = current_schedee();
-
-	sch->local_errno = 0;
-}
+void schedee_start(struct schedee * sch);
+void schedee_pause(struct schedee * sch);
 
 #if SCHEDEE_DEBUG_STRUCT
 void schedee_list_debug_info();

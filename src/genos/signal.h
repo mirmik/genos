@@ -6,7 +6,7 @@
 #define SIGCHLD -33
 #define SIGINT -22
 
-namespace genos 
+/*namespace genos 
 {
 	static inline
 	void raise_signal_group(int gid, int sig) 
@@ -20,6 +20,6 @@ namespace genos
 			}
 		}
 	}
-}
+}*/
 
 #endif

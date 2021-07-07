@@ -2,17 +2,29 @@ from licant.modules import module, submodule
 
 module("avr.diag", sources=["src/diag.c"])
 
-module("cpu.avr.common",
+module("genos.hal.avr",
 	include_paths = ["include"],
 	sources=[
 		"src/avr_gpio.c",
-		"src/switch_context.S",	
-		"src/context.c",
 	]
 )
 
+module("genos.hal.avr.context",
+	sources=[
+		"src/switch_context.S",	
+		"src/context.c",
+	],
+	mdepends=["genos.hal.avr"]
+)
+
+module("genos.hal.avr.diag",
+	sources=[
+		"src/diag.c"
+	],
+	mdepends=["genos.hal.avr"]
+)
+
 module("cpu.avr.atmega2560",
-	mdepends = ["cpu.avr.common"],
 	defines = ["CHIP_ATMEGA2560"],
 	cxx_flags = "-mmcu=atmega2560",
 	cc_flags = "-mmcu=atmega2560",
@@ -20,7 +32,6 @@ module("cpu.avr.atmega2560",
 )
 
 module("cpu.avr.atmega328p",
-	mdepends = ["cpu.avr.common"],
 	defines = ["CHIP_ATMEGA328P"],
 	cxx_flags = "-mmcu=atmega328p",
 	cc_flags = "-mmcu=atmega328p",

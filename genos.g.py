@@ -12,10 +12,15 @@ module ("genos.include",
 	include_paths = [".", "src"],
 	mdepends = ["igris.include"] )
 
+
 module ("genos.irqtable", sources = [ "src/hal/irqtable.cpp" ] )
 module ("genos.malloc", "lin", 
 	sources=["src/mem/lin_malloc.cpp", "src/mem/lin_realloc.cpp"], 
 	default=True
+)
+
+module ("genos.sched2", 
+	sources = ["src/genos/schedee.c"]
 )
 
 module("genos.addons.adafruit_motor_shield", sources = [

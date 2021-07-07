@@ -1,5 +1,5 @@
-#ifndef GENOS_TIMER_TASKLET_H
-#define GENOS_TIMER_TASKLET_H
+#ifndef GENOS_KTIMER_H
+#define GENOS_KTIMER_H
 
 #include <igris/sync/syslock.h>
 #include <igris/osinter/ctrobj.h>
@@ -7,12 +7,9 @@
 
 extern struct dlist_head ktimer_list;
 
-namespace genos 
-{
-	struct ktimer;
-}
+struct ktimer;
 
-typedef void(* ktimer_callback_t)(void* arg, genos::ktimer * tim);
+typedef void(* ktimer_callback_t)(void* arg, struct ktimer * tim);
 
 struct ktimer_base
 {
@@ -21,10 +18,10 @@ struct ktimer_base
 	int64_t start;
 	int64_t interval;
 
-	ktimer_base(int64_t start, int64_t interval) : 
-			ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)),
-			start(start), 
-			interval(interval)
+	ktimer_base(int64_t start, int64_t interval) :
+		ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)),
+		start(start),
+		interval(interval)
 	{}
 
 	void plan();
@@ -41,33 +38,34 @@ struct ktimer_base
 	}
 
 	bool planned();
-	void unplan();	
+	void unplan();
 
 	void set_start_now();
 	void set_interval_ms(int64_t t);
 };
 
-namespace genos
+struct ktimer_action
 {
-	struct ktimer 
-	{
-		struct ktimer_base tim;
+	struct ktimer_base tim;
 
-		ktimer_callback_t act;
-		void * arg;
+	ktimer_callback_t act;
+	void * arg;
 
-		ktimer(ktimer_callback_t act, void* arg, int64_t interval) : 
-			tim(0, interval),
-			act(act),
-			arg(arg)
-		{}
+/*	ktimer(ktimer_callback_t act, void* arg, int64_t interval) :
+		tim(0, interval),
+		act(act),
+		arg(arg)
+	{}*/
 
-		void plan() { tim.plan(); }
-		void replan() { tim.replan(); }
-	};
-}
+	void plan() { tim.plan(); }
+	void replan() { tim.replan(); }
+};
 
 __BEGIN_DECLS
+
+void ktimer_init(struct ktimer * tim, int64_t start, int64_t interval);
+
+void ktimer_plan(struct ktimer * tim);
 
 void ktimer_manager_step();
 
