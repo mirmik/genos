@@ -9,7 +9,7 @@
 #include <genos/cdev.h>
 
 #include <drivers/cdev/serdev.h>
-#include <drivers/serial/uart.h>
+#include <drivers/serial/uart_device.h>
 
 namespace genos
 {
@@ -55,7 +55,7 @@ namespace genos
 		size_t room() override;
 		size_t avail() override;
 
-		void begin(genos::uart * udev);
+		void begin(genos::uart_device * udev);
 		void begin() { begin(udev); };
 		void clear();
 	};

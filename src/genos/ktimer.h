@@ -1,79 +1,52 @@
+/**
+@file
+    Структура таймера для использования совместно с менеджером таймеров.
+*/
+
 #ifndef GENOS_KTIMER_H
 #define GENOS_KTIMER_H
 
-#include <igris/sync/syslock.h>
+#include <igris/compiler.h>
 #include <igris/osinter/ctrobj.h>
-#include <systime/systime.h>
 
-extern struct dlist_head ktimer_list;
+struct ktimer_head;
+typedef void (*ktimer_callback_t)(void *arg, struct ktimer_head *tim);
 
-struct ktimer;
-
-typedef void(* ktimer_callback_t)(void* arg, struct ktimer * tim);
-
-struct ktimer_base
+struct ktimer_head
 {
-	struct ctrobj ctr;
+    struct ctrobj ctr;
 
-	int64_t start;
-	int64_t interval;
+    uint64_t start;
+    int64_t interval;
 
-	ktimer_base(int64_t start, int64_t interval) :
-		ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)),
-		start(start),
-		interval(interval)
-	{}
-
-	void plan();
-
-	void swift()
-	{
-		start += interval;
-	}
-
-	void replan()
-	{
-		swift();
-		plan();
-	}
-
-	bool planned();
-	void unplan();
-
-	void set_start_now();
-	void set_interval_ms(int64_t t);
+    ktimer_callback_t callback;
+    void *privdata;
 };
-
-struct ktimer_action
-{
-	struct ktimer_base tim;
-
-	ktimer_callback_t act;
-	void * arg;
-
-/*	ktimer(ktimer_callback_t act, void* arg, int64_t interval) :
-		tim(0, interval),
-		act(act),
-		arg(arg)
-	{}*/
-
-	void plan() { tim.plan(); }
-	void replan() { tim.replan(); }
-};
+typedef struct ktimer_head ktimer_t;
 
 __BEGIN_DECLS
 
-void ktimer_init(struct ktimer * tim, int64_t start, int64_t interval);
+// Инициализировать таймер
+void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
+                 void *privdata, uint64_t start, int64_t interval);
 
-void ktimer_plan(struct ktimer * tim);
+// Инициализировать и активировать таймер
+void ktimer_plan(struct ktimer_head *timer);
 
-void ktimer_manager_step();
+// Сменить точку старта и запланировать
+void ktimer_restart(struct ktimer_head *timer, uint64_t start);
 
-void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg,
-                                  uint32_t ms);
-void ktimer_base_init_for_milliseconds(struct ktimer_base * tim, uint32_t interval, uint8_t ctrtype);
+// Проверить, сработал ли таймер
+int ktimer_check(struct ktimer_head *timer, uint64_t curtime);
 
-void ktimer_list_debug_print();
+// Сместить start на значение interval, чтобы отмерить следующий
+// квант времени
+void ktimer_swift(struct ktimer_head *timer);
+
+// Расчитать точку завершения.
+uint64_t ktimer_finish(struct ktimer_head *timer);
+
+void ktimer_manager_step(uint64_t curtime);
 
 __END_DECLS
 

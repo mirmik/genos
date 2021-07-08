@@ -3,7 +3,7 @@
 
 #include <igris/osinter/ctrobj.h>
 #include <igris/osinter/wait.h>
-#include <igris/osinter/ktimer.h>
+#include <genos/ktimer.h>
 
 #ifndef SCHEDEE_DEBUG_STRUCT
 #define SCHEDEE_DEBUG_STRUCT 1
@@ -87,6 +87,7 @@ struct schedee
 
 __BEGIN_DECLS
 
+struct schedee * current_schedee();
 
 void schedee_init(
     struct schedee* sch,

@@ -2,8 +2,7 @@
 #define GENOS_DRIVERS_AVR_GPIO_H
 
 #include <drivers/gpio/gpio_device.h>
-
-struct gpio_regs;
+#include <asm/avr_gpio.h>
 
 namespace genos
 {

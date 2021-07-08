@@ -27,11 +27,10 @@ namespace genos
 
 	class uart_device
 	{
-	private:
+	public:
 		uart_irq_handler_t  handler;
 		void*               handarg;
 
-	public:
 		virtual int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) = 0;
 		virtual int enable(int en) = 0;
 		virtual int ctrirqs(uint8_t cmd) = 0;

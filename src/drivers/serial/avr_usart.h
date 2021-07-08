@@ -3,32 +3,30 @@
 
 #include <drivers/serial/uart_device.h>
 
-namespace genos
+class usart_regs;
+
+class avr_usart_device : public genos::uart_device
 {
-    class usart_regs;
+    struct usart_regs * regs;
 
-    class avr_usart_device : public uart_device
-    {
-        struct usart_regs * regs;
+public:
+    int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
+    int enable(int en) override;
+    int ctrirqs(uint8_t cmd) override;
+    int recvbyte() override;
+    int sendbyte(int c) override;
+    int cantx() override;
+    int hasrx() override;
 
-    public:
-        int setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits) override;
-        int enable(int en) override;
-        int ctrirqs(uint8_t cmd) override;
-        int recvbyte() override;
-        int sendbyte(int c) override;
-        int cantx() override;
-        int hasrx() override;
-
-        avr_usart_device(struct usart_regs * regs)
-            : regs(regs)
-        {}
+    avr_usart_device(struct usart_regs * regs)
+        : regs(regs)
+    {}
 
 #if defined DRIVERS_WITH_IRQTABLE
-        int irqinit(int base_irqno);
+    int irqinit(int base_irqno);
 #endif
-    };
-}
+};
+
 
 #define __DECLARE_ISR_RX(vect, arg) \
 ISR(vect)   { arg.handler(arg.handarg, UART_IRQCODE_RX); }

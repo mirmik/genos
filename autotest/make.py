@@ -17,7 +17,8 @@ application("runtests",
 	include_paths = ["."],
 	mdepends=[
 		"genos.include",
-		"genos.sched2"
+		"genos.sched2",
+		"genos.systime"
 	],
 	libs = ["nos", "igris"]
 )

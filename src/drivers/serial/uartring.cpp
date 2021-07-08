@@ -4,7 +4,7 @@
 #include <igris/sync/syslock.h>
 #include <igris/util/bug.h>
 
-#include <genos/sched.h>
+#include <genos/schedee.h>
 #include <genos/wait.h>
 #include <util/cpu_delay.h>
 
@@ -221,7 +221,7 @@ void uartring_emulate_read(struct genos::uartring * dev,
 	system_unlock();
 }
 
-void genos::uartring::begin(genos::uart * uart)
+void genos::uartring::begin(genos::uart_device * uart)
 {
 	udev = uart;
 	uart -> handler = uartring_irq_handler;

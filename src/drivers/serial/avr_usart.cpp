@@ -2,10 +2,8 @@
 #include <asm/avr_usart.h>
 
 #include <igris/dprint.h>
-#include <hal/irqtable.h>
-#include <hal/board.h>
-
 #include <util/cpu_delay.h>
+
 
 int avr_usart_device::enable(int en)
 {

@@ -148,7 +148,10 @@ module("genos.mvfs.schedee_support",
 	sources = [ "src/mvfs/variant/global_root.c", "src/mvfs/variant/schedee_support.c" ]
 ) 
 
-module ("genos.systime", srcdir="src", sources = [ "systime/systime.c" ] )
+module ("genos.systime", srcdir="src", sources = [ 
+	"genos/jiffies.c",
+	"genos/systime.c"
+] )
 
 module ("genos.errno", srcdir="src", sources = [ "errno.c" ])
 module ("genos.cpudelay", srcdir="src", sources = [ "hal/cpudelay.c" ])
