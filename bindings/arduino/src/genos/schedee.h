@@ -34,7 +34,6 @@ struct schedee_operations
 {
 	void (* execute)(struct schedee *);
 	void (* finalize)(struct schedee *);
-	int  (* displace)(struct schedee *);
 };
 
 

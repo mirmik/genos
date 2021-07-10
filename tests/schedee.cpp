@@ -56,4 +56,6 @@ TEST_CASE("schedee")
 
 	CHECK_EQ(a, 2);
 	CHECK_EQ(b, 1);
+
+	schedee_deinit(&sch0);
 }

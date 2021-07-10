@@ -11,7 +11,6 @@ int ktimer_check(struct ktimer_head *timer, uint64_t curtime)
 void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
                  void *privdata, uint64_t start, int64_t interval)
 {
-    ctrobj_init(&timer->ctr, CTROBJ_KTIMER_DELEGATE);
     timer->callback = callback;
     timer->privdata = privdata;
     timer->start = start;
@@ -56,7 +55,6 @@ void ktimer_plan(struct ktimer_head *tim)
 
     system_lock();
 
-    dprln("AAA");
     dlist_for_each_entry(it, &ktimer_list, ctr.lnk)
     {
         it_final = it->start + it->interval;
@@ -68,7 +66,6 @@ void ktimer_plan(struct ktimer_head *tim)
         }
     }
 
-    dprln("BBB");
     dlist_add_tail(&tim->ctr.lnk, sit ? sit : &ktimer_list);
 
     system_unlock();

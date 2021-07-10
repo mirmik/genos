@@ -11,7 +11,7 @@ licant.module("genos",
 licant.module("genos.include", include_paths=["."])
 
 licant.module("genos.schedee", 
-	sources = ["genos/schedee.c"],
+	sources = ["genos/schedee.c", "genos/schedee_api.c", "genos/autom_schedee.c"],
 	mdepends = ["genos.ktimer"]
 )
 
