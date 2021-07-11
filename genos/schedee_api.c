@@ -10,15 +10,21 @@ int current_schedee_displace()
 {
 	struct schedee * sch = current_schedee();
 
-	if (sch->flag.can_displace == 0)
+	dprln("H0");
+	if (sch->flag.can_displace == 0) 
+	{
+		dprln("H4");
 		return -1;
+	}
 
+	dprln("H1");
 	sch->syslock_counter_save = syslock_counter();
 
 #if SCHEDEE_DEBUG_STRUCT
 	++sch->dispcounter;
 #endif
 
+	dprln("H2");
 	return sch->ops->displace(sch);
 }
 
@@ -30,6 +36,7 @@ void __timer_schedee_unsleep(void * priv, struct ktimer_head * tim)
 
 int current_schedee_msleep(unsigned int ms)
 {
+	dprln("current_schedee_msleep");
 	struct schedee * sch;
 	struct ktimer_head * timer;
 
@@ -61,9 +68,11 @@ int current_schedee_msleep(unsigned int ms)
 		system_time(),                 //start 
 		millis_to_systime(ms)      //interval
 	);
-	dprln("HERE");
+	dprln("HERE0");
 	ktimer_plan(timer);
 
-	dprln("HERE");
-	return current_schedee_displace();
+	dprln("HERE1");
+	int re = current_schedee_displace();
+	DPRINT(re);
+	return re;
 }

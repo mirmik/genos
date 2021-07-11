@@ -18,6 +18,11 @@ void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
     timer->interval = interval;
 }
 
+void ktimer_deinit(struct ktimer_head *timer) 
+{
+    ctrobj_deinit(&timer->ctr);
+}
+
 void ktimer_swift(struct ktimer_head *timer)
 {
     timer->start += timer->interval;
@@ -71,7 +76,11 @@ void ktimer_plan(struct ktimer_head *tim)
     dprln("BBB");
     dlist_add_tail(&tim->ctr.lnk, sit ? sit : &ktimer_list);
 
+
+    dprln("BBB2");
+
     system_unlock();
+    dprln("BBB3");
 }
 
 void ktimer_execute(struct ktimer_head *tim)

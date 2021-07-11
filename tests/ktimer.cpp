@@ -21,4 +21,6 @@ TEST_CASE("ktimer invoke")
 
 	ktimer_manager_step(100);
 	CHECK_EQ(a, 1);
+
+	ktimer_deinit(&tim);
 }

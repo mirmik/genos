@@ -21,6 +21,7 @@ void foo(void * priv, int * state)
 
 void bar(void * priv, int * state) 
 {
+	dprln("bar");
 	switch (*state) 
 	{
 		case 0: a = 1; ++(*state); current_schedee_msleep(10); return;
@@ -62,5 +63,5 @@ TEST_CASE("aschedee_with_timer")
 	schedee_start(&sch.sch);
 
 	schedee_manager_step();
-//	schedee_deinit(&sch.sch);
+	schedee_deinit(&sch.sch);
 }
