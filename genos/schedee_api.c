@@ -10,21 +10,17 @@ int current_schedee_displace()
 {
 	struct schedee * sch = current_schedee();
 
-	dprln("H0");
 	if (sch->flag.can_displace == 0) 
 	{
-		dprln("H4");
 		return -1;
 	}
 
-	dprln("H1");
 	sch->syslock_counter_save = syslock_counter();
 
 #if SCHEDEE_DEBUG_STRUCT
 	++sch->dispcounter;
 #endif
 
-	dprln("H2");
 	return sch->ops->displace(sch);
 }
 
@@ -36,15 +32,11 @@ void __timer_schedee_unsleep(void * priv, struct ktimer_head * tim)
 
 int current_schedee_msleep(unsigned int ms)
 {
-	dprln("current_schedee_msleep");
 	struct schedee * sch;
 	struct ktimer_head * timer;
 
-	dprln("HERE");
 	sch = current_schedee();
 
-	dprln("HERE");
-	dprptr(sch);
 	if (sch == NULL)
 	{
 		BUG();
@@ -52,12 +44,10 @@ int current_schedee_msleep(unsigned int ms)
 
 	timer = &sch->ktimer;
 
-	dprln("HERE");
 	system_lock();
 	dlist_del_init(&sch->ctr.lnk);
 	system_unlock();
 
-	dprln("HERE");
 	sch->ctr.type = CTROBJ_KTIMER_SCHEDEE;
 	sch->sch_state = SCHEDEE_STATE_WAIT;
 
@@ -68,11 +58,9 @@ int current_schedee_msleep(unsigned int ms)
 		system_time(),                 //start 
 		millis_to_systime(ms)      //interval
 	);
-	dprln("HERE0");
+
 	ktimer_plan(timer);
 
-	dprln("HERE1");
 	int re = current_schedee_displace();
-	DPRINT(re);
 	return re;
 }
