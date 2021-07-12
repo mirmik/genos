@@ -23,11 +23,11 @@ int devnull_onrelease(struct file_head * file)
 const struct file_operations devnull_ops = {
 	.write = devnull_write,
 	.read = devnull_read,
-	.onopen = devnull_onopen,
-	.onrelease = devnull_onrelease
+	.on_open = devnull_onopen,
+	.on_release = devnull_onrelease
 };
 
 void devnull_init(struct devnull * null) 
 {
-	char_device_init(devnull, "null", &devnull_ops);
+	device_head_init(&null->dev, "null", &devnull_ops);
 }

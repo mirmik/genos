@@ -27,7 +27,7 @@ void namespace_init(struct namespace_head * head, const char * path,
 
 void namespace_deinit(struct namespace_head * head);
 
-struct namespace_head * namespace_lookup(const char * path);
+struct namespace_head * namespace_lookup(const char * path, const char ** internal_path);
 
 __END_DECLS
 

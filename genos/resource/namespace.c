@@ -16,7 +16,7 @@ void namespace_deinit(struct namespace_head * head)
 	dlist_del(&head->lnk_namespace_list);
 }
 
-struct namespace_head * namespace_lookup(const char * path)
+struct namespace_head * namespace_lookup(const char * path, const char ** internal_path)
 {
 	struct namespace_head * ns;
 	struct namespace_head * maxns = NULL;
@@ -29,11 +29,11 @@ struct namespace_head * namespace_lookup(const char * path)
 		const char * bptr = ns->path;
 
 		int ns_pathlen = strlen(ns->path);
-		if (pathlen < ns_pathlen) 
+		if (pathlen < ns_pathlen)
 			continue;
 
 		int i = 0;
-		while (aptr[i] == bptr[i] && i < ns_pathlen) 
+		while (aptr[i] == bptr[i] && i < ns_pathlen)
 		{
 			++i;
 		}
@@ -42,6 +42,16 @@ struct namespace_head * namespace_lookup(const char * path)
 		{
 			maxlen = i;
 			maxns = ns;
+		}
+	}
+
+	if (internal_path)
+	{
+		*internal_path = path + maxlen;
+
+		while ((**internal_path) == '/')
+		{
+			++(*internal_path);
 		}
 	}
 
