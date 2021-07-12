@@ -10,6 +10,8 @@ void autom_schedee_execute(struct schedee * sch)
 void autom_schedee_finalize(struct schedee * sch) 
 {
 	struct autom_schedee * asch = mcast_out(sch, struct autom_schedee, sch);
+
+	(void) asch;
 }
 
 struct schedee_operations autom_schedee_ops = {
