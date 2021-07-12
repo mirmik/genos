@@ -1,16 +1,17 @@
 #include <genos/drivers/serial/arduino_serial_device.h>
+#include <genos/wait.h>
 
 DLIST_HEAD(arduino_serial_readers_waits);
 
 int arduino_serial_device_write(struct file_head * file, const void * data, int size) 
 {
-	struct arduino_serial_device * dev = mcast_out(file, file);
-	return dev->serial->write(data, size);
+	struct arduino_serial_device * dev = mcast_out(file, struct arduino_serial_device, dev.fil);
+	return dev->serial->write((const char*)data, (size_t)size);
 }
 
 int arduino_serial_device_read(struct file_head * file, const void * data, int size) 
 {
-	struct arduino_serial_device * dev = mcast_out(file, file);
+	struct arduino_serial_device * dev = mcast_out(file, struct arduino_serial_device, dev.fil);
 	
 	if (dev->serial->available() == 0) 
 	{
@@ -20,7 +21,7 @@ int arduino_serial_device_read(struct file_head * file, const void * data, int s
 		return 0;
 	}
 
-	dev->serial->read(data, size);
+	dev->serial->read((char*)data, (size_t)size);
 }
 
 
