@@ -37,7 +37,7 @@ int mvfs_open(const char * path, int mode)
 	}
 
 	sch = current_schedee();
-	resindex = current_schedee_get_free_openres(&res);
+	resindex = schedee_get_free_openres(sch, &res);
 
 	res->file = filp;
 

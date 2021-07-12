@@ -29,6 +29,7 @@ struct resource_table;
 struct navigation_block;
 
 struct schedee;
+struct openres;
 
 struct schedee_operations 
 {
@@ -109,6 +110,7 @@ void schedee_deinit(struct schedee * sch);
 void schedee_list_debug_info();
 #endif
 
+int schedee_get_free_openres(struct schedee * sch, struct openres ** res);
 
 __END_DECLS
 

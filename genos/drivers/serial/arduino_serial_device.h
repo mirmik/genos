@@ -8,6 +8,7 @@ struct arduino_serial_device
 {
 	struct device_head dev;
 	struct dlist_head lnk_reader;
+	struct dlist_head waitqueue;
 	Serial * serial;
 };
 

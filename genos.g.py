@@ -24,6 +24,7 @@ licant.module("genos.resources",
 		"genos/drivers/device_head.c",
 		"genos/drivers/virtual/devnull.c",
 		"genos/resource/mvfs.c",
+		"genos/resource/openres.c",
 		]
 )
 

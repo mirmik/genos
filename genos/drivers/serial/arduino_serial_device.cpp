@@ -15,15 +15,13 @@ int arduino_serial_device_read(struct file_head * file, const void * data, int s
 	if (dev->serial->available() == 0) 
 	{
 		dlist_add(&dev->lnk_reader, &arduino_serial_readers_waits);
-		current_schedee_set_waitstate();
+		wait_current_schedee(&dev->waitqueue);
+		//current_schedee_set_waitstate();
 		return 0;
 	}
 
 	dev->serial->read(data, size);
 }
-
-
-
 
 
 void arduino_serial_device_init(
@@ -43,7 +41,7 @@ void arduino_serial_devices_step()
 	{
 		if (dev->serial->available()) 
 		{
-			
+
 		}
 	}
 }
