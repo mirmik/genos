@@ -30,6 +30,8 @@ __BEGIN_DECLS
 void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
                  void *privdata, uint64_t start, int64_t interval);
 
+void ktimer_deinit(struct ktimer_head *timer);
+
 // Инициализировать и активировать таймер
 void ktimer_plan(struct ktimer_head *timer);
 

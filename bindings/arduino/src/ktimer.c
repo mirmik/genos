@@ -11,10 +11,16 @@ int ktimer_check(struct ktimer_head *timer, uint64_t curtime)
 void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
                  void *privdata, uint64_t start, int64_t interval)
 {
+    ctrobj_init(&timer->ctr, CTROBJ_KTIMER_DELEGATE);
     timer->callback = callback;
     timer->privdata = privdata;
     timer->start = start;
     timer->interval = interval;
+}
+
+void ktimer_deinit(struct ktimer_head *timer) 
+{
+    ctrobj_deinit(&timer->ctr);
 }
 
 void ktimer_swift(struct ktimer_head *timer)

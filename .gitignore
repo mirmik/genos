@@ -56,3 +56,5 @@ __configure__.py
 *.pyc
 
 *.elf
+
+bindings/arduino/src

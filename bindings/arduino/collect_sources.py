@@ -10,7 +10,15 @@ PREFIX = "../../genos"
 
 SOURCES = [
 	"schedee.c",
-	"ktimer.c"
+	"ktimer.c",
+	"drivers/serial/arduino_serial_device.cpp",
+	"drivers/device_head.c",
+	"drivers/devns.c",
+	"drivers/virtual/devnull.c",
+	"resource/file_head.c",
+	"resource/mvfs.c",	
+	"resource/namespace.c",
+	"resource/openres.c",		
 ]
 
 for path, subdirs, files in os.walk(PREFIX):
