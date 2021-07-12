@@ -25,6 +25,10 @@ __BEGIN_DECLS
 void namespace_init(struct namespace_head * head, const char * path, 
 	const struct namespace_operations * ops);
 
+void namespace_deinit(struct namespace_head * head);
+
+struct namespace_head * namespace_lookup(const char * path);
+
 __END_DECLS
 
 #endif
