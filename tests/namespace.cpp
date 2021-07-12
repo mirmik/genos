@@ -3,7 +3,7 @@
 #include <genos/drivers/devns.h>
 #include <genos/drivers/virtual/devnull.h>
 
-#include <genos/mvfs.h>
+#include <genos/resource/mvfs.h>
 
 struct namespace_head ns0, ns1;
 struct devices_namespace  devns;
