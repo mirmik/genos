@@ -1,11 +1,11 @@
 #include <genos/drivers/virtual/devnull.h>
 
-int devnull_write(struct file_head * file, const void * data, int size) 
+int devnull_write(struct file_head * file, const void * data, unsigned int size) 
 {
 	return 0;
 }
 
-int devnull_read(struct file_head * file, void * data, int size) 
+int devnull_read(struct file_head * file, void * data, unsigned int size) 
 {
 	return 0;	
 }

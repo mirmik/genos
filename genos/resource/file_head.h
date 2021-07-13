@@ -12,8 +12,8 @@ struct file_head;
 
 struct file_operations 
 {
-	int (*write)(struct file_head * file, const void * data, int size);
-	int (*read) (struct file_head * file,       void * read, int size);
+	int (*write)(struct file_head * file, const void * data, unsigned int size);
+	int (*read) (struct file_head * file,       void * read, unsigned int size);
 
 	int (*on_open)    (struct file_head * file);
 	int (*on_release) (struct file_head * file);

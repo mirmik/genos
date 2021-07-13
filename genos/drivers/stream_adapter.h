@@ -28,6 +28,7 @@ __BEGIN_DECLS
 
 void stream_adapter_init(
 	struct stream_adapter * adapter,
+	const char * name, 
 	const struct stream_adapter_operations * ops
 );
 

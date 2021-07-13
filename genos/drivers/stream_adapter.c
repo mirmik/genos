@@ -56,8 +56,12 @@ int stream_adapter_write(
 	return writed;
 }
 
-int stream_adapter_read(void * data, unsigned int size)
+int stream_adapter_read(
+	struct file_head * head,
+	void * data, unsigned int size)
 {
+	struct stream_adapter * adapter = mcast_out(head, struct stream_adapter, dev.fil);
+
 	char *       cdata = (char *) data;
 	unsigned int csize = size;
 	int readed;
@@ -74,13 +78,13 @@ int stream_adapter_read(void * data, unsigned int size)
 	return readed;
 }
 
-const struct stream_adapter_file_ops =
+const struct file_operations stream_adapter_file_ops =
 {
 	.write = stream_adapter_write,
 	.read = stream_adapter_read,
 	.on_open = NULL,
 	.on_release = NULL
-}
+};
 
 void stream_adapter_init(
     struct stream_adapter * adapter,
@@ -97,5 +101,5 @@ void stream_adapter_init(
 	    stream_adapter_tasklet_routine,
 	    (void*) adapter);
 
-	device_head_init(&adapter->dev, name, stream_adapter_file_ops);
+	device_head_init(&adapter->dev, name, &stream_adapter_file_ops);
 }
