@@ -6,6 +6,7 @@
 __BEGIN_DECLS
 
 int current_schedee_msleep(unsigned int ms);
+int current_schedee_displace();
 
 __END_DECLS
 

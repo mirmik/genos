@@ -8,7 +8,7 @@
 int unwait_schedee_waiter(struct waiter* w) 
 {
 	struct schedee * sch = mcast_out(w, struct schedee, waiter);
-	sch->start();
+	schedee_start(sch);
 
 	return 0;
 }
@@ -25,7 +25,7 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 	sch->ctr.type = CTROBJ_WAITER_SCHEDEE;
 	sch->sch_state = SCHEDEE_STATE_WAIT;
 
-	irqstate_t save = irqs_save();
+	system_lock();
 	dlist_del_init(&sch->ctr.lnk);
 
 	if (priority) 
@@ -33,9 +33,9 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 	else 
 		dlist_move_tail(&sch->ctr.lnk, head);
 
-	irqs_restore(save);
+	system_unlock();
 
-	return __displace__();
+	return current_schedee_displace();
 }
 
 int waitchild() 
@@ -49,7 +49,7 @@ int waitchild()
 	dlist_del_init(&sch->ctr.lnk);
 	system_unlock();
 
-	__displace__();
+	current_schedee_displace();
 
 	return 0;
 }
