@@ -16,7 +16,7 @@ int mvfs_lookup(struct file_head ** filp, const char * path)
 	return sts;
 }
 
-int mvfs_open(const char * path, int mode) 
+int mvfs_open(const char * path, int mode, int flags) 
 {
 	int sts;
 	int resindex;
@@ -40,6 +40,7 @@ int mvfs_open(const char * path, int mode)
 	resindex = schedee_get_free_openres(sch, &res);
 
 	res->file = filp;
+	filp->flags = flags; // TODO: Как должны выставляться флаги?
 
 	return resindex;
 }

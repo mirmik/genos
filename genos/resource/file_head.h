@@ -4,6 +4,10 @@
 #include <igris/compiler.h>
 #include <stdint.h>
 
+#ifndef O_NONBLOCK
+#define O_NONBLOCK 1
+#endif
+
 struct file_head;
 
 struct file_operations 
@@ -19,6 +23,7 @@ struct file_head
 {
 	const struct file_operations * f_ops;
 	uint8_t refs;
+	uint8_t flags;
 };
 
 __BEGIN_DECLS
