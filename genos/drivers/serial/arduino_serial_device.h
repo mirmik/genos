@@ -6,15 +6,15 @@
 
 struct arduino_serial_device
 {
-	struct device_head dev;
-	struct dlist_head lnk_reader;
-	struct dlist_head waitqueue;
-	HardwareSerial * serial;
+	struct stream_adapter adapter;
 };
 
 __BEGIN_DECLS
 
-void arduino_serial_devices_step();
+void arduino_serial_device_init(
+	struct arduino_serial_device * dev,
+	Stream * serial
+);
 
 __END_DECLS
 

@@ -1,4 +1,4 @@
-#include <genos/drivers/serial/arduino_serial_device.h>
+/*#include <genos/drivers/serial/arduino_serial_device.h>
 #include <genos/wait.h>
 
 DLIST_HEAD(arduino_serial_readers_waits);
@@ -45,4 +45,4 @@ void arduino_serial_devices_step()
 
 		}
 	}
-}
+}*/

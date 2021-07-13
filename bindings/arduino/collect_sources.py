@@ -10,6 +10,8 @@ PREFIX = "../../genos"
 
 SOURCES = [
 	"schedee.c",
+	"schedee_api.c",
+	"autom_schedee.c",
 	"ktimer.c",
 	"drivers/serial/arduino_serial_device.cpp",
 	"drivers/device_head.c",
