@@ -7,7 +7,7 @@ void schedee_and_files_foo(void * priv, int * state)
 {
 	switch(*state) 
 	{
-		case 0: mvfs_open("/dev/null", 0); break;
+		case 0: mvfs_open("/dev/null", 0, 0); break;
 		case 1: break;
 		case 2: break;
 	}

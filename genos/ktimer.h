@@ -8,6 +8,7 @@
 
 #include <igris/compiler.h>
 #include <igris/osinter/ctrobj.h>
+#include <igris/systime.h> // for types
 
 struct ktimer_head;
 typedef void (*ktimer_callback_t)(void *arg, struct ktimer_head *tim);
@@ -16,8 +17,8 @@ struct ktimer_head
 {
     struct ctrobj ctr;
 
-    uint64_t start;
-    int64_t interval;
+    systime_t start;
+    systime_difference_t interval;
 
     ktimer_callback_t callback;
     void *privdata;
@@ -28,7 +29,7 @@ __BEGIN_DECLS
 
 // Инициализировать таймер
 void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
-                 void *privdata, uint64_t start, int64_t interval);
+                 void *privdata, systime_t start, systime_difference_t interval);
 
 void ktimer_deinit(struct ktimer_head *timer);
 
@@ -36,19 +37,21 @@ void ktimer_deinit(struct ktimer_head *timer);
 void ktimer_plan(struct ktimer_head *timer);
 
 // Сменить точку старта и запланировать
-void ktimer_restart(struct ktimer_head *timer, uint64_t start);
+void ktimer_restart(struct ktimer_head *timer, systime_t start);
 
 // Проверить, сработал ли таймер
-int ktimer_check(struct ktimer_head *timer, uint64_t curtime);
+int ktimer_check(struct ktimer_head *timer, systime_t curtime);
 
 // Сместить start на значение interval, чтобы отмерить следующий
 // квант времени
 void ktimer_swift(struct ktimer_head *timer);
 
 // Расчитать точку завершения.
-uint64_t ktimer_finish(struct ktimer_head *timer);
+systime_t ktimer_finish(struct ktimer_head *timer);
 
-void ktimer_manager_step(uint64_t curtime);
+void ktimer_manager_init();
+void ktimer_manager_step(systime_t curtime);
+unsigned int ktimer_manager_planed_count();
 
 __END_DECLS
 

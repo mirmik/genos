@@ -3,13 +3,13 @@
 
 static DLIST_HEAD(ktimer_list);
 
-int ktimer_check(struct ktimer_head *timer, uint64_t curtime)
+int ktimer_check(struct ktimer_head *timer, systime_t curtime)
 {
     return curtime - timer->start >= timer->interval;
 }
 
 void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
-                 void *privdata, uint64_t start, int64_t interval)
+                 void *privdata, systime_t start, systime_difference_t interval)
 {
     ctrobj_init(&timer->ctr, CTROBJ_KTIMER_DELEGATE);
     timer->callback = callback;
@@ -28,12 +28,12 @@ void ktimer_swift(struct ktimer_head *timer)
     timer->start += timer->interval;
 }
 
-uint64_t ktimer_finish(struct ktimer_head *timer)
+systime_t ktimer_finish(struct ktimer_head *timer)
 {
     return timer->start + timer->interval;
 }
 
-void ktimer_restart(struct ktimer_head *timer, uint64_t start)
+void ktimer_restart(struct ktimer_head *timer, systime_t start)
 {
     timer->start = start;
     ktimer_plan(timer);
@@ -53,8 +53,8 @@ void ktimer_plan(struct ktimer_head *tim)
 {
     struct ktimer_head *it;
     struct dlist_head *sit = NULL;
-    int64_t it_final;
-    int64_t final;
+    systime_difference_t it_final;
+    systime_difference_t final;
 
     final = tim->start + tim->interval;
     sit = NULL;
@@ -83,7 +83,7 @@ void ktimer_execute(struct ktimer_head *tim)
     tim->callback(tim->privdata, tim);
 }
 
-void ktimer_manager_step(uint64_t curtime)
+void ktimer_manager_step(systime_t curtime)
 {
     system_lock();
 
@@ -103,4 +103,15 @@ void ktimer_manager_step(uint64_t curtime)
     }
 
     system_unlock();
+}
+
+
+void ktimer_manager_init() 
+{
+    dlist_init(&ktimer_list);
+}
+
+unsigned int ktimer_manager_planed_count() 
+{
+    return dlist_size(&ktimer_list);
 }

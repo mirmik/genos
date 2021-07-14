@@ -56,7 +56,7 @@ int current_schedee_msleep(unsigned int ms)
 		__timer_schedee_unsleep, 
 		(void*) sch, 
 		system_time(),                 //start 
-		millis_to_systime(ms)      //interval
+		ms2systime(ms)      //interval
 	);
 
 	ktimer_plan(timer);

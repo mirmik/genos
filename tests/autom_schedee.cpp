@@ -55,6 +55,7 @@ TEST_CASE("aschedee")
 TEST_CASE("aschedee_with_timer") 
 {
 	schedee_manager_init();
+	ktimer_manager_init();
 
 	autom_schedee sch;
 	autom_schedee_init(&sch, bar, nullptr);
@@ -62,5 +63,24 @@ TEST_CASE("aschedee_with_timer")
 	schedee_start(&sch.sch);
 
 	schedee_manager_step();
+	CHECK_EQ(a, 1);
+
+	schedee_manager_step();
+	CHECK_EQ(a, 1);
+
+	schedee_manager_step();
+	CHECK_EQ(a, 1);
+
+	CHECK_EQ(ktimer_manager_planed_count(), 1);
+
+	ktimer_manager_step(systime() + ms2systime(11));
+	CHECK_EQ(ktimer_manager_planed_count(), 0);
+
+	schedee_manager_step();
+	CHECK_EQ(a, 2);
+
+	schedee_manager_step();
+	CHECK_EQ(a, 3);
+
 	schedee_deinit(&sch.sch);
 }
