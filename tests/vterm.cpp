@@ -10,6 +10,12 @@ static char history[48 * 5];
 std::string output;
 
 static int a = 0;
+static int b = 0;
+
+static void signal_callback(void * priv, int sig)
+{
+	b++;
+}
 
 static void execute_callback(void * priv, const char * data, unsigned int size)
 {
@@ -66,4 +72,11 @@ TEST_CASE("vterm")
 	}
 	CHECK_EQ(a, 4);
 
+	vterm_automate_newdata(&vterm, 3);
+	CHECK_EQ(b, 0);
+
+	vterm_set_signal_callback(&vterm, signal_callback, NULL);
+
+	vterm_automate_newdata(&vterm, 3);
+	CHECK_EQ(b, 1);
 }

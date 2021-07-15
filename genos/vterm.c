@@ -76,7 +76,9 @@ void vterm_automate_newdata(struct vterm_automate * vterm, int16_t input_c)
 						vterm->write_callback(
 						    vterm->write_privdata, "^C\r\n", 4);
 					vterm->state = 1;
-					vterm->signal_callback(vterm->signal_privdata, SIGINT);
+
+					if (vterm->signal_callback)
+						vterm->signal_callback(vterm->signal_privdata, SIGINT);
 					break;
 				}
 
