@@ -1,5 +1,6 @@
 #include <doctest/doctest.h>
 #include <genos/vterm.h>
+#include <igris/defs/vt100.h>
 
 #include <string>
 
@@ -45,13 +46,24 @@ TEST_CASE("vterm")
 
 	vterm_automate_newdata(&vterm, '\r');
 	vterm_automate_newdata(&vterm, '\n');
-
 	CHECK_EQ(a, 1);
 
 	for (char c : std::string("hello\r\n"))
 	{
 		vterm_automate_newdata(&vterm, c);
 	}
-
 	CHECK_EQ(a, 2);
+
+	for (char c : std::string("e" VT100_LEFT "h" VT100_RIGHT "llo\r\n"))
+	{
+		vterm_automate_newdata(&vterm, c);
+	}
+	CHECK_EQ(a, 3);
+
+	for (char c : std::string("hello\n"))
+	{
+		vterm_automate_newdata(&vterm, c);
+	}
+	CHECK_EQ(a, 4);
+
 }
