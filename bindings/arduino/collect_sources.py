@@ -4,6 +4,7 @@ import os
 import shutil
 import glob
 
+shutil.rmtree("src")
 os.makedirs("src/genos", exist_ok=True)
 
 PREFIX = "../../genos"
@@ -13,6 +14,7 @@ SOURCES = [
 	"schedee_api.c",
 	"autom_schedee.c",
 	"ktimer.c",
+	"vterm.c",
 	"drivers/serial/arduino_serial_device.cpp",
 	"drivers/device_head.c",
 	"drivers/devns.c",

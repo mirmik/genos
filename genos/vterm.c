@@ -244,14 +244,19 @@ void vterm_automate_newdata(struct vterm_automate * vterm, int16_t input_c)
 
 
 					default:
-						dprln("?unr_rl_code?:", ret);
+						// readline вернул странный код
+						// делаем вид, что всё впорядке.
+						;
 				}
 
 				vterm->state = 2;
 				break;
 
 			default:
-				BUG();
+				// автомат находится в непредусмотренном состоянии
+				// сбрасываем состояние и завершаем итерацию.
+				vterm->state = 0;			
+				return;
 		}
 	}
 }
