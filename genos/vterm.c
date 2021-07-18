@@ -2,8 +2,6 @@
 #include <genos/signal.h>
 #include <igris/defs/vt100.h>
 
-#define CONTTY_LINE_LENGTH 48
-
 void vterm_automate_init(
     struct vterm_automate * vterm,
 	char * buffer, unsigned int buffer_size,
