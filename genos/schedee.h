@@ -112,6 +112,8 @@ void schedee_list_debug_info();
 
 int schedee_get_free_openres(struct schedee * sch, struct openres ** res);
 
+void __schedule__();
+
 __END_DECLS
 
 #endif

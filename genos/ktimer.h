@@ -8,7 +8,7 @@
 
 #include <igris/compiler.h>
 #include <igris/osinter/ctrobj.h>
-#include <igris/systime.h> // for types
+#include <igris/time/systime.h>
 
 struct ktimer_head;
 typedef void (*ktimer_callback_t)(void *arg, struct ktimer_head *tim);
