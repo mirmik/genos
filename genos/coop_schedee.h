@@ -4,7 +4,7 @@
 #include <genos/schedee.h>
 #include <asm/context.h>
 
-class coop_schedee
+struct coop_schedee
 {
 	struct schedee sch;
 	struct context cntxt;
@@ -19,7 +19,8 @@ class coop_schedee
 
 __BEGIN_DECLS
 
-void coop_schedee_init(void* (*task) (void*),
+void coop_schedee_init(struct coop_schedee * csch,
+                       void* (*task) (void*),
                        void * arg,
                        void * heap,
                        int heapsize,

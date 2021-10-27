@@ -1,7 +1,6 @@
 #include <genos/schedee_api.h>
 #include <genos/schedee.h>
 #include <genos/ktimer.h>
-#include <genos/time.h>
 
 #include <igris/sync/syslock.h>
 #include <igris/util/bug.h>
