@@ -5,8 +5,7 @@ licant.module("genos",
 	mdepends = [
 		"genos.schedee",
 		"genos.include",
-		"genos.resources",
-		"genos.utilities"
+		"genos.resources"
 	]
 )
 
@@ -33,12 +32,6 @@ licant.module("genos.resources",
 		"genos/drivers/stream_adapter.c",
 		"genos/resource/mvfs.c",
 		"genos/resource/openres.c",
-		]
-)
-
-licant.module("genos.utilities",
-	sources = [
-		"genos/vterm.c",
 		]
 )
 
