@@ -1,9 +1,20 @@
 #include <genos/schedee_api.h>
 #include <genos/schedee.h>
 #include <genos/ktimer.h>
+#include <genos/displace.h>
 
 #include <igris/sync/syslock.h>
 #include <igris/util/bug.h>
+
+void current_schedee_exit()
+{
+	struct schedee * sch;
+
+	sch = current_schedee();
+	__schedee_final(sch);
+
+	__displace__();
+}
 
 int current_schedee_displace()
 {
@@ -54,8 +65,8 @@ int current_schedee_msleep(unsigned int ms)
 		timer, 
 		__timer_schedee_unsleep, 
 		(void*) sch, 
-		system_time(),                 //start 
-		ms2systime(ms)      //interval
+		millis(),           //start 
+		ms                  //interval
 	);
 
 	ktimer_plan(timer);

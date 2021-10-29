@@ -17,6 +17,7 @@ licant.module("genos.schedee",
 		"genos/schedee_api.c", 
 		"genos/autom_schedee.c", 
 		"genos/coop_schedee.c", 
+		"genos/displace.c", 
 		"genos/wait.c"
 	],
 	mdepends = ["genos.ktimer", "genos.tasklet"]
