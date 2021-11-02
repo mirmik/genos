@@ -36,5 +36,9 @@ licant.module("genos.resources",
 		]
 )
 
+licant.module("genos.host_stub", 
+	include_paths = ["genos/host-stub"]
+)
+
 licant.module("genos.ktimer", sources = ["genos/ktimer.c"])
 licant.module("genos.tasklet", sources = ["genos/tasklet.c"])

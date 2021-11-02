@@ -2,6 +2,7 @@
 #define GENOS_COOPERATIVE_SCHEDEE_H
 
 #include <genos/schedee.h>
+#include <zillot/context.h>
 #include <asm/context.h>
 
 struct coop_schedee
