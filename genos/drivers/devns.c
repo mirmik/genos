@@ -7,6 +7,7 @@ int devices_namespace_lookup(
     struct file_head ** filpp,
     const char * name)
 {
+	(void) ns;
 	struct device_head * head;
 	dlist_for_each_entry(head, &devices_list, lnk_devices_list)
 	{

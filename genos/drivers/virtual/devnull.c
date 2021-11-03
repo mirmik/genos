@@ -2,21 +2,25 @@
 
 int devnull_write(struct file_head * file, const void * data, unsigned int size) 
 {
+	(void) file; (void) data; (void) size;
 	return 0;
 }
 
 int devnull_read(struct file_head * file, void * data, unsigned int size) 
 {
+	(void) file; (void) data; (void) size;
 	return 0;	
 }
 
 int devnull_onopen(struct file_head * file) 
 {
+	(void) file;
 	return 0;	
 }
 
 int devnull_onrelease(struct file_head * file) 
 {
+	(void) file;
 	return 0;	
 }
 

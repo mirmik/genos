@@ -36,6 +36,7 @@ int current_schedee_displace()
 
 void __timer_schedee_unsleep(void * priv, struct ktimer_head * tim) 
 {
+	(void) tim;
 	struct schedee * sch = (struct schedee *) priv;
 	schedee_start(sch);
 }

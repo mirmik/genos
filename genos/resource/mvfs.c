@@ -18,6 +18,8 @@ int mvfs_lookup(struct file_head ** filp, const char * path)
 
 int mvfs_open(const char * path, int mode, int flags) 
 {
+	(void) mode;
+
 	int sts;
 	int resindex;
 	struct schedee * sch;

@@ -54,6 +54,7 @@ void coop_schedee_init(struct coop_schedee * csch,
                        int heapsize,
                        int flags)
 {
+	(void) flags;
 	schedee_init(
 	    &csch->sch,
 	    0,

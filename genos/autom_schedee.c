@@ -16,6 +16,7 @@ void autom_schedee_finalize(struct schedee * sch)
 
 int autom_schedee_displace(struct schedee * sch) 
 {
+	(void) sch;
 	BUG();
 	return 0;
 }

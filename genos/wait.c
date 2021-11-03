@@ -18,6 +18,7 @@ int unwait_schedee_waiter(struct waiter* w)
 
 int wait_current_schedee(struct dlist_head * head, int priority, void** future) 
 {
+	(void) future;
 	struct schedee * sch;
 	sch = current_schedee();
 
@@ -81,4 +82,6 @@ int waitqueue_no_displace_wait(struct waitqueue * queue)
 	else 
 		dlist_move_tail(&sch->ctr.lnk, head);
 	irqs_restore(save);	
+
+	return 0;
 }
