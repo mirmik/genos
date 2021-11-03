@@ -6,15 +6,18 @@ import licant.install
 import os
 
 licant.execute("genos.g.py")
+licant.include("zillot")
 
 licant.cli.add_argument("--toolchain")
 opts, args = licant.cli.parse()
-toolchain = licant.cxx_make.toolchain_gcc(opts.toolchain)
+toolchain = licant.gcc_toolchain(opts.toolchain)
 
 target = lambda suffix: "libgenos.{}".format(suffix)
 
 modules = [
 		"genos",
+		"genos.host_stub",
+		"zillot.include"
 	]
 
 CCFLAGS = '-fPIC -Wall -pedantic-errors -Wreturn-type -Wno-gnu-zero-variadic-macro-arguments'

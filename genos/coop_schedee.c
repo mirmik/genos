@@ -33,6 +33,7 @@ int coop_schedee_displace(struct schedee * sch)
 void coop_schedee_finalize(struct schedee * sch)
 {
 	struct coop_schedee * csch = mcast_out(sch, struct coop_schedee, sch);
+	(void) csch;
 	if (sch->flag.dynamic_heap)
 		BUG();
 	if (sch->flag.dynamic)
