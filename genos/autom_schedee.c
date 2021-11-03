@@ -1,22 +1,29 @@
 #include <genos/autom_schedee.h>
+#include <genos/displace.h>
+#include <igris/util/bug.h>
 
 void autom_schedee_execute(struct schedee * sch) 
 {
 	struct autom_schedee * asch = mcast_out(sch, struct autom_schedee, sch);
-
 	asch->func(asch->priv, &asch->state);
 }
 
 void autom_schedee_finalize(struct schedee * sch) 
 {
 	struct autom_schedee * asch = mcast_out(sch, struct autom_schedee, sch);
-
 	(void) asch;
+}
+
+int autom_schedee_displace(struct schedee * sch) 
+{
+	BUG();
+	return 0;
 }
 
 struct schedee_operations autom_schedee_ops = {
 	.execute = autom_schedee_execute,
-	.finalize = autom_schedee_finalize
+	.finalize = autom_schedee_finalize,
+	.displace = autom_schedee_displace
 };
 
 void autom_schedee_init(
