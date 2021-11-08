@@ -5,7 +5,7 @@ licant.module("genos",
 	mdepends = [
 		"genos.schedee",
 		"genos.include",
-		"genos.resources"
+		#"genos.resources"
 	]
 )
 
@@ -13,12 +13,12 @@ licant.module("genos.include", include_paths=["."])
 
 licant.module("genos.schedee", 
 	sources = [
-		"genos/schedee.c", 
-		"genos/schedee_api.c", 
-		"genos/autom_schedee.c", 
-		"genos/coop_schedee.c", 
-		"genos/displace.c", 
-		"genos/wait.c"
+		"genos/schedee.cpp", 
+		"genos/schedee_api.cpp", 
+		"genos/autom_schedee.cpp", 
+		"genos/coop_schedee.cpp", 
+		"genos/displace.cpp", 
+		"genos/wait.cpp"
 	],
 	mdepends = ["genos.ktimer", "genos.tasklet"]
 )
@@ -40,5 +40,5 @@ licant.module("genos.host_stub",
 	include_paths = ["genos/host-stub"]
 )
 
-licant.module("genos.ktimer", sources = ["genos/ktimer.c"])
-licant.module("genos.tasklet", sources = ["genos/tasklet.c"])
+licant.module("genos.ktimer", sources = ["genos/ktimer.cpp"])
+licant.module("genos.tasklet", sources = ["genos/tasklet.cpp"])

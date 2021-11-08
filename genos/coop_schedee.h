@@ -5,28 +5,30 @@
 #include <zillot/context.h>
 #include <asm/context.h>
 
-struct coop_schedee
+namespace genos
 {
-	struct schedee sch;
-	struct context cntxt;
+	struct coop_schedee : public schedee
+	{
+		struct context cntxt;
 
-	void* (*task) (void*);
-	void * arg;
-	void * heap;
-	size_t heapsize;
+		void* (*task) (void*);
+		void * arg;
+		void * heap;
+		size_t heapsize;
 
-	void * ret;
-};
+		void * ret;
 
-__BEGIN_DECLS
+	public:
+		coop_schedee(void* (*task) (void*),
+		             void * arg,
+		             void * heap,
+		             int heapsize,
+		             int flags);
 
-void coop_schedee_init(struct coop_schedee * csch,
-                       void* (*task) (void*),
-                       void * arg,
-                       void * heap,
-                       int heapsize,
-                       int flags);
-
-__END_DECLS
+		void execute() override;
+		void finalize() override;
+		int displace() override;
+	};
+}
 
 #endif

@@ -13,15 +13,15 @@ DLIST_HEAD(finallist);
 uint16_t pid_counter = 0;
 uint16_t gid_counter = 0;
 
-struct schedee * __current_schedee = NULL;
-struct schedee * current_schedee()
+genos::schedee * __current_schedee = NULL;
+genos::schedee * current_schedee()
 {
 	return __current_schedee;
 }
 
 uint16_t generate_new_pid()
 {
-	struct schedee * sch;
+	genos::schedee * sch;
 
 	bool founded = false;
 	do
@@ -47,7 +47,7 @@ uint16_t generate_new_pid()
 
 uint16_t generate_new_gid()
 {
-	struct schedee * sch;
+	genos::schedee * sch;
 
 	bool founded = false;
 	do
@@ -72,49 +72,44 @@ uint16_t generate_new_gid()
 }
 
 
-void schedee_init(
-    struct schedee* sch,
+genos::schedee::schedee(
     int prio,
-    int flags,
-    const struct schedee_operations * ops)
+    int flags)
 {
 #if SCHEDEE_DEBUG_STRUCT
 
 	// В дальнейшем эту провеку следует убрать, так как нод
 	// должен отстыковываться от списка по завершению работы.
-	if (!dlist_in(&sch->schedee_list_lnk, &schedee_list))
+	if (!dlist_in(&schedee_list_lnk, &schedee_list))
 	{
-		ctrobj_init(&sch->ctr, CTROBJ_SCHEDEE_LIST);
-		dlist_add(&sch->schedee_list_lnk, &schedee_list);
+		ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
+		dlist_add(&schedee_list_lnk, &schedee_list);
 	}
 
 	else
 	{
-		dlist_del_init(&sch->ctr.lnk);
+		dlist_del_init(&ctr.lnk);
 	}
 
-	sch->pid = generate_new_pid();
+	this->pid = generate_new_pid();
 
 	if (flags & SCHEDEE_USE_PARENT_GID)
-		sch->gid = current_schedee()->gid;
+		this->gid = current_schedee()->gid;
 	else
-		sch->gid = generate_new_gid();
+		this->gid = generate_new_gid();
 
-	sch->dispcounter = 0;
-	sch->execcounter = 0;
+	dispcounter = 0;
+	execcounter = 0;
 #else
-	ctrobj_init(&sch->ctr, CTROBJ_SCHEDEE_LIST);
+	ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
 #endif
 
-	sch->ops = ops;
-	sch->prio = prio;
-	sch->sch_state = SCHEDEE_STATE_STOP;
-	sch->flags = 0;
-	sch->syslock_counter_save = 0;
-
-	sch->parent = current_schedee();
-
-	sch->local_errno = 0;
+	this->prio = prio;
+	this->sch_state = SCHEDEE_STATE_STOP;
+	flags = 0;
+	syslock_counter_save = 0;
+	parent = current_schedee();
+	local_errno = 0;
 }
 
 void schedee_manager_init()
@@ -130,7 +125,7 @@ void schedee_manager_init()
 	dlist_init(&schedee_list);
 }
 
-void schedee_start(struct schedee * sch)
+void schedee_start(genos::schedee * sch)
 {
 	// TODO : Здесь должна быть какая-то защита от попытки оперировать таймером,
 	//        находящимся в ожидании таймера.
@@ -146,12 +141,12 @@ void schedee_start(struct schedee * sch)
 
 
 
-void __schedee_run(struct schedee * sch)
+void __schedee_run(genos::schedee * sch)
 {
 	dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
 }
 
-void __schedee_final(struct schedee * sch)
+void __schedee_final(genos::schedee * sch)
 {
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_FINAL;
@@ -159,7 +154,7 @@ void __schedee_final(struct schedee * sch)
 	system_unlock();
 }
 
-void __schedee_execute(struct schedee * sch)
+void __schedee_execute(genos::schedee * sch)
 {
 	__current_schedee = sch;
 	sch->flag.runned = 1;
@@ -168,10 +163,10 @@ void __schedee_execute(struct schedee * sch)
 	++sch->execcounter;
 #endif
 
-	sch->ops->execute(sch);
+	sch->execute();
 }
 
-void schedee_notify_finalize(struct schedee * sch)
+void schedee_notify_finalize(genos::schedee * sch)
 {
 	if (sch->parent)
 		sch->parent->signal_handler(SIGCHLD);
@@ -180,19 +175,19 @@ void schedee_notify_finalize(struct schedee * sch)
 
 void schedee_manager_step()
 {
-	struct schedee* sch;
+	genos::schedee* sch;
 
 	// Отрабатываем логику завершения процессов.
 	system_lock();
 	while (!dlist_empty(&finallist))
 	{
-		sch = dlist_first_entry(&finallist, struct schedee, ctr.lnk);
+		sch = dlist_first_entry(&finallist, genos::schedee, ctr.lnk);
 		dlist_del_init(&sch->ctr.lnk);
 
 		system_unlock();
 
 		sch->sch_state = SCHEDEE_STATE_ZOMBIE;
-		sch->ops->finalize(sch);
+		sch->finalize();
 
 		schedee_notify_finalize(sch);
 
@@ -204,7 +199,7 @@ void schedee_manager_step()
 	system_lock();
 	while (!dlist_empty(&unstoplist))
 	{
-		sch = dlist_first_entry(&unstoplist, struct schedee, ctr.lnk);
+		sch = dlist_first_entry(&unstoplist, genos::schedee, ctr.lnk);
 		__schedee_run(sch);
 	}
 	system_unlock();
@@ -214,7 +209,7 @@ void schedee_manager_step()
 	{
 		if (!dlist_empty(&runlist[priolvl]))
 		{
-			sch = dlist_first_entry(&runlist[priolvl], struct schedee, ctr.lnk);
+			sch = dlist_first_entry(&runlist[priolvl], genos::schedee, ctr.lnk);
 
 			if (sch->flag.killed)
 			{
@@ -239,7 +234,7 @@ void schedee_manager_step()
 }
 
 
-void schedee_deinit(struct schedee * sch) 
+void schedee_deinit(genos::schedee * sch) 
 {
 	dlist_del_init(&sch->ctr.lnk);
 #if SCHEDEE_DEBUG_STRUCT

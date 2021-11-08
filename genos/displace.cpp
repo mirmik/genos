@@ -5,7 +5,7 @@
 
 int __displace__()
 {
-	struct schedee * sch = current_schedee();
+	genos::schedee * sch = genos::current_schedee();
 
 	if (sch->flag.can_displace == 0)
 		return -1;
@@ -17,7 +17,7 @@ int __displace__()
 #endif
 
 	//irqs_disable();
-	return sch->ops->displace(sch);
+	return sch->displace();
 }
 
 __attribute__((weak))

@@ -6,9 +6,11 @@
 #include <igris/sync/syslock.h>
 #include <igris/util/bug.h>
 
+using namespace genos;
+
 void current_schedee_exit()
 {
-	struct schedee * sch;
+	genos::schedee * sch;
 
 	sch = current_schedee();
 	__schedee_final(sch);
@@ -18,7 +20,7 @@ void current_schedee_exit()
 
 int current_schedee_displace()
 {
-	struct schedee * sch = current_schedee();
+	genos::schedee * sch = current_schedee();
 
 	if (sch->flag.can_displace == 0) 
 	{
@@ -31,19 +33,19 @@ int current_schedee_displace()
 	++sch->dispcounter;
 #endif
 
-	return sch->ops->displace(sch);
+	return sch->displace();
 }
 
 void __timer_schedee_unsleep(void * priv, struct ktimer_head * tim) 
 {
 	(void) tim;
-	struct schedee * sch = (struct schedee *) priv;
+	genos::schedee * sch = (genos::schedee *) priv;
 	schedee_start(sch);
 }
 
 int current_schedee_msleep(unsigned int ms)
 {
-	struct schedee * sch;
+	genos::schedee * sch;
 	struct ktimer_head * timer;
 
 	sch = current_schedee();
