@@ -22,7 +22,7 @@ int current_schedee_displace()
 {
 	genos::schedee * sch = current_schedee();
 
-	if (sch->flag.can_displace == 0) 
+	if (sch->u.f.can_displace == 0) 
 	{
 		return -1;
 	}

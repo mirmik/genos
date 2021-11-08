@@ -8,7 +8,7 @@ int __displace__()
 {
 	genos::schedee * sch = genos::current_schedee();
 
-	if (sch->flag.can_displace == 0)
+	if (sch->u.f.can_displace == 0)
 		return -1;
 
 	sch->syslock_counter_save = syslock_counter();

@@ -157,7 +157,7 @@ void __schedee_final(genos::schedee * sch)
 void __schedee_execute(genos::schedee * sch)
 {
 	__current_schedee = sch;
-	sch->flag.runned = 1;
+	sch->u.f.runned = 1;
 
 #if SCHEDEE_DEBUG_STRUCT
 	++sch->execcounter;
@@ -211,7 +211,7 @@ void genos::schedee_manager_step()
 		{
 			sch = dlist_first_entry(&runlist[priolvl], genos::schedee, ctr.lnk);
 
-			if (sch->flag.killed)
+			if (sch->u.f.killed)
 			{
 				__schedee_final(sch);
 				return;

@@ -30,9 +30,9 @@ int genos::coop_schedee::displace()
 
 void genos::coop_schedee::finalize()
 {
-	if (flag.dynamic_heap)
+	if (u.f.dynamic_heap)
 		BUG();
-	if (flag.dynamic)
+	if (u.f.dynamic)
 		BUG();
 }
 
@@ -53,6 +53,6 @@ genos::coop_schedee::coop_schedee(void* (*task) (void*),
 	this->heapsize = heapsize;
 	this->task = task;
 	this->arg = arg;
-	this->flag.has_context = 1;
-	this->flag.can_displace = 1;
+	this->u.f.has_context = 1;
+	this->u.f.can_displace = 1;
 }

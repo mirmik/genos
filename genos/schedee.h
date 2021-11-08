@@ -27,7 +27,6 @@ extern struct dlist_head schedee_list;
 
 struct resource_table;
 struct navigation_block;
-struct schedee;
 struct openres;
 
 namespace genos
@@ -35,7 +34,7 @@ namespace genos
 	class schedee
 	{
 	public:
-		struct schedee * parent;
+		schedee * parent;
 		void (*signal_handler) (int sig);
 
 		union
@@ -66,10 +65,10 @@ namespace genos
 		struct navigation_block * navblock;
 
 	public:
-		union
+		union u_s
 		{
 			uint8_t flags;
-			struct
+			struct f_s
 			{
 				uint8_t runned 			: 1;
 				uint8_t can_displace 	: 1;
@@ -77,8 +76,8 @@ namespace genos
 				uint8_t dynamic 		: 1;
 				uint8_t dynamic_heap 	: 1;
 				uint8_t killed			: 1;
-			} flag;
-		};
+			} f;
+		} u;
 		uint8_t syslock_counter_save;
 
 	public:
@@ -90,20 +89,20 @@ namespace genos
 		virtual int displace() = 0;
 	};
 
-	struct schedee * current_schedee();
+	schedee * current_schedee();
 
 	void schedee_manager_init();
 	void schedee_manager_step();
 
-	void schedee_start(struct schedee * sch);
-	void schedee_pause(struct schedee * sch);
-	void schedee_deinit(struct schedee * sch);
+	void schedee_start(schedee * sch);
+	void schedee_pause(schedee * sch);
+	void schedee_deinit(schedee * sch);
 
 #if SCHEDEE_DEBUG_STRUCT
 	void schedee_list_debug_info();
 #endif
 
-	int schedee_get_free_openres(struct schedee * sch, struct openres ** res);
+	int schedee_get_free_openres(schedee * sch, struct openres ** res);
 }
 
 __BEGIN_DECLS

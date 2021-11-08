@@ -21,7 +21,7 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 	genos::schedee * sch;
 	sch = genos::current_schedee();
 
-	if (sch == NULL || !sch->flag.can_displace) 
+	if (sch == NULL || !sch->u.f.can_displace) 
 	{
 		BUG();
 		return -1;
