@@ -39,8 +39,7 @@ void genos::coop_schedee::finalize()
 genos::coop_schedee::coop_schedee(void* (*task) (void*),
                                   void * arg,
                                   void * heap,
-                                  int heapsize,
-                                  int flags)
+                                  int heapsize)
 :	schedee(0, SCHEDEE_USE_PARENT_GID)
 {
 	context_init(

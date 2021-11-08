@@ -1,4 +1,5 @@
 #include <genos/schedee.h>
+#include <genos/displace.h>
 #include <igris/sync/syslock.h>
 #include <asm/startup.h>
 #include <asm/irq.h>

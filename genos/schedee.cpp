@@ -14,7 +14,7 @@ uint16_t pid_counter = 0;
 uint16_t gid_counter = 0;
 
 genos::schedee * __current_schedee = NULL;
-genos::schedee * current_schedee()
+genos::schedee * genos::current_schedee()
 {
 	return __current_schedee;
 }
@@ -112,7 +112,7 @@ genos::schedee::schedee(
 	local_errno = 0;
 }
 
-void schedee_manager_init()
+void genos::schedee_manager_init()
 {
 
 	for (int i = 0; i < SCHEDEE_PRIORITY_TOTAL; ++i)
@@ -125,7 +125,7 @@ void schedee_manager_init()
 	dlist_init(&schedee_list);
 }
 
-void schedee_start(genos::schedee * sch)
+void genos::schedee_start(genos::schedee * sch)
 {
 	// TODO : Здесь должна быть какая-то защита от попытки оперировать таймером,
 	//        находящимся в ожидании таймера.
@@ -173,7 +173,7 @@ void schedee_notify_finalize(genos::schedee * sch)
 }
 
 
-void schedee_manager_step()
+void genos::schedee_manager_step()
 {
 	genos::schedee* sch;
 

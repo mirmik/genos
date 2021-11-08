@@ -82,6 +82,7 @@ namespace genos
 		uint8_t syslock_counter_save;
 
 	public:
+		schedee() = default;
 		schedee(int prio, int flags);
 
 		virtual void execute() = 0;

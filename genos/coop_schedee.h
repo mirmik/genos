@@ -22,8 +22,8 @@ namespace genos
 		coop_schedee(void* (*task) (void*),
 		             void * arg,
 		             void * heap,
-		             int heapsize,
-		             int flags);
+		             int heapsize);
+		coop_schedee() = default;
 
 		void execute() override;
 		void finalize() override;
