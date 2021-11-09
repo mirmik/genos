@@ -42,10 +42,12 @@ namespace genos
 
 		uint8_t prio;
 		uint8_t sch_state;
-		uint16_t pid;
 
+#ifdef GENOS_SCHEDEE_INTROSPECT
+		uint16_t pid;
 		const char * mnemo;
 		struct dlist_head schedee_list_lnk;
+#endif
 		
 		union {
 			int local_errno;

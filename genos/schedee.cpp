@@ -19,6 +19,7 @@ genos::schedee * genos::current_schedee()
 	return __current_schedee;
 }
 
+#ifdef GENOS_SCHEDEE_INTROSPECT
 uint16_t generate_new_pid()
 {
 	genos::schedee * sch;
@@ -44,28 +45,23 @@ uint16_t generate_new_pid()
 
 	return pid_counter;
 }
+#endif
 
 genos::schedee::schedee()
 {
 	// В дальнейшем эту провеку следует убрать, так как нод
 	// должен отстыковываться от списка по завершению работы.
-	if (!dlist_in(&schedee_list_lnk, &schedee_list))
-	{
-		ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
-		dlist_add(&schedee_list_lnk, &schedee_list);
-	}
-
-	else
-	{
-		dlist_del_init(&ctr.lnk);
-	}
-
-	this->pid = generate_new_pid();
+	ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
 	this->prio = SCHEDEE_PRIORITY_TOTAL - 1;
 	sch_state = SCHEDEE_STATE_STOP;
 	syslock_counter_save = 0;
 	parent = current_schedee();
 	local_errno = 0;
+
+#ifdef GENOS_SCHEDEE_INTROSPECT
+	dlist_add(&schedee_list_lnk, &schedee_list);
+	this->pid = generate_new_pid();
+#endif
 }
 
 void genos::schedee_manager_init()
@@ -198,5 +194,7 @@ void genos::schedee_manager_step()
 void schedee_deinit(genos::schedee * sch) 
 {
 	dlist_del_init(&sch->ctr.lnk);
+#ifdef GENOS_SCHEDEE_INTROSPECT
 	dlist_del_init(&sch->schedee_list_lnk);
+#endif
 }

@@ -23,7 +23,6 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 
 	if (sch == NULL || !sch->u.f.can_displace) 
 	{
-		BUG();
 		return -1;
 	}
 

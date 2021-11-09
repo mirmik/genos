@@ -12,8 +12,7 @@ void genos::autom_schedee::finalize()
 
 int genos::autom_schedee::displace() 
 {
-	BUG();
-	return 0;
+	return -1;
 }
 
 genos::autom_schedee::autom_schedee(autom_schedee_func_t foo, void * privdata) 
