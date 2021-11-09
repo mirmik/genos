@@ -5,11 +5,7 @@
 #include <igris/osinter/wait.h>
 #include <genos/ktimer.h>
 
-#ifndef SCHEDEE_DEBUG_STRUCT
-#define SCHEDEE_DEBUG_STRUCT 1
-#endif
-
-#define SCHEDEE_PRIORITY_TOTAL 4
+#define SCHEDEE_PRIORITY_TOTAL 3
 
 #define SCHEDEE_STATE_RUN 			0
 #define SCHEDEE_STATE_WAIT 			2
@@ -46,23 +42,20 @@ namespace genos
 
 		uint8_t prio;
 		uint8_t sch_state;
-
 		uint16_t pid;
-		uint16_t gid;
 
-#if SCHEDEE_DEBUG_STRUCT
 		const char * mnemo;
 		struct dlist_head schedee_list_lnk;
-		uint16_t dispcounter;
-		uint16_t execcounter;
-#endif
-
-		int local_errno;
+		
+		union {
+			int local_errno;
+			uint8_t syslock_counter_save;
+		};
 
 		// Ресурсы должны принадлежать процессу специального вида (процесс-пользователь).
 		// всем schedee ресурсы не нужны.
-		struct resource_table * restbl;
-		struct navigation_block * navblock;
+		//struct resource_table * restbl;
+		//struct navigation_block * navblock;
 
 	public:
 		union u_s
@@ -78,11 +71,9 @@ namespace genos
 				uint8_t killed			: 1;
 			} f;
 		} u;
-		uint8_t syslock_counter_save;
-
+		
 	public:
-		schedee() = default;
-		schedee(int prio, int flags);
+		schedee();
 
 		virtual void execute() = 0;
 		virtual void finalize() = 0;
@@ -95,6 +86,7 @@ namespace genos
 	void schedee_manager_step();
 
 	void schedee_start(schedee * sch);
+	void schedee_stop(schedee * sch);
 	void schedee_pause(schedee * sch);
 	void schedee_deinit(schedee * sch);
 

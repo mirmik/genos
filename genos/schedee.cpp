@@ -1,4 +1,5 @@
 #include <genos/schedee.h>
+#include <genos/schedee_api.h>
 #include <igris/sync/syslock.h>
 #include <genos/signal.h>
 
@@ -11,7 +12,6 @@ DLIST_HEAD(finallist);
 
 
 uint16_t pid_counter = 0;
-uint16_t gid_counter = 0;
 
 genos::schedee * __current_schedee = NULL;
 genos::schedee * genos::current_schedee()
@@ -45,39 +45,8 @@ uint16_t generate_new_pid()
 	return pid_counter;
 }
 
-uint16_t generate_new_gid()
+genos::schedee::schedee()
 {
-	genos::schedee * sch;
-
-	bool founded = false;
-	do
-	{
-		gid_counter ++;
-		if (gid_counter == 0) gid_counter++;
-
-		founded = false;
-		dlist_for_each_entry(sch, &schedee_list, schedee_list_lnk)
-		{
-			if (gid_counter == sch->gid)
-			{
-				founded = true;
-				break;
-			}
-		}
-
-	}
-	while (founded);
-
-	return gid_counter;
-}
-
-
-genos::schedee::schedee(
-    int prio,
-    int flags)
-{
-#if SCHEDEE_DEBUG_STRUCT
-
 	// В дальнейшем эту провеку следует убрать, так как нод
 	// должен отстыковываться от списка по завершению работы.
 	if (!dlist_in(&schedee_list_lnk, &schedee_list))
@@ -92,21 +61,8 @@ genos::schedee::schedee(
 	}
 
 	this->pid = generate_new_pid();
-
-	if (flags & SCHEDEE_USE_PARENT_GID)
-		this->gid = current_schedee()->gid;
-	else
-		this->gid = generate_new_gid();
-
-	dispcounter = 0;
-	execcounter = 0;
-#else
-	ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
-#endif
-
-	this->prio = prio;
-	this->sch_state = SCHEDEE_STATE_STOP;
-	flags = 0;
+	this->prio = SCHEDEE_PRIORITY_TOTAL - 1;
+	sch_state = SCHEDEE_STATE_STOP;
 	syslock_counter_save = 0;
 	parent = current_schedee();
 	local_errno = 0;
@@ -139,7 +95,17 @@ void genos::schedee_start(genos::schedee * sch)
 	system_unlock();
 }
 
+void genos::schedee_stop(genos::schedee * sch)
+{
+	// TODO : Здесь должна быть какая-то защита от попытки оперировать таймером,
+	//        находящимся в ожидании таймера.
 
+	system_lock();
+	sch->sch_state = SCHEDEE_STATE_STOP;
+	sch->ctr.type = CTROBJ_SCHEDEE_LIST;
+	dlist_move_tail(&sch->ctr.lnk, &waitlist);
+	system_unlock();
+}
 
 void __schedee_run(genos::schedee * sch)
 {
@@ -218,11 +184,6 @@ void genos::schedee_manager_step()
 			}
 
 			dlist_move_tail(&sch->ctr.lnk, &runlist[priolvl]);
-
-#if SCHED_DEBUG
-			dprln("execute:", (uintptr_t)sch, sch->mnemo);
-#endif
-
 			__schedee_execute(sch);
 
 			return;
@@ -237,7 +198,5 @@ void genos::schedee_manager_step()
 void schedee_deinit(genos::schedee * sch) 
 {
 	dlist_del_init(&sch->ctr.lnk);
-#if SCHEDEE_DEBUG_STRUCT
 	dlist_del_init(&sch->schedee_list_lnk);
-#endif
 }

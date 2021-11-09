@@ -52,7 +52,7 @@ int current_schedee_msleep(unsigned int ms)
 
 	if (sch == NULL)
 	{
-		BUG();
+		return -1;
 	}
 
 	timer = &sch->ktimer;

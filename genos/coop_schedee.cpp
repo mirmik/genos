@@ -23,24 +23,18 @@ void genos::coop_schedee::execute()
 
 int genos::coop_schedee::displace()
 {
-	//flag.runned = 0;
 	context_save_and_displace(&cntxt);
 	return SCHEDEE_DISPLACE_REAL;
 }
 
 void genos::coop_schedee::finalize()
 {
-	if (u.f.dynamic_heap)
-		BUG();
-	if (u.f.dynamic)
-		BUG();
 }
 
 genos::coop_schedee::coop_schedee(void* (*task) (void*),
                                   void * arg,
                                   void * heap,
                                   int heapsize)
-:	schedee(0, SCHEDEE_USE_PARENT_GID)
 {
 	context_init(
 	    &cntxt,

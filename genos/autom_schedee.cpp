@@ -17,7 +17,6 @@ int genos::autom_schedee::displace()
 }
 
 genos::autom_schedee::autom_schedee(autom_schedee_func_t foo, void * privdata) 
-	: schedee(SCHEDEE_PRIORITY_TOTAL - 1, 0)
 {
 	this->state = 0;
 	this->func = foo;
