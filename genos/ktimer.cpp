@@ -61,6 +61,11 @@ void ktimer_plan(struct ktimer_head *tim)
 
     system_lock();
 
+    if (ktimer_planned(tim)) 
+    {
+        ktimer_unplan(tim);
+    }
+
     dlist_for_each_entry(it, &ktimer_list, ctr.lnk)
     {
         it_final = it->start + it->interval;
