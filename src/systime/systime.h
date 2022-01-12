@@ -37,7 +37,7 @@ jiffies_pair_t jiffies_pair();
 int jiffies_pair_compare(jiffies_pair_t a, jiffies_pair_t b);
 jiffies_t jiffies_pair_to_micros(jiffies_pair_t pair);
 
-void delay(double d);
+void delay(int64_t d);
 
 jiffies_t ms2jiffies(uint32_t ms);
 

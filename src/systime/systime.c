@@ -33,7 +33,7 @@ jiffies_t millis()
 	return (jiffies() * jiffies_to_millis) >> FREQSHIFT;
 }
 
-void delay(double d)
+void delay(int64_t d)
 {
 	jiffies_t n = millis();
 	jiffies_t f = n + d;
