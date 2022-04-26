@@ -54,3 +54,8 @@ jjj
 
 __configure__.py
 *.pyc
+
+*.elf
+
+tests/runtests
+bindings/arduino/src
