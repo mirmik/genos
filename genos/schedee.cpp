@@ -121,9 +121,9 @@ void __schedee_execute(genos::schedee * sch)
 	__current_schedee = sch;
 	sch->u.f.runned = 1;
 
-#if SCHEDEE_DEBUG_STRUCT
-	++sch->execcounter;
-#endif
+//#if SCHEDEE_DEBUG_STRUCT
+//	++sch->execcounter;
+//#endif
 
 	sch->execute();
 }
@@ -197,4 +197,14 @@ void schedee_deinit(genos::schedee * sch)
 #ifdef GENOS_SCHEDEE_INTROSPECT
 	dlist_del_init(&sch->schedee_list_lnk);
 #endif
+}
+
+void genos::schedee::start() 
+{
+	genos::schedee_start(this);
+}
+
+void genos::schedee::stop() 
+{
+	genos::schedee_stop(this);
 }

@@ -1,57 +1,90 @@
-/**
-@file
-    Структура таймера для использования совместно с менеджером таймеров.
-*/
+#ifndef GENOS_TIMER_TASKLET_H
+#define GENOS_TIMER_TASKLET_H
 
-#ifndef GENOS_KTIMER_H
-#define GENOS_KTIMER_H
-
-#include <igris/compiler.h>
+#include <igris/sync/syslock.h>
 #include <igris/osinter/ctrobj.h>
 #include <igris/time/systime.h>
 
-struct ktimer_head;
-typedef void (*ktimer_callback_t)(void *arg, struct ktimer_head *tim);
+extern struct dlist_head ktimer_list;
 
-struct ktimer_head
+namespace genos 
+{
+    struct ktimer;
+}
+
+typedef void(* ktimer_callback_t)(void* arg, genos::ktimer * tim);
+
+struct ktimer_base
 {
     struct ctrobj ctr;
 
-    systime_t start;
-    systime_difference_t interval;
+    int64_t start;
+    int64_t interval;
 
-    ktimer_callback_t callback;
-    void *privdata;
+    ktimer_base(int64_t start, int64_t interval) : 
+            ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)),
+            start(start), 
+            interval(interval)
+    {}
+
+    ktimer_base(const ktimer_base&) = default;
+    ktimer_base& operator=(const ktimer_base&) = default;
+
+    void plan();
+
+    void swift()
+    {
+        start += interval;
+    }
+
+    void replan()
+    {
+        swift();
+        plan();
+    }
+
+    bool planned();
+    void unplan();  
+
+    void set_start_now();
+    void set_interval_ms(int64_t t);
 };
-typedef struct ktimer_head ktimer_t;
+
+namespace genos
+{
+    struct ktimer 
+    {
+        struct ktimer_base tim;
+
+        ktimer_callback_t act;
+        void * arg;
+
+        ktimer(ktimer_callback_t act, void* arg, int64_t interval) : 
+            tim(0, interval),
+            act(act),
+            arg(arg)
+        {}
+
+        ktimer(ktimer_callback_t act, void* arg, int64_t start, int64_t interval) : 
+            tim(start, interval),
+            act(act),
+            arg(arg)
+        {}
+
+        void plan() { tim.plan(); }
+        void replan() { tim.replan(); }
+    };
+}
 
 __BEGIN_DECLS
 
-// Инициализировать таймер
-void ktimer_init(struct ktimer_head *timer, ktimer_callback_t callback,
-                 void *privdata, systime_t start, systime_difference_t interval);
+void ktimer_manager_step();
 
-void ktimer_deinit(struct ktimer_head *timer);
+void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg,
+                                  uint32_t ms);
+void ktimer_base_init_for_milliseconds(struct ktimer_base * tim, uint32_t interval, uint8_t ctrtype);
 
-// Инициализировать и активировать таймер
-void ktimer_plan(struct ktimer_head *timer);
-
-// Сменить точку старта и запланировать
-void ktimer_restart(struct ktimer_head *timer, systime_t start);
-
-// Проверить, сработал ли таймер
-int ktimer_check(struct ktimer_head *timer, systime_t curtime);
-
-// Сместить start на значение interval, чтобы отмерить следующий
-// квант времени
-void ktimer_swift(struct ktimer_head *timer);
-
-// Расчитать точку завершения.
-systime_t ktimer_finish(struct ktimer_head *timer);
-
-void ktimer_manager_init();
-void ktimer_manager_step(systime_t curtime);
-unsigned int ktimer_manager_planed_count();
+void ktimer_list_debug_print();
 
 __END_DECLS
 

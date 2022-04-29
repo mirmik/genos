@@ -31,13 +31,14 @@ namespace genos
 	{
 	public:
 		schedee * parent;
+		const char * _mnemo;
 		void (*signal_handler) (int sig);
 
 		union
 		{
 			struct ctrobj      ctr;
 			struct waiter      waiter;
-			struct ktimer_head ktimer;
+			genos::ktimer ktimer;
 		};
 
 		uint8_t prio;
@@ -76,10 +77,14 @@ namespace genos
 		
 	public:
 		schedee();
+		void set_mnemo(const char * str) { _mnemo = str; }
 
 		virtual void execute() = 0;
 		virtual void finalize() = 0;
 		virtual int displace() = 0;
+
+		void start();
+		void stop();
 	};
 
 	schedee * current_schedee();

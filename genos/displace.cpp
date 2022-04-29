@@ -13,9 +13,9 @@ int __displace__()
 
 	sch->syslock_counter_save = syslock_counter();
 
-#if SCHEDEE_DEBUG_STRUCT
-	++sch->dispcounter;
-#endif
+//#if SCHEDEE_DEBUG_STRUCT
+//	++sch->dispcounter;
+//#endif
 
 	//irqs_disable();
 	return sch->displace();
