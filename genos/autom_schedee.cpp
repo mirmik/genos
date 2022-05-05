@@ -21,3 +21,10 @@ genos::autom_schedee::autom_schedee(autom_schedee_func_t foo, void * privdata)
 	this->func = foo;
 	this->priv = privdata;
 }
+
+void genos::autom_schedee::init(autom_schedee_func_t foo, void * privdata) 
+{
+	this->state = 0;
+	this->func = foo;
+	this->priv = privdata;
+}

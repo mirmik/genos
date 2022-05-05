@@ -1,78 +1,74 @@
 #ifndef GENOS_TIMER_TASKLET_H
 #define GENOS_TIMER_TASKLET_H
 
-#include <igris/sync/syslock.h>
 #include <igris/osinter/ctrobj.h>
+#include <igris/sync/syslock.h>
 #include <igris/time/systime.h>
 
 extern struct dlist_head ktimer_list;
 
-namespace genos 
+namespace genos
 {
     struct ktimer;
 }
 
-typedef void(* ktimer_callback_t)(void* arg, genos::ktimer * tim);
-
-struct ktimer_base
-{
-    struct ctrobj ctr;
-
-    int64_t start;
-    int64_t interval;
-
-    ktimer_base(int64_t start, int64_t interval) : 
-            ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)),
-            start(start), 
-            interval(interval)
-    {}
-
-    ktimer_base(const ktimer_base&) = default;
-    ktimer_base& operator=(const ktimer_base&) = default;
-
-    void plan();
-
-    void swift()
-    {
-        start += interval;
-    }
-
-    void replan()
-    {
-        swift();
-        plan();
-    }
-
-    bool planned();
-    void unplan();  
-
-    void set_start_now();
-    void set_interval_ms(int64_t t);
-};
+typedef void (*ktimer_callback_t)(void *arg, genos::ktimer *tim);
 
 namespace genos
 {
-    struct ktimer 
+    class ktimer_base
     {
-        struct ktimer_base tim;
+    public:
+        struct ctrobj ctr;
 
+        int64_t start;
+        int64_t interval;
+
+    public:
+        ktimer_base(int64_t start, int64_t interval)
+            : ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)), start(start),
+              interval(interval)
+        {
+        }
+
+        ktimer_base(const ktimer_base &) = default;
+        ktimer_base &operator=(const ktimer_base &) = default;
+
+        void plan();
+
+        void swift() { start += interval; }
+
+        void replan()
+        {
+            swift();
+            plan();
+        }
+
+        bool planned();
+        void unplan();
+        uint8_t check(int64_t ms);
+
+        void set_start_now();
+        void set_interval_ms(int64_t t);
+    };
+
+    class ktimer : public ktimer_base
+    {
+    public:
         ktimer_callback_t act;
-        void * arg;
+        void *arg;
 
-        ktimer(ktimer_callback_t act, void* arg, int64_t interval) : 
-            tim(0, interval),
-            act(act),
-            arg(arg)
-        {}
+    public:
+        ktimer(ktimer_callback_t act, void *arg, int64_t interval)
+            : ktimer_base(0, interval), act(act), arg(arg)
+        {
+        }
 
-        ktimer(ktimer_callback_t act, void* arg, int64_t start, int64_t interval) : 
-            tim(start, interval),
-            act(act),
-            arg(arg)
-        {}
-
-        void plan() { tim.plan(); }
-        void replan() { tim.replan(); }
+        ktimer(ktimer_callback_t act, void *arg, int64_t start,
+               int64_t interval)
+            : ktimer_base(start, interval), act(act), arg(arg)
+        {
+        }
     };
 }
 
@@ -80,11 +76,12 @@ __BEGIN_DECLS
 
 void ktimer_manager_step();
 
-void ktimer_init_for_milliseconds(struct ktimer * tim, ktimer_callback_t act, void* arg,
-                                  uint32_t ms);
-void ktimer_base_init_for_milliseconds(struct ktimer_base * tim, uint32_t interval, uint8_t ctrtype);
+void ktimer_init_for_milliseconds(genos::ktimer *tim, ktimer_callback_t act,
+                                  void *arg, uint32_t ms);
+void ktimer_base_init_for_milliseconds(genos::ktimer_base *tim,
+                                       uint32_t interval, uint8_t ctrtype);
 
-void ktimer_list_debug_print();
+//void ktimer_list_debug_print();
 
 __END_DECLS
 

@@ -50,3 +50,23 @@ genos::coop_schedee::coop_schedee(void* (*task) (void*),
 	this->u.f.has_context = 1;
 	this->u.f.can_displace = 1;
 }
+
+void genos::coop_schedee::init(void* (*task) (void*),
+                                  void * arg,
+                                  void * heap,
+                                  int heapsize)
+{
+	context_init(
+	    &cntxt,
+	    (uintptr_t) heap + heapsize - 1,
+	    coop_schedee_starter,
+	    (void*)this,
+	    1);
+
+	this->heap = heap;
+	this->heapsize = heapsize;
+	this->task = task;
+	this->arg = arg;
+	this->u.f.has_context = 1;
+	this->u.f.can_displace = 1;
+}

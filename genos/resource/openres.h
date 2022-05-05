@@ -2,18 +2,24 @@
 #define GENOS_RESOURCE_OPENRES_H
 
 #include <igris/compiler.h>
+#include <genos/resource/file_head.h>
 
-struct openres 
+namespace genos 
 {
-	struct file_head * file;
-	int pos;
-};
+	class openres 
+	{
+		genos::file_head * file = nullptr;
+		int pos = 0;
 
-__BEGIN_DECLS
+	public:
+		void init(genos::file_head * file) 
+		{
+			this->file = file;
+			pos = 0;
+		}
 
-void openres_init(struct openres * ores, struct file_head * file);
-int current_schedee_get_free_openres(struct openres ** ores);
 
-__END_DECLS
+	};
+}
 
 #endif

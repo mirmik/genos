@@ -4,6 +4,7 @@
 #include <igris/osinter/ctrobj.h>
 #include <igris/osinter/wait.h>
 #include <genos/ktimer.h>
+#include <genos/resource/resource_table.h>
 
 #define SCHEDEE_PRIORITY_TOTAL 3
 
@@ -19,11 +20,6 @@
 #define SCHEDEE_USE_PARENT_GID 1
 
 extern struct dlist_head schedee_list;
-
-
-struct resource_table;
-struct navigation_block;
-struct openres;
 
 namespace genos
 {
@@ -57,7 +53,7 @@ namespace genos
 
 		// Ресурсы должны принадлежать процессу специального вида (процесс-пользователь).
 		// всем schedee ресурсы не нужны.
-		//struct resource_table * restbl;
+		genos::resource_table restbl;
 		//struct navigation_block * navblock;
 
 	public:
@@ -96,11 +92,6 @@ namespace genos
 	void schedee_stop(schedee * sch);
 	void schedee_pause(schedee * sch);
 	void schedee_deinit(schedee * sch);
-
-#if SCHEDEE_DEBUG_STRUCT
-	void schedee_list_debug_info();
-#endif
-
 	int schedee_get_free_openres(schedee * sch, struct openres ** res);
 }
 

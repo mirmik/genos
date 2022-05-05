@@ -15,7 +15,9 @@ namespace genos
 		int state;
 
 	public:
+		autom_schedee() = default;
 		autom_schedee(autom_schedee_func_t foo, void * privdata);
+		void init(autom_schedee_func_t foo, void * privdata);
 
 		void execute() override;
 		void finalize() override;
