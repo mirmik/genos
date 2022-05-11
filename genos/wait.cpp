@@ -15,13 +15,24 @@ int unwait_schedee_waiter(struct waiter* w)
 	return 0;
 }
 
+/** 
+ * Подписывает текущую единицу исполнения на очередь ожидания @head. 
+ * 
+ * Если единица исполнения не имеет флага can_displace, метод current_schedee_displace
+ * вернёт -1 вместо вытеснения контекста. Функция завершится немедленно, а завершение 
+ * исполнения возлагается на пользовательский код.
+ * 
+ * @head - очередь ожидания
+ * @priority - приоритетность - добавляет токен в начало или конец очереди
+ * @future - Указатель на слово для приёма возвращаемого значения.
+ * */
 int wait_current_schedee(struct dlist_head * head, int priority, void** future) 
 {
 	(void) future;
 	genos::schedee * sch;
 	sch = genos::current_schedee();
 
-	if (sch == NULL || !sch->u.f.can_displace) 
+	if (sch == NULL) 
 	{
 		return -1;
 	}
