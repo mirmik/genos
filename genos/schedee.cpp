@@ -85,9 +85,7 @@ void genos::schedee_start(genos::schedee * sch)
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_RUN;
 	sch->ctr.type = CTROBJ_SCHEDEE_LIST;
-
 	dlist_move_tail(&sch->ctr.lnk, &unstoplist);
-
 	system_unlock();
 }
 

@@ -3,7 +3,7 @@
 
 #include <igris/sync/syslock.h>
 #include <igris/osinter/ctrobj.h>
-#include <igris/time/systime.h>
+//#include <igris/time/systime.h>
 
 extern struct dlist_head ktimer_list;
 
