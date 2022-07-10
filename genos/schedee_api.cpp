@@ -68,7 +68,7 @@ int current_schedee_msleep(unsigned int ms)
 	*timer = genos::ktimer( 
 		__timer_schedee_unsleep, 
 		(void*) sch, 
-		millis(),           //start 
+		igris::millis(),    //start 
 		ms                  //interval
 	);
 

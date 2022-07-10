@@ -6,50 +6,13 @@
 
 DLIST_HEAD(ktimer_list);
 
-/*void ktimer_base_init(struct ktimer_base *tim, int64_t start, int64_t interval,
-                      uint8_t ctrtype)
-{
-    ctrobj_init(&tim->ctr, ctrtype);
-    tim->start = start;
-    tim->interval = interval;
-}
-
-void ktimer_init(genos::ktimer *tim, ktimer_callback_t act, void *arg,
-                 int64_t start, int64_t interval)
-{
-    ktimer_base_init(&tim->tim, start, interval, CTROBJ_KTIMER_DELEGATE);
-    tim->act = act;
-    tim->arg = arg;
-}
-*/
 uint8_t genos::ktimer_base::check(int64_t now)
 {
     return now - start >= interval;
 }
-/*
-void ktimer_base_init_for_milliseconds(struct ktimer_base *tim,
-                                       uint32_t interval, uint8_t ctrtype)
-{
-    ktimer_base_init(tim, jiffies(), ms2jiffies(interval), ctrtype);
-}
-
-void ktimer_init_for_milliseconds(genos::ktimer *tim, ktimer_callback_t act,
-                                  void *arg, uint32_t interval)
-{
-    ktimer_init(tim, act, arg, jiffies(), ms2jiffies(interval));
-}*/
 
 void genos::ktimer_base::set_start_now() { start = jiffies(); }
 void genos::ktimer_base::set_interval_ms(int64_t t) { interval = ms2jiffies(t); }
-
-/*void ktimer_list_debug_print()
-{
-    struct ktimer_base *it;
-    dlist_for_each_entry(it, &ktimer_list, ctr.lnk)
-    {
-        dprln("timer", it->start, it->interval);
-    }
-}*/
 
 bool genos::ktimer_base::planned() { return ctr.lnk.next != ctr.lnk.prev; }
 

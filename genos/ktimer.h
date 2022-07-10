@@ -25,10 +25,18 @@ namespace genos
         int64_t interval;
 
     public:
+        ktimer_base() : ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)) {}
+
         ktimer_base(int64_t start, int64_t interval)
             : ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)), start(start),
               interval(interval)
         {
+        }
+
+        void init(int64_t start, int64_t interval)
+        {
+            this->start=start;
+            this->interval=interval;
         }
 
         ktimer_base(const ktimer_base &) = default;
@@ -59,6 +67,8 @@ namespace genos
         void *arg;
 
     public:
+        ktimer() = default;
+
         ktimer(ktimer_callback_t act, void *arg, int64_t interval)
             : ktimer_base(0, interval), act(act), arg(arg)
         {
@@ -68,6 +78,13 @@ namespace genos
                int64_t interval)
             : ktimer_base(start, interval), act(act), arg(arg)
         {
+        }
+
+        void init(ktimer_callback_t act, void *arg, int64_t start, int64_t interval)
+        {
+            ktimer_base::init(start, interval);
+            this->act = act; 
+            this->arg = arg;
         }
     };
 }
