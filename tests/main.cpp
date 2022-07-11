@@ -2,11 +2,11 @@
 #include "doctest/doctest.h"
 
 #include <igris/time/ardutime.h>
-#include <genos/time.h>
+#include <igris/time/systime.h>
 
-systime_t system_time() 
+int64_t system_time() 
 {
-	return millis();
+	return igris::millis();
 }
 
 float systime_frequency() 

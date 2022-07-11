@@ -3,24 +3,23 @@
 
 static int a = 0;
 
-void action(void * privdata, ktimer_t * tim) 
+void action(void * privdata, genos::ktimer * tim) 
 {
 	a = 1;
 }
 
 TEST_CASE("ktimer invoke") 
 {
-	ktimer_t tim;
-	ktimer_init(&tim, action, NULL, 0, 100);
+	genos::ktimer tim(action, NULL, 0, 100);
 
-	CHECK(!ktimer_check(&tim, 0));
-	CHECK(ktimer_check(&tim, 100));
+	CHECK(!tim.check(0));
+	CHECK(tim.check(100));
 
-	ktimer_plan(&tim);
+	tim.plan();
 	CHECK_EQ(a, 0);
 
-	ktimer_manager_step(100);
+	genos::ktimer_manager_step();
 	CHECK_EQ(a, 1);
 
-	ktimer_deinit(&tim);
+	tim.deinit();
 }

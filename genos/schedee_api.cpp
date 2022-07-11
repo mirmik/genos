@@ -8,7 +8,7 @@
 
 using namespace genos;
 
-void current_schedee_exit()
+void genos::current_schedee_exit()
 {
 	genos::schedee * sch;
 
@@ -18,7 +18,7 @@ void current_schedee_exit()
 	__displace__();
 }
 
-int current_schedee_displace()
+int genos::current_schedee_displace()
 {
 	genos::schedee * sch = current_schedee();
 
@@ -43,7 +43,7 @@ void __timer_schedee_unsleep(void * priv, genos::ktimer * tim)
 	schedee_start(sch);
 }
 
-int current_schedee_msleep(unsigned int ms)
+int genos::current_schedee_msleep(unsigned int ms, int64_t start)
 {
 	genos::schedee * sch;
 	genos::ktimer * timer;
@@ -68,7 +68,7 @@ int current_schedee_msleep(unsigned int ms)
 	*timer = genos::ktimer( 
 		__timer_schedee_unsleep, 
 		(void*) sch, 
-		igris::millis(),    //start 
+		start,    //start 
 		ms                  //interval
 	);
 
@@ -76,4 +76,9 @@ int current_schedee_msleep(unsigned int ms)
 
 	int re = current_schedee_displace();
 	return re;
+}
+
+int genos::current_schedee_msleep(unsigned int ms) 
+{
+	return genos::current_schedee_msleep(ms, igris::system_time());
 }

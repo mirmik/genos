@@ -1,4 +1,4 @@
-#include <doctest/doctest.h>
+/*#include <doctest/doctest.h>
 #include <genos/resource/namespace.h>
 #include <genos/drivers/devns.h>
 #include <genos/drivers/virtual/devnull.h>
@@ -50,3 +50,4 @@ TEST_CASE("devnull")
 
 	namespace_deinit(&devns.ns);
 }
+*/

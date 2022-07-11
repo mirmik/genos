@@ -9,7 +9,7 @@ extern struct dlist_head ktimer_list;
 
 namespace genos
 {
-    struct ktimer;
+    class ktimer;
 }
 
 typedef void (*ktimer_callback_t)(void *arg, genos::ktimer *tim);
@@ -58,6 +58,11 @@ namespace genos
 
         void set_start_now();
         void set_interval_ms(int64_t t);
+
+        void deinit() 
+        {
+            dlist_del_init(&ctr.lnk);
+        }
     };
 
     class ktimer : public ktimer_base
@@ -87,19 +92,17 @@ namespace genos
             this->arg = arg;
         }
     };
+
+
+    void ktimer_manager_step();
+    void ktimer_manager_step(int64_t curtime); // < for testing
+
+    size_t ktimer_manager_planed_count();
+
+//void ktimer_init_for_milliseconds(genos::ktimer *tim, ktimer_callback_t act,
+//                                  void *arg, uint32_t ms);
+//void ktimer_base_init_for_milliseconds(genos::ktimer_base *tim,
+//                                     uint32_t interval, uint8_t ctrtype);
 }
-
-__BEGIN_DECLS
-
-void ktimer_manager_step();
-
-void ktimer_init_for_milliseconds(genos::ktimer *tim, ktimer_callback_t act,
-                                  void *arg, uint32_t ms);
-void ktimer_base_init_for_milliseconds(genos::ktimer_base *tim,
-                                       uint32_t interval, uint8_t ctrtype);
-
-//void ktimer_list_debug_print();
-
-__END_DECLS
 
 #endif

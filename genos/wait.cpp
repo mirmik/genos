@@ -51,7 +51,7 @@ int wait_current_schedee(struct dlist_head * head, int priority, void** future)
 		dlist_move_tail(&sch->ctr.lnk, head);
 	irqs_restore(save);
 	
-	return current_schedee_displace();
+	return genos::current_schedee_displace();
 }
 
 int waitchild() 
@@ -65,7 +65,7 @@ int waitchild()
 	dlist_del_init(&sch->ctr.lnk);
 	system_unlock();
 
-	current_schedee_displace();
+	genos::current_schedee_displace();
 
 	return 0;
 }

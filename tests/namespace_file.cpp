@@ -1,4 +1,4 @@
-#include <doctest/doctest.h>
+/*#include <doctest/doctest.h>
 #include <genos/autom_schedee.h>
 #include <genos/resource/namespace.h>
 #include <genos/resource/mvfs.h>
@@ -32,3 +32,4 @@ TEST_CASE("schedee_and_files")
 
 	schedee_deinit(&asch.sch);
 }
+*/

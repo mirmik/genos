@@ -2,6 +2,7 @@
 #include <genos/schedee.h>
 #include <igris/dprint.h>
 #include <igris/time/jiffies-systime.h>
+#include <igris/time/systime.h>
 #include <stdlib.h>
 
 DLIST_HEAD(ktimer_list);
@@ -72,12 +73,8 @@ void ktimer_execute(genos::ktimer_base *tim)
     }
 }
 
-void ktimer_manager_step()
+void genos::ktimer_manager_step(int64_t now)
 {
-    int64_t now;
-
-    now = jiffies();
-
     system_lock();
 
     while (!dlist_empty(&ktimer_list))
@@ -97,4 +94,15 @@ void ktimer_manager_step()
     }
 
     system_unlock();
+}
+
+void genos::ktimer_manager_step() 
+{    
+    int64_t now = igris::system_time();
+    ktimer_manager_step(now);
+}
+
+size_t genos::ktimer_manager_planed_count() 
+{
+    return dlist_size(&ktimer_list);
 }

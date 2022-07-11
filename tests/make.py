@@ -2,23 +2,28 @@
 
 import sys
 import licant
-from licant.cxx_modules import application
 from licant.modules import submodule, module
 from licant.libs import include
 
+licant.include("igris")
+licant.include("zillot")
 licant.execute("../genos.g.py")
 
-application("runtests",
+licant.cxx_application("runtests",
 	sources = ["*.cpp"],
-
-	cxx_flags = "-g",
-	cc_flags = "-g",
 
 	include_paths = ["."],
 	mdepends=[
-		"genos"
+		"genos",
+		"zillot",
+		"zillot.mock",
+		"igris.systime",
 	],
-	libs = ["nos", "igris"]
+	libs = ["nos", "igris"],
+
+	cxx_flags = "-flto -ffunction-sections -fexceptions -fdata-sections -Wl,--gc-sections -g -fno-rtti",
+	cc_flags = "-flto -ffunction-sections -fdata-sections -Wl,--gc-sections -g",
+	ld_flags = "-flto -ffunction-sections -fdata-sections -Wl,--gc-sections -g -fno-rtti",
 )
 
 licant.ex("runtests")

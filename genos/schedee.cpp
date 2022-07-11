@@ -108,7 +108,7 @@ void __schedee_run(genos::schedee * sch)
 	dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
 }
 
-void __schedee_final(genos::schedee * sch)
+void genos::__schedee_final(genos::schedee * sch)
 {
 	system_lock();
 	sch->sch_state = SCHEDEE_STATE_FINAL;
@@ -191,7 +191,7 @@ void genos::schedee_manager_step()
 }
 
 
-void schedee_deinit(genos::schedee * sch) 
+void genos::schedee_deinit(genos::schedee * sch) 
 {
 	dlist_del_init(&sch->ctr.lnk);
 #ifdef GENOS_SCHEDEE_INTROSPECT

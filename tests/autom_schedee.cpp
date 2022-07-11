@@ -23,9 +23,12 @@ void bar(void * priv, int * state)
 {
 	switch (*state) 
 	{
-		case 0: a = 1; ++(*state); current_schedee_msleep(10); return;
+		case 0: a = 1; ++(*state); genos::current_schedee_msleep(10, 0); return;
 		case 1: a = 2; ++(*state); return;
 		case 2: a = 3; ++(*state); return;
+		case 3: a = 4; ++(*state); genos::current_schedee_msleep(20, 20); return;
+		case 4: a = 5; ++(*state); return;
+		case 5: a = 6; ++(*state); return;
 	}
 }
 
@@ -33,54 +36,68 @@ void bar(void * priv, int * state)
 
 TEST_CASE("aschedee") 
 {
-	schedee_manager_init();
+	genos::schedee_manager_init();
 
-	autom_schedee sch;
-	autom_schedee_init(&sch, foo, nullptr);
+	genos::autom_schedee sch(foo, nullptr);
 
-	schedee_start(&sch.sch);
+	genos::schedee_start(&sch);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a,1);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a,2);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a,3);
 
-	schedee_deinit(&sch.sch);
+	genos::schedee_deinit(&sch);
 }
 
 TEST_CASE("aschedee_with_timer") 
 {
-	schedee_manager_init();
-	ktimer_manager_init();
+	genos::schedee_manager_init();
 
-	autom_schedee sch;
-	autom_schedee_init(&sch, bar, nullptr);
+	genos::autom_schedee sch(bar, nullptr);
 
-	schedee_start(&sch.sch);
+	genos::schedee_start(&sch);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a, 1);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a, 1);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a, 1);
 
-	CHECK_EQ(ktimer_manager_planed_count(), 1);
+	CHECK_EQ(genos::ktimer_manager_planed_count(), 1);
+	CHECK_EQ(sch.ktimer.interval, 10);
+	CHECK_EQ(sch.ktimer.start, 0);
 
-	ktimer_manager_step(systime() + ms2systime(11));
-	CHECK_EQ(ktimer_manager_planed_count(), 0);
+	genos::ktimer_manager_step(20);
+	CHECK_EQ(genos::ktimer_manager_planed_count(), 0);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a, 2);
 
-	schedee_manager_step();
+	genos::schedee_manager_step();
 	CHECK_EQ(a, 3);
 
-	schedee_deinit(&sch.sch);
+	genos::ktimer_manager_step(20);
+	genos::schedee_manager_step();
+	CHECK_EQ(a, 4);
+
+	genos::ktimer_manager_step(30);
+	genos::schedee_manager_step();
+	CHECK_EQ(a, 4);
+
+	genos::ktimer_manager_step(40);
+	genos::schedee_manager_step();
+	CHECK_EQ(a, 5);
+
+	genos::schedee_manager_step();
+	CHECK_EQ(a, 6);
+
+	genos::schedee_deinit(&sch);
 }

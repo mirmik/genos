@@ -4,13 +4,13 @@
 #include <igris/compiler.h>
 #include <genos/schedee.h>
 
-__BEGIN_DECLS
-
-void __schedee_final(genos::schedee * sch);
-void current_schedee_exit();
-int current_schedee_msleep(unsigned int ms);
-int current_schedee_displace();
-
-__END_DECLS
+namespace genos 
+{
+	void __schedee_final(genos::schedee * sch);
+	void current_schedee_exit();
+	int current_schedee_msleep(unsigned int ms);
+	int current_schedee_msleep(unsigned int ms, int64_t start);
+	int current_schedee_displace();
+}
 
 #endif

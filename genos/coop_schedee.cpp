@@ -13,7 +13,7 @@ static void coop_schedee_starter (void * priv)
 	genos::coop_schedee * csch = (genos::coop_schedee *) priv;
 	void* ret = csch->task(csch->arg);
 	csch->ret = ret;
-	current_schedee_exit();
+	genos::current_schedee_exit();
 }
 
 void genos::coop_schedee::execute()
