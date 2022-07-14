@@ -50,7 +50,7 @@ genos::schedee::schedee()
 {
     // В дальнейшем эту провеку следует убрать, так как нод
     // должен отстыковываться от списка по завершению работы.
-    ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
+    ctr.init(CTROBJ_SCHEDEE_LIST);
     this->prio = SCHEDEE_PRIORITY_TOTAL - 1;
     sch_state = SCHEDEE_STATE_STOP;
     syslock_counter_save = 0;

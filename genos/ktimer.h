@@ -16,31 +16,39 @@ typedef void (*ktimer_callback_t)(void *arg, genos::ktimer *tim);
 
 namespace genos
 {
-    class ktimer_base
+    class ktimer
     {
     public:
-        struct ctrobj ctr;
-
-        int64_t start;
-        int64_t interval;
+        struct ctrobj ctr = {CTROBJ_KTIMER_DELEGATE};
+        int64_t start = 0;
+        int64_t interval = 0;
+        ktimer_callback_t act = {};
+        void *arg = nullptr;
 
     public:
-        ktimer_base() : ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)) {}
+        ktimer() = default;
 
-        ktimer_base(int64_t start, int64_t interval)
-            : ctr(CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE)), start(start),
-              interval(interval)
+        ktimer(ktimer_callback_t act, void *arg, int64_t interval)
+            : interval(interval), act(act), arg(arg)
         {
         }
 
-        void init(int64_t start, int64_t interval)
+        ktimer(ktimer_callback_t act,
+               void *arg,
+               int64_t start,
+               int64_t interval)
+            : start(start), interval(interval), act(act), arg(arg)
+        {
+        }
+
+        void
+        init(ktimer_callback_t act, void *arg, int64_t start, int64_t interval)
         {
             this->start = start;
             this->interval = interval;
+            this->act = act;
+            this->arg = arg;
         }
-
-        ktimer_base(const ktimer_base &) = default;
-        ktimer_base &operator=(const ktimer_base &) = default;
 
         void plan();
 
@@ -68,47 +76,9 @@ namespace genos
         }
     };
 
-    class ktimer : public ktimer_base
-    {
-    public:
-        ktimer_callback_t act;
-        void *arg;
-
-    public:
-        ktimer() = default;
-
-        ktimer(ktimer_callback_t act, void *arg, int64_t interval)
-            : ktimer_base(0, interval), act(act), arg(arg)
-        {
-        }
-
-        ktimer(ktimer_callback_t act,
-               void *arg,
-               int64_t start,
-               int64_t interval)
-            : ktimer_base(start, interval), act(act), arg(arg)
-        {
-        }
-
-        void
-        init(ktimer_callback_t act, void *arg, int64_t start, int64_t interval)
-        {
-            ktimer_base::init(start, interval);
-            this->act = act;
-            this->arg = arg;
-        }
-    };
-
     void ktimer_manager_step();
     void ktimer_manager_step(int64_t curtime); // < for testing
-
     size_t ktimer_manager_planed_count();
-
-    // void ktimer_init_for_milliseconds(genos::ktimer *tim, ktimer_callback_t
-    // act,
-    //                                  void *arg, uint32_t ms);
-    // void ktimer_base_init_for_milliseconds(genos::ktimer_base *tim,
-    //                                     uint32_t interval, uint8_t ctrtype);
 }
 
 #endif

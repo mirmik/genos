@@ -7,33 +7,33 @@
 
 DLIST_HEAD(ktimer_list);
 
-uint8_t genos::ktimer_base::check(int64_t now)
+uint8_t genos::ktimer::check(int64_t now)
 {
     return now - start >= interval;
 }
 
-void genos::ktimer_base::set_start_now()
+void genos::ktimer::set_start_now()
 {
     start = jiffies();
 }
-void genos::ktimer_base::set_interval_ms(int64_t t)
+void genos::ktimer::set_interval_ms(int64_t t)
 {
     interval = ms2jiffies(t);
 }
 
-bool genos::ktimer_base::planned()
+bool genos::ktimer::planned()
 {
     return ctr.lnk.next != ctr.lnk.prev;
 }
 
-void genos::ktimer_base::unplan()
+void genos::ktimer::unplan()
 {
     dlist_del_init(&ctr.lnk);
 }
 
-void genos::ktimer_base::plan()
+void genos::ktimer::plan()
 {
-    struct ktimer_base *it;
+    struct ktimer *it;
     struct dlist_head *sit = nullptr;
     int64_t it_final;
     int64_t final;
@@ -42,6 +42,7 @@ void genos::ktimer_base::plan()
     sit = NULL;
 
     system_lock();
+    unplan();
 
     dlist_for_each_entry(it, &ktimer_list, ctr.lnk)
     {
@@ -59,7 +60,7 @@ void genos::ktimer_base::plan()
     system_unlock();
 }
 
-void ktimer_execute(genos::ktimer_base *tim)
+void ktimer_execute(genos::ktimer *tim)
 {
     switch (tim->ctr.type)
     {
@@ -91,8 +92,8 @@ void genos::ktimer_manager_step(int64_t now)
 
     while (!dlist_empty(&ktimer_list))
     {
-        genos::ktimer_base *it =
-            dlist_first_entry(&ktimer_list, genos::ktimer_base, ctr.lnk);
+        genos::ktimer *it =
+            dlist_first_entry(&ktimer_list, genos::ktimer, ctr.lnk);
         system_unlock();
 
         if (it->check(now))
