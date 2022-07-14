@@ -72,7 +72,6 @@ int genos::current_schedee_msleep(unsigned int ms, int64_t start)
     );
 
     timer->plan();
-
     int re = current_schedee_displace();
     return re;
 }
