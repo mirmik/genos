@@ -64,7 +64,6 @@ int genos::current_schedee_msleep(unsigned int ms, int64_t start)
     sch->ctr.type = CTROBJ_KTIMER_SCHEDEE;
     sch->sch_state = SCHEDEE_STATE_WAIT;
 
-    // ktimer_init(
     *timer = genos::ktimer(__timer_schedee_unsleep,
                            (void *)sch,
                            start, // start
