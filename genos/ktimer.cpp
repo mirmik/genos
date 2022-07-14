@@ -12,12 +12,24 @@ uint8_t genos::ktimer_base::check(int64_t now)
     return now - start >= interval;
 }
 
-void genos::ktimer_base::set_start_now() { start = jiffies(); }
-void genos::ktimer_base::set_interval_ms(int64_t t) { interval = ms2jiffies(t); }
+void genos::ktimer_base::set_start_now()
+{
+    start = jiffies();
+}
+void genos::ktimer_base::set_interval_ms(int64_t t)
+{
+    interval = ms2jiffies(t);
+}
 
-bool genos::ktimer_base::planned() { return ctr.lnk.next != ctr.lnk.prev; }
+bool genos::ktimer_base::planned()
+{
+    return ctr.lnk.next != ctr.lnk.prev;
+}
 
-void genos::ktimer_base::unplan() { dlist_del_init(&ctr.lnk); }
+void genos::ktimer_base::unplan()
+{
+    dlist_del_init(&ctr.lnk);
+}
 
 void genos::ktimer_base::plan()
 {
@@ -53,7 +65,7 @@ void ktimer_execute(genos::ktimer_base *tim)
     {
     case CTROBJ_KTIMER_DELEGATE:
     {
-        genos::ktimer *t = reinterpret_cast<genos::ktimer*>(tim);
+        genos::ktimer *t = reinterpret_cast<genos::ktimer *>(tim);
         dlist_del_init(&tim->ctr.lnk);
         t->act(t->arg, t);
         break;
@@ -96,13 +108,13 @@ void genos::ktimer_manager_step(int64_t now)
     system_unlock();
 }
 
-void genos::ktimer_manager_step() 
-{    
+void genos::ktimer_manager_step()
+{
     int64_t now = igris::system_time();
     ktimer_manager_step(now);
 }
 
-size_t genos::ktimer_manager_planed_count() 
+size_t genos::ktimer_manager_planed_count()
 {
     return dlist_size(&ktimer_list);
 }

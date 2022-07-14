@@ -2,42 +2,41 @@
 
 DLIST_HEAD(tasklets_list);
 
-void tasklet_init(
-	struct tasklet * tasklet,
-	tasklet_callback_t callback,
-	void * privdata) 
+void tasklet_init(struct tasklet *tasklet,
+                  tasklet_callback_t callback,
+                  void *privdata)
 {
-	tasklet -> callback = callback;
-	tasklet -> privdata = privdata;
-	dlist_init(&tasklet->lnk);
+    tasklet->callback = callback;
+    tasklet->privdata = privdata;
+    dlist_init(&tasklet->lnk);
 }
 
-void tasklet_plan(struct tasklet * tasklet) 
+void tasklet_plan(struct tasklet *tasklet)
 {
-	dlist_move(&tasklet->lnk, &tasklets_list);
+    dlist_move(&tasklet->lnk, &tasklets_list);
 }
 
-void tasklet_unplan(struct tasklet * tasklet) 
+void tasklet_unplan(struct tasklet *tasklet)
 {
-	dlist_del_init(&tasklet->lnk);
+    dlist_del_init(&tasklet->lnk);
 }
 
-void tasklet_deinit(struct tasklet * tasklet) 
+void tasklet_deinit(struct tasklet *tasklet)
 {
-	tasklet_unplan(tasklet);
+    tasklet_unplan(tasklet);
 }
 
-void tasklet_exec(struct tasklet * tasklet) 
+void tasklet_exec(struct tasklet *tasklet)
 {
-	tasklet->callback(tasklet->privdata);
+    tasklet->callback(tasklet->privdata);
 }
 
-void tasklet_manager_step() 
+void tasklet_manager_step()
 {
-	struct tasklet *it, *n;
+    struct tasklet *it, *n;
 
-	dlist_for_each_entry_safe(it, n, &tasklets_list, lnk) 
-	{
-		tasklet_exec(it);
-	}
+    dlist_for_each_entry_safe(it, n, &tasklets_list, lnk)
+    {
+        tasklet_exec(it);
+    }
 }

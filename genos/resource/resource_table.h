@@ -4,25 +4,25 @@
 #include <genos/resource/openres.h>
 #include <vector>
 
-namespace genos 
+namespace genos
 {
-	class resource_table 
-	{
-		std::vector<genos::openres> table;
-		
-	public:
-		openres* get_resource() 
-		{
-			table.resize(table.size() + 1);
-			return &table.back();
-		}
-	};
+    class resource_table
+    {
+        std::vector<genos::openres> table;
+
+    public:
+        openres *get_resource()
+        {
+            table.resize(table.size() + 1);
+            return &table.back();
+        }
+    };
 }
 
-/*struct restbl_head 
+/*struct restbl_head
 {
-	struct openres * table;
-	int              total;
+    struct openres * table;
+    int              total;
 };
 
 __BEGIN_DECLS

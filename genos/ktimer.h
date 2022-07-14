@@ -35,8 +35,8 @@ namespace genos
 
         void init(int64_t start, int64_t interval)
         {
-            this->start=start;
-            this->interval=interval;
+            this->start = start;
+            this->interval = interval;
         }
 
         ktimer_base(const ktimer_base &) = default;
@@ -44,7 +44,10 @@ namespace genos
 
         void plan();
 
-        void swift() { start += interval; }
+        void swift()
+        {
+            start += interval;
+        }
 
         void replan()
         {
@@ -59,7 +62,7 @@ namespace genos
         void set_start_now();
         void set_interval_ms(int64_t t);
 
-        void deinit() 
+        void deinit()
         {
             dlist_del_init(&ctr.lnk);
         }
@@ -79,30 +82,33 @@ namespace genos
         {
         }
 
-        ktimer(ktimer_callback_t act, void *arg, int64_t start,
+        ktimer(ktimer_callback_t act,
+               void *arg,
+               int64_t start,
                int64_t interval)
             : ktimer_base(start, interval), act(act), arg(arg)
         {
         }
 
-        void init(ktimer_callback_t act, void *arg, int64_t start, int64_t interval)
+        void
+        init(ktimer_callback_t act, void *arg, int64_t start, int64_t interval)
         {
             ktimer_base::init(start, interval);
-            this->act = act; 
+            this->act = act;
             this->arg = arg;
         }
     };
-
 
     void ktimer_manager_step();
     void ktimer_manager_step(int64_t curtime); // < for testing
 
     size_t ktimer_manager_planed_count();
 
-//void ktimer_init_for_milliseconds(genos::ktimer *tim, ktimer_callback_t act,
-//                                  void *arg, uint32_t ms);
-//void ktimer_base_init_for_milliseconds(genos::ktimer_base *tim,
-//                                     uint32_t interval, uint8_t ctrtype);
+    // void ktimer_init_for_milliseconds(genos::ktimer *tim, ktimer_callback_t
+    // act,
+    //                                  void *arg, uint32_t ms);
+    // void ktimer_base_init_for_milliseconds(genos::ktimer_base *tim,
+    //                                     uint32_t interval, uint8_t ctrtype);
 }
 
 #endif

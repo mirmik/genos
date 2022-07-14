@@ -3,57 +3,59 @@
 
 DLIST_HEAD(namespace_list);
 
-void namespace_init(struct namespace_head * head, const char * path,
-                    const struct namespace_operations * ops)
+void namespace_init(struct namespace_head *head,
+                    const char *path,
+                    const struct namespace_operations *ops)
 {
-	head->path = path;
-	head->ns_ops = ops;
-	dlist_add(&head->lnk_namespace_list, &namespace_list);
+    head->path = path;
+    head->ns_ops = ops;
+    dlist_add(&head->lnk_namespace_list, &namespace_list);
 }
 
-void namespace_deinit(struct namespace_head * head)
+void namespace_deinit(struct namespace_head *head)
 {
-	dlist_del(&head->lnk_namespace_list);
+    dlist_del(&head->lnk_namespace_list);
 }
 
-struct namespace_head * namespace_lookup(const char * path, const char ** internal_path)
+struct namespace_head *namespace_lookup(const char *path,
+                                        const char **internal_path)
 {
-	struct namespace_head * ns;
-	struct namespace_head * maxns = NULL;
-	int maxlen = 0;
+    struct namespace_head *ns;
+    struct namespace_head *maxns = NULL;
+    int maxlen = 0;
 
-	int pathlen = strlen(path);
-	dlist_for_each_entry(ns, &namespace_list, lnk_namespace_list)
-	{
-		const char * aptr = path;
-		const char * bptr = ns->path;
+    int pathlen = strlen(path);
+    dlist_for_each_entry(ns, &namespace_list, lnk_namespace_list)
+    {
+        const char *aptr = path;
+        const char *bptr = ns->path;
 
-		int ns_pathlen = strlen(ns->path);
-		if (pathlen < ns_pathlen)
-			continue;
+        int ns_pathlen = strlen(ns->path);
+        if (pathlen < ns_pathlen)
+            continue;
 
-		int i = 0;
-		while (aptr[i] == bptr[i] && i < ns_pathlen)
-		{
-			++i;
-		}
+        int i = 0;
+        while (aptr[i] == bptr[i] && i < ns_pathlen)
+        {
+            ++i;
+        }
 
-		if (maxlen < i)
-		{
-			maxlen = i;
-			maxns = ns;
-		}
-	}
+        if (maxlen < i)
+        {
+            maxlen = i;
+            maxns = ns;
+        }
+    }
 
-	if (internal_path)
-	{
-		*internal_path = path + maxlen;
+    if (internal_path)
+    {
+        *internal_path = path + maxlen;
 
-		while ((**internal_path) == '/')
-		{
-			++(*internal_path);
-		}
-	}
+        while ((**internal_path) == '/')
+        {
+            ++(*internal_path);
+        }
+    }
 
-	return maxns;
+    return maxns;
 }
