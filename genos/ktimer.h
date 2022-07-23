@@ -19,7 +19,7 @@ namespace genos
     class ktimer
     {
     public:
-        struct ctrobj ctr = {CTROBJ_KTIMER_DELEGATE};
+        struct ctrobj ctr = CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE);
         int64_t start = 0;
         int64_t interval = 0;
         ktimer_callback_t act = {};
