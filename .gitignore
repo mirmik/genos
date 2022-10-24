@@ -59,3 +59,4 @@ __configure__.py
 
 tests/runtests
 bindings/arduino/src
+runtests
