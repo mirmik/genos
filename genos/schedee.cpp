@@ -46,7 +46,8 @@ uint16_t generate_new_pid()
 }
 #endif
 
-genos::schedee::schedee()
+genos::schedee::schedee(void (*destructor)(schedee *sched))
+    : destructor(destructor)
 {
     // В дальнейшем эту провеку следует убрать, так как нод
     // должен отстыковываться от списка по завершению работы.

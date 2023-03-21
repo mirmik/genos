@@ -29,6 +29,7 @@ namespace genos
         schedee *parent;
         const char *_mnemo;
         void (*signal_handler)(int sig);
+        void (*destructor)(schedee *sched);
 
         union
         {
@@ -66,14 +67,14 @@ namespace genos
                 uint8_t runned : 1;
                 uint8_t can_displace : 1;
                 uint8_t has_context : 1;
-                uint8_t dynamic : 1;
                 uint8_t dynamic_heap : 1;
                 uint8_t killed : 1;
             } f;
         } u;
 
     public:
-        schedee();
+        schedee(void (*destructor)(schedee *sched) = nullptr);
+
         void set_mnemo(const char *str)
         {
             _mnemo = str;
@@ -85,6 +86,8 @@ namespace genos
 
         void start();
         void stop();
+
+        virtual ~schedee() = default;
     };
 
     schedee *current_schedee();
