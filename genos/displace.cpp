@@ -21,6 +21,12 @@ int __displace__()
     return sch->displace();
 }
 
+__attribute__((weak)) void __schedule__()
+{
+    while (1)
+        ;
+}
+
 __attribute__((weak)) void __context_displace_vector__()
 {
     RESET_STACK();

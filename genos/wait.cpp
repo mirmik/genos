@@ -39,7 +39,7 @@ int wait_current_schedee(struct dlist_head *head, int priority, void **future)
     }
 
     sch->ctr.type = CTROBJ_WAITER_SCHEDEE;
-    sch->sch_state = SCHEDEE_STATE_WAIT;
+    sch->sch_state = genos::schedee_state::wait;
 
     // Для лока используем апи прерываний, чтобы не нарушать консистентность
     // подсистемы syslock
@@ -60,7 +60,7 @@ int waitchild()
     genos::schedee *sch;
     sch = genos::current_schedee();
 
-    sch->sch_state = SCHEDEE_STATE_WAIT_SCHEDEE;
+    sch->sch_state = genos::schedee_state::wait_schedee;
 
     system_lock();
     dlist_del_init(&sch->ctr.lnk);
@@ -79,7 +79,7 @@ int waitqueue_no_displace_wait(struct waitqueue *queue)
     sch = genos::current_schedee();
 
     sch->ctr.type = CTROBJ_WAITER_SCHEDEE;
-    sch->sch_state = SCHEDEE_STATE_WAIT;
+    sch->sch_state = genos::schedee_state::wait;
 
     // Для лока используем апи прерываний, чтобы не нарушать консистентность
     // подсистемы syslock

@@ -5,29 +5,31 @@
 #include <genos/resource/resource_table.h>
 #include <igris/osinter/ctrobj.h>
 #include <igris/osinter/wait.h>
+#include <string>
 
 #define SCHEDEE_PRIORITY_TOTAL 3
-
-#define SCHEDEE_STATE_RUN 0
-#define SCHEDEE_STATE_WAIT 2
-#define SCHEDEE_STATE_WAIT_SCHEDEE 6
-#define SCHEDEE_STATE_STOP 3
-#define SCHEDEE_STATE_FINAL 4
-#define SCHEDEE_STATE_ZOMBIE 5
-
 #define SCHEDEE_FDMAX 5
-
 #define SCHEDEE_USE_PARENT_GID 1
 
 extern struct dlist_head schedee_list;
 
 namespace genos
 {
+    enum class schedee_state
+    {
+        run,
+        wait,
+        wait_schedee,
+        stop,
+        final,
+        zombie
+    };
+
     class schedee
     {
     public:
         schedee *parent;
-        const char *_mnemo;
+        const char *_mnemo = "undefined";
         void (*signal_handler)(int sig);
         void (*destructor)(schedee *sched);
 
@@ -39,13 +41,10 @@ namespace genos
         };
 
         uint8_t prio;
-        uint8_t sch_state;
+        schedee_state sch_state;
 
-#ifdef GENOS_SCHEDEE_INTROSPECT
         uint16_t pid;
-        const char *mnemo;
         struct dlist_head schedee_list_lnk;
-#endif
 
         union
         {
@@ -88,6 +87,12 @@ namespace genos
         void stop();
 
         virtual ~schedee() = default;
+
+        const char *mnemo() const
+        {
+            return _mnemo;
+        }
+        std::string info();
     };
 
     schedee *current_schedee();

@@ -2,6 +2,7 @@
 #include <genos/schedee_api.h>
 #include <genos/signal.h>
 #include <igris/sync/syslock.h>
+#include <string>
 
 DLIST_HEAD(schedee_list);
 
@@ -18,7 +19,6 @@ genos::schedee *genos::current_schedee()
     return __current_schedee;
 }
 
-#ifdef GENOS_SCHEDEE_INTROSPECT
 uint16_t generate_new_pid()
 {
     genos::schedee *sch;
@@ -44,7 +44,6 @@ uint16_t generate_new_pid()
 
     return pid_counter;
 }
-#endif
 
 genos::schedee::schedee(void (*destructor)(schedee *sched))
     : destructor(destructor)
@@ -53,20 +52,16 @@ genos::schedee::schedee(void (*destructor)(schedee *sched))
     // должен отстыковываться от списка по завершению работы.
     ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
     this->prio = SCHEDEE_PRIORITY_TOTAL - 1;
-    sch_state = SCHEDEE_STATE_STOP;
+    sch_state = schedee_state::stop;
     syslock_counter_save = 0;
     parent = current_schedee();
     local_errno = 0;
-
-#ifdef GENOS_SCHEDEE_INTROSPECT
     dlist_add(&schedee_list_lnk, &schedee_list);
     this->pid = generate_new_pid();
-#endif
 }
 
 void genos::schedee_manager_init()
 {
-
     for (int i = 0; i < SCHEDEE_PRIORITY_TOTAL; ++i)
         dlist_init(&runlist[i]);
 
@@ -83,7 +78,7 @@ void genos::schedee_start(genos::schedee *sch)
     //        находящимся в ожидании таймера.
 
     system_lock();
-    sch->sch_state = SCHEDEE_STATE_RUN;
+    sch->sch_state = schedee_state::run;
     sch->ctr.type = CTROBJ_SCHEDEE_LIST;
 
     dlist_move_tail(&sch->ctr.lnk, &unstoplist);
@@ -97,7 +92,7 @@ void genos::schedee_stop(genos::schedee *sch)
     //        находящимся в ожидании таймера.
 
     system_lock();
-    sch->sch_state = SCHEDEE_STATE_STOP;
+    sch->sch_state = schedee_state::stop;
     sch->ctr.type = CTROBJ_SCHEDEE_LIST;
     dlist_move_tail(&sch->ctr.lnk, &waitlist);
     system_unlock();
@@ -111,7 +106,7 @@ void __schedee_run(genos::schedee *sch)
 void genos::__schedee_final(genos::schedee *sch)
 {
     system_lock();
-    sch->sch_state = SCHEDEE_STATE_FINAL;
+    sch->sch_state = schedee_state::final;
     dlist_move_tail(&sch->ctr.lnk, &finallist);
     system_unlock();
 }
@@ -120,11 +115,6 @@ void __schedee_execute(genos::schedee *sch)
 {
     __current_schedee = sch;
     sch->u.f.runned = 1;
-
-    //#if SCHEDEE_DEBUG_STRUCT
-    //	++sch->execcounter;
-    //#endif
-
     sch->execute();
 }
 
@@ -147,7 +137,7 @@ void genos::schedee_manager_step()
 
         system_unlock();
 
-        sch->sch_state = SCHEDEE_STATE_ZOMBIE;
+        sch->sch_state = schedee_state::zombie;
         sch->finalize();
 
         schedee_notify_finalize(sch);
@@ -191,9 +181,7 @@ void genos::schedee_manager_step()
 void genos::schedee_deinit(genos::schedee *sch)
 {
     dlist_del_init(&sch->ctr.lnk);
-#ifdef GENOS_SCHEDEE_INTROSPECT
     dlist_del_init(&sch->schedee_list_lnk);
-#endif
 }
 
 void genos::schedee::start()
@@ -204,4 +192,32 @@ void genos::schedee::start()
 void genos::schedee::stop()
 {
     genos::schedee_stop(this);
+}
+
+const char *schedee_state_to_sting(genos::schedee_state state)
+{
+    switch (state)
+    {
+    case genos::schedee_state::run:
+        return "RUN";
+    case genos::schedee_state::stop:
+        return "STOP";
+    case genos::schedee_state::final:
+        return "FINAL";
+    case genos::schedee_state::zombie:
+        return "ZOMBIE";
+    default:
+        return "UNKNOWN";
+    }
+}
+
+std::string genos::schedee::info()
+{
+    std::string str;
+    str += "pid: ";
+    str += std::to_string(pid);
+    str += "state: ";
+    str += schedee_state_to_sting(sch_state);
+    str += "prio: ";
+    return str;
 }
