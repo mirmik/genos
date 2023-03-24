@@ -10,12 +10,12 @@ namespace genos
 
     class autom_schedee : public schedee
     {
-        autom_schedee_func_t func;
-        void *priv;
-        int state;
+        autom_schedee_func_t func = nullptr;
+        void *priv = nullptr;
+        int state = 0;
 
     public:
-        autom_schedee(void (*destructor)(schedee *sched) = nullptr);
+        // autom_schedee(void (*destructor)(schedee *sched) = nullptr);
         autom_schedee(autom_schedee_func_t foo,
                       void *privdata,
                       void (*destructor)(schedee *sched) = nullptr);

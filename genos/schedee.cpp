@@ -48,16 +48,12 @@ uint16_t generate_new_pid()
 genos::schedee::schedee(void (*destructor)(schedee *sched))
     : destructor(destructor)
 {
-    // В дальнейшем эту провеку следует убрать, так как нод
-    // должен отстыковываться от списка по завершению работы.
     ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
     this->prio = SCHEDEE_PRIORITY_TOTAL - 1;
     sch_state = schedee_state::stop;
     syslock_counter_save = 0;
     parent = current_schedee();
     local_errno = 0;
-    schedee_list.move_back(*this);
-    this->pid = generate_new_pid();
 }
 
 void genos::schedee_manager_init()
@@ -184,6 +180,8 @@ void genos::schedee_deinit(genos::schedee *sch)
 
 void genos::schedee::start()
 {
+    genos::schedee_list.move_back(*this);
+    this->pid = generate_new_pid();
     genos::schedee_start(this);
 }
 
@@ -219,3 +217,23 @@ std::string genos::schedee::info()
     str += "prio: ";
     return str;
 }
+
+int info_cmd(const nos::argv &args, nos::ostream &os)
+{
+    for (auto &sch : genos::schedee_list)
+    {
+        nos::print_to(os, " mnemo: ");
+        nos::print_to(os, sch.mnemo());
+        nos::print_to(os, " pid: ");
+        nos::print_to(os, std::to_string(sch.pid));
+        nos::print_to(os, " state: ");
+        nos::print_to(os, schedee_state_to_sting(sch.sch_state));
+        nos::print_to(os, " prio: ");
+        nos::print_to(os, std::to_string(sch.prio));
+        nos::println_to(os);
+    }
+    return 0;
+}
+
+nos::executor genos::schedee_manager_executor{
+    {nos::command{"ps", "proccess information", info_cmd}}};

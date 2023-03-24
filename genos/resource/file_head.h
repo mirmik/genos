@@ -24,6 +24,13 @@ namespace genos
         virtual int read(void *read, unsigned int size) = 0;
         virtual int on_open() = 0;
         virtual int on_release() = 0;
+
+        char getc()
+        {
+            char c;
+            read(&c, 1);
+            return c;
+        }
     };
 }
 

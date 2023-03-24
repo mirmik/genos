@@ -10,29 +10,15 @@ using namespace genos;
 
 void genos::current_schedee_exit()
 {
-    genos::schedee *sch;
-
-    sch = current_schedee();
+    genos::schedee *sch = current_schedee();
     __schedee_final(sch);
-
-    __displace__();
+    sch->displace();
 }
 
 int genos::current_schedee_displace()
 {
     genos::schedee *sch = current_schedee();
-
-    if (sch->u.f.can_displace == 0)
-    {
-        return -1;
-    }
-
     sch->syslock_counter_save = syslock_counter();
-
-    //#if SCHEDEE_DEBUG_STRUCT
-    //	++sch->dispcounter;
-    //#endif
-
     return sch->displace();
 }
 

@@ -1,4 +1,5 @@
 #include <genos/chardev.h>
+#include <genos/schedee_api.h>
 
 genos::zillot_chardev::zillot_chardev(zillot::chardev *zchar, const char *name)
     : genos::chardev(name), zchar(zchar)
@@ -19,12 +20,18 @@ int genos::zillot_chardev::read(void *data, unsigned int size)
     if (zchar->avail() == 0)
     {
         wait_current_schedee(&rx_wait, 0, nullptr);
+        genos::current_schedee_displace();
     }
 
     if (data == nullptr)
         return 0;
 
     return zchar->read(data, size);
+}
+
+void genos::zillot_chardev::wait_for_avail()
+{
+    wait_current_schedee(&rx_wait, 0, nullptr);
 }
 
 int genos::zillot_chardev::on_open()

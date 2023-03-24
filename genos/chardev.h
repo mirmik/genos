@@ -31,6 +31,8 @@ namespace genos
         int on_release() override;
         void rx_callback();
         void tx_callback();
+
+        void wait_for_avail();
     };
 }
 

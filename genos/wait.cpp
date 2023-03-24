@@ -52,7 +52,7 @@ int wait_current_schedee(struct dlist_head *head, int priority, void **future)
         dlist_move_tail(&sch->ctr.lnk, head);
     irqs_restore(save);
 
-    return genos::current_schedee_displace();
+    return 0;
 }
 
 int waitchild()
