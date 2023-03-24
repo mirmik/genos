@@ -1,10 +1,12 @@
 #include <genos/schedee.h>
 #include <genos/schedee_api.h>
 #include <genos/signal.h>
+#include <igris/container/dlist.h>
 #include <igris/sync/syslock.h>
 #include <string>
 
-DLIST_HEAD(schedee_list);
+igris::dlist<genos::schedee, &genos::schedee::schedee_list_lnk>
+    genos::schedee_list;
 
 struct dlist_head runlist[SCHEDEE_PRIORITY_TOTAL];
 DLIST_HEAD(unstoplist);
@@ -21,8 +23,6 @@ genos::schedee *genos::current_schedee()
 
 uint16_t generate_new_pid()
 {
-    genos::schedee *sch;
-
     bool founded = false;
     do
     {
@@ -31,9 +31,9 @@ uint16_t generate_new_pid()
             pid_counter++;
 
         founded = false;
-        dlist_for_each_entry(sch, &schedee_list, schedee_list_lnk)
+        for (auto &sch : genos::schedee_list)
         {
-            if (pid_counter == sch->pid)
+            if (pid_counter == sch.pid)
             {
                 founded = true;
                 break;
@@ -56,7 +56,7 @@ genos::schedee::schedee(void (*destructor)(schedee *sched))
     syslock_counter_save = 0;
     parent = current_schedee();
     local_errno = 0;
-    dlist_add(&schedee_list_lnk, &schedee_list);
+    schedee_list.move_back(*this);
     this->pid = generate_new_pid();
 }
 
@@ -68,8 +68,6 @@ void genos::schedee_manager_init()
     dlist_init(&waitlist);
     dlist_init(&unstoplist);
     dlist_init(&finallist);
-
-    dlist_init(&schedee_list);
 }
 
 void genos::schedee_start(genos::schedee *sch)

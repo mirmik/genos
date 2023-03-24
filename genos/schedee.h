@@ -3,6 +3,7 @@
 
 #include <genos/ktimer.h>
 #include <genos/resource/resource_table.h>
+#include <igris/container/dlist.h>
 #include <igris/osinter/ctrobj.h>
 #include <igris/osinter/wait.h>
 #include <string>
@@ -10,8 +11,6 @@
 #define SCHEDEE_PRIORITY_TOTAL 3
 #define SCHEDEE_FDMAX 5
 #define SCHEDEE_USE_PARENT_GID 1
-
-extern struct dlist_head schedee_list;
 
 namespace genos
 {
@@ -28,10 +27,10 @@ namespace genos
     class schedee
     {
     public:
-        schedee *parent;
+        schedee *parent = nullptr;
         const char *_mnemo = "undefined";
-        void (*signal_handler)(int sig);
-        void (*destructor)(schedee *sched);
+        void (*signal_handler)(int sig) = nullptr;
+        void (*destructor)(schedee *sched) = nullptr;
 
         union
         {
@@ -40,11 +39,11 @@ namespace genos
             genos::ktimer ktimer;
         };
 
-        uint8_t prio;
-        schedee_state sch_state;
+        uint8_t prio = SCHEDEE_PRIORITY_TOTAL - 1;
+        schedee_state sch_state = schedee_state::stop;
 
-        uint16_t pid;
-        struct dlist_head schedee_list_lnk;
+        uint16_t pid = 0;
+        struct dlist_head schedee_list_lnk = DLIST_HEAD_INIT(schedee_list_lnk);
 
         union
         {
@@ -60,7 +59,7 @@ namespace genos
     public:
         union u_s
         {
-            uint8_t flags;
+            uint8_t flags = 0;
             struct f_s
             {
                 uint8_t runned : 1;
@@ -94,6 +93,8 @@ namespace genos
         }
         std::string info();
     };
+
+    extern igris::dlist<schedee, &schedee::schedee_list_lnk> schedee_list;
 
     schedee *current_schedee();
 
