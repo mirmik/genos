@@ -93,6 +93,11 @@ namespace genos
             return _mnemo;
         }
         std::string info();
+
+        void set_priority(uint8_t prio)
+        {
+            this->prio = prio;
+        }
     };
 
     extern igris::dlist<schedee, &schedee::schedee_list_lnk> schedee_list;

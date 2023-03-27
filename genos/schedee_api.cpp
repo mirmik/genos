@@ -31,6 +31,19 @@ void __timer_schedee_unsleep(void *priv, genos::ktimer *tim)
 
 int genos::current_schedee_msleep(unsigned int ms, int64_t start)
 {
+    current_schedee_msleep_without_displace(ms, start);
+    int re = current_schedee_displace();
+    return re;
+}
+
+int genos::current_schedee_msleep(unsigned int ms)
+{
+    return genos::current_schedee_msleep(ms, igris::system_time());
+}
+
+void genos::current_schedee_msleep_without_displace(unsigned int ms,
+                                                    int64_t start)
+{
     genos::schedee *sch;
     genos::ktimer *timer;
 
@@ -38,7 +51,7 @@ int genos::current_schedee_msleep(unsigned int ms, int64_t start)
 
     if (sch == NULL)
     {
-        return -1;
+        return;
     }
 
     timer = &sch->ktimer;
@@ -57,11 +70,9 @@ int genos::current_schedee_msleep(unsigned int ms, int64_t start)
     );
 
     timer->plan();
-    int re = current_schedee_displace();
-    return re;
 }
 
-int genos::current_schedee_msleep(unsigned int ms)
+void genos::current_schedee_msleep_without_displace(unsigned int ms)
 {
-    return genos::current_schedee_msleep(ms, igris::system_time());
+    genos::current_schedee_msleep_without_displace(ms, igris::system_time());
 }

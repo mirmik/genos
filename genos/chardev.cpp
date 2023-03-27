@@ -1,3 +1,4 @@
+#include <asm/irq.h>
 #include <genos/chardev.h>
 #include <genos/schedee_api.h>
 
@@ -31,7 +32,10 @@ int genos::zillot_chardev::read(void *data, unsigned int size)
 
 void genos::zillot_chardev::wait_for_avail()
 {
-    wait_current_schedee(&rx_wait, 0, nullptr);
+    irqstate_t save = irqs_save();
+    if (zchar->avail() == 0)
+        wait_current_schedee(&rx_wait, 0, nullptr);
+    irqs_restore(save);
 }
 
 int genos::zillot_chardev::on_open()

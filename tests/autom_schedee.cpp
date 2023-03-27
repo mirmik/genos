@@ -34,7 +34,7 @@ void bar(void *priv, int *state)
     case 0:
         a = 1;
         ++(*state);
-        genos::current_schedee_msleep(10, 0);
+        genos::current_schedee_msleep_without_displace(10, 0);
         return;
     case 1:
         a = 2;
@@ -47,7 +47,7 @@ void bar(void *priv, int *state)
     case 3:
         a = 4;
         ++(*state);
-        genos::current_schedee_msleep(20, 20);
+        genos::current_schedee_msleep_without_displace(20, 20);
         return;
     case 4:
         a = 5;
@@ -85,8 +85,7 @@ TEST_CASE("aschedee_with_timer")
     genos::schedee_manager_init();
 
     genos::autom_schedee sch(bar, nullptr);
-
-    genos::schedee_start(&sch);
+    sch.start();
 
     genos::schedee_manager_step();
     CHECK_EQ(a, 1);

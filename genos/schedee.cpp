@@ -161,7 +161,7 @@ void genos::schedee_manager_step()
                 return;
             }
 
-            dlist_move_tail(&sch->ctr.lnk, &runlist[priolvl]);
+            dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
             __schedee_execute(sch);
 
             return;
