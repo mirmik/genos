@@ -24,8 +24,15 @@ int genos::autom_schedee::displace()
 genos::autom_schedee::autom_schedee(autom_schedee_func_t foo,
                                     void *privdata,
                                     void (*destructor)(genos::schedee *sched))
-    : schedee(destructor)
 {
+    init(foo, privdata, destructor);
+}
+
+void genos::autom_schedee::init(autom_schedee_func_t foo,
+                                void *privdata,
+                                void (*destructor)(schedee *sched))
+{
+    schedee::set_destructor(destructor);
     this->state = 0;
     this->func = foo;
     this->priv = privdata;

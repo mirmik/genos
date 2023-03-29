@@ -15,10 +15,16 @@ namespace genos
         int state = 0;
 
     public:
+        autom_schedee() = default;
+
         // autom_schedee(void (*destructor)(schedee *sched) = nullptr);
         autom_schedee(autom_schedee_func_t foo,
                       void *privdata,
                       void (*destructor)(schedee *sched) = nullptr);
+
+        void init(autom_schedee_func_t foo,
+                  void *privdata,
+                  void (*destructor)(schedee *sched) = nullptr);
 
         autom_schedee(const autom_schedee &) = delete;
         autom_schedee &operator=(const autom_schedee &) = delete;

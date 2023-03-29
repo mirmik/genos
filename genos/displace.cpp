@@ -4,7 +4,7 @@
 #include <genos/schedee.h>
 #include <igris/sync/syslock.h>
 
-/*int __displace__()
+__attribute__((deprecated)) int __displace__()
 {
     genos::schedee *sch = genos::current_schedee();
 
@@ -19,7 +19,7 @@
 
     // irqs_disable();
     return sch->displace();
-}*/
+}
 
 __attribute__((weak)) void __schedule__()
 {
