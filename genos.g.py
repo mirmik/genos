@@ -20,6 +20,8 @@ licant.module("genos.schedee",
 		"genos/displace.cpp", 
 		"genos/wait.cpp",
 		"genos/chardev.cpp",
+		"genos/fork.cpp",
+		"genos/invoke.cpp",
 	],
 	mdepends = ["genos.ktimer", "genos.tasklet"]
 )

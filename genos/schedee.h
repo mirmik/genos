@@ -68,15 +68,26 @@ namespace genos
                 uint8_t has_context : 1;
                 uint8_t dynamic_heap : 1;
                 uint8_t killed : 1;
+                uint8_t is_process : 1;
             } f;
         } u;
 
     public:
         schedee(void (*destructor)(schedee *sched) = nullptr);
 
+        void set_destructor(void (*destructor)(schedee *sched))
+        {
+            this->destructor = destructor;
+        }
+
         void set_mnemo(const char *str)
         {
             _mnemo = str;
+        }
+
+        bool is_process()
+        {
+            return u.f.is_process;
         }
 
         virtual void execute() = 0;
@@ -98,11 +109,19 @@ namespace genos
         {
             this->prio = prio;
         }
+
+        uint8_t priority()
+        {
+            return prio;
+        }
+
+        void signal_received(int sig);
     };
 
     extern igris::dlist<schedee, &schedee::schedee_list_lnk> schedee_list;
 
     schedee *current_schedee();
+    void force_set_current_schedee(genos::schedee *sch);
 
     void schedee_manager_init();
     void schedee_manager_step();

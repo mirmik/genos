@@ -21,6 +21,11 @@ genos::schedee *genos::current_schedee()
     return __current_schedee;
 }
 
+void genos::force_set_current_schedee(genos::schedee *sch)
+{
+    __current_schedee = sch;
+}
+
 uint16_t generate_new_pid()
 {
     bool founded = false;
@@ -97,12 +102,23 @@ void __schedee_run(genos::schedee *sch)
     dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
 }
 
+void schedee_notify_finalize(genos::schedee *sch)
+{
+    nos::println("schedee_notify_finalize", sch->mnemo());
+    if (sch && sch->parent)
+        sch->parent->signal_received(SIGCHLD);
+}
+
 void genos::__schedee_final(genos::schedee *sch)
 {
+    auto tmp_current = current_schedee();
+    __current_schedee = sch;
     system_lock();
     sch->sch_state = schedee_state::final;
+    schedee_notify_finalize(sch);
     dlist_move_tail(&sch->ctr.lnk, &finallist);
     system_unlock();
+    __current_schedee = tmp_current;
 }
 
 void __schedee_execute(genos::schedee *sch)
@@ -110,12 +126,6 @@ void __schedee_execute(genos::schedee *sch)
     __current_schedee = sch;
     sch->u.f.runned = 1;
     sch->execute();
-}
-
-void schedee_notify_finalize(genos::schedee *sch)
-{
-    if (sch->parent)
-        sch->parent->signal_handler(SIGCHLD);
 }
 
 void genos::schedee_manager_step()
@@ -133,8 +143,6 @@ void genos::schedee_manager_step()
 
         sch->sch_state = schedee_state::zombie;
         sch->finalize();
-
-        schedee_notify_finalize(sch);
 
         system_lock();
     }
@@ -237,3 +245,17 @@ int info_cmd(const nos::argv &args, nos::ostream &os)
 
 nos::executor genos::schedee_manager_executor{
     {nos::command{"ps", "proccess information", info_cmd}}};
+
+void genos::schedee::signal_received(int sig)
+{
+    if (sig == SIGCHLD && sch_state == schedee_state::wait_schedee)
+    {
+        auto *cursch = genos::current_schedee();
+        int pid = ctrobj_get_future(&ctr);
+        if (pid == cursch->pid)
+            this->start();
+    }
+
+    if (signal_handler)
+        signal_handler(sig);
+}
