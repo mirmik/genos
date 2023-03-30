@@ -6,7 +6,6 @@
 #include <igris/container/dlist.h>
 #include <igris/osinter/ctrobj.h>
 #include <igris/osinter/wait.h>
-#include <nos/shell/executor.h>
 #include <string>
 
 #define SCHEDEE_PRIORITY_TOTAL 3
@@ -132,7 +131,7 @@ namespace genos
     void schedee_deinit(schedee *sch);
     int schedee_get_free_openres(schedee *sch, struct openres **res);
 
-    extern nos::executor schedee_manager_executor;
+    // extern nos::executor schedee_manager_executor;
 }
 
 __BEGIN_DECLS
