@@ -8,28 +8,34 @@ namespace genos
 {
     class resource_table
     {
-        std::vector<genos::openres> table;
+        std::vector<genos::openres> table = {};
 
     public:
-        openres *get_resource()
+        openres *create_openres()
         {
             table.resize(table.size() + 1);
-            return &table.back();
+            return &table[table.size() - 1];
+        }
+
+        openres *operator[](size_t i)
+        {
+            if (i >= table.size())
+                return nullptr;
+
+            return &table[i];
+        }
+
+        size_t size()
+        {
+            return table.size();
+        }
+
+        void open_new_as(openres &res)
+        {
+            auto *newres = create_openres();
+            newres->open_as(res);
         }
     };
 }
-
-/*struct restbl_head
-{
-    struct openres * table;
-    int              total;
-};
-
-__BEGIN_DECLS
-__END_DECLS
-
-#define RESOURCE_TABLE(name, total) \
-struct openres name##_table_array[total];  \
-struct restbl_head name = { name##_table_array, total };*/
 
 #endif

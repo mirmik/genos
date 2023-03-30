@@ -2,6 +2,7 @@
 #define GENOS_CHARDEV_H
 
 #include <genos/resource/file_head.h>
+#include <genos/resource/namespace.h>
 #include <igris/container/static_string.h>
 #include <igris/datastruct/dlist.h>
 #include <igris/osinter/wait.h>
@@ -14,7 +15,15 @@ namespace genos
         igris::static_string<8> _name;
 
     public:
-        chardev(const char *name) : _name(name) {}
+        dlist_head chardev_list_lnk = DLIST_HEAD_INIT(chardev_list_lnk);
+
+    public:
+        chardev(const char *name);
+        ~chardev();
+        const char *name()
+        {
+            return _name.c_str();
+        }
     };
 
     class zillot_chardev : public genos::chardev
@@ -32,7 +41,14 @@ namespace genos
         void rx_callback();
         void tx_callback();
 
-        void wait_for_avail();
+        int wait_for_avail() override;
+    };
+
+    class device_namespace_manager : public genos::namespace_manager
+    {
+    public:
+        device_namespace_manager() : genos::namespace_manager("/dev") {}
+        int lookup(genos::file_head **fh, const char *path) override;
     };
 }
 

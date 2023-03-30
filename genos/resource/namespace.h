@@ -1,37 +1,32 @@
 #ifndef GENOS_RESOURCE_NAMESPACE_H
 #define GENOS_RESOURCE_NAMESPACE_H
 
+#include <genos/resource/file_head.h>
 #include <igris/compiler.h>
-#include <igris/datastruct/dlist.h>
+#include <igris/container/dlist.h>
 
-struct namespace_head;
-struct file_head;
-
-struct namespace_operations
+namespace genos
 {
-    int (*lookup)(struct namespace_head *ns,
-                  struct file_head **filpp,
-                  const char *path);
-};
+    class namespace_manager
+    {
+        const char *_path;
 
-struct namespace_head
-{
-    const char *path;
-    struct dlist_head lnk_namespace_list;
-    const struct namespace_operations *ns_ops;
-};
+    public:
+        dlist_head namespace_list_lnk = DLIST_HEAD_INIT(namespace_list_lnk);
 
-__BEGIN_DECLS
+    public:
+        namespace_manager(const char *zone);
+        ~namespace_manager();
+        virtual int lookup(file_head **filpp, const char *path) = 0;
+        const char *path()
+        {
+            return _path;
+        }
+    };
 
-void namespace_init(struct namespace_head *head,
-                    const char *path,
-                    const struct namespace_operations *ops);
-
-void namespace_deinit(struct namespace_head *head);
-
-struct namespace_head *namespace_lookup(const char *path,
-                                        const char **internal_path);
-
-__END_DECLS
+    extern igris::dlist<namespace_manager,
+                        &namespace_manager::namespace_list_lnk>
+        namespace_list;
+}
 
 #endif

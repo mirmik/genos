@@ -5,7 +5,7 @@ licant.module("genos",
 	mdepends = [
 		"genos.schedee",
 		"genos.include",
-		#"genos.resources"
+		"genos.resources"
 	]
 )
 
@@ -26,17 +26,19 @@ licant.module("genos.schedee",
 	mdepends = ["genos.ktimer", "genos.tasklet"]
 )
 
+licant.module("genos.posix",
+	sources=["genos/posix/*.cpp","genos/posix/sys/*.cpp"],
+	include_paths = ["genos/posix/"]
+)
+
 licant.module("genos.resources",
 	sources = [
-		"genos/resource/namespace.c",
-		"genos/resource/file_head.c",
-		"genos/drivers/devns.c",
-		"genos/drivers/device_head.c",
-		"genos/drivers/virtual/devnull.c",
-		"genos/drivers/stream_adapter.c",
-		"genos/resource/mvfs.c",
-		"genos/resource/openres.c",
+		"genos/resource/*.cpp",
 		]
+)
+
+licant.module("genos.shellutil",
+	sources=["genos/shellutil.cpp"]
 )
 
 licant.module("genos.host_stub", 

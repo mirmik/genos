@@ -74,6 +74,11 @@ namespace genos
     public:
         schedee(void (*destructor)(schedee *sched) = nullptr);
 
+        genos::resource_table &resource_table()
+        {
+            return restbl;
+        }
+
         void set_destructor(void (*destructor)(schedee *sched))
         {
             this->destructor = destructor;
@@ -115,6 +120,8 @@ namespace genos
         }
 
         void signal_received(int sig);
+
+        void copy_open_resources_from(schedee *sch);
     };
 
     extern igris::dlist<schedee, &schedee::schedee_list_lnk> schedee_list;
@@ -131,7 +138,7 @@ namespace genos
     void schedee_deinit(schedee *sch);
     int schedee_get_free_openres(schedee *sch, struct openres **res);
 
-    // extern nos::executor schedee_manager_executor;
+    const char *schedee_state_to_sting(genos::schedee_state state);
 }
 
 __BEGIN_DECLS

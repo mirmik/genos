@@ -14,6 +14,9 @@ namespace genos
     void current_schedee_msleep_without_displace(unsigned int ms,
                                                  int64_t start);
     int current_schedee_displace();
+
+    int wait_for_avail(unsigned int fd);
+
 }
 
 #endif

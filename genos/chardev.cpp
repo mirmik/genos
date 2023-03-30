@@ -2,6 +2,38 @@
 #include <genos/chardev.h>
 #include <genos/schedee_api.h>
 
+__attribute__((
+    init_priority(140))) static igris::dlist<genos::chardev,
+                                             &genos::chardev::chardev_list_lnk>
+    chardev_list;
+
+genos::device_namespace_manager device_namespace;
+
+int genos::device_namespace_manager::lookup(genos::file_head **fh,
+                                            const char *path)
+{
+    assert(*fh == nullptr);
+    for (auto &dev : chardev_list)
+    {
+        if (strcmp(dev.name(), path) == 0)
+        {
+            *fh = &dev;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+genos::chardev::chardev(const char *name) : _name(name)
+{
+    chardev_list.move_back(*this);
+}
+
+genos::chardev::~chardev()
+{
+    chardev_list.unlink(*this);
+}
+
 genos::zillot_chardev::zillot_chardev(zillot::chardev *zchar, const char *name)
     : genos::chardev(name), zchar(zchar)
 {
@@ -30,12 +62,13 @@ int genos::zillot_chardev::read(void *data, unsigned int size)
     return zchar->read(data, size);
 }
 
-void genos::zillot_chardev::wait_for_avail()
+int genos::zillot_chardev::wait_for_avail()
 {
     irqstate_t save = irqs_save();
     if (zchar->avail() == 0)
         wait_current_schedee(&rx_wait, 0, nullptr);
     irqs_restore(save);
+    return 0;
 }
 
 int genos::zillot_chardev::on_open()

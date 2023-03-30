@@ -5,6 +5,7 @@
 #include <igris/sync/syslock.h>
 #include <string>
 
+__attribute__((init_priority(140)))
 igris::dlist<genos::schedee, &genos::schedee::schedee_list_lnk>
     genos::schedee_list;
 
@@ -187,8 +188,11 @@ void genos::schedee_deinit(genos::schedee *sch)
 
 void genos::schedee::start()
 {
-    genos::schedee_list.move_back(*this);
-    this->pid = generate_new_pid();
+    if (schedee_list_lnk.next == &schedee_list_lnk)
+        genos::schedee_list.move_back(*this);
+    if (this->pid == 0)
+        this->pid = generate_new_pid();
+
     genos::schedee_start(this);
 }
 
@@ -197,7 +201,7 @@ void genos::schedee::stop()
     genos::schedee_stop(this);
 }
 
-const char *schedee_state_to_sting(genos::schedee_state state)
+const char *genos::schedee_state_to_sting(genos::schedee_state state)
 {
     switch (state)
     {
@@ -225,26 +229,6 @@ std::string genos::schedee::info()
     return str;
 }
 
-// int info_cmd(const nos::argv &args, nos::ostream &os)
-// {
-//     for (auto &sch : genos::schedee_list)
-//     {
-//         nos::print_to(os, " mnemo: ");
-//         nos::print_to(os, sch.mnemo());
-//         nos::print_to(os, " pid: ");
-//         nos::print_to(os, std::to_string(sch.pid));
-//         nos::print_to(os, " state: ");
-//         nos::print_to(os, schedee_state_to_sting(sch.sch_state));
-//         nos::print_to(os, " prio: ");
-//         nos::print_to(os, std::to_string(sch.prio));
-//         nos::println_to(os);
-//     }
-//     return 0;
-// }
-
-// nos::executor genos::schedee_manager_executor{
-//     {nos::command{"ps", "proccess information", info_cmd}}};
-
 void genos::schedee::signal_received(int sig)
 {
     if (sig == SIGCHLD && sch_state == schedee_state::wait_schedee)
@@ -257,4 +241,15 @@ void genos::schedee::signal_received(int sig)
 
     if (signal_handler)
         signal_handler(sig);
+}
+
+void genos::schedee::copy_open_resources_from(genos::schedee *sch)
+{
+    auto &other_res = sch->resource_table();
+    auto &my_res = this->resource_table();
+
+    for (size_t i = 0; i < other_res.size(); i++)
+    {
+        my_res.open_new_as(*other_res[i]);
+    }
 }

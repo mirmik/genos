@@ -1,12 +1,9 @@
 #ifndef GENOS_RESOURCE_FILE_HEAD_H
 #define GENOS_RESOURCE_FILE_HEAD_H
 
+#include <fcntl.h>
 #include <igris/compiler.h>
 #include <stdint.h>
-
-#ifndef O_NONBLOCK
-#define O_NONBLOCK 1
-#endif
 
 namespace genos
 {
@@ -24,6 +21,11 @@ namespace genos
         virtual int read(void *read, unsigned int size) = 0;
         virtual int on_open() = 0;
         virtual int on_release() = 0;
+
+        virtual int wait_for_avail()
+        {
+            return 0;
+        }
 
         char getc()
         {
