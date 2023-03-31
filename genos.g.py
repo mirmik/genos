@@ -23,8 +23,10 @@ licant.module("genos.schedee",
 		"genos/fork.cpp",
 		"genos/invoke.cpp",
 	],
-	mdepends = ["genos.ktimer", "genos.tasklet"]
+	mdepends = ["genos.ktimer", "genos.tasklet", "genos.tty"]
 )
+
+licant.module("genos.tty", sources = ["genos/drivers/tty.cpp"])
 
 licant.module("genos.posix",
 	sources=["genos/posix/*.cpp","genos/posix/sys/*.cpp"],
