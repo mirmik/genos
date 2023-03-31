@@ -15,10 +15,8 @@ int genos::wait_for_avail(unsigned int fd)
         genos::current_schedee()->resource_table();
     if (resources.size() <= fd)
         return -1;
-    auto *openr = resources[fd];
-    if (openr == nullptr)
-        return -1;
-    return openr->wait_for_avail();
+    auto &openr = resources[fd];
+    return openr.wait_for_avail();
 }
 
 void genos::current_schedee_exit()

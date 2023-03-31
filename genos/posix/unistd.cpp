@@ -8,13 +8,12 @@ ssize_t write(int fd, const void *data, size_t size)
         genos::current_schedee()->resource_table();
 
     if (resources.size() <= fd)
+    {
         return -1;
+    }
 
-    auto *openr = resources[fd];
-    if (openr == nullptr)
-        return -1;
-
-    auto res = openr->write(data, size);
+    auto &openr = resources[fd];
+    auto res = openr.write(data, size);
     return res;
 }
 
@@ -26,10 +25,7 @@ ssize_t read(int fd, void *data, size_t size)
     if (resources.size() <= fd)
         return -1;
 
-    auto *openr = resources[fd];
-    if (openr == nullptr)
-        return -1;
-
-    auto res = openr->read(data, size);
+    auto &openr = resources[fd];
+    auto res = openr.read(data, size);
     return res;
 }

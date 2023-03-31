@@ -16,6 +16,7 @@ namespace genos
 
     public:
         autom_schedee() = default;
+        ~autom_schedee() override = default;
 
         // autom_schedee(void (*destructor)(schedee *sched) = nullptr);
         autom_schedee(autom_schedee_func_t foo,
@@ -32,8 +33,6 @@ namespace genos
         void execute() override;
         void finalize() override;
         int displace() override;
-
-        ~autom_schedee() override = default;
     };
 
     autom_schedee *create_autom_schedee(autom_schedee_func_t foo,

@@ -30,6 +30,8 @@ namespace genos
         {
         }
 
+        ~coop_schedee() override;
+
         void init(int (*task)(void *),
                   void *arg,
                   void *heap,

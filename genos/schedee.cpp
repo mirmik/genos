@@ -60,6 +60,7 @@ genos::schedee::schedee(void (*destructor)(schedee *sched))
     syslock_counter_save = 0;
     parent = current_schedee();
     local_errno = 0;
+    u.f.remove_without_zombie_state = 1;
 }
 
 void genos::schedee_manager_init()
@@ -74,23 +75,15 @@ void genos::schedee_manager_init()
 
 void genos::schedee_start(genos::schedee *sch)
 {
-    // TODO : Здесь должна быть какая-то защита от попытки оперировать таймером,
-    //        находящимся в ожидании таймера.
-
     system_lock();
     sch->sch_state = schedee_state::run;
     sch->ctr.type = CTROBJ_SCHEDEE_LIST;
-
     dlist_move_tail(&sch->ctr.lnk, &unstoplist);
-
     system_unlock();
 }
 
 void genos::schedee_stop(genos::schedee *sch)
 {
-    // TODO : Здесь должна быть какая-то защита от попытки оперировать таймером,
-    //        находящимся в ожидании таймера.
-
     system_lock();
     sch->sch_state = schedee_state::stop;
     sch->ctr.type = CTROBJ_SCHEDEE_LIST;
@@ -128,6 +121,26 @@ void __schedee_execute(genos::schedee *sch)
     sch->execute();
 }
 
+bool is_schedee_manager_lists_correct()
+{
+    for (int i = 0; i < SCHEDEE_PRIORITY_TOTAL; ++i)
+    {
+        if (!dlist_is_correct(&runlist[i]))
+            return false;
+    }
+
+    if (!dlist_is_correct(&waitlist))
+        return false;
+
+    if (!dlist_is_correct(&unstoplist))
+        return false;
+
+    if (!dlist_is_correct(&finallist))
+        return false;
+
+    return true;
+}
+
 void genos::schedee_manager_step()
 {
     genos::schedee *sch;
@@ -143,6 +156,20 @@ void genos::schedee_manager_step()
 
         sch->sch_state = schedee_state::zombie;
         sch->finalize();
+
+        if (sch->u.f.remove_without_zombie_state)
+        {
+            schedee_deinit(sch);
+            sch->destructor(sch);
+        }
+
+        // TODO: remove this section after debug
+        if (!is_schedee_manager_lists_correct())
+        {
+            system_lock();
+            dprln("Schedee manager lists is corrupted!");
+            abort();
+        }
 
         system_lock();
     }
@@ -188,11 +215,13 @@ void genos::schedee_deinit(genos::schedee *sch)
 
 void genos::schedee::start()
 {
+    system_lock();
     if (schedee_list_lnk.next == &schedee_list_lnk)
         genos::schedee_list.move_back(*this);
     if (this->pid == 0)
         this->pid = generate_new_pid();
 
+    system_unlock();
     genos::schedee_start(this);
 }
 
@@ -247,9 +276,9 @@ void genos::schedee::copy_open_resources_from(genos::schedee *sch)
 {
     auto &other_res = sch->resource_table();
     auto &my_res = this->resource_table();
-
     for (size_t i = 0; i < other_res.size(); i++)
     {
-        my_res.open_new_as(*other_res[i]);
+        auto &res = other_res[i];
+        my_res.open_new_as(res);
     }
 }

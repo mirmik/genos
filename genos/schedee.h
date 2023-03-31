@@ -68,11 +68,13 @@ namespace genos
                 uint8_t dynamic_heap : 1;
                 uint8_t killed : 1;
                 uint8_t is_process : 1;
+                uint8_t remove_without_zombie_state : 1;
             } f;
         } u;
 
     public:
         schedee(void (*destructor)(schedee *sched) = nullptr);
+        virtual ~schedee() = default;
 
         genos::resource_table &resource_table()
         {
@@ -100,8 +102,6 @@ namespace genos
 
         void start();
         void stop();
-
-        virtual ~schedee() = default;
 
         const char *mnemo() const
         {

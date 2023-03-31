@@ -35,7 +35,15 @@ int genos::coop_schedee::displace()
 void genos::coop_schedee::finalize()
 {
     if (u.f.dynamic_heap)
+    {
         free(heap);
+        heap = nullptr;
+    }
+}
+
+genos::coop_schedee::~coop_schedee()
+{
+    free(heap);
 }
 
 genos::coop_schedee::coop_schedee(int (*task)(void *),

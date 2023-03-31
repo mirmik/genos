@@ -16,6 +16,10 @@ namespace genos
 
     public:
         openres() = default;
+        openres(const openres &) = delete;
+        openres &operator=(const openres &) = delete;
+        openres(openres &&) = default;
+        openres &operator=(openres &&) = default;
 
         void init(genos::file_head *file)
         {

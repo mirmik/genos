@@ -2,27 +2,26 @@
 #define GENOS_RESOURCE_RESTBL_H
 
 #include <genos/resource/openres.h>
+#include <igris/container/static_vector.h>
 #include <vector>
 
 namespace genos
 {
     class resource_table
     {
-        std::vector<genos::openres> table = {};
+        igris::static_vector<genos::openres, 5> table = {};
 
     public:
-        openres *create_openres()
+        openres &create_openres()
         {
-            table.resize(table.size() + 1);
-            return &table[table.size() - 1];
+            table.emplace_back();
+            return table.back();
         }
 
-        openres *operator[](size_t i)
+        openres &operator[](size_t i)
         {
-            if (i >= table.size())
-                return nullptr;
-
-            return &table[i];
+            assert(i < table.size());
+            return table[i];
         }
 
         size_t size()
@@ -32,8 +31,8 @@ namespace genos
 
         void open_new_as(openres &res)
         {
-            auto *newres = create_openres();
-            newres->open_as(res);
+            auto &newres = create_openres();
+            newres.open_as(res);
         }
     };
 }

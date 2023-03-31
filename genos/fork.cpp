@@ -6,9 +6,15 @@
 #include <genos/schedee_api.h>
 #include <igris/osinter/ctrobj.h>
 #include <igris/util/string.h>
+#include <nos/print.h>
+
+extern "C" unsigned char is_interrupt_context();
 
 int genos::clone(int (*fn)(void *), void *arg, void *stack, size_t stack_size)
 {
+    assert(is_interrupt_context() == 0);
+    assert(stack == nullptr);
+    system_lock();
     auto *sch = genos::current_schedee();
     auto *ncsch = genos::create_coop_schedee(fn, arg, stack, stack_size);
     ncsch->set_priority(sch->priority());
@@ -16,13 +22,14 @@ int genos::clone(int (*fn)(void *), void *arg, void *stack, size_t stack_size)
     ncsch->copy_open_resources_from(sch);
     genos::force_set_current_schedee(sch);
     ncsch->start();
+    system_unlock();
     return ncsch->pid;
 }
 
 struct environment_vars
 {
-    const char *cmd;
-    std::vector<const char *> args;
+    const char *cmd = nullptr;
+    std::vector<const char *> args = {};
 };
 
 int __execute_starter(void *arg)
@@ -66,11 +73,6 @@ int genos::execute(const char *cmd)
     auto splited = igris::split(cmd);
     return genos::execute(splited);
 }
-
-/*void genos::start_command_process_v(const char **argv, size_t stacksize)
-{
-    genos::clone(__start_command_process_v, (void *)argv, NULL, stacksize);
-}*/
 
 int genos::waitpid(intptr_t pid)
 {
