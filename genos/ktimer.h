@@ -79,6 +79,7 @@ namespace genos
     void ktimer_manager_step();
     void ktimer_manager_step(int64_t curtime); // < for testing
     size_t ktimer_manager_planed_count();
+    void ktimer_manager_init();
 }
 
 #endif

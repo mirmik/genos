@@ -87,3 +87,8 @@ void genos::current_schedee_msleep_without_displace(unsigned int ms)
 {
     genos::current_schedee_msleep_without_displace(ms, igris::system_time());
 }
+
+void genos::send_signal_to_group(int gid, int sig)
+{
+    // pass
+}
