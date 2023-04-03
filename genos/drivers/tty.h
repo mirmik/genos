@@ -13,7 +13,8 @@ namespace genos
         tty_driver *driver = nullptr;
         tty_linedisc *linedisc = nullptr;
 
-        int gid = 0; // holder group id
+        pid_t gid = 0; // holder group id
+        pid_t pid = 0;
 
     public:
         tty();
@@ -23,6 +24,9 @@ namespace genos
         int read(void *data, unsigned int size) override;
         void receive_newchar(char c);
         void send_signal(int sig);
+
+        int on_open() override;
+        int on_release() override;
     };
 }
 

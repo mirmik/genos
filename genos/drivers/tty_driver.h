@@ -7,10 +7,11 @@ namespace genos
 {
     class tty_driver
     {
+    protected:
         tty *_tty = nullptr;
 
     public:
-        void transmit(const char *data, size_t size);
+        virtual void transmit(const char *data, size_t size) = 0;
         void set_tty(genos::tty *tty)
         {
             _tty = tty;
@@ -20,6 +21,8 @@ namespace genos
         {
             _tty->receive_newchar(c);
         }
+
+        virtual ~tty_driver() = default;
     };
 }
 

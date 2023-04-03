@@ -29,3 +29,32 @@ void genos::tty::send_signal(int sig)
 {
     genos::send_signal_to_group(gid, sig);
 }
+
+int genos::tty::on_open()
+{
+    auto current_pid = genos::current_schedee()->pid;
+    bool is_opened = pid != 0;
+
+    if (is_opened && pid != current_pid)
+    {
+        return -1;
+    }
+
+    pid = current_pid;
+    gid = genos::current_schedee()->gid;
+    reference_counter++;
+
+    return 0;
+}
+
+int genos::tty::on_release()
+{
+    reference_counter--;
+    if (reference_counter == 0)
+    {
+        pid = 0;
+        gid = 0;
+        return 0;
+    }
+    return 0;
+}

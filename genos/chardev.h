@@ -16,6 +16,7 @@ namespace genos
 
     public:
         dlist_head chardev_list_lnk = DLIST_HEAD_INIT(chardev_list_lnk);
+        int reference_counter = 0;
 
     public:
         chardev(const char *name);

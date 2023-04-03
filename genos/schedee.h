@@ -43,6 +43,7 @@ namespace genos
         schedee_state sch_state = schedee_state::stop;
 
         uint16_t pid = 0;
+        uint16_t gid = 0;
         struct dlist_head schedee_list_lnk = DLIST_HEAD_INIT(schedee_list_lnk);
 
         union
