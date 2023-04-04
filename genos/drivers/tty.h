@@ -12,6 +12,7 @@ namespace genos
     {
         tty_driver *driver = nullptr;
         tty_linedisc *linedisc = nullptr;
+        dlist_head rx_wait = DLIST_HEAD_INIT(rx_wait);
 
         pid_t gid = 0; // holder group id
         pid_t pid = 0;
@@ -22,11 +23,20 @@ namespace genos
 
         int write(const void *data, unsigned int size) override;
         int read(void *data, unsigned int size) override;
+
         void receive_newchar(char c);
         void send_signal(int sig);
 
         int on_open() override;
         int on_release() override;
+
+        size_t send_over_driver(const char *data, size_t size);
+        size_t send_over_driver(char c)
+        {
+            return send_over_driver(&c, 1);
+        }
+        void notify_readers();
+        void signal(int sig);
     };
 }
 

@@ -26,11 +26,14 @@ namespace genos
             txring.resize(sz);
         }
 
+        void
+        setup(int32_t baud, char parity, uint8_t databits, uint8_t stopbits);
+
         static void uartring_irq_handler_tx(void *priv);
         static void uartring_irq_handler_rx(void *priv);
         static void uartring_irq_handler(void *priv, int code);
 
-        void transmit(const char *data, size_t size) override;
+        size_t transmit(const char *data, size_t size) override;
 
         virtual ~zillot_tty_driver() = default;
 

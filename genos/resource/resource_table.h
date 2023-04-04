@@ -18,6 +18,12 @@ namespace genos
             return table.back();
         }
 
+        int create_openres_fd()
+        {
+            table.emplace_back();
+            return table.size() - 1;
+        }
+
         openres &operator[](size_t i)
         {
             assert(i < table.size());

@@ -1,6 +1,10 @@
 #include <asm/irq.h>
+#include <fcntl.h>
+#include <genos/autom_schedee.h>
+#include <genos/coop_schedee.h>
 #include <genos/drivers/tty_linedisc_line.h>
 #include <genos/drivers/zillot_tty_driver.h>
+#include <genos/ktimer.h>
 #include <genos/schedee.h>
 #include <igris/sync/syslock.h>
 #include <igris/time/jiffies-systime.h>
@@ -8,6 +12,7 @@
 #include <igris/util/cpu_delay.h>
 #include <nos/io/generic_ostream.h>
 #include <nos/print.h>
+#include <unistd.h>
 #include <zillot/irqtable/irqtable.h>
 #include <zillot/stm32/pin.h>
 #include <zillot/stm32/stm32_diag.h>
@@ -58,8 +63,28 @@ nos::generic_ostream stdostream(+[](const void *data, size_t size) -> int
                                     return 1;
                                 });
 
+int mainthread(void *arg)
+{
+    debug_print("coop schedee started\r\n");
+
+    int a = open("/dev/ttyS0", O_RDONLY);
+    int b = open("/dev/ttyS0", O_WRONLY);
+
+    char buf[32];
+    while (1)
+    {
+        int sz = read(STDIN_FILENO, buf, 32);
+        nos::println("readed: ", sz);
+        //    nos::write(buf, sz);
+    }
+    return 0;
+}
+
 int main()
 {
+    genos::schedee_manager_init();
+    genos::ktimer_manager_init();
+
     nos::set_default_ostream(&stdostream);
     stm32_clockbus_freq[CLOCKBUS_HSI] = 64000000;
     stm32_clockbus_freq[CLOCKBUS_HSE] = 25000000;
@@ -110,18 +135,21 @@ int main()
 
     irqs_enable();
 
+    tty_driver.setup(115200, 'n', 8, 1);
     tty_driver.begin();
-    tty.write("hello world!", 12);
+
+    genos::create_coop_schedee(mainthread, NULL, NULL, 1024)->start();
 
     while (1)
     {
-        igris::delay(100);
-        system_lock();
-        green_led.toggle();
-        red_led.toggle();
-        system_unlock();
-        // nos::println("HelloWorld!", igris::millis());
+        __schedule__();
     }
+}
+
+void __schedule__()
+{
+    genos::ktimer_manager_step();
+    genos::schedee_manager_step();
 }
 
 extern "C" void emergency_halt();

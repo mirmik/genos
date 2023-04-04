@@ -8,6 +8,8 @@ genos::tty::tty(const char *name,
                 genos::tty_linedisc *ldisc)
     : chardev(name), driver(drv), linedisc(ldisc)
 {
+    driver->attach_tty(this);
+    linedisc->attach_tty(this);
 }
 
 int genos::tty::write(const void *data, unsigned int size)
@@ -17,6 +19,15 @@ int genos::tty::write(const void *data, unsigned int size)
 
 int genos::tty::read(void *data, unsigned int size)
 {
+    if (linedisc->avail() == 0)
+    {
+        wait_current_schedee(&rx_wait, 0, nullptr);
+        genos::current_schedee_displace();
+    }
+
+    if (data == nullptr)
+        return 0;
+
     return linedisc->read((char *)data, size);
 }
 
@@ -57,4 +68,19 @@ int genos::tty::on_release()
         return 0;
     }
     return 0;
+}
+
+void genos::tty::signal(int sig)
+{
+    dprln("tty signal");
+}
+
+size_t genos::tty::send_over_driver(const char *data, size_t size)
+{
+    return driver->transmit(data, size);
+}
+
+void genos::tty::notify_readers()
+{
+    unwait_one(&rx_wait, 0);
 }

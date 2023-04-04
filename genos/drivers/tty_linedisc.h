@@ -7,15 +7,22 @@ namespace genos
 {
     class tty_linedisc
     {
-        tty *_tty = nullptr;
+    protected:
+        genos::tty *_tty = nullptr;
 
     public:
         virtual void receive_newchar(char c) = 0;
         virtual int transmit(const char *data, size_t size) = 0;
         virtual int read(char *data, size_t size) = 0;
-        void set_tty(genos::tty *tty)
+        virtual size_t avail() = 0;
+        void attach_tty(genos::tty *tty)
         {
             _tty = tty;
+        }
+
+        genos::tty *tty()
+        {
+            return _tty;
         }
     };
 }

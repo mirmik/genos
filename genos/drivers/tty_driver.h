@@ -11,8 +11,8 @@ namespace genos
         tty *_tty = nullptr;
 
     public:
-        virtual void transmit(const char *data, size_t size) = 0;
-        void set_tty(genos::tty *tty)
+        virtual size_t transmit(const char *data, size_t size) = 0;
+        void attach_tty(genos::tty *tty)
         {
             _tty = tty;
         }

@@ -1,6 +1,37 @@
 #include <genos/drivers/zillot_tty_driver.h>
+#include <igris/sync/syslock.h>
 
-void genos::zillot_tty_driver::transmit(const char *data, size_t size) {}
+size_t genos::zillot_tty_driver::transmit(const char *data, size_t size)
+{
+    size_t writed = 0;
+
+    if (size == 0)
+    {
+        return 0;
+    }
+
+    system_lock();
+
+    if (udev->cantx() && txring.empty())
+    {
+        writed++;
+        udev->sendbyte(*(char *)data);
+    }
+
+    if (size != writed)
+    {
+        int curwrited = txring.write((char *)data + writed, size - writed);
+
+        if (curwrited)
+        {
+            udev->ctrirqs(UART_CTRIRQS_TXON);
+        }
+
+        writed += curwrited;
+    }
+    system_unlock();
+    return writed;
+}
 
 void genos::zillot_tty_driver::uartring_irq_handler(void *priv, int code)
 {
@@ -60,4 +91,12 @@ void genos::zillot_tty_driver::begin()
     udev->handarg = (void *)this;
     udev->enable(1);
     udev->ctrirqs(UART_CTRIRQS_RXON);
+}
+
+void genos::zillot_tty_driver::setup(int32_t baud,
+                                     char parity,
+                                     uint8_t databits,
+                                     uint8_t stopbits)
+{
+    udev->setup(baud, parity, databits, stopbits);
 }

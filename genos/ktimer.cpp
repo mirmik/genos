@@ -120,7 +120,7 @@ size_t genos::ktimer_manager_planed_count()
     return dlist_size(&ktimer_list);
 }
 
-void ktimer_manager_init()
+void genos::ktimer_manager_init()
 {
     dlist_init(&ktimer_list);
 }

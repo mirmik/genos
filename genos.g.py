@@ -7,10 +7,13 @@ licant.module("genos",
 		"genos.include",
 		"genos.resources",
 		"genos.drivers",
+		"genos.utilities"
 	]
 )
 
 licant.module("genos.include", include_paths=["."])
+
+licant.module("genos.utilities", sources=["genos/utility/*.cpp"])
 
 licant.module("genos.schedee", 
 	sources = [
