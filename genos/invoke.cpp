@@ -14,9 +14,11 @@ genos::system_utility_aggregator system_utilities;
 
 int genos::invoke_program(const char *cmd, int argc, const char **argv)
 {
+    dprln("invoke_program:", cmd);
+    dprln("size:", system_utilities.utilities().size());
     for (auto &util : system_utilities.utilities())
     {
-        nos::println("util name:", util.name());
+        dprln("util name:", util.name());
     }
     return system_utilities.invoke(cmd, argc, (char **)argv);
 }
@@ -33,7 +35,7 @@ int genos::system_utility_aggregator::invoke(const char *cmd,
 {
     for (auto &util : _utilities)
     {
-        if (strcmp(util.name(), cmd) == 0)
+        if (strcmp(util.name().c_str(), cmd) == 0)
         {
             return util.invoke(argc, argv);
         }

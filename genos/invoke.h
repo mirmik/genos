@@ -11,18 +11,20 @@ namespace genos
 
     class system_utility
     {
-        const char *_name;
-        system_utility_func_t _func;
+        std::string _name = {};
+        system_utility_func_t _func = nullptr;
 
     public:
-        system_utility(const char *name, system_utility_func_t func)
+        system_utility(const std::string &name, system_utility_func_t func)
             : _name(name), _func(func)
         {
         }
-        const char *name() const
+
+        const std::string &name() const
         {
             return _name;
         }
+
         int invoke(int argc, char **argv) const
         {
             return _func(argc, argv);
@@ -31,9 +33,10 @@ namespace genos
 
     class system_utility_aggregator
     {
-        std::vector<system_utility> _utilities;
+        std::vector<system_utility> _utilities = {};
 
     public:
+        system_utility_aggregator() = default;
         std::vector<system_utility> &utilities();
         void add_utility(const char *name, system_utility_func_t util);
         int invoke(const char *cmd, int argc, char **argv);
