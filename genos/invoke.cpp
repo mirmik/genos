@@ -1,4 +1,5 @@
 #include <cstring>
+#include <genos/coop_schedee.h>
 #include <genos/fork.h>
 #include <genos/invoke.h>
 #include <genos/schedee_api.h>
@@ -13,20 +14,24 @@ genos::system_utility_aggregator system_utilities;
 
 int genos::invoke_program(const char *cmd, int argc, const char **argv)
 {
+    for (auto &util : system_utilities.utilities())
+    {
+        nos::println("util name:", util.name());
+    }
     return system_utilities.invoke(cmd, argc, (char **)argv);
 }
 
 void genos::system_utility_aggregator::add_utility(const char *cmd,
                                                    system_utility_func_t util)
 {
-    utilities.push_back({cmd, util});
+    _utilities.push_back({cmd, util});
 }
 
 int genos::system_utility_aggregator::invoke(const char *cmd,
                                              int argc,
                                              char **argv)
 {
-    for (auto &util : utilities)
+    for (auto &util : _utilities)
     {
         if (strcmp(util.name(), cmd) == 0)
         {
@@ -36,38 +41,59 @@ int genos::system_utility_aggregator::invoke(const char *cmd,
     return -1;
 }
 
+std::vector<genos::system_utility> &
+genos::system_utility_aggregator::utilities()
+{
+    return _utilities;
+}
+
 void genos::register_system_utility(const char *cmd, system_utility_func_t util)
 {
     system_utilities.add_utility(cmd, util);
 }
 
+struct environment_vars
+{
+    const char *cmd = nullptr;
+    std::vector<const char *> args = {};
+};
+
+int __execute_starter(void *arg)
+{
+    auto *env = (environment_vars *)arg;
+    genos::invoke_program(env->cmd, env->args.size(), env->args.data());
+    for (const char *str : env->args)
+        free((void *)str);
+    delete env;
+    return 0;
+}
+
 int __system_v_second_half(void *arg)
 {
-    auto *argv = (std::vector<const char *> *)arg;
-    genos::current_schedee()->set_mnemo("sechalf");
-    genos::command_process_v(argv->data());
-    for (const char *str : *argv)
-        free((void *)str);
-    delete argv;
+    dprln("sechalf id:", genos::current_schedee()->pid);
+
+    auto *env = (environment_vars *)arg;
+    auto *sch = genos::current_schedee();
+    genos::coop_schedee *csch = (genos::coop_schedee *)sch;
+
+    csch->set_mnemo("sechalf");
+    csch->reset_context(__execute_starter, env);
+    csch->execute();
+
+    // unreachable code
     return 0;
 }
 
 int genos::system(const char *cmd)
 {
-    auto vec = igris::split(cmd);
-    std::vector<const char *> cvec;
-    for (const auto &str : vec)
-        cvec.push_back(str.c_str());
-    cvec.push_back(nullptr);
-    return genos::system_v(cvec.data());
-}
+    environment_vars *cvec = new environment_vars;
+    auto splitted = igris::split(cmd, ' ');
 
-int genos::system_v(const char **cmds)
-{
-    std::vector<const char *> *cvec = new std::vector<const char *>;
-    for (const char **sstr = cmds; *sstr != NULL; ++sstr)
-        cvec->push_back(strdup(*sstr));
-    cvec->push_back(nullptr);
+    for (auto &str : splitted)
+        cvec->args.push_back(strdup(str.c_str()));
+    cvec->args.push_back(nullptr);
+    cvec->cmd = cvec->args[0];
+
     int pid = genos::clone(__system_v_second_half,
                            (void *)cvec,
                            NULL,
@@ -76,12 +102,33 @@ int genos::system_v(const char **cmds)
     return 0;
 }
 
-int genos::system_v_without_displace(const char **cmds)
+int genos::system_v(const char **cmds)
 {
-    std::vector<const char *> *cvec = new std::vector<const char *>;
+    abort();
+    /*environment_vars *cvec = new environment_vars;
+
     for (const char **sstr = cmds; *sstr != NULL; ++sstr)
-        cvec->push_back(strdup(*sstr));
-    cvec->push_back(nullptr);
+        cvec->args.push_back(strdup(*sstr));
+    cvec->args.push_back(nullptr);
+    cvec->cmd = cvec->args[0];
+
+    int pid = genos::clone(__system_v_second_half,
+                           (void *)cvec,
+                           NULL,
+                           GENOS_DEFAULT_HEAPSTACK_SIZE);
+    genos::waitpid(pid);*/
+    return 0;
+}
+
+int genos::system_v_without_displace(const char **argv)
+{
+    environment_vars *cvec = new environment_vars;
+
+    for (const char **sstr = argv; *sstr != NULL; ++sstr)
+        cvec->args.push_back(strdup(*sstr));
+    cvec->args.push_back(nullptr);
+    cvec->cmd = cvec->args[0];
+
     int pid = genos::clone(__system_v_second_half,
                            (void *)cvec,
                            NULL,

@@ -26,30 +26,19 @@ int genos::clone(int (*fn)(void *), void *arg, void *stack, size_t stack_size)
     return ncsch->pid;
 }
 
-struct environment_vars
-{
-    const char *cmd = nullptr;
-    std::vector<const char *> args = {};
-};
-
-int __execute_starter(void *arg)
-{
-    auto *env = (environment_vars *)arg;
-    genos::invoke_program(env->cmd, env->args.size(), env->args.data());
-    for (const char *str : env->args)
-        free((void *)str);
-    delete env;
-    return 0;
-}
-
-int genos::command_process_v(const char **argv)
+/*int genos::command_process_v(const std::vector<std::string> &argv)
 {
     auto *env = new environment_vars;
-    for (const char **sstr = argv; *sstr != NULL; ++sstr)
+
+    for (const std::string &str : argv)
     {
-        env->args.push_back(strdup(*sstr));
+        env->args.push_back(strdup(str.c_str()));
     }
+    // add NULL to the end of args
+    env->args.push_back(nullptr);
+
     env->cmd = env->args[0];
+
     auto *sch = genos::current_schedee();
     genos::coop_schedee *csch = (genos::coop_schedee *)sch;
     csch->reset_context(__execute_starter, env);
@@ -61,18 +50,14 @@ int genos::command_process_v(const char **argv)
 
 int genos::execute(const std::vector<std::string> &vec)
 {
-    std::vector<const char *> cvec;
-    for (const auto &str : vec)
-        cvec.push_back(str.c_str());
-    cvec.push_back(nullptr);
-    return genos::command_process_v(cvec.data());
+    return genos::command_process_v(vec);
 }
 
 int genos::execute(const char *cmd)
 {
     auto splited = igris::split(cmd);
     return genos::execute(splited);
-}
+}*/
 
 int genos::waitpid(intptr_t pid)
 {

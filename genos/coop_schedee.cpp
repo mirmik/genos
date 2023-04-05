@@ -115,6 +115,7 @@ genos::coop_schedee *genos::create_process(int (*foo)(void *),
 
 void genos::coop_schedee::reset_context(int (*task)(void *), void *arg)
 {
+    igris::syslock_guard guard;
     this->task = task;
     this->arg = arg;
     context_init(&cntxt,
