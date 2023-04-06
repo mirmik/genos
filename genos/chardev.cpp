@@ -50,6 +50,9 @@ int genos::zillot_chardev::write(const void *data, unsigned int size)
 
 int genos::zillot_chardev::read(void *data, unsigned int size)
 {
+    if (data == nullptr)
+        return wait_for_avail();
+
     if (zchar->avail() == 0)
     {
         wait_current_schedee(&rx_wait, 0, nullptr);

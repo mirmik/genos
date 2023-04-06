@@ -14,14 +14,14 @@ int shell_main(int argc, char **argv)
     rl.init(48, 5);
     rl.set_write_callback(write_callback);
 
-    int a = open("/dev/ttyS0", O_RDONLY);
-    int b = open("/dev/ttyS0", O_WRONLY);
+//    int a = open("/dev/ttyS0", O_RDONLY);
+//    int b = open("/dev/ttyS0", O_WRONLY);
 
-    char c;
-    while (1)
-    {
-        int sz = read(STDIN_FILENO, &c, 1);
-        rl.newdata(c);
+//    char c;
+//    while (1)
+//    {
+//        int sz = read(STDIN_FILENO, &c, 1);
+//        rl.newdata(c);
         return 0;
-    }
+//    }
 }

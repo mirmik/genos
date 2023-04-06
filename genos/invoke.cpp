@@ -6,7 +6,7 @@
 #include <igris/time/systime.h>
 #include <igris/util/bug.h>
 #include <igris/util/string.h>
-#include <nos/print.h>
+//#include <nos/print.h>
 #include <unistd.h>
 
 __attribute__((init_priority(101)))

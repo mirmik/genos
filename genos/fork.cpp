@@ -6,7 +6,7 @@
 #include <genos/schedee_api.h>
 #include <igris/osinter/ctrobj.h>
 #include <igris/util/string.h>
-#include <nos/print.h>
+//#include <nos/print.h>
 
 extern "C" unsigned char is_interrupt_context();
 
