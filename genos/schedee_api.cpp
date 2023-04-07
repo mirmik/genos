@@ -21,7 +21,6 @@ int genos::wait_for_avail(unsigned int fd)
 
 void genos::current_schedee_exit()
 {
-    dprln("current_schedee_exit", current_schedee()->mnemo());
     genos::schedee *sch = current_schedee();
     __schedee_final(sch);
     sch->displace();
