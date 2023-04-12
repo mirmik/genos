@@ -15,7 +15,7 @@ namespace genos
         igris::static_string<8> _name;
 
     public:
-        dlist_head chardev_list_lnk = DLIST_HEAD_INIT(chardev_list_lnk);
+        igris::dlist_node chardev_list_lnk = {};
         int reference_counter = 0;
 
     public:
@@ -30,8 +30,8 @@ namespace genos
     class zillot_chardev : public genos::chardev
     {
         zillot::chardev *zchar = nullptr;
-        dlist_head rx_wait = DLIST_HEAD_INIT(rx_wait);
-        dlist_head tx_wait = DLIST_HEAD_INIT(tx_wait);
+        igris::dlist_base rx_wait = {};
+        igris::dlist_base tx_wait = {};
 
     public:
         zillot_chardev(zillot::chardev *zchar, const char *name);

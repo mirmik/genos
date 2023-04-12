@@ -12,7 +12,7 @@ namespace genos
         const char *_path;
 
     public:
-        dlist_head namespace_list_lnk = DLIST_HEAD_INIT(namespace_list_lnk);
+        igris::dlist_node namespace_list_lnk = {};
 
     public:
         namespace_manager(const char *zone);

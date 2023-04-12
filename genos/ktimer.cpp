@@ -5,7 +5,7 @@
 #include <igris/time/systime.h>
 #include <stdlib.h>
 
-DLIST_HEAD(ktimer_list);
+igris::dlist<genos::ktimer, &genos::ktimer::lnk> ktimer_list;
 
 uint8_t genos::ktimer::check(int64_t now)
 {
@@ -23,77 +23,46 @@ void genos::ktimer::set_interval_ms(int64_t t)
 
 bool genos::ktimer::planned()
 {
-    return ctr.lnk.next != ctr.lnk.prev;
+    return lnk.next_node() != lnk.prev_node();
 }
 
 void genos::ktimer::unplan()
 {
-    dlist_del_init(&ctr.lnk);
+    lnk.unlink();
 }
 
 void genos::ktimer::plan()
 {
-    struct ktimer *it;
-    struct dlist_head *sit = nullptr;
-    int64_t it_final;
-    int64_t final;
-
-    final = start + interval;
-    sit = NULL;
+    int64_t final = start + interval;
 
     system_lock();
     unplan();
 
-    dlist_for_each_entry(it, &ktimer_list, ctr.lnk)
+    auto it = ktimer_list.begin();
+    for (; it != ktimer_list.end(); ++it)
     {
-        it_final = it->start + it->interval;
-
+        int64_t it_final = it->start + it->interval;
         if (final - it_final < 0)
-        {
-            sit = &it->ctr.lnk;
             break;
-        }
     }
-
-    dlist_add_tail(&ctr.lnk, sit ? sit : &ktimer_list);
+    ktimer_list.move_prev(*this, it);
 
     system_unlock();
 }
 
 void ktimer_execute(genos::ktimer *tim)
 {
-    switch (tim->ctr.type)
-    {
-    case CTROBJ_KTIMER_DELEGATE:
-    {
-        genos::ktimer *t = reinterpret_cast<genos::ktimer *>(tim);
-        dlist_del_init(&tim->ctr.lnk);
-        t->act(t->arg, t);
-        break;
-    }
-
-    case CTROBJ_KTIMER_SCHEDEE:
-    {
-        genos::schedee *sch = mcast_out(tim, genos::schedee, ktimer);
-        // извлечение из списка произойдёт при запуске, т.к. waiter использует
-        // поле schedee листа.
-        schedee_start(sch);
-        break;
-    }
-
-    default:
-        break;
-    }
+    tim->lnk.unlink();
+    tim->act(tim->arg, tim);
 }
 
 void genos::ktimer_manager_step(int64_t now)
 {
     system_lock();
 
-    while (!dlist_empty(&ktimer_list))
+    while (!ktimer_list.empty())
     {
-        genos::ktimer *it =
-            dlist_first_entry(&ktimer_list, genos::ktimer, ctr.lnk);
+        genos::ktimer *it = &ktimer_list.first();
         system_unlock();
 
         if (it->check(now))
@@ -101,7 +70,9 @@ void genos::ktimer_manager_step(int64_t now)
             ktimer_execute(it);
         }
         else
+        {
             return;
+        }
 
         system_lock();
     }
@@ -117,10 +88,10 @@ void genos::ktimer_manager_step()
 
 size_t genos::ktimer_manager_planed_count()
 {
-    return dlist_size(&ktimer_list);
+    return ktimer_list.size();
 }
 
 void genos::ktimer_manager_init()
 {
-    dlist_init(&ktimer_list);
+    // pass
 }

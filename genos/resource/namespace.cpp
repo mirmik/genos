@@ -15,5 +15,5 @@ genos::namespace_manager::namespace_manager(const char *path)
 
 genos::namespace_manager::~namespace_manager()
 {
-    genos::namespace_list.unlink(*this);
+    genos::namespace_list.pop(*this);
 }

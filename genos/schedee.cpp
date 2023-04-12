@@ -1,7 +1,9 @@
+#include <array>
 #include <genos/schedee.h>
 #include <genos/schedee_api.h>
 #include <genos/signal.h>
 #include <igris/container/dlist.h>
+#include <igris/dprint.h>
 #include <igris/sync/syslock.h>
 #include <string>
 
@@ -9,10 +11,12 @@ __attribute__((init_priority(140)))
 igris::dlist<genos::schedee, &genos::schedee::schedee_list_lnk>
     genos::schedee_list;
 
-struct dlist_head runlist[SCHEDEE_PRIORITY_TOTAL];
-DLIST_HEAD(unstoplist);
-DLIST_HEAD(waitlist);
-DLIST_HEAD(finallist);
+std::array<igris::dlist<genos::schedee, &genos::schedee::control_lnk>,
+           SCHEDEE_PRIORITY_TOTAL>
+    runlist;
+igris::dlist<genos::schedee, &genos::schedee::control_lnk> unstoplist;
+igris::dlist<genos::schedee, &genos::schedee::control_lnk> waitlist;
+igris::dlist<genos::schedee, &genos::schedee::control_lnk> finallist;
 
 uint16_t pid_counter = 0;
 
@@ -51,34 +55,69 @@ uint16_t generate_new_pid()
     return pid_counter;
 }
 
+bool is_schedee_manager_lists_correct__DEBUG()
+{
+    system_lock();
+    for (int i = 0; i < SCHEDEE_PRIORITY_TOTAL; ++i)
+    {
+        if (!runlist[i].is_correct())
+            abort();
+    }
+
+    if (!waitlist.is_correct())
+        abort();
+
+    if (!unstoplist.is_correct())
+        abort();
+
+    if (!finallist.is_correct())
+        abort();
+
+    system_unlock();
+    return true;
+}
+
 genos::schedee::schedee(void (*destructor)(schedee *sched))
     : destructor(destructor)
 {
-    ctrobj_init(&ctr, CTROBJ_SCHEDEE_LIST);
-    this->prio = SCHEDEE_PRIORITY_TOTAL - 1;
-    sch_state = schedee_state::stop;
-    syslock_counter_save = 0;
-    parent = current_schedee();
+    this->destructor = destructor;
+    u.flags = 0;
+    restbl.clear();
     local_errno = 0;
+    syslock_counter_save = 0;
+    pid = 0;
+    gid = 0;
+    sch_state = schedee_state::stop;
+    prio = SCHEDEE_PRIORITY_TOTAL - 1;
+    parent = nullptr;
+    signal_handler = nullptr;
+    _mnemo = "undefined";
     u.f.remove_without_zombie_state = 1;
+}
+
+void genos::schedee::kill()
+{
+    if (u.f.killed)
+        return;
+    u.f.killed = 1;
 }
 
 void genos::schedee_manager_init()
 {
-    for (int i = 0; i < SCHEDEE_PRIORITY_TOTAL; ++i)
-        dlist_init(&runlist[i]);
+    for (auto &list : runlist)
+        list.clear();
 
-    dlist_init(&waitlist);
-    dlist_init(&unstoplist);
-    dlist_init(&finallist);
+    waitlist.clear();
+    unstoplist.clear();
+    finallist.clear();
 }
 
 void genos::schedee_start(genos::schedee *sch)
 {
     system_lock();
     sch->sch_state = schedee_state::run;
-    sch->ctr.type = CTROBJ_SCHEDEE_LIST;
-    dlist_move_tail(&sch->ctr.lnk, &unstoplist);
+    // sch->ctr.type = CTROBJ_SCHEDEE_LIST;
+    unstoplist.move_back(*sch);
     system_unlock();
 }
 
@@ -86,14 +125,14 @@ void genos::schedee_stop(genos::schedee *sch)
 {
     system_lock();
     sch->sch_state = schedee_state::stop;
-    sch->ctr.type = CTROBJ_SCHEDEE_LIST;
-    dlist_move_tail(&sch->ctr.lnk, &waitlist);
+    // sch->ctr.type = CTROBJ_SCHEDEE_LIST;
+    waitlist.move_back(*sch);
     system_unlock();
 }
 
 void __schedee_run(genos::schedee *sch)
 {
-    dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
+    runlist[sch->prio].move_back(*sch);
 }
 
 void schedee_notify_finalize(genos::schedee *sch)
@@ -109,7 +148,7 @@ void genos::__schedee_final(genos::schedee *sch)
     system_lock();
     sch->sch_state = schedee_state::final;
     schedee_notify_finalize(sch);
-    dlist_move_tail(&sch->ctr.lnk, &finallist);
+    finallist.move_back(*sch);
     system_unlock();
     __current_schedee = tmp_current;
 }
@@ -117,28 +156,8 @@ void genos::__schedee_final(genos::schedee *sch)
 void __schedee_execute(genos::schedee *sch)
 {
     __current_schedee = sch;
-    sch->u.f.runned = 1;
+    sch->set_runned_flag();
     sch->execute();
-}
-
-bool is_schedee_manager_lists_correct()
-{
-    for (int i = 0; i < SCHEDEE_PRIORITY_TOTAL; ++i)
-    {
-        if (!dlist_is_correct(&runlist[i]))
-            return false;
-    }
-
-    if (!dlist_is_correct(&waitlist))
-        return false;
-
-    if (!dlist_is_correct(&unstoplist))
-        return false;
-
-    if (!dlist_is_correct(&finallist))
-        return false;
-
-    return true;
 }
 
 void genos::schedee_manager_step()
@@ -147,60 +166,56 @@ void genos::schedee_manager_step()
 
     // Отрабатываем логику завершения процессов.
     system_lock();
-    while (!dlist_empty(&finallist))
+    while (!finallist.empty())
     {
-        sch = dlist_first_entry(&finallist, genos::schedee, ctr.lnk);
-        dlist_del_init(&sch->ctr.lnk);
+        sch = &finallist.front();
+        sch->control_lnk.unlink();
+        sch->schedee_list_lnk.unlink();
 
         system_unlock();
 
         sch->sch_state = schedee_state::zombie;
         sch->finalize();
 
-        if (sch->u.f.remove_without_zombie_state)
+        if (sch->remove_without_zombie_state_flag())
         {
             schedee_deinit(sch);
             sch->destructor(sch);
         }
-
-        // TODO: remove this section after debug
-        if (!is_schedee_manager_lists_correct())
-        {
-            system_lock();
-            dprln("Schedee manager lists is corrupted!");
-            abort();
-        }
-
         system_lock();
     }
     system_unlock();
 
     // Перемещаем процессы, объявленные запущенными в основные листы.
     system_lock();
-    while (!dlist_empty(&unstoplist))
+    while (!unstoplist.empty())
     {
-        sch = dlist_first_entry(&unstoplist, genos::schedee, ctr.lnk);
+        sch = &unstoplist.front();
         __schedee_run(sch);
     }
     system_unlock();
 
     for (int priolvl = 0; priolvl < SCHEDEE_PRIORITY_TOTAL; priolvl++)
     {
-        if (!dlist_empty(&runlist[priolvl]))
+        system_lock();
+        if (!runlist[priolvl].empty())
         {
-            sch = dlist_first_entry(&runlist[priolvl], genos::schedee, ctr.lnk);
+            sch = &runlist[priolvl].front();
 
-            if (sch->u.f.killed)
+            if (sch->killed_flag())
             {
                 __schedee_final(sch);
-                return;
+                system_unlock();
+                continue;
             }
 
-            dlist_move_tail(&sch->ctr.lnk, &runlist[sch->prio]);
-            __schedee_execute(sch);
+            runlist[sch->prio].move_back(*sch);
+            system_unlock();
 
+            __schedee_execute(sch);
             return;
         }
+        system_unlock();
     }
 
     // Nobody to run
@@ -209,14 +224,14 @@ void genos::schedee_manager_step()
 
 void genos::schedee_deinit(genos::schedee *sch)
 {
-    dlist_del_init(&sch->ctr.lnk);
-    dlist_del_init(&sch->schedee_list_lnk);
+    sch->control_lnk.unlink();
+    sch->schedee_list_lnk.unlink();
 }
 
 void genos::schedee::start()
 {
     system_lock();
-    if (schedee_list_lnk.next == &schedee_list_lnk)
+    if (!schedee_list_lnk.is_linked())
         genos::schedee_list.move_back(*this);
     if (this->pid == 0)
         this->pid = generate_new_pid();
@@ -263,7 +278,7 @@ void genos::schedee::signal_received(int sig)
     if (sig == SIGCHLD && sch_state == schedee_state::wait_schedee)
     {
         auto *cursch = genos::current_schedee();
-        int pid = ctrobj_get_future(&ctr);
+        int pid = cursch->future;
         if (pid == cursch->pid)
             this->start();
     }

@@ -1,4 +1,5 @@
 #include <asm/irq.h>
+#include <genos/coop_schedee.h>
 #include <genos/drivers/tty_linedisc_line.h>
 #include <genos/drivers/zillot_tty_driver.h>
 #include <genos/schedee.h>
@@ -21,7 +22,7 @@
 #include <zillot/stm32/stm32_usart.h>
 #include <zillot/stm32/usart.h>
 
-#define HSI_FREQ 16000000
+#define HSI_FREQ 8000000
 
 // stm32f401re led
 zillot::stm32::pin board_led(GPIOA, 1 << 5);
@@ -99,10 +100,32 @@ int main()
     irqs_enable();
     tty_driver.begin();
 
+    auto *sch = genos::create_coop_schedee(
+        +[](void *priv)
+        {
+            while (1)
+            {
+                board_led.toggle();
+                cpu_delay(500000);
+            }
+            return 0;
+        },
+        nullptr,
+        nullptr,
+        512);
+
     while (1)
     {
-        onboardtest::TestEnv env(_write, _syncronization);
-        env.start();
+        __schedule__();
+    }
+}
+
+void __schedule__()
+{
+    while (1)
+    {
+        genos::ktimer_manager_step();
+        genos::schedee_manager_step();
     }
 }
 

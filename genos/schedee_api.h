@@ -18,6 +18,8 @@ namespace genos
     int wait_for_avail(unsigned int fd);
 
     void send_signal_to_group(int gid, int sig);
+
+    int kill(pid_t pid);
 }
 
 #endif

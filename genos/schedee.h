@@ -32,19 +32,23 @@ namespace genos
         void (*signal_handler)(int sig) = nullptr;
         void (*destructor)(schedee *sched) = nullptr;
 
-        union
-        {
-            struct ctrobj ctr;
-            struct waiter waiter;
-            genos::ktimer ktimer;
-        };
+        // union
+        //{
+        //     struct ctrobj ctr;
+        //     struct waiter waiter;
+        // };
+
+        igris::dlist_node control_lnk;
+        struct waiter waiter;
+        genos::ktimer ktimer;
+        intptr_t future;
 
         uint8_t prio = SCHEDEE_PRIORITY_TOTAL - 1;
         schedee_state sch_state = schedee_state::stop;
 
         uint16_t pid = 0;
         uint16_t gid = 0;
-        struct dlist_head schedee_list_lnk = DLIST_HEAD_INIT(schedee_list_lnk);
+        igris::dlist_node schedee_list_lnk = {};
 
         union
         {
@@ -57,14 +61,13 @@ namespace genos
         genos::resource_table restbl;
         // struct navigation_block * navblock;
 
-    public:
+    private:
         union u_s
         {
             uint8_t flags = 0;
             struct f_s
             {
                 uint8_t runned : 1;
-                uint8_t can_displace : 1;
                 uint8_t has_context : 1;
                 uint8_t dynamic_heap : 1;
                 uint8_t killed : 1;
@@ -74,17 +77,12 @@ namespace genos
         } u;
 
     public:
-        schedee(void (*destructor)(schedee *sched) = nullptr);
+        schedee(void (*destructor)(schedee *sched));
         virtual ~schedee() = default;
 
         genos::resource_table &resource_table()
         {
             return restbl;
-        }
-
-        void set_destructor(void (*destructor)(schedee *sched))
-        {
-            this->destructor = destructor;
         }
 
         void set_mnemo(const char *str)
@@ -96,6 +94,8 @@ namespace genos
         {
             return u.f.is_process;
         }
+
+        void kill();
 
         virtual void execute() = 0;
         virtual void finalize() = 0;
@@ -118,6 +118,48 @@ namespace genos
         uint8_t priority()
         {
             return prio;
+        }
+
+        void set_dynamic_heap_flag()
+        {
+            u.f.dynamic_heap = 1;
+        }
+        void set_has_context_flag()
+        {
+            u.f.has_context = 1;
+        }
+        void set_is_process_flag()
+        {
+            u.f.is_process = 1;
+        }
+        void set_runned_flag()
+        {
+            u.f.runned = 1;
+        }
+        void set_killed_flag()
+        {
+            u.f.killed = 1;
+        }
+
+        bool dynamic_heap_flag()
+        {
+            return u.f.dynamic_heap;
+        }
+        bool has_context_flag()
+        {
+            return u.f.has_context;
+        }
+        bool runned_flag()
+        {
+            return u.f.runned;
+        }
+        bool killed_flag()
+        {
+            return u.f.killed;
+        }
+        bool remove_without_zombie_state_flag()
+        {
+            return u.f.remove_without_zombie_state;
         }
 
         void signal_received(int sig);

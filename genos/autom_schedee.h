@@ -15,7 +15,6 @@ namespace genos
         int state = 0;
 
     public:
-        autom_schedee() = default;
         ~autom_schedee() override = default;
 
         // autom_schedee(void (*destructor)(schedee *sched) = nullptr);

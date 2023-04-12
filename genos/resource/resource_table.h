@@ -40,6 +40,11 @@ namespace genos
             auto &newres = create_openres();
             newres.open_as(res);
         }
+
+        void clear()
+        {
+            table.clear();
+        }
     };
 }
 

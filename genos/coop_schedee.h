@@ -12,10 +12,10 @@ namespace genos
     {
         struct context cntxt;
 
-        int (*task)(void *);
-        void *arg;
-        void *heap;
-        size_t heapsize;
+        int (*task)(void *) = nullptr;
+        void *arg = nullptr;
+        void *heap = nullptr;
+        size_t heapsize = 0;
 
         int ret;
 
@@ -25,10 +25,6 @@ namespace genos
                      void *heap,
                      int heapsize,
                      void (*destructor)(schedee *sched) = nullptr);
-        coop_schedee(void (*destructor)(schedee *sched) = nullptr)
-            : schedee(destructor)
-        {
-        }
 
         ~coop_schedee() override;
 

@@ -4,7 +4,6 @@
 #include <genos/wait.h>
 
 #include <igris/sync/syslock.h>
-#include <igris/sync/waitqueue.h>
 #include <igris/util/bug.h>
 #include <igris/util/macro.h>
 
@@ -13,6 +12,12 @@ int unwait_schedee_waiter(struct waiter *w)
     genos::schedee *sch = mcast_out(w, genos::schedee, waiter);
     schedee_start(sch);
     return 0;
+}
+
+void _unwait_schedee(void *priv)
+{
+    genos::schedee *sch = (genos::schedee *)priv;
+    unwait_schedee_waiter(&sch->waiter);
 }
 
 /**
@@ -27,7 +32,7 @@ int unwait_schedee_waiter(struct waiter *w)
  * @priority - приоритетность - добавляет токен в начало или конец очереди
  * @future - Указатель на слово для приёма возвращаемого значения.
  * */
-int wait_current_schedee(struct dlist_head *head, int priority, void **future)
+int wait_current_schedee(igris::dlist_base *head, int priority, void **future)
 {
     (void)future;
     genos::schedee *sch;
@@ -38,18 +43,18 @@ int wait_current_schedee(struct dlist_head *head, int priority, void **future)
         return -1;
     }
 
-    sch->ctr.type = CTROBJ_WAITER_SCHEDEE;
     sch->sch_state = genos::schedee_state::wait;
 
     // Для лока используем апи прерываний, чтобы не нарушать консистентность
     // подсистемы syslock
     irqstate_t save = irqs_save();
-    dlist_del_init(&sch->ctr.lnk);
+    sch->control_lnk.unlink();
 
+    waiter_delegate_init(&sch->waiter, _unwait_schedee, (void *)sch);
     if (priority)
-        dlist_move(&sch->ctr.lnk, head);
+        head->move_front(sch->waiter.lnk);
     else
-        dlist_move_tail(&sch->ctr.lnk, head);
+        head->move_back(sch->waiter.lnk);
     irqs_restore(save);
 
     return 0;
@@ -63,7 +68,7 @@ int waitchild()
     sch->sch_state = genos::schedee_state::wait_schedee;
 
     system_lock();
-    dlist_del_init(&sch->ctr.lnk);
+    sch->control_lnk.unlink();
     system_unlock();
 
     genos::current_schedee_displace();
@@ -71,10 +76,10 @@ int waitchild()
     return 0;
 }
 
-int waitqueue_no_displace_wait(struct waitqueue *queue)
+/*int waitqueue_no_displace_wait(struct waitqueue *queue)
 {
     int priority = 0;
-    struct dlist_head *head = &queue->lst;
+    igris::dlist_node *head = &queue->lst;
     genos::schedee *sch;
     sch = genos::current_schedee();
 
@@ -84,13 +89,14 @@ int waitqueue_no_displace_wait(struct waitqueue *queue)
     // Для лока используем апи прерываний, чтобы не нарушать консистентность
     // подсистемы syslock
     irqstate_t save = irqs_save();
-    dlist_del_init(&sch->ctr.lnk);
+    sch->ctr.lnk.unlink();
 
     if (priority)
-        dlist_move(&sch->ctr.lnk, head);
+        sch->ctr.lnk.move_next_than(head);
     else
-        dlist_move_tail(&sch->ctr.lnk, head);
+        sch->ctr.lnk.move_prev_than(head);
     irqs_restore(save);
 
     return 0;
 }
+*/

@@ -65,8 +65,7 @@ TEST_CASE("aschedee")
     genos::schedee_manager_init();
 
     genos::autom_schedee sch(foo, nullptr);
-
-    genos::schedee_start(&sch);
+    sch.start();
 
     genos::schedee_manager_step();
     CHECK_EQ(a, 1);

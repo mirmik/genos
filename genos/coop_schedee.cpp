@@ -1,3 +1,4 @@
+#include <asm/irq.h>
 #include <genos/coop_schedee.h>
 #include <genos/schedee.h>
 #include <genos/schedee_api.h>
@@ -23,6 +24,7 @@ static void coop_schedee_starter(void *priv)
 
 void genos::coop_schedee::execute()
 {
+    irqs_enable();
     context_load(&cntxt);
 }
 
@@ -34,7 +36,7 @@ int genos::coop_schedee::displace()
 
 void genos::coop_schedee::finalize()
 {
-    if (u.f.dynamic_heap)
+    if (dynamic_heap_flag())
     {
         free(heap);
         heap = nullptr;
@@ -43,47 +45,37 @@ void genos::coop_schedee::finalize()
 
 genos::coop_schedee::~coop_schedee()
 {
-    free(heap);
+    if (dynamic_heap_flag())
+        free(heap);
 }
 
 genos::coop_schedee::coop_schedee(int (*task)(void *),
                                   void *arg,
-                                  void *heap,
+                                  void *heapptr,
                                   int heapsize,
                                   void (*destructor)(schedee *))
-{
-    init(task, arg, heap, heapsize, destructor);
-}
-
-void genos::coop_schedee::init(int (*task)(void *),
-                               void *arg,
-                               void *heap,
-                               int heapsize,
-                               void (*destructor)(schedee *))
+    : schedee(destructor)
 {
     assert(heapsize);
 
-    set_destructor(destructor);
-
-    if (heap == nullptr)
+    this->heap = heapptr;
+    this->heapsize = heapsize;
+    if (this->heap == nullptr)
     {
-        heap = malloc(this->heapsize);
-        u.f.dynamic_heap = 1;
+        this->heap = malloc(this->heapsize);
+        this->set_dynamic_heap_flag();
     }
 
+    this->task = task;
+    this->arg = arg;
+    this->set_has_context_flag();
+    this->set_is_process_flag();
+
     context_init(&cntxt,
-                 (uintptr_t)heap + heapsize - 1,
+                 (uintptr_t)this->heap + heapsize - 1,
                  coop_schedee_starter,
                  (void *)this,
                  1);
-
-    this->heap = heap;
-    this->heapsize = heapsize;
-    this->task = task;
-    this->arg = arg;
-    this->u.f.has_context = 1;
-    this->u.f.can_displace = 1;
-    this->u.f.is_process = 1;
 }
 
 genos::coop_schedee *genos::create_coop_schedee(int (*foo)(void *),
@@ -101,15 +93,7 @@ genos::coop_schedee *genos::create_process(int (*foo)(void *),
 
 {
     genos::coop_schedee *csch = new genos::coop_schedee(
-        foo,
-        arg,
-        stack,
-        stack_heap_size,
-        +[](schedee *)
-        {
-            auto *csch = (genos::coop_schedee *)current_schedee();
-            delete csch;
-        });
+        foo, arg, stack, stack_heap_size, +[](schedee *csch) { delete csch; });
     return csch;
 }
 

@@ -5,8 +5,6 @@
 #include <igris/sync/syslock.h>
 #include <igris/time/systime.h>
 
-extern struct dlist_head ktimer_list;
-
 namespace genos
 {
     class ktimer;
@@ -19,7 +17,7 @@ namespace genos
     class ktimer
     {
     public:
-        struct ctrobj ctr = CTROBJ_DECLARE(ctr, CTROBJ_KTIMER_DELEGATE);
+        igris::dlist_node lnk = {};
         int64_t start = 0;
         int64_t interval = 0;
         ktimer_callback_t act = {};
@@ -72,7 +70,7 @@ namespace genos
 
         void deinit()
         {
-            dlist_del_init(&ctr.lnk);
+            lnk.unlink();
         }
     };
 

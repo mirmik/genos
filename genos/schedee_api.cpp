@@ -16,7 +16,9 @@ int genos::wait_for_avail(unsigned int fd)
     if (resources.size() <= fd)
         return -1;
     auto &openr = resources[fd];
-    return openr.wait_for_avail();
+
+    auto ret = openr.wait_for_avail();
+    return ret;
 }
 
 void genos::current_schedee_exit()
@@ -68,16 +70,16 @@ void genos::current_schedee_msleep_without_displace(unsigned int ms,
     timer = &sch->ktimer;
 
     system_lock();
-    dlist_del_init(&sch->ctr.lnk);
+    sch->control_lnk.unlink();
     system_unlock();
 
-    sch->ctr.type = CTROBJ_KTIMER_SCHEDEE;
+    // sch->ctr.type = CTROBJ_KTIMER_SCHEDEE;
     sch->sch_state = schedee_state::wait;
 
-    *timer = genos::ktimer(__timer_schedee_unsleep,
-                           (void *)sch,
-                           start, // start
-                           ms     // interval
+    timer->init(__timer_schedee_unsleep,
+                (void *)sch,
+                start, // start
+                ms     // interval
     );
 
     timer->plan();
@@ -91,4 +93,17 @@ void genos::current_schedee_msleep_without_displace(unsigned int ms)
 void genos::send_signal_to_group(int gid, int sig)
 {
     // pass
+}
+
+int genos::kill(pid_t pid)
+{
+    for (auto &sch : genos::schedee_list)
+    {
+        if (sch.pid == pid)
+        {
+            sch.kill();
+            return 0;
+        }
+    }
+    return -1;
 }

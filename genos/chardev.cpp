@@ -31,7 +31,7 @@ genos::chardev::chardev(const char *name) : _name(name)
 
 genos::chardev::~chardev()
 {
-    chardev_list.unlink(*this);
+    chardev_list.pop(*this);
 }
 
 genos::zillot_chardev::zillot_chardev(zillot::chardev *zchar, const char *name)

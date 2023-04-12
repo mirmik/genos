@@ -12,7 +12,7 @@ namespace genos
     {
         tty_driver *driver = nullptr;
         tty_linedisc *linedisc = nullptr;
-        dlist_head rx_wait = DLIST_HEAD_INIT(rx_wait);
+        igris::dlist_base rx_wait = {};
 
         pid_t gid = 0; // holder group id
         pid_t pid = 0;

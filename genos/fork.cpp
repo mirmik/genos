@@ -67,10 +67,10 @@ int genos::waitpid(intptr_t pid)
     sch->sch_state = genos::schedee_state::wait_schedee;
 
     system_lock();
-    dlist_del_init(&sch->ctr.lnk);
+    sch->control_lnk.unlink();
     system_unlock();
 
-    ctrobj_set_future(&sch->ctr, pid);
+    sch->future = pid;
     genos::current_schedee_displace();
 
     return 0;
@@ -84,10 +84,10 @@ int genos::waitpid_without_displace(intptr_t pid)
     sch->sch_state = genos::schedee_state::wait_schedee;
 
     system_lock();
-    dlist_del_init(&sch->ctr.lnk);
+    sch->control_lnk.unlink();
     system_unlock();
 
-    ctrobj_set_future(&sch->ctr, pid);
+    sch->future = pid;
 
     return 0;
 }
