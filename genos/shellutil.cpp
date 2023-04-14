@@ -23,7 +23,7 @@ int info_cmd(const nos::argv &args, nos::ostream &os)
     return 0;
 }
 
-int info_cmd(const nos::argv &args, nos::ostream &os)
+int time_cmd(const nos::argv &args, nos::ostream &os)
 {
     uint64_t time = igris::micros();
     nos::println_to(os, "time: ", time);
@@ -31,5 +31,5 @@ int info_cmd(const nos::argv &args, nos::ostream &os)
 }
 
 nos::executor genos::schedee_manager_executor{
-    {nos::command{"ps", "proccess information", info_cmd}},
-    {nos::command{"time", "time information", time_cmd}}};
+    {nos::command{"ps", "proccess information", info_cmd},
+     nos::command{"time", "time information", time_cmd}}};
