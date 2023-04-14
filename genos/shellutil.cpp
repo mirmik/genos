@@ -15,6 +15,8 @@ int info_cmd(const nos::argv &args, nos::ostream &os)
         nos::print_to(os, schedee_state_to_sting(sch.sch_state));
         nos::print_to(os, " prio: ");
         nos::print_to(os, std::to_string(sch.prio));
+        nos::print_to(os, " counter: ");
+        nos::print_to(os, std::to_string(sch._execute_counter));
         nos::println_to(os);
     }
     return 0;

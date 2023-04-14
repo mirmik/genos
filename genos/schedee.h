@@ -37,6 +37,7 @@ namespace genos
         //     struct ctrobj ctr;
         //     struct waiter waiter;
         // };
+        uint32_t _execute_counter = 0;
 
         igris::dlist_node control_lnk;
         struct waiter waiter;
