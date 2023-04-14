@@ -26,7 +26,7 @@ licant.module("genos.schedee",
                   "genos/chardev.cpp",
                   "genos/fork.cpp",
                   "genos/invoke.cpp",
-                  "genos/execution_controller.cpp",
+                  "genos/execution_monitor.cpp",
               ],
               mdepends=["genos.ktimer", "genos.drivers"]
               )

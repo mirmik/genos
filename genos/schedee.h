@@ -1,6 +1,7 @@
 #ifndef GENOS_SCHEDEE_H
 #define GENOS_SCHEDEE_H
 
+#include <genos/execution_monitor.h>
 #include <genos/ktimer.h>
 #include <genos/resource/resource_table.h>
 #include <igris/container/dlist.h>
@@ -32,12 +33,7 @@ namespace genos
         void (*signal_handler)(int sig) = nullptr;
         void (*destructor)(schedee *sched) = nullptr;
 
-        // union
-        //{
-        //     struct ctrobj ctr;
-        //     struct waiter waiter;
-        // };
-        uint32_t _execute_counter = 0;
+        genos::execution_monitor _execmon = {};
 
         igris::dlist_node control_lnk;
         struct waiter waiter;
@@ -89,6 +85,7 @@ namespace genos
         void set_mnemo(const char *str)
         {
             _mnemo = str;
+            _execmon.set_mnemo(str);
         }
 
         bool is_process()

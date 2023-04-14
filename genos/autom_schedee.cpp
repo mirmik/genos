@@ -4,7 +4,9 @@
 
 void genos::autom_schedee::execute()
 {
+    _execmon.start_session();
     func(priv, &state);
+    _execmon.end_session();
 }
 
 void genos::autom_schedee::finalize() {}

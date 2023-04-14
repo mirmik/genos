@@ -24,12 +24,14 @@ static void coop_schedee_starter(void *priv)
 
 void genos::coop_schedee::execute()
 {
+    _execmon.start_session();
     irqs_enable();
     context_load(&cntxt);
 }
 
 int genos::coop_schedee::displace()
 {
+    _execmon.end_session();
     context_save_and_displace(&cntxt);
     return SCHEDEE_DISPLACE_REAL;
 }

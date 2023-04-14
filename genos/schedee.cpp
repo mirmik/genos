@@ -157,7 +157,6 @@ void __schedee_execute(genos::schedee *sch)
 {
     __current_schedee = sch;
     sch->set_runned_flag();
-    sch->_execute_counter++;
     sch->execute();
 }
 

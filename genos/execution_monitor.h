@@ -7,7 +7,7 @@
 
 namespace genos
 {
-    class execution_controller
+    class execution_monitor
     {
         const char *_mnemo = "undefined";
         uint64_t _summary_time = 0;
@@ -19,7 +19,29 @@ namespace genos
         igris::dlist_node _lnk = {};
 
     public:
-        execution_controller(const char *mnemo);
+        execution_monitor() = default;
+        execution_monitor(const char *mnemo);
+
+        const char *mnemo() const
+        {
+            return _mnemo;
+        }
+        uint64_t summary_time() const
+        {
+            return _summary_time;
+        }
+        uint32_t summary_count() const
+        {
+            return _summary_count;
+        }
+        uint64_t last_session_time() const
+        {
+            return _last_session_time;
+        }
+        uint64_t start_time() const
+        {
+            return _start_time;
+        }
 
         void start_session()
         {
@@ -32,20 +54,24 @@ namespace genos
             _summary_time += _last_session_time;
             _summary_count++;
         }
+
+        void set_mnemo(const char *name)
+        {
+            _mnemo = name;
+        }
     };
 
-    class execution_controller_manager
+    class execution_monitor_manager
     {
-        static igris::dlist<execution_controller, &execution_controller::_lnk>
-            _list;
+        static igris::dlist<execution_monitor, &execution_monitor::_lnk> _list;
 
     public:
-        static void register_controller(execution_controller *ctrl)
+        static void register_controller(execution_monitor *ctrl)
         {
             _list.move_back(*ctrl);
         }
 
-        static void print_summary();
+        static std::string summary();
 
         static size_t count()
         {

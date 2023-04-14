@@ -30,6 +30,14 @@ int time_cmd(const nos::argv &args, nos::ostream &os)
     return 0;
 }
 
+int execmon_cmd(const nos::argv &args, nos::ostream &os)
+{
+    auto str = genos::execution_monitor_manager::summary();
+    nos::print_to(os, str);
+    return 0;
+}
+
 nos::executor genos::schedee_manager_executor{
     {nos::command{"ps", "proccess information", info_cmd},
-     nos::command{"time", "time information", time_cmd}}};
+     nos::command{"time", "time information", time_cmd},
+     nos::command{"execmon", "execution monitor information", monitor_cmd}}};
