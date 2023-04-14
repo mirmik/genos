@@ -17,7 +17,7 @@ int info_cmd(const nos::argv &args, nos::ostream &os)
         nos::print_to(os, " prio: ");
         nos::print_to(os, std::to_string(sch.prio));
         nos::print_to(os, " counter: ");
-        nos::print_to(os, std::to_string(sch._execute_counter));
+        nos::print_to(os, std::to_string(sch._execmon.summary_count()));
         nos::println_to(os);
     }
     return 0;
@@ -40,4 +40,4 @@ int execmon_cmd(const nos::argv &args, nos::ostream &os)
 nos::executor genos::schedee_manager_executor{
     {nos::command{"ps", "proccess information", info_cmd},
      nos::command{"time", "time information", time_cmd},
-     nos::command{"execmon", "execution monitor information", monitor_cmd}}};
+     nos::command{"execmon", "execution monitor information", execmon_cmd}}};

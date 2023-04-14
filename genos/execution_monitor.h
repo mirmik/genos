@@ -4,6 +4,7 @@
 #include <igris/container/dlist.h>
 #include <igris/time/systime.h>
 #include <stdint.h>
+#include <string>
 
 namespace genos
 {
@@ -19,7 +20,7 @@ namespace genos
         igris::dlist_node _lnk = {};
 
     public:
-        execution_monitor() = default;
+        execution_monitor();
         execution_monitor(const char *mnemo);
 
         const char *mnemo() const
