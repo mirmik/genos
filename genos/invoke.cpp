@@ -9,7 +9,7 @@
 //#include <nos/print.h>
 #include <unistd.h>
 
-__attribute__((init_priority(101)))
+INIT_PRIORITY(110)
 genos::system_utility_aggregator system_utilities;
 
 int genos::invoke_program(const char *cmd, int argc, const char **argv)

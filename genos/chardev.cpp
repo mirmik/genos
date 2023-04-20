@@ -2,10 +2,9 @@
 #include <genos/chardev.h>
 #include <genos/schedee_api.h>
 
-__attribute__((
-    init_priority(140))) static igris::dlist<genos::chardev,
-                                             &genos::chardev::chardev_list_lnk>
-    chardev_list;
+INIT_PRIORITY(140)
+static igris::dlist<genos::chardev,
+                    &genos::chardev::chardev_list_lnk> chardev_list;
 
 genos::device_namespace_manager device_namespace;
 

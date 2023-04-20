@@ -7,7 +7,7 @@
 #include <igris/sync/syslock.h>
 #include <string>
 
-__attribute__((init_priority(140)))
+INIT_PRIORITY(140)
 igris::dlist<genos::schedee, &genos::schedee::schedee_list_lnk>
     genos::schedee_list;
 

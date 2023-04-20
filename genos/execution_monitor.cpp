@@ -1,6 +1,6 @@
 #include <genos/execution_monitor.h>
 
-__attribute__((init_priority(101)))
+INIT_PRIORITY(101)
 igris::dlist<genos::execution_monitor, &genos::execution_monitor::_lnk>
     genos::execution_monitor_manager::_list;
 

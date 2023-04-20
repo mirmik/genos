@@ -2,7 +2,7 @@
 #include <igris/container/dlist.h>
 #include <string.h>
 
-__attribute__((init_priority(140)))
+INIT_PRIORITY(140)
 igris::dlist<genos::namespace_manager,
              &genos::namespace_manager::namespace_list_lnk>
     genos::namespace_list;
