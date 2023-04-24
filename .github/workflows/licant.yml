@@ -34,6 +34,30 @@ jobs:
         sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/${{matrix.compiler.CC}} 100
         sudo python3 -m pip install licant
 
+    - name: Install igris library
+      run: |
+        git clone https://github.com/mirmik/igris
+        cd igris
+        ./make.py
+        sudo ./make.py install
+        cd ..
+
+    - name: Install nos library
+      run: |
+        git clone https://github.com/mirmik/nos
+        cd nos
+        ./make.py
+        sudo ./make.py install
+        cd ..
+    
+    - name: Install zillot library
+      run: |
+        git clone https://github.com/mirmik/zillot
+        cd zillot
+        ./make.py
+        sudo ./make.py install
+        cd ..
+
     - name: Build
       run: python3 ./make.py
 
