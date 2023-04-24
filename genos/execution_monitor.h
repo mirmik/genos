@@ -5,6 +5,7 @@
 #include <igris/time/systime.h>
 #include <stdint.h>
 #include <string>
+#include <igris/compiler.h>
 
 namespace genos
 {
