@@ -22,7 +22,6 @@ jobs:
       matrix:
         compiler: 
           - { CXX: g++-11, CC: gcc-11 } 
-          - { CXX: clang++-12, CC: clang-12 }
       
     steps:
     - uses: actions/checkout@v2
