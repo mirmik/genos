@@ -56,8 +56,6 @@ jobs:
       run: |
         git clone https://github.com/mirmik/onboardtest
         cd onboardtest
-        ./make.py
-        sudo ./make.py install
         sudo licant-libs .
         cd ..
 
@@ -65,7 +63,7 @@ jobs:
       run: |
         git clone https://github.com/mirmik/zillot
         cd zillot
-        ./make.py
+        ./make.py runtests
         sudo ./make.py install
         cd ..
 
