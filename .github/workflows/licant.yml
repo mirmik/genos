@@ -63,8 +63,7 @@ jobs:
       run: |
         git clone https://github.com/mirmik/zillot
         cd zillot
-        ./make.py runtests
-        sudo ./make.py install
+        sudo licant-libs .
         cd ..
 
     - name: Build
