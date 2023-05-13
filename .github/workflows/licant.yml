@@ -51,7 +51,16 @@ jobs:
         sudo ./make.py install
         sudo licant-libs .
         cd ..
-    
+
+    - name: Install onboardtest library
+      run: |
+        git clone https://github.com/mirmik/onboardtest
+        cd onboardtest
+        ./make.py
+        sudo ./make.py install
+        sudo licant-libs .
+        cd ..
+
     - name: Install zillot library
       run: |
         git clone https://github.com/mirmik/zillot
