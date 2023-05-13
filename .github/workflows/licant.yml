@@ -40,7 +40,7 @@ jobs:
         cd igris
         ./make.py
         sudo ./make.py install
-        licant-libs .
+        sudo licant-libs .
         cd ..
 
     - name: Install nos library
@@ -49,7 +49,7 @@ jobs:
         cd nos
         ./make.py
         sudo ./make.py install
-        licant-libs .
+        sudo licant-libs .
         cd ..
     
     - name: Install zillot library
