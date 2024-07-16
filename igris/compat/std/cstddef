@@ -1,0 +1,13 @@
+#ifndef GXX_STD_CSTDDEF_H
+#define GXX_STD_CSTDDEF_H
+
+#include <stddef.h>
+
+namespace std
+{
+    using size_t = ::size_t;
+    using nullptr_t = decltype(nullptr);
+    using ptrdiff_t = ::ptrdiff_t;
+}
+
+#endif

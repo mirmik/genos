@@ -1,0 +1,1 @@
+pdflatex -jobname=protocol-ru ru/protocol.tex

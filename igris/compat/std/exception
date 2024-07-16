@@ -1,0 +1,28 @@
+#ifndef IGRIS_STD_EXCEPTION_H
+#define IGRIS_STD_EXCEPTION_H
+
+#include <string>
+
+namespace std
+{
+    class exception
+    {
+    public:
+        exception(const std::string &msg) : m_msg(msg)
+        {
+            m_msg.c_str();
+        }
+
+        const char *what() const
+        {
+            return m_msg.c_str();
+        }
+
+    private:
+        std::string m_msg;
+    };
+
+    bool uncaught_exception();
+}
+
+#endif

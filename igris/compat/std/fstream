@@ -1,0 +1,73 @@
+#ifndef IGRIS_STD_FSTREAM_H
+#define IGRIS_STD_FSTREAM_H
+
+#include <ios>
+#include <istream>
+#include <ostream>
+
+namespace std
+{
+    class fstream : virtual public istream, virtual public ostream
+
+    {
+        int _dummy;
+
+    public:
+        fstream() {}
+        fstream(std::string) {}
+        fstream(std::string, int) {}
+
+        ~fstream() {}
+        operator bool()
+        {
+            return true;
+        }
+
+        void open(std::string) {}
+        void open(std::string, int) {}
+
+        bool is_open()
+        {
+            return false;
+        }
+
+        void close() {}
+    };
+
+    class ifstream : virtual public fstream
+    {
+    public:
+        ifstream() {}
+        ifstream(std::string) {}
+        ifstream(std::string, int) {}
+
+        bool fail()
+        {
+            return false;
+        }
+
+        bool good()
+        {
+            return false;
+        }
+
+        bool eof()
+        {
+            return false;
+        }
+
+        int read(char *buf, int sz)
+        {
+            (void)buf;
+            (void)sz;
+            return 0;
+        }
+
+        int gcount()
+        {
+            return 0;
+        }
+    };
+}
+
+#endif

@@ -1,0 +1,7 @@
+#ifndef IGRIS_STD_FUNCTIONAL_MINIMAL_H
+#define IGRIS_STD_FUNCTIONAL_MINIMAL_H
+
+namespace std
+{
+
+}

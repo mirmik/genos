@@ -1,0 +1,2 @@
+/web/ ./web/
+/simulator-configs/ ./simulator-configs/

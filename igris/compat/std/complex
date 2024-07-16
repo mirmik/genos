@@ -1,0 +1,70 @@
+#ifndef IGRIS_STD_COMPLEX_H
+#define IGRIS_STD_COMPLEX_H
+
+#include <cmath>
+
+namespace std
+{
+    template <class T> class complex
+    {
+        T re, im;
+
+    public:
+        complex(T r, T i) : re(r), im(i) {}
+        complex(T r) : re(r) {}
+        complex() : re(0), im(0) {}
+
+        std::complex<T> operator*(const std::complex<T> &b)
+        {
+            return {re * b.re - im * b.im, re * b.im + im * b.re};
+        }
+
+        std::complex<T> &operator*=(const std::complex<T> &b)
+        {
+            *this = *this * b;
+            return *this;
+        }
+
+        std::complex<T> operator+(const std::complex<T> &b)
+        {
+            return {re + b.re, im + b.im};
+        }
+
+        std::complex<T> operator-(const std::complex<T> &b)
+        {
+            return {re - b.re, im - b.im};
+        }
+
+        std::complex<T> &operator*=(T b)
+        {
+            re *= b;
+            im *= b;
+            return *this;
+        }
+
+        std::complex<T> &operator/=(T b)
+        {
+            re /= b;
+            im /= b;
+            return *this;
+        }
+    };
+
+    template <class T> constexpr std::complex<T> conj(const std::complex<T> &z)
+    {
+        return std::complex<T>{z.real(), -z.imag()};
+    }
+
+    template <class T> complex<T> polar(const T &r, const T &theta = T())
+    {
+        return std::complex<T>{r * cos(theta), r * sin(theta)};
+    }
+
+    template <class T> T arg(const complex<T> &z)
+    {
+        return atan2(z.imag(), z.real());
+    }
+
+}
+
+#endif

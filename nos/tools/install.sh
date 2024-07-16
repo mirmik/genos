@@ -1,0 +1,1 @@
+sudo ./make.py -jj install

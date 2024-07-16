@@ -1,0 +1,94 @@
+#ifndef IGRIS_STD_ARRAY_H
+#define IGRIS_STD_ARRAY_H
+
+#include <algorithm>
+#include <initializer_list>
+#include <memory>
+#include <utility>
+
+namespace std
+{
+    template <typename T, size_t N> struct array
+    {
+        T arr[N];
+
+        array() = default;
+
+        array(const array &oth)
+        {
+            std::copy(oth.begin(), oth.end(), begin());
+        }
+
+        array(const std::initializer_list<T> &oth)
+        {
+            std::copy(oth.begin(), oth.end(), begin());
+        }
+
+        T &operator[](size_t i)
+        {
+            return arr[i];
+        }
+        const T &operator[](size_t i) const
+        {
+            return arr[i];
+        }
+
+        T *begin()
+        {
+            return arr;
+        }
+        const T *begin() const
+        {
+            return arr;
+        }
+        T *end()
+        {
+            return arr + N;
+        }
+        const T *end() const
+        {
+            return arr + N;
+        }
+
+        T *data()
+        {
+            return arr;
+        }
+        const T *data() const
+        {
+            return arr;
+        }
+
+        size_t size() const
+        {
+            return N;
+        }
+
+        void fill(const T &val)
+        {
+            std::fill(begin(), end(), val);
+        }
+
+        void swap(array &oth)
+        {
+            std::swap_ranges(begin(), end(), oth.begin());
+        }
+
+        void swap(T &oth)
+        {
+            std::swap_ranges(begin(), end(), &oth);
+        }
+
+        void swap(T *oth)
+        {
+            std::swap_ranges(begin(), end(), oth);
+        }
+
+        void swap(T *oth, size_t n)
+        {
+            std::swap_ranges(begin(), end(), oth);
+        }
+    };
+}
+
+#endif

@@ -1,0 +1,27 @@
+#ifndef IGRIS_STD_CSTDLIB_H
+#define IGRIS_STD_CSTDLIB_H
+
+#include <stdlib.h>
+#include <stddef.h>
+
+namespace std
+{
+    using ::abort;
+    using ::atexit;
+    using ::atof;
+    using ::atoi;
+    using ::atol;
+    using ::bsearch;
+    using ::calloc;
+    using ::div_t;
+    using ::exit;
+    using ::free;
+    using ::getenv;
+    using ::labs;
+    using ::ldiv_t;
+    using ::rand;
+    using ::size_t;
+    using ::srand;
+}
+
+#endif

@@ -1,0 +1,14 @@
+#ifndef IGRIS_COMPAT_STD_IOSFWD_H
+#define IGRIS_COMPAT_STD_IOSFWD_H
+
+#include <streambuf>
+#include <string>
+#include <utility>
+#include <ostream>
+
+namespace std
+{
+    using streamsize = int;
+}
+
+#endif

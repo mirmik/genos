@@ -1,0 +1,9 @@
+[Unit]
+Description=Crow brocker
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/crowker
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,190 @@
+#ifndef IGRIS_STD_LIST_H
+#define IGRIS_STD_LIST_H
+
+#include <igris/container/dlist.h>
+#include <igris/util/ctrdtr.h>
+#include <memory>
+
+namespace std
+{
+    namespace detail
+    {
+        template <class T> class list_node
+        {
+        public:
+            igris::dlist_node head = {};
+            T data = {};
+
+        public:
+            list_node() {}
+            list_node(const T &data) : data(data) {}
+            list_node(T &&data) : data(std::move(data)) {}
+
+            T &value()
+            {
+                return data;
+            }
+            const T &value() const
+            {
+                return data;
+            }
+
+            igris::dlist_node *get_head()
+            {
+                return &head;
+            }
+            const igris::dlist_node *get_head() const
+            {
+                return &head;
+            }
+        };
+
+        template <class T> class list_iterator
+        {
+            list_node<T> *node = nullptr;
+
+        public:
+            list_iterator() = default;
+            list_iterator(list_node<T> *node) : node(node) {}
+
+            list_iterator &operator++()
+            {
+                auto* next = node->get_head()->next_node();
+                node = next->template cast_out<
+                            detail::list_node<T>, 
+                            &detail::list_node<T>::head>();
+                return *this;
+            }
+
+            list_iterator operator++(int)
+            {
+                list_iterator tmp = *this;
+                ++*this;
+                return tmp;
+            }
+
+            list_iterator &operator--()
+            {
+                auto* prev = node->get_head()->prev_node();
+                node = prev->template cast_out<
+                            detail::list_node<T> , 
+                            &detail::list_node<T>::head>();
+                return *this;
+            }
+
+            list_iterator operator--(int)
+            {
+                list_iterator tmp = *this;
+                --*this;
+                return tmp;
+            }
+
+            T &operator*()
+            {
+                return node->value();
+            }
+
+            const T &operator*() const
+            {
+                return node->value();
+            }
+
+            T *operator->()
+            {
+                return &node->value();
+            }
+
+            const T *operator->() const
+            {
+                return &node->value();
+            }
+
+            bool operator==(const list_iterator &other) const
+            {
+                return node == other.node;
+            }
+
+            bool operator!=(const list_iterator &other) const
+            {
+                return node != other.node;
+            }
+        };
+    } // namespace detail  
+
+    template <class T, class Alloc = std::allocator<detail::list_node<T>>>
+    class list
+    {
+        igris::dlist<detail::list_node<T>, &detail::list_node<T>::head> head;
+        Alloc alloc;
+
+    public:
+        using iterator = detail::list_iterator<T>;
+        using const_iterator = detail::list_iterator<const T>;
+
+        void push_back(const T &data)
+        {
+            auto node = alloc.allocate(1);
+            igris::constructor(node, data);
+            head.move_back(*node);
+        }
+
+        void push_back(T &&data)
+        {
+            auto node = alloc.allocate(1);
+            igris::constructor(node, std::move(data));
+            head.move_back(*node);
+        }
+
+        T &back()
+        {
+            return head.back().value();
+        }
+
+        const T &back() const
+        {
+            return head.back().value();
+        }
+
+        void pop_back()
+        {
+            auto node = head.back();
+            node->get_head().unlink();
+            igris::destructor(node);
+            alloc.deallocate(node, 1);
+        }
+
+        void push_front(const T &data)
+        {
+            auto node = alloc.allocate(1);
+            igris::constructor(node, data);
+            dlist_add(node->get_head(), &head);
+        }
+
+        void push_front(T &&data)
+        {
+            auto node = alloc.allocate(1);
+            igris::constructor(node, std::move(data));
+            head.move_front(node);
+        }
+
+        T &front()
+        {
+            return head.front().value();
+        }
+
+        const T &front() const
+        {
+            return head.front().value();
+        }
+
+        void pop_front()
+        {
+            auto node = head.front();
+            node->get_head().unlink();
+            igris::destructor(node);
+            alloc.deallocate(node, 1);
+        }
+    };
+}
+
+#endif

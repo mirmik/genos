@@ -1,0 +1,12 @@
+{
+	"axes": {
+		"Az": {
+			"unitBackwardLimit": -100,
+			"unitForwardLimit": 100
+		},
+		"El": {
+			"unitBackwardLimit": -100,
+			"unitForwardLimit": 100
+		}
+	}
+}

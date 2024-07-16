@@ -1,0 +1,1 @@
+rlwrap ctrans --request helix/cli

@@ -1,0 +1,27 @@
+#ifndef IGRIS_STD_THREAD_H
+#define IGRIS_STD_THREAD_H
+
+#include <chrono>
+
+namespace std
+{
+    class thread
+    {
+        int _dummy;
+
+    public:
+        thread() {}
+        template <typename T> thread(T) {}
+        void join() {}
+    };
+
+    class this_thread
+    {
+    public:
+        static void yield() {}
+
+        static void sleep_for(std::chrono::milliseconds) {}
+    };
+}
+
+#endif

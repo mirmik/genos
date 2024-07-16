@@ -1,0 +1,20 @@
+pipeline:
+    - name: nos
+      watchdog: 600
+      git:
+          url: https://github.com/mirmik/nos
+          name: nos
+      steps:
+          - name: make
+            run: ./make.py
+
+          - name: install
+            run: ./make.py install
+
+          - name: test
+            run: ./runtests
+
+          - name: licant-libs
+            run: licant-libs .
+
+      success_info: "Pipeline: {{pipeline_name}}\nCommit: {{commit_hash}}\nMessage: {{commit_message}}\n"

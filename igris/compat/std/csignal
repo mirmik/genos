@@ -1,0 +1,10 @@
+#ifndef IGRIS_STD_SIGNAL_H
+#define IGRIS_STD_SIGNAL_H
+
+#include <signal.h>
+
+namespace std
+{
+}
+
+#endif

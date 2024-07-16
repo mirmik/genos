@@ -1,0 +1,20 @@
+pipeline:
+  - name: nos
+    watchdog: 600
+    git:
+      url: https://github.com/mirmik/nos
+      name: nos
+    steps:
+      - name: cmake
+        run: cmake .
+
+      - name: cmake-build
+        run: cmake --build .
+
+      - name: cmake-install
+        run: cmake --build . --target install
+
+      - name: cmake-tests
+        run: ctest .
+
+    success_info: "Pipeline: {{pipeline_name}}\nCommit: {{commit_hash}}\nMessage: {{commit_message}}\n"

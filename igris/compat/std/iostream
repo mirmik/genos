@@ -1,0 +1,19 @@
+#ifndef IGRIS_COMPAT_STD_IOSTREAM_H
+#define IGRIS_COMPAT_STD_IOSTREAM_H
+
+#include <ios>
+#include <iosfwd>
+#include <istream>
+#include <ostream>
+#include <string>
+#include <utility>
+
+namespace std
+{
+    extern std::ostream cout;
+    extern std::ostream cerr;
+    extern std::ostream clog;
+    extern std::istream cin;
+}
+
+#endif

@@ -1,0 +1,6 @@
+/hello ./helloworld.txt
+another_key ./foo.txt
+/image ./image.png
+
+# add directory
+/web/ ./directory
