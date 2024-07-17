@@ -113,11 +113,10 @@ void RalgoCNC::preset()
 
     std::string cmd2 = "cmd stop";
     command_send(cmd2);
-    nos::println("VERSION:!!!!!!!!!!!!!!!!!!!");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     auto version = command_send("api_version", true);
-    nos::println("VERSION:!!!!!!!!!!!!!!!!!!!", version);
+    nos::println("RalgoCNC VERSION: ", version);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     _firmware_version = std::stoi(version);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
