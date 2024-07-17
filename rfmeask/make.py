@@ -6,9 +6,7 @@ import os
 import subprocess
 import git
 
-repo = git.Repo(os.getcwd())
-repo.head.object.hexsha
-last_commit_datetime = repo.head.object.authored_datetime
+#last_commit_datetime = repo.head.object.authored_datetime
 
 mitsubishi_board = False
 correction_table = False
@@ -90,8 +88,8 @@ if mitsubishi_board:
 		src/MitsubishiBoard.cpp
 	""".split())
 
-defopts = ["-DSCPI_USER_CONFIG",
-           f"-DLAST_COMMIT_DATETIME='{last_commit_datetime}'"]
+defopts = ["-DSCPI_USER_CONFIG"]
+#           f"-DLAST_COMMIT_DATETIME='{last_commit_datetime}'"]
 
 opt_table = {
     "HAVE_CORRECTION_TABLE": correction_table,

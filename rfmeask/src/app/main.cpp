@@ -523,7 +523,7 @@ int main(int argc, char **argv)
             nos::fprintln("{} SCPI_API:{} ({})",
                           VERSION,
                           API_VERSION,
-                          STRINGIFY2(LAST_COMMIT_DATETIME));
+                          "---");
             exit(0);
 
         default:

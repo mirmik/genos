@@ -30,7 +30,15 @@ AbstractServo::AbstractServo(const std::string &name) :
     _velocity_multiplier->init(*runtime_syncer, "velocity_multiplier");
     _velocity_multiplier->sync_default(1);
 
+    _last_alarm_runtime_binder.init(*runtime_syncer, "last_alarm");
+    _last_alarm_runtime_binder.sync_default(0);
+
     load_one_axis_correction_from_runtime();
+}
+
+void AbstractServo::save_last_alarm_code(int code) 
+{
+    _last_alarm_runtime_binder.update(code);
 }
 
 double AbstractServo::last_position()
