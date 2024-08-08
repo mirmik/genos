@@ -32,7 +32,7 @@ extern std::vector<Device *> devices_list;
 extern std::vector<std::string> devices_types;
 
 size_t axes_total();
-size_t active_axes_total();
+//size_t active_axes_total();
 AbstractAxis *get_axis(size_t num);
 AbstractAxis *get_axis(const std::string_view &str);
 
