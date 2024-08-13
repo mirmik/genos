@@ -152,6 +152,12 @@ void initialize_sync_axis(const nos::trent &p)
         exit(-1);
     }
 
+    if (!p.contains("syncro"))
+    {
+        nos::log::fault("Sync axis not contain 'syncro' key");
+        exit(-1);
+    }
+
     std::string sync_name = p["syncro"].as_string_except();
     if (devices.count(sync_name) == 0)
     {

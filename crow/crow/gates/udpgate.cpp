@@ -38,9 +38,12 @@ void crow::udpgate::read_handler(int fd)
     socklen_t sender_socksize = sizeof(sender);
     memset(&sender, 0, sizeof(sender));
 
-    ssize_t len =
-        recvfrom(sock, (char *)&header, sizeof(crow::header_v1), MSG_PEEK,
-                 (struct sockaddr *)&sender, &sender_socksize);
+    ssize_t len = recvfrom(sock,
+                           (char *)&header,
+                           sizeof(crow::header_v1),
+                           MSG_PEEK,
+                           (struct sockaddr *)&sender,
+                           &sender_socksize);
 
     if (len <= 0)
         return;
@@ -52,8 +55,12 @@ void crow::udpgate::read_handler(int fd)
         allocate_packet<crow::header_v1>(header.addrsize(), header.datasize());
     block->parse_header(header);
 
-    len = recvfrom(sock, (char *)block->header_addr(), block->fullsize(), 0,
-                   (struct sockaddr *)&sender, &sender_socksize);
+    len = recvfrom(sock,
+                   (char *)block->header_addr(),
+                   block->fullsize(),
+                   0,
+                   (struct sockaddr *)&sender,
+                   &sender_socksize);
 
     if (len <= 0)
     {
@@ -116,7 +123,8 @@ int crow::udpgate::open(uint16_t port)
 
 #ifdef CROW_USE_ASYNCIO
     crow::asyncio.add_iotask(
-        sock, SelectType::READ,
+        sock,
+        SelectType::READ,
         igris::make_delegate(&udpgate::read_handler, this));
 #endif
 
@@ -152,13 +160,18 @@ void crow::udpgate::send(crow::packet *pack)
     if (send_buffer.size() < header.flen)
         send_buffer.resize(header.flen);
     memcpy(send_buffer.data(), &header, sizeof(header));
-    memcpy(send_buffer.data() + sizeof(header), pack->addrptr(),
-           pack->addrsize());
+    memcpy(
+        send_buffer.data() + sizeof(header), pack->addrptr(), pack->addrsize());
     memcpy(send_buffer.data() + sizeof(header) + pack->addrsize(),
-           pack->dataptr(), pack->datasize());
+           pack->dataptr(),
+           pack->datasize());
 
-    sendto(sock, (char *)send_buffer.data(), header.flen, 0,
-           (struct sockaddr *)&ipaddr, iplen);
+    sendto(sock,
+           (char *)send_buffer.data(),
+           header.flen,
+           0,
+           (struct sockaddr *)&ipaddr,
+           iplen);
     crow::return_to_tower(pack, CROW_SENDED);
 }
 

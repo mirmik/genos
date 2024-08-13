@@ -663,7 +663,8 @@ scpi_result_t SCPIFUNC_axisIsActiveQ(scpi_t *context)
     int number;
     SCPI_CommandNumbers(context, &number, 1, -1);
 
-    SCPI_ResultInt32(context, get_axis(number)->isActive());
+    //SCPI_ResultInt32(context, get_axis(number)->isActive());
+    SCPI_ResultInt32(context, 1); // Active mechanic removed
     return SCPI_RES_OK;
 }
 

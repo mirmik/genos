@@ -39,13 +39,25 @@ namespace crow
             oth.pack = nullptr;
         }
 
-        crow::packet *get() { return pack; }
+        crow::packet *get()
+        {
+            return pack;
+        }
 
-        crow::packet *get() const { return pack; }
+        crow::packet *get() const
+        {
+            return pack;
+        }
 
-        crow::packet *operator->() { return pack; }
+        crow::packet *operator->()
+        {
+            return pack;
+        }
 
-        crow::packet &operator*() { return *pack; }
+        crow::packet &operator*()
+        {
+            return *pack;
+        }
 
         crow::packet_ptr &operator=(const crow::packet_ptr &oth)
         {
@@ -71,9 +83,15 @@ namespace crow
 
         ~packet_ptr();
 
-        operator bool() { return pack != nullptr; }
+        operator bool()
+        {
+            return pack != nullptr;
+        }
 
-        bool operator==(decltype(nullptr)) { return pack == nullptr; }
+        bool operator==(decltype(nullptr))
+        {
+            return pack == nullptr;
+        }
 
         void clear();
     };

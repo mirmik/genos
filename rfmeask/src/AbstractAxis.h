@@ -233,7 +233,7 @@ public:
 
     AbstractAxis(const std::string &name);
 
-    bool isActive(); // < for HelixAxis only. deprecated
+    //bool isActive(); // < for HelixAxis only. deprecated
 
     double unitBackwardLimit();
     double unitForwardLimit();

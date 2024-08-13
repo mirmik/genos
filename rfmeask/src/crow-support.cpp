@@ -20,6 +20,7 @@
 #include <crow/nodes/subscriber_node.h>
 #include <crow/tower.h>
 
+#include <igris/util/dstring.h>
 #include <logging.h>   
 #include <map>
 #include <thread>
@@ -47,9 +48,11 @@ crow::publisher_node  remote_cmd_publisher;
 
 void remote_cmd_handler(nos::buffer data)
 {
+    nos::println("remote_cmd_handler:", igris::dstring(std::string(data.data(), data.size())));
+
     struct
     {
-        double spd;
+        float spd;
         int16_t ax;
     } __attribute__((packed)) s;
 
@@ -59,9 +62,10 @@ void remote_cmd_handler(nos::buffer data)
 
 void remote_pos_handler(nos::buffer data)
 {
+    nos::println("remote_pos_handler:", igris::dstring(std::string(data.data(), data.size())));
     struct
     {
-        double pos;
+        float pos;
         int16_t ax;
     } __attribute__((packed)) s;
 
@@ -69,8 +73,10 @@ void remote_pos_handler(nos::buffer data)
     std::thread(remote_axis_incpos, (int16_t)s.ax, (double)s.pos).detach();
 }
 
+
 void remote_stop_handler(nos::buffer data)
 {
+    nos::println("remote_stop_handler");
     std::thread(remote_stop).detach();
 }
 
@@ -117,6 +123,6 @@ int crow_configure(int crow_port)
     }
 
     //syslogger.info("CROW_START_SPIN");
-    crow::start_spin_with_select_realtime(0);
+    crow::start_spin_with_select();
     return 0;
 }

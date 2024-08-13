@@ -37,9 +37,9 @@ namespace crow
 #endif
     };
 
-    crow::serial_gstuff_v1 *create_serial_gstuff_v1(const char *path,
-                                                    uint32_t baudrate,
-                                                    uint8_t id, bool debug);
+    // crow::serial_gstuff_v1 *create_serial_gstuff_v1(const char *path,
+    //                                                 uint32_t baudrate,
+    //                                                 uint8_t id, bool debug);
 } // namespace crow
 
 #endif

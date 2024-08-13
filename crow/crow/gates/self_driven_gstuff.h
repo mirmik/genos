@@ -14,12 +14,14 @@ namespace crow
 {
     template <typename Header> class self_driven_gstuff : public crow::gateway
     {
+        gstuff_context gctx;
+
         dlist_head to_send = DLIST_HEAD_INIT(to_send);
         crow::packet *insend = nullptr;
         /// Максимальная длина пакета, какой мы готовы принять.
         int received_maxpack_size = 0;
         crow::packet *recvpack = nullptr;
-        gstuff_autorecv recver = {};
+        gstuff_autorecv recver;
 
         int (*write_callback)(void *,
                               const char *data,
@@ -33,6 +35,10 @@ namespace crow
         uint8_t crc = 0;
 
     public:
+        self_driven_gstuff() : gctx(), recver(gctx) {}
+        self_driven_gstuff(const self_driven_gstuff &) = delete;
+        self_driven_gstuff &operator=(const self_driven_gstuff &) = delete;
+
         bool in_send()
         {
             return insend != nullptr;
@@ -59,12 +65,12 @@ namespace crow
             status = recver.newchar(c);
             switch (status)
             {
-                case GSTUFF_NEWPACKAGE:
-                    newline_handler();
-                    break;
+            case GSTUFF_NEWPACKAGE:
+                newline_handler();
+                break;
 
-                default:
-                    break;
+            default:
+                break;
             }
         }
 
@@ -119,7 +125,7 @@ namespace crow
                 char arr[2];
                 char c = data[data_index++];
                 igris_strmcrc8(&crc, c);
-                int len = gstuff_byte(c, arr);
+                int len = gstuff_byte(c, arr, gctx);
                 write(arr, len);
             }
             if (data_index == size)
@@ -143,57 +149,56 @@ namespace crow
 
                 switch (send_state)
                 {
-                    case 0: /// Отправка старта
+                case 0: /// Отправка старта
+                {
+                    if (room() >= 1)
                     {
-                        if (room() >= 1)
-                        {
-                            sendbyte(GSTUFF_START);
-                            send_state = 1;
-                            fallthrow = true;
-                        }
+                        sendbyte(gctx.GSTUFF_START);
+                        send_state = 1;
+                        fallthrow = true;
                     }
-                    break;
-                    case 1: /// Отправка заголовка
+                }
+                break;
+                case 1: /// Отправка заголовка
+                {
+                    Header header = crow::extract_header<Header>(insend);
+                    fallthrow = data_section((char *)&header, sizeof(Header));
+                }
+                break;
+                case 2: /// Отправка адреса
+                {
+                    fallthrow = data_section((char *)insend->addrptr(),
+                                             insend->addrsize());
+                }
+                break;
+                case 3: /// Отправка данных
+                {
+                    fallthrow = data_section((char *)insend->dataptr(),
+                                             insend->datasize());
+                }
+                break;
+                case 4: /// Отправка контрольной суммы
+                {
+                    if (room() >= 2)
                     {
-                        Header header = crow::extract_header<Header>(insend);
-                        fallthrow =
-                            data_section((char *)&header, sizeof(Header));
+                        char arr[2];
+                        int len = gstuff_byte(crc, arr, gctx);
+                        write(arr, len);
+                        send_state = 5;
+                        fallthrow = true;
                     }
-                    break;
-                    case 2: /// Отправка адреса
+                }
+                break;
+                case 5: /// Отправка стоп сигнала
+                {
+                    if (room() >= 1)
                     {
-                        fallthrow = data_section((char *)insend->addrptr(),
-                                                 insend->addrsize());
+                        sendbyte(gctx.GSTUFF_STOP);
+                        fallthrow = false;
+                        finish_send();
                     }
-                    break;
-                    case 3: /// Отправка данных
-                    {
-                        fallthrow = data_section((char *)insend->dataptr(),
-                                                 insend->datasize());
-                    }
-                    break;
-                    case 4: /// Отправка контрольной суммы
-                    {
-                        if (room() >= 2)
-                        {
-                            char arr[2];
-                            int len = gstuff_byte(crc, arr);
-                            write(arr, len);
-                            send_state = 5;
-                            fallthrow = true;
-                        }
-                    }
-                    break;
-                    case 5: /// Отправка стоп сигнала
-                    {
-                        if (room() >= 1)
-                        {
-                            sendbyte(GSTUFF_STOP);
-                            fallthrow = false;
-                            finish_send();
-                        }
-                    }
-                    break;
+                }
+                break;
                 }
             } while (fallthrow);
         }

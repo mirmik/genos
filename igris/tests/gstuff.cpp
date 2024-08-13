@@ -9,7 +9,7 @@ TEST_CASE("gstuffing")
         {(void *)"!", 1},
     };
 
-    auto sbuffer = gstuffing_v(arr, 3);
+    auto sbuffer = gstuffing_v(arr, 3, gstuff_context());
 
     CHECK(sbuffer.size() == 14);
 }

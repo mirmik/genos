@@ -133,7 +133,7 @@ void crow::set_spin_cancel_token()
     cancel_token = true;
 }
 
-#if defined(CROW_REALTIME_THREADS)
+//#if defined(CROW_REALTIME_THREADS)
 #include <igris/osutil/realtime.h>
 void crow::spin_with_select_realtime(int abort_on_fault)
 {
@@ -168,4 +168,4 @@ int crow::start_spin_realtime(int abort_on_fault)
 {
     return crow::start_spin_with_select_realtime(abort_on_fault);
 }
-#endif
+//#endif

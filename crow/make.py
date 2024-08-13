@@ -46,7 +46,7 @@ licant.fileset("apps", targets=[
     "crowker",
 ], deps=["libcrow.so"])
 
-licant.install.install_library(tgt="install_libraries",
+licant.install.install_library(tgt="install_libs",
                                libtgt=["libcrow.a", "libcrow.so"],
                                headers="crow",
                                hroot="crow",
@@ -58,7 +58,7 @@ def install_apps():
     pass
 
 
-@licant.routine(deps=["install_apps", "install_libraries"])
+@licant.routine(deps=["install_apps", "install_libs"])
 def install():
     pass
 
@@ -80,6 +80,6 @@ licant.cxx_application("runtests",
                        )
 
 licant.fileset("all", targets=["apps", target, "runtests"])
-licant.fileset("install", targets=["install_libraries", "install_apps"])
+licant.fileset("install", targets=["install_libs", "install_apps"])
 
 licant.ex("all")

@@ -9,14 +9,14 @@ namespace crow
 {
     class nodeaddr
     {
-      public:
+    public:
         crow::hostaddr addr;
         nodeid_t nid;
 
-      public:
+    public:
         crow::hostaddr_view hostaddr() const
         {
-            return { addr.data(), addr.size() };
+            return {addr.data(), addr.size()};
         }
 
         bool operator<(const nodeaddr &oth) const

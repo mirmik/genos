@@ -53,8 +53,9 @@ namespace crow
     class gateway
     {
     public:
-        struct dlist_head lnk = DLIST_HEAD_INIT(lnk); ///< встроенное поле списка.
-        uint8_t id=0;            ///< номер врат.
+        struct dlist_head lnk =
+            DLIST_HEAD_INIT(lnk); ///< встроенное поле списка.
+        uint8_t id = 0;           ///< номер врат.
 
         virtual void send(crow::packet *) = 0;
         virtual void finish() = 0;

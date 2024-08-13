@@ -49,7 +49,8 @@ TEST_CASE("self_driven_gstuff.output")
             {pack->dataptr(), pack->datasize()},
         };
 
-        auto sbuffer = gstuffing_v(arr, sizeof(arr) / sizeof(iovec));
+        auto sbuffer = gstuffing_v(arr, sizeof(arr) / sizeof(iovec), 
+            gstuff_context());
 
         CHECK_EQ(ccc, 0);
         gate.send(pack);

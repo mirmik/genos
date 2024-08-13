@@ -60,12 +60,12 @@ namespace crow
             status = recver.newchar(c);
             switch (status)
             {
-                case GSTUFF_NEWPACKAGE:
-                    newline_handler();
-                    break;
+            case GSTUFF_NEWPACKAGE:
+                newline_handler();
+                break;
 
-                default:
-                    break;
+            default:
+                break;
             }
         }
 
@@ -157,58 +157,57 @@ namespace crow
 
                 switch (send_state)
                 {
-                    case 0: /// Отправка старта
+                case 0: /// Отправка старта
+                {
+                    if (room() >= 1)
                     {
-                        if (room() >= 1)
-                        {
-                            sendbyte(GSTUFF_START);
-                            send_state = 1;
-                            fallthrow = true;
-                        }
+                        sendbyte(GSTUFF_START);
+                        send_state = 1;
+                        fallthrow = true;
                     }
-                    break;
-                    case 1: /// Отправка заголовка
+                }
+                break;
+                case 1: /// Отправка заголовка
+                {
+                    chrow::header_v1 header =
+                        crow::extract_header<chrow::header_v1>(insend);
+                    fallthrow = data_section((char *)&header, sizeof(Header));
+                }
+                break;
+                case 2: /// Отправка адреса
+                {
+                    fallthrow = data_section((char *)insend->addrptr(),
+                                             insend->addrsize());
+                }
+                break;
+                case 3: /// Отправка данных
+                {
+                    fallthrow = data_section((char *)insend->dataptr(),
+                                             insend->datasize());
+                }
+                break;
+                case 4: /// Отправка контрольной суммы
+                {
+                    if (room() >= 2)
                     {
-                        chrow::header_v1 header =
-                            crow::extract_header<chrow::header_v1>(insend);
-                        fallthrow =
-                            data_section((char *)&header, sizeof(Header));
+                        char arr[2];
+                        int len = gstuff_byte(crc, arr);
+                        write(arr, len);
+                        send_state = 5;
+                        fallthrow = true;
                     }
-                    break;
-                    case 2: /// Отправка адреса
+                }
+                break;
+                case 5: /// Отправка стоп сигнала
+                {
+                    if (room() >= 1)
                     {
-                        fallthrow = data_section((char *)insend->addrptr(),
-                                                 insend->addrsize());
+                        sendbyte(GSTUFF_STOP);
+                        fallthrow = false;
+                        finish_send();
                     }
-                    break;
-                    case 3: /// Отправка данных
-                    {
-                        fallthrow = data_section((char *)insend->dataptr(),
-                                                 insend->datasize());
-                    }
-                    break;
-                    case 4: /// Отправка контрольной суммы
-                    {
-                        if (room() >= 2)
-                        {
-                            char arr[2];
-                            int len = gstuff_byte(crc, arr);
-                            write(arr, len);
-                            send_state = 5;
-                            fallthrow = true;
-                        }
-                    }
-                    break;
-                    case 5: /// Отправка стоп сигнала
-                    {
-                        if (room() >= 1)
-                        {
-                            sendbyte(GSTUFF_STOP);
-                            fallthrow = false;
-                            finish_send();
-                        }
-                    }
-                    break;
+                }
+                break;
                 }
             } while (fallthrow);
         }

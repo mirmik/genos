@@ -87,6 +87,8 @@ cp tools/positioner-configs/rfdaemon.service $RDIR/etc/systemd/system/rfdaemon.s
 cp tools/positioner-configs/20auto-upgrades $RDIR/etc/apt/apt.conf.d/20auto-upgrades
 #cp tools/positioner-configs/interfaces $RDIR/etc/network/interfaces
 
+cp tools/on-remote-update-script.sh $RDIR/home/rfmeas/
+
 # Add web-server assets
 cp -r tools/positioner-assets/* $RDIR/home/rfmeas/web/
 

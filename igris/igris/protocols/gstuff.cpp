@@ -2,39 +2,45 @@
 #include <igris/util/crc.h>
 #include <vector>
 
-int gstuffing(const char *data, size_t size, char *outdata)
+int gstuffing(const char *data, size_t size, char *outdata, const gstuff_context& ctx)
 {
     struct iovec vec[] = {{(void *)data, size}};
-    return gstuffing_v(vec, 1, outdata);
+    return gstuffing_v(vec, 1, outdata, ctx);
 }
 
-int gstuff_byte(char c, char *outdata)
+int gstuff_byte(char c, char *outdata, const gstuff_context& ctx)
 {
-    switch (c)
+    if (c == ctx.GSTUFF_START)
     {
-    case GSTUFF_START:
-        *outdata++ = GSTUFF_STUB;
-        *outdata++ = GSTUFF_STUB_START;
+        *outdata++ = ctx.GSTUFF_STUB;
+        *outdata++ = ctx.GSTUFF_STUB_START;
         return 2;
-    case GSTUFF_STOP:
-        *outdata++ = GSTUFF_STUB;
-        *outdata++ = GSTUFF_STUB_STOP;
+    }
+    else if (c == ctx.GSTUFF_STUB) 
+    {
+        *outdata++ = ctx.GSTUFF_STUB;
+        *outdata++ = ctx.GSTUFF_STUB_STUB;
         return 2;
-    case GSTUFF_STUB:
-        *outdata++ = GSTUFF_STUB;
-        *outdata++ = GSTUFF_STUB_STUB;
-        return 2;
-    default:
+    }
+    else if (c == ctx.GSTUFF_STOP) 
+    {
+        *outdata++ = ctx.GSTUFF_STUB;
+        *outdata++ = ctx.GSTUFF_STUB_STOP;
+         return 2;
+    }
+    else 
+    {
         *outdata++ = c;
         return 1;
     }
 }
 
-int gstuffing_v(struct iovec *vec, size_t n, char *outdata)
+int gstuffing_v(struct iovec *vec, size_t n, char *outdata, 
+    const gstuff_context& ctx)
 {
     char *outstrt = outdata;
     uint8_t crc = 0xFF;
-    *outdata++ = GSTUFF_START;
+    *outdata++ = ctx.GSTUFF_START;
     for (size_t j = 0; j < n; ++j)
     {
         size_t size = vec[j].iov_len;
@@ -43,11 +49,11 @@ int gstuffing_v(struct iovec *vec, size_t n, char *outdata)
         {
             char c = *data++;
             igris_strmcrc8(&crc, c);
-            outdata += gstuff_byte(c, outdata);
+            outdata += gstuff_byte(c, outdata, ctx);
         }
     }
-    outdata += gstuff_byte(crc, outdata);
-    *outdata++ = GSTUFF_STOP;
+    outdata += gstuff_byte(crc, outdata, ctx);
+    *outdata++ = ctx.GSTUFF_STOP;
     return (int)(outdata - outstrt);
 }
 
@@ -66,6 +72,12 @@ void gstuff_autorecv::reset()
 
 int gstuff_autorecv::newchar(char c)
 {
+    __label__ __continue__;
+    __label__ __garbage__;
+    __label__ __putchar__;
+    __label__ __stop_handler__;
+    __label__ __start__;
+    __label__ __force_restart__;
     int sts;
 
 __start__:
@@ -78,57 +90,70 @@ __start__:
         goto __start__;
 
     case 4:
-        switch (c)
+        if (c == ctx.GSTUFF_START) 
         {
-        case GSTUFF_START:
             //Приняли стартовый символ. Реинициализация.
             state = 1;
             reset();
             goto __continue__;
+        }
 
-        default:
+        else 
+        {
             goto __garbage__;
         }
 
     case 1:
-        switch (c)
+        if (c == ctx.GSTUFF_START)
         {
-        case GSTUFF_START:
-            //Приняли стартовый символ. Реинициализация.
-            reset();
-            goto __force_restart__;
-
-        case GSTUFF_STOP:
-            // приняли финальный символ
+            // рестарт отрабатывает если стартовый байт
+            // отличен от стопового.
+            if ((ctx.GSTUFF_START != ctx.GSTUFF_STOP)) {
+                //Приняли стартовый символ. Реинициализация.
+                reset();
+                goto __force_restart__;
+            }
+        }
+        
+        if (c == ctx.GSTUFF_STOP) 
+        {
+            // Срабатывает на стоп байт (может быть равен стартовому).
             goto __stop_handler__;
-
-        case GSTUFF_STUB:
+        }
+    
+        else if (c == ctx.GSTUFF_STUB) 
+        {
             //Принят STUFF ждем вторй байт.
             state = 2;
             goto __continue__;
+        }
 
-        default:
+        else {
             goto __putchar__;
         }
 
     case 2:
         // На прошлой итерации принят STUFF.
         // Обрабатываем второй символ.
-        switch (c)
+        if (c == ctx.GSTUFF_STUB_START) 
         {
-        case GSTUFF_STUB_START:
-            c = GSTUFF_START;
-            break;
-        case GSTUFF_STUB_STOP:
-            c = GSTUFF_STOP;
-            break;
-        case GSTUFF_STUB_STUB:
-            c = GSTUFF_STUB;
-            break;
-        case GSTUFF_START:
+            c = ctx.GSTUFF_START;
+        }
+        else if (c == ctx.GSTUFF_STUB_STOP)
+        {
+            c = ctx.GSTUFF_STOP;
+        }
+        else if (c == ctx.GSTUFF_STUB_STUB) 
+        {
+            c = ctx.GSTUFF_STUB;
+        }
+        else if (ctx.GSTUFF_START) 
+        {
             reset();
             goto __force_restart__;
-        default:
+        }
+        else 
+        {
             // Невалидный пакет.
             sts = GSTUFF_STUFFING_ERROR;
             goto __finish__;
@@ -183,7 +208,7 @@ __finish__:
     return sts;
 }
 
-std::vector<uint8_t> gstuffing_v(struct iovec *vec, size_t n)
+std::vector<uint8_t> gstuffing_v(struct iovec *vec, size_t n, const gstuff_context& ctx)
 {
     std::vector<uint8_t> ret;
     size_t sz = 0;
@@ -193,16 +218,16 @@ std::vector<uint8_t> gstuffing_v(struct iovec *vec, size_t n)
         sz += v->iov_len;
     }
     ret.resize(sz * 2 + 2);
-    size_t sz2 = gstuffing_v(vec, n, (char *)&ret[0]);
+    size_t sz2 = gstuffing_v(vec, n, (char *)&ret[0], ctx);
     ret.resize(sz2);
     return ret;
 }
 
-std::vector<uint8_t> gstuffing(igris::buffer buf)
+std::vector<uint8_t> gstuffing(igris::buffer buf, const gstuff_context& ctx)
 {
     std::vector<uint8_t> ret;
     ret.resize(buf.size() * 2 + 2);
-    size_t sz2 = gstuffing(buf.data(), buf.size(), (char *)&ret[0]);
+    size_t sz2 = gstuffing(buf.data(), buf.size(), (char *)&ret[0], ctx);
     ret.resize(sz2);
     return ret;
 }

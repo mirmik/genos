@@ -18,10 +18,10 @@ namespace crow
             crow::packet *copypack = crow::allocate_packet<crow::header_v1>(
                 pack->addrsize(), pack->datasize());
             copypack->parse_header(pack->extract_header_v1());
-            memcpy((void *)copypack->addrptr(), pack->addrptr(),
-                   pack->addrsize());
-            memcpy((void *)copypack->dataptr(), pack->dataptr(),
-                   pack->datasize());
+            memcpy(
+                (void *)copypack->addrptr(), pack->addrptr(), pack->addrsize());
+            memcpy(
+                (void *)copypack->dataptr(), pack->dataptr(), pack->datasize());
 
             crow::packet_initialization(copypack, this);
             copypack->revert_gate(id);

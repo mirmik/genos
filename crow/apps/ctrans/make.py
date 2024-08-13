@@ -15,18 +15,18 @@ application("ctrans",
                 "main.cpp"
             ],
             mdepends=[
-                "crow",
-                "crow.crowker",
-                "crow.udpgate",
-                "crow.tcpgate",
-                "crow.serial_gstuff",
+#                "crow",
+ #               "crow.crowker",
+  #              "crow.udpgate",
+   #             "crow.tcpgate",
+    #            "crow.serial_gstuff",
             ],
             defines=defines,
             optimize="-O0",
             cc_flags="-flto -fPIC -Wextra -Wall -ffunction-sections -fdata-sections",
             cxx_flags="-flto -fPIC -Wextra -Wall -ffunction-sections -fdata-sections",
             ld_flags="-flto -fPIC -static -Wl,--whole-archive -lpthread -Wl,--strip-all -Wl,--no-whole-archive -ffunction-sections -fdata-sections -Wl,--gc-sections",
-            libs=["pthread", "readline", "igris", "nos"],
+            libs=["pthread", "readline", "igris", "nos", "crow"],
             cxxstd="c++17"
             )
 

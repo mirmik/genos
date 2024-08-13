@@ -17,17 +17,17 @@
 
 #define EPSILON_UNIT 0.1
 
-bool AbstractAxis::isActive()
-{
-    if (for_modes.size() == 0)
-        return true;
+// bool AbstractAxis::isActive()
+// {
+//     if (for_modes.size() == 0)
+//         return true;
 
-    for (auto m : for_modes)
-        if (m == system_ctrmode)
-            return true;
+//     for (auto m : for_modes)
+//         if (m == system_ctrmode)
+//             return true;
 
-    return false;
-}
+//     return false;
+// }
 
 AbstractAxis::AbstractAxis(const std::string &name) :
     LogicalDevice(name, "axes")

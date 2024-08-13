@@ -23,124 +23,72 @@
 
 namespace crow
 {
-    template <class Header> struct serial_gstuff : public crow::gateway
+    struct serial_gstuff_v0 : public crow::gateway
     {
         int fd = -1;
 
+        gstuff_context gctx;
         crow::packet *rpack = nullptr;
         bool debug = false;
-        gstuff_autorecv recver = {};
+        gstuff_autorecv recver;
 
     public:
-        void newline_handler()
-        {
-            crow::packet *block = rpack;
-            rpack = NULL;
+        serial_gstuff_v0(const serial_gstuff_v0 &) = delete;
+        serial_gstuff_v0(gstuff_context gctx);
+        serial_gstuff_v0 &operator=(const serial_gstuff_v0 &) = delete;
 
-            block->revert_gate(id);
+        void newline_handler();
 
-            crow::packet_initialization(block, this);
-            crow::nocontrol_travel(block, false);
-        }
+        void send(crow::packet *pack) override;
 
-        void send(crow::packet *pack) override
-        {
-            char buffer[512];
-
-            header_v1 header = pack->extract_header_v1();
-            struct iovec iov[] = {
-                {&header, sizeof(header)},
-                {pack->addrptr(), pack->addrsize()},
-                {pack->dataptr(), pack->datasize()},
-            };
-            int size = gstuffing_v(iov, 3, buffer);
-            auto _ = write(fd, buffer, size);
-            (void)_;
-            crow::return_to_tower(pack, CROW_SENDED);
-        }
-
-        void read_handler(int)
-        {
-#define GSTUFF_MAXPACK_SIZE 512
-            char buf[1024];
-            ssize_t len = read(fd, (uint8_t *)buf, 1024);
-
-            for (int i = 0; i < len; ++i)
-            {
-                char c = buf[i];
-
-                if (debug)
-                {
-                    debug_printhex_uint8(c);
-                    debug_putchar('\t');
-                    debug_putchar(c);
-                    debug_print_newline();
-                }
-
-                if (rpack == NULL)
-                {
-                    rpack =
-                        allocate_packet<crow::header_v1>(GSTUFF_MAXPACK_SIZE);
-                    recver.setbuf(rpack->header_addr(), GSTUFF_MAXPACK_SIZE);
-                }
-
-                int ret = recver.newchar(c);
-
-                switch (ret)
-                {
-                    case GSTUFF_CRC_ERROR:
-                        crow::warn("warn: gstuff crc error");
-                        break;
-
-                    case GSTUFF_NEWPACKAGE:
-                        newline_handler();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
+        void read_handler(int);
 
         void
-        setup_serial_port(int baud, char parity, int databits, int stopbits)
-        {
-            nos::serial_port port(fd);
-            port.setup(baud, parity, databits, stopbits);
-        }
+        setup_serial_port(int baud, char parity, int databits, int stopbits);
 
-        void finish() override {}
+        void finish() override;
     };
 
-    template <class Header>
-    crow::serial_gstuff<Header> *create_serial_gstuff(const char *path,
-                                                      uint32_t baudrate,
-                                                      uint8_t id,
-                                                      bool debug)
+    // template <class Header>
+    crow::serial_gstuff_v0 *create_serial_gstuff_v0(const char *path,
+                                              uint32_t baudrate,
+                                              uint8_t id,
+                                              bool debug,
+                                                const gstuff_context& gctx);
+
+
+    struct serial_gstuff : public crow::gateway
     {
-        (void)baudrate;
-        auto *g = new crow::serial_gstuff<Header>;
+        int fd = -1;
 
-        g->debug = debug;
+        gstuff_context gctx;
+        crow::packet *rpack = nullptr;
+        bool debug = false;
+        gstuff_autorecv recver;
 
-        g->fd = open(path, O_RDWR | O_NOCTTY);
-        fcntl(g->fd, F_SETFL, fcntl(g->fd, F_GETFL) | O_NONBLOCK);
+    public:
+        serial_gstuff(const serial_gstuff &) = delete;
+        serial_gstuff(gstuff_context gctx);
+        serial_gstuff &operator=(const serial_gstuff &) = delete;
 
-        if (g->fd < 0)
-        {
-            perror("serial::open");
-            exit(0);
-        }
+        void newline_handler();
 
-        g->rpack = NULL;
-        g->bind(id);
+        void send(crow::packet *pack) override;
 
-        crow::asyncio.add_iotask(
-            g->fd, SelectType::READ,
-            igris::make_delegate(&serial_gstuff<Header>::read_handler, g));
+        void read_handler(int);
 
-        return g;
-    }
+        void
+        setup_serial_port(int baud, char parity, int databits, int stopbits);
+
+        void finish() override;
+    };
+
+    // template <class Header>
+    crow::serial_gstuff *create_serial_gstuff(const char *path,
+                                              uint32_t baudrate,
+                                              uint8_t id,
+                                              bool debug,
+                                                const gstuff_context& gctx);
 
 } // namespace crow
 

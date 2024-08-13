@@ -748,13 +748,13 @@ void parse_options(int argc, char **argv)
     }
 }
 
-template <class Header>
-void create_serial_gate_v(
+void create_serial_gate_v0(
     std::string path, int baud, char parity, int stopbits, int databits)
 {
-    crow::serial_gstuff<Header> *gate = nullptr;
-    if ((gate = crow::create_serial_gstuff<Header>(path.c_str(), 115200, 42,
-                                                   gdebug)) == NULL)
+    crow::serial_gstuff_v0 *gate = nullptr;
+    if ((gate = crow::create_serial_gstuff_v0(path.c_str(), 115200, 42,
+                                                   gdebug,
+        gstuff_context_v0())) == NULL)
     {
         perror("serialgate open");
         exit(-1);
@@ -765,21 +765,43 @@ void create_serial_gate_v(
     }
 }
 
-template <class Header> void create_serial_gate_v(std::string path)
+void create_serial_gate_v1(
+    std::string path, int baud, char parity, int stopbits, int databits)
 {
-    create_serial_gate_v<Header>(path, 115200, 'n', 1, 8);
+    crow::serial_gstuff *gate = nullptr;
+    if ((gate = crow::create_serial_gstuff(path.c_str(), 115200, 42,
+                                                   gdebug,
+        gstuff_context_v0())) == NULL)
+    {
+        perror("serialgate open");
+        exit(-1);
+    }
+    if (gate)
+    {
+        gate->setup_serial_port(baud, parity, stopbits, databits);
+    }
+}
+
+void create_serial_gate_v0(std::string path)
+{
+    create_serial_gate_v0(path, 115200, 'n', 1, 8);
+}
+
+void create_serial_gate_v1(std::string path)
+{
+    create_serial_gate_v1(path, 115200, 'n', 1, 8);
 }
 
 void create_serial_gate(std::vector<std::string> tokens)
 {
     if (tokens.size() == 1)
     {
-        create_serial_gate_v<crow::header_v1>(tokens[0]);
+        create_serial_gate_v1(tokens[0]);
     }
 
     else if (tokens.size() == 5)
     {
-        create_serial_gate_v<crow::header_v1>(
+        create_serial_gate_v1(
             tokens[0], std::stoi(tokens[1]), tokens[2][0], std::stoi(tokens[3]),
             std::stoi(tokens[4]));
     }
@@ -788,13 +810,15 @@ void create_serial_gate(std::vector<std::string> tokens)
     {
         if (tokens[5] == "v0")
         {
-            create_serial_gate_v<crow::header_v0>(
+            nos::println("create_serial_gate_v<crow::header_v0>");
+            create_serial_gate_v0(
                 tokens[0], std::stoi(tokens[1]), tokens[2][0],
                 std::stoi(tokens[3]), std::stoi(tokens[4]));
         }
         else if (tokens[5] == "v1")
         {
-            create_serial_gate_v<crow::header_v1>(
+            nos::println("create_serial_gate_v<crow::header_v1>");
+            create_serial_gate_v1(
                 tokens[0], std::stoi(tokens[1]), tokens[2][0],
                 std::stoi(tokens[3]), std::stoi(tokens[4]));
         }

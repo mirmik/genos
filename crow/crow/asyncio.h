@@ -90,7 +90,8 @@ namespace crow
             (void)ret;
             nos::osutil::nonblock(unsleep_pipe[0], true);
             add_iotask(
-                unsleep_pipe[0], SelectType::READ,
+                unsleep_pipe[0],
+                SelectType::READ,
                 igris::make_delegate(&asyncio_manager::unsleep_handler, this));
         }
 

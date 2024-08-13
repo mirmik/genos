@@ -8,5 +8,5 @@ BreakBeforeBraces: Allman
 FixNamespaceComments: false
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: Empty
-IndentCaseLabels: true
+BinPackArguments: false
 BinPackParameters: false

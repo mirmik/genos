@@ -345,19 +345,19 @@ namespace nos
             numer_or_string() : schema_node(numer_or_string_checker_type) {}
         };
 
-        [[deprecated]] void asserted_check(const trent &tr,
-                                           std::string rootname)
-        {
-            std::vector<std::string> strvec{rootname};
-            auto ret = root.check(tr, strvec);
-            if (ret.is_error())
-            {
-                std::string path = nos::join(strvec, '/');
-                std::string errtxt =
-                    nos::format("SCHEMA: trent {} {}", path, ret.error());
-                throw std::runtime_error("schema: errstring:" + errtxt);
-            }
-        }
+        // [[deprecated]] void asserted_check(const trent &tr,
+        //                                    std::string rootname)
+        // {
+        //     std::vector<std::string> strvec{rootname};
+        //     auto ret = root.check(tr, strvec);
+        //     if (ret.is_error())
+        //     {
+        //         std::string path = nos::join(strvec, '/');
+        //         std::string errtxt =
+        //             nos::format("SCHEMA: trent {} {}", path, ret.error());
+        //         throw std::runtime_error("schema: errstring:" + errtxt);
+        //     }
+        // }
 
         nos::expected<void, nos::errstring> check(const trent &tr,
                                                   std::string rootname)
