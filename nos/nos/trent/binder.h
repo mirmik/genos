@@ -120,6 +120,9 @@ namespace nos
 
         void update(const T &val)
         {
+            if (val == _local)
+                return;
+
             _local = val;
             ops.set_trent(saver.node(), _local);
             saver.save();

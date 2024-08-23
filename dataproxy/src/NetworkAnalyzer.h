@@ -8,6 +8,7 @@
 #include <nos/log.h>
 #include <nos/print.h>
 #include <nos/util/hexascii.h>
+#include <igris/time/systime.h>
 #include <stdio.h>
 
 extern int packno;
@@ -25,9 +26,10 @@ public:
     {
         _ip = ip;
         _port = port;
+        int ret = sock.connect(nos::inet::hostaddr(ip), port);
         sock.nodelay(true);
         sock.reusing(false);
-        return sock.connect(nos::inet::hostaddr(ip), port);
+        return ret;
     }
 
     std::string host_ip () { return _ip; }
@@ -42,9 +44,7 @@ public:
     {
         std::string sstr = str;
         nos::log::debug("SEND: {}", sstr);
-        // nos::println(str);
-        nos::print_to(sock, str);
-        nos::print_to(sock, "\n");
+        nos::print_to(sock, sstr + "\n\r");
         return 0;
     }
 

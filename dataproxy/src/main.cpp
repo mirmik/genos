@@ -16,6 +16,7 @@
 #include <nos/io/buffer_reader.h>
 #include <nos/io/stdfile.h>
 #include <nos/print.h>
+#include <igris/time/systime.h>
 #include <nos/trent/json.h>
 #include <nos/trent/trent.h>
 #include <queue>
@@ -125,6 +126,7 @@ void listenerThread_BufferMode_Func(void *)
     {
         if (discStart)
             return;
+
         auto exret = nos::read_until_from(informer, {buf, 128}, "\n");
 
         if (exret.is_error())
@@ -247,6 +249,7 @@ std::string raw_mode_formatdata_choose(const std::string &netantype)
 void listenerThread_RawMode_Func(void *)
 {
     nos::println("RawMode active");
+    static std::shared_ptr<std::string> last_ampdata;
 
     char buf[128];
     int sts;
@@ -263,8 +266,11 @@ void listenerThread_RawMode_Func(void *)
         if (ret.is_ok() && *ret > 0)
             nos::println(nos::buffer(buf, *ret));
 
+        if (before_package_delay != 0) 
+        {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(before_package_delay));
+        }
 
         if (ret.is_error())
         {
@@ -286,7 +292,13 @@ void listenerThread_RawMode_Func(void *)
             if (netan.send(raw_mode_getdata_choose(netantype).c_str()) < 0)
                 goto __error__;
 
+            
             ampdata = netan.read_block();
+            if (last_ampdata && *ampdata == *last_ampdata) 
+            {
+                nos::println("ampdata equaled last_ampdata");
+            }
+            last_ampdata = ampdata;
 
             if (!ampdata)
             {
@@ -632,32 +644,6 @@ void dataSenderFunc(void *)
                     cptr++;
                 }
 
-                // int32_t txtsize = sz * sizeof(float);
-
-                // if (DUMP_BLOCKS)
-                // {
-                //     nos::println("send(converted): txtsize:", txtsize);
-                // }
-
-                // if (client.write((char *)&packageindex, sizeof(int32_t))
-                //         .is_error())
-                //     goto __error__;
-                // if (client.write("amp", 3).is_error())
-                //     goto __error__;
-                // if (client.write((char *)&txtsize, sizeof(int32_t)).is_error())
-                //     goto __error__;
-                // if (client.write(amp.data(), txtsize).is_error())
-                //     goto __error__;
-                // if (client.write("phs", 3).is_error())
-                //     goto __error__;
-                // if (client.write((char *)&txtsize, sizeof(int32_t)).is_error())
-                //     goto __error__;
-                // if (client.write(phs.data(), txtsize).is_error())
-                //     goto __error__;
-                // if (client.write("end", 3).is_error())
-                //     goto __error__;
-
-                // packageindex++;
                 bool is_error = send_ampphs_strings(amp, phs);
                 if (is_error)
                     goto __error__;
@@ -665,39 +651,16 @@ void dataSenderFunc(void *)
 
             else
             {
-                // int32_t fsize = pair.first->size();
-                // int32_t ssize = pair.second->size();
-
-                // if (DUMP_BLOCKS)
-                // {
-                //     nos::fprintln(
-                //         "send(converted): fsize:{0} ssize:{1}", fsize, ssize);
-                // }
-
-                // if (client.write((char *)&packageindex, sizeof(int32_t))
-                //         .is_error())
-                //     goto __error__;
-                // if (client.write("amp", 3).is_error())
-                //     goto __error__;
-                // if (client.write((char *)&fsize, sizeof(int32_t)).is_error())
-                //     goto __error__;
-                // if (client.write(pair.first->data(), fsize).is_error())
-                //     goto __error__;
-                // if (client.write("phs", 3).is_error())
-                //     goto __error__;
-                // if (client.write((char *)&ssize, sizeof(int32_t)).is_error())
-                //     goto __error__;
-                // if (client.write(pair.second->data(), ssize).is_error())
-                //     goto __error__;
-                // if (client.write("end", 3).is_error())
-                //     goto __error__;
-                // packageindex++;
                 bool is_error = send_ampphs_strings(*pair.first, *pair.second);
                 if (is_error)
                     goto __error__;
             }
         }
+        else 
+        {
         datmutx.unlock();
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
 __error__:
