@@ -25,7 +25,7 @@
 #include <string>
 #include <thread>
 
-#define VERSION "0120"
+#define VERSION "0130"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
