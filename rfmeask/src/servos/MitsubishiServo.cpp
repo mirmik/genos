@@ -10,6 +10,7 @@
 #include <igris/util/bits.h>
 #include <nos/print.h>
 #include <nos/trace.h>
+#include <modes.h>
 #include <servos/MitsubishiServo.h>
 
 using namespace igris::result_type;
@@ -60,7 +61,9 @@ void MitsubishiServo::errstatAnalyze(uint8_t &errstat, uint8_t critical)
     if ((errstat & MRS_ALARMERROR) || forceAlarm)
     {
         uint16_t alarm_code = getAlarmStatus();
+    #if USE_LAST_ALARM
         AbstractServo::save_last_alarm_code((int)alarm_code);
+    #endif
         if (alarm_code < 0x90)
         {
             std::string alarm_code_str = std::to_string(alarm_code);
@@ -326,14 +329,15 @@ void MitsubishiServo::preset()
     }
 
 
+#if USE_LAST_ALARM
     int last_alarm_code = _last_alarm_runtime_binder.get();
-    nos::println("LAST_ALARM_CODE:", name(), " :", last_alarm_code);
     if (last_alarm_code == 0x25) 
     {
         nos::log::info("SET ZERO POSITION because LAST_ALARM_CODE == 0x25");
         set_zero_position();
         _last_alarm_runtime_binder.update(0);
     }
+#endif
 
 }
 

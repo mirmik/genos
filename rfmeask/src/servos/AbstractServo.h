@@ -20,6 +20,7 @@
 #include <igris/util/bug.h>
 #include <interrupt.h>
 #include <mutex>
+#include <modes.h>
 #include <optional>
 
 extern std::recursive_mutex updmtx;
@@ -92,7 +93,10 @@ public:
     igris::multiple_delegate<std::vector<int32_t>> multiTorqueUpdated = {};
 
     nos::trent_binder<double> *_velocity_multiplier = nullptr;
+
+#if USE_LAST_ALARM
     nos::trent_binder<int> _last_alarm_runtime_binder;
+#endif
 
     AbstractServo(const AbstractServo &) = delete;
     AbstractServo &operator=(const AbstractServo &) = delete;
@@ -259,7 +263,9 @@ public:
         FUNCTION_IS_NOT_RELEASED
     }
 
+#if USE_LAST_ALARM
     void save_last_alarm_code(int code);
+#endif
 
     virtual void relative_move(double dist) = 0;
     virtual void absolute_move(double dist) = 0;

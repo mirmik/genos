@@ -5,6 +5,8 @@
 #ifndef MODES_H
 #define MODES_H
 
+#define USE_LAST_ALARM 0
+
 // Мод для хеликса (Изделия в ОПКБ Радуга).
 extern int system_ctrmode;
 extern bool NOFAULT;
