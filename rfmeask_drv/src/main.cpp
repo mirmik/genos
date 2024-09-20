@@ -103,10 +103,10 @@ void eventctr_init()
                          trigout_send_pulse_fast_notify,
                          "send trigout pulse with fast notify");
 
-#ifdef BOARD_RL_SYNCRO_V2
+//#ifdef BOARD_RL_SYNCRO_V2
     eventctr.set_handler(1, switch_mode_state0_aug, "clear extpin[0]");
     eventctr.set_handler(2, switch_mode_state1_aug, "set extpin[0]");
-#endif
+//#endif
 }
 
 int external_trigger_number = 0;
