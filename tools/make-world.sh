@@ -6,6 +6,7 @@ list_of_directories="\
     ralgo \
     rabbit \
     rfmeask \
+    rfdaemon \
     dataproxy \
     ModbusRemoteControl \
     zillot \

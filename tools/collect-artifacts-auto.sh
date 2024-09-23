@@ -62,8 +62,8 @@ touch $RDIR/home/rfmeas/project/__dirkeep__
 cp tools/bin/reproxy $RDIR/usr/bin/reproxy
 cp tools/bin/uredir $RDIR/usr/bin/uredir
 cp rfmeask/rfmeas $RDIR/usr/local/bin/rfmeas
-cp tools/bin/rfdaemon $RDIR/usr/local/bin/rfdaemon
-cp tools/bin/rfdaemonctl $RDIR/usr/local/bin/rfdaemonctl
+cp rfdaemon/rfdaemon $RDIR/usr/local/bin/rfdaemon
+cp rfdaemon/rfdaemonctl $RDIR/usr/local/bin/rfdaemonctl
 #cp crow/ctrans $RDIR/usr/local/bin/ctrans
 #cp crow/crowker $RDIR/usr/local/bin/crowker
 cp dataproxy/dataproxy $RDIR/usr/local/bin/dataproxy
