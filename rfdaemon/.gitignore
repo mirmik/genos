@@ -74,6 +74,7 @@ Release
 
 rfdaemon
 rfdaemonctl
+!src/rfdaemonctl
 errlog.txt
 *.gen.cpp
 

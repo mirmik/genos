@@ -21,10 +21,18 @@ file(GLOB SOURCES
   src/*.cpp
 )
 
+file(GLOB SOURCES_RFDAEMONCTL
+  src/rfdaemonctl/*.cpp
+)
+
 add_executable(rfdaemon 
   ircc_resources.gen.cpp
   ${SOURCES})
 target_include_directories(rfdaemon PRIVATE src)
+
+add_executable(rfdaemonctl 
+  ${SOURCES_RFDAEMONCTL})
+target_include_directories(rfdaemonctl PRIVATE src)
 
 target_link_libraries(rfdaemon
   pthread
@@ -33,4 +41,9 @@ target_link_libraries(rfdaemon
   jsoncpp
   z
   util
+)
+
+target_link_libraries(rfdaemonctl
+  igris
+  nos
 )
