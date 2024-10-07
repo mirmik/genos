@@ -107,6 +107,25 @@ namespace igris
         //     ioctl(STDOUT_FILENO, TIOC, )
         // }
 
+        
+        void exec(const std::string &name,
+                  const std::vector<std::string> &args,
+                  const std::vector<std::string> &env)
+        {
+            std::vector<char *> cargs;
+            std::vector<char *> cenv;
+
+            for (auto &arg : args)
+                cargs.push_back(const_cast<char *>(arg.c_str()));
+            cargs.push_back(nullptr);
+
+            for (auto &env : env)
+                cenv.push_back(const_cast<char *>(env.c_str()));
+            cenv.push_back(nullptr);
+
+            exec(name, cargs, cenv);
+        }
+
         void exec(const std::string &name,
                   const std::vector<char *> &args,
                   const std::vector<char *> &env)

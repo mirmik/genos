@@ -4,28 +4,7 @@
             "command": "/usr/local/bin/rfmeas --config /home/rfmeas/project/settings.json --runtime /home/rfmeas/project/runtime.json",
             "name": "rfmeas",
             "restart": "always",
-            "files": [
-                {
-                    "path": "/home/rfmeas/project/errlog.txt",
-                    "name": "errlog.txt",
-                    "editable": false
-                },
-                {
-                    "path": "/home/rfmeas/project/rfmeas_log",
-                    "name": "runtime_log",
-                    "editable": false
-                },
-                {
-                    "path": "/home/rfmeas/project/settings.json",
-                    "name": "settings.json",
-                    "editable": false
-                },
-                {
-                    "path": "/home/rfmeas/project/runtime.json",
-                    "name": "runtime.json",
-                    "editable": false
-                }
-            ]
+            "systemd_bind" : "rfmeas"
         },
         {
             "command": "/usr/local/bin/crowker --udp 10009",
@@ -35,7 +14,8 @@
         {
             "command": "/usr/local/bin/dataproxy",
             "name": "dataproxy",
-            "restart": "always"
+            "restart": "always",
+            "systemd_bind" : "dataproxy"
         },
         {
             "command": "/usr/local/bin/ModbusRemoteControl --hmi_ip 192.168.2.253",

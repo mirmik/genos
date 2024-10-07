@@ -57,9 +57,9 @@ void start_httpserver(uint16_t port)
             nos::trent tr;
             for (size_t i = 0; i < apps.size(); i++)
             {
-                tr["apps"][(int)i]["name"] = apps[i].name();
-                tr["apps"][(int)i]["state"] = apps[i].status_string();
-                tr["apps"][(int)i]["pid"] = apps[i].pid();
+                tr["apps"][(int)i]["name"] = apps[i]->name();
+                tr["apps"][(int)i]["state"] = apps[i]->status_string();
+                tr["apps"][(int)i]["pid"] = apps[i]->pid();
             }
             res.set_content(nos::json::to_string(tr), "application/json");
         });
@@ -70,10 +70,10 @@ void start_httpserver(uint16_t port)
             nos::trent tr;
             for (size_t i = 0; i < apps.size(); i++)
             {
-                tr["apps"][(int)i]["name"] = apps[i].name();
-                tr["apps"][(int)i]["state"] = apps[i].status_string();
-                tr["apps"][(int)i]["pid"] = apps[i].pid();
-                tr["apps"][(int)i]["command"] = apps[i].command();
+                tr["apps"][(int)i]["name"] = apps[i]->name();
+                tr["apps"][(int)i]["state"] = apps[i]->status_string();
+                tr["apps"][(int)i]["pid"] = apps[i]->pid();
+                tr["apps"][(int)i]["command"] = apps[i]->command();
             }
             res.set_content(nos::json::to_string(tr), "application/json");
         });
@@ -96,7 +96,7 @@ void start_httpserver(uint16_t port)
                                       httplib::Response &res) {
             auto index = std::stoi(req.get_param_value("index"));
             std::cout << "stop " << index << std::endl;
-            appManager->applications()[index].stop();
+            appManager->applications()[index]->stop();
             res.set_content("{\"status\":\"ok\"}", "application/json");
         });
 
@@ -104,7 +104,7 @@ void start_httpserver(uint16_t port)
                                        httplib::Response &res) {
             auto index = std::stoi(req.get_param_value("index"));
             std::cout << "start " << index << std::endl;
-            appManager->applications()[index].start();
+            appManager->applications()[index]->start();
             res.set_content("{\"status\":\"ok\"}", "application/json");
         });
 
@@ -112,7 +112,7 @@ void start_httpserver(uint16_t port)
                                          httplib::Response &res) {
             auto index = std::stoi(req.get_param_value("index"));
             std::cout << "restart " << index << std::endl;
-            appManager->applications()[index].restart();
+            appManager->applications()[index]->restart();
             res.set_content("{\"status\":\"ok\"}", "application/json");
         });
 
@@ -121,7 +121,7 @@ void start_httpserver(uint16_t port)
             auto index = std::stoi(req.get_param_value("index"));
             std::cout << "get_logs " << index << std::endl;
             auto &app = appManager->applications()[index];
-            auto logs = httplib::detail::base64_encode(app.show_stdout());
+            auto logs = httplib::detail::base64_encode(app->show_stdout());
             nos::trent tr;
             tr["stdout"] = logs;
             res.set_content(nos::json::to_string(tr), "application/json");

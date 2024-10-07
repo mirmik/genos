@@ -151,14 +151,14 @@ std::vector<uint8_t> RFDaemonServer::getAppsInfo(const uint8_t *, uint32_t)
     auto &apps = appMgr->getAppsList();
     for (int i = 0; i < appCount; i++)
     {
-        pAppData[i].state = !apps[i].stopped();
+        pAppData[i].state = !apps[i]->stopped();
         pAppData[i].startSuccess = true; // Не используется
-        pAppData[i].uptime = apps[i].uptime();
-        pAppData[i].pid = apps[i].pid();
-        if (apps[i].errors().size())
+        pAppData[i].uptime = apps[i]->uptime();
+        pAppData[i].pid = apps[i]->pid();
+        if (apps[i]->errors().size())
         {
-            pAppData[i].error = (int8_t)apps[i].errors().front();
-            apps[i].errors().pop();
+            pAppData[i].error = (int8_t)apps[i]->errors().front();
+            apps[i]->errors().pop();
         }
     }
     return answer;

@@ -61,5 +61,5 @@ private:
     std::vector<uint8_t>
     parseReceivedData(const std::vector<uint8_t> &data) final;
     AppManager *appMgr = NULL;
-    std::vector<SrvCmd> commands;
+    std::vector<SrvCmd> commands = {};
 };

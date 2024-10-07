@@ -268,6 +268,7 @@ void TcpServer::setupConnection()
         socket.close();
         exit(EXIT_FAILURE);
     }
+    socket.reusing(true);
 
     if (socket.listen(1) == -1)
     {
@@ -275,5 +276,6 @@ void TcpServer::setupConnection()
         socket.close();
         exit(EXIT_FAILURE);
     }
+    socket.reusing(true);
     connectionCreated = true;
 }

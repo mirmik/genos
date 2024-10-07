@@ -105,8 +105,35 @@ App::App(int task_index, const std::string &name, const std::string &cmd,
     set_user(user);
 }
 
+
+std::string execute_and_read_output(const std::string& cmd) 
+{
+    igris::subprocess proc;
+    std::vector<std::string> args = igris::split(cmd);
+    proc.exec(args[0], args, {});
+    int fd = proc.output_fd();
+    proc.wait();
+    std::string out;
+    out.resize(1024);
+    int n = read(fd, out.data(), out.size());
+    if (n>=0) {
+        out.resize(n);
+        return out;
+    }
+    else 
+        return "";    
+}
+
 void App::stop()
 {
+    if (systemd_bind != "") 
+    {
+        std::string cmd = "/usr/bin/systemctl stop " + systemd_bind;
+        std::string out = execute_and_read_output(cmd);
+        nos::println(out);
+        return;
+    }
+
     if (!isStopped)
     {
         _attempts = 0;
@@ -123,6 +150,19 @@ void App::restart()
 
 void App::start()
 {
+    if (systemd_bind != "") 
+    {
+        std::string cmd = "/usr/bin/systemctl start " + systemd_bind;
+        nos::fprintln("Start in systemctl mode: {}", cmd);
+        restart_attempt_counter();
+        std::string out = execute_and_read_output(cmd);
+        nos::println(out);
+        isStopped = false;
+        _startTime = std::chrono::system_clock::now();
+        systemd_pid = 0;
+        return;
+    }
+
     if (isStopped)
     {
         restart_attempt_counter();
@@ -163,6 +203,11 @@ std::vector<char *> App::envp_for_execve(const std::vector<std::string> &args)
     return res;
 }
 
+void App::set_systemd_bind(const std::string& service) 
+{
+    this->systemd_bind = service;
+}
+
 // Call only in a separate thread
 void App::appFork()
 {
@@ -178,6 +223,7 @@ void App::appFork()
     auto args = tokens_for_execve(tokens);
 
     nos::println("Start subprocess:", name());
+    nos::println("tokens:", tokens);
     proc.exec(tokens[0].data(), args, envp);
     int fd = proc.output_fd();
 
@@ -203,8 +249,10 @@ void App::appFork()
             appManager->send_spam(buffer);
         }
 
-        if (cancel_reading)
+        if (cancel_reading) {
+            nos::println("stopped because reading was canceled");
             break;
+        }
         std::this_thread::sleep_for(100ms);
     }
     isStopped = true;
@@ -217,13 +265,18 @@ bool App::stopped() const
     return isStopped;
 }
 
-App::RestartMode App::restartMode() const
+RestartMode App::restartMode() const
 {
     return _restartMode;
 }
 
 int App::pid() const
 {
+    if (!systemd_bind.empty()) 
+    {
+        return systemd_pid; 
+    }
+
     return proc.pid();
 }
 
@@ -340,4 +393,45 @@ void App::set_environment_variables(
     const std::unordered_map<std::string, std::string> &env)
 {
     _env = env;
+}
+
+bool App::is_systemctl_process() 
+{
+    return systemd_bind != "";
+}
+
+void App::set_pid(int p) 
+{
+    systemd_pid = p;
+}
+
+void AppManager::update_systemctl_projects_status() 
+{
+    while (true) 
+    {
+        for (std::shared_ptr<App> p: applications()) 
+        {
+            if (p->is_systemctl_process()) 
+            {
+                auto name = p->systemd_bind;
+
+                if (p->pid() == 0) 
+                {
+                    auto out = execute_and_read_output(nos::format("/usr/bin/systemctl show --property MainPID --value {}", name));
+                    auto trimmed = nos::trim(out);
+                    int pid = std::stoi(trimmed);
+                    p->set_pid(pid);
+                }
+
+                {
+                    auto out = execute_and_read_output(nos::format("/usr/bin/systemctl is-active {}", name));
+                    auto trimmed = nos::trim(out);
+                    bool is_active = trimmed == "active";
+                    p -> isStopped = !is_active;
+                }
+            }
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    }
 }

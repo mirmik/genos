@@ -33,10 +33,13 @@ std::thread srvRxThread;
 std::thread srvTxThread;
 std::string APPLICATION_LIST_FILE_NAME = "/etc/rfdaemon/applications.json";
 
+std::thread systemdUpdaterThread;
+
 void interrupt_signal_handler(int signum);
 
 void interrupt_child(int signum)
 {
+    nos::println("interrupt_child:", signum);
     (void)signum;
     int status;
 
@@ -132,8 +135,8 @@ int main(int argc, char *argv[])
         }
         appManager->runApps();
 
-        if (!NO_HTTP_SERVER)
-            start_httpserver(HTTP_SERVER_PORT);
+        // if (!NO_HTTP_SERVER)
+        //     start_httpserver(HTTP_SERVER_PORT);
 
         start_tcp_console(API_CONSOLE_PORT);
         if (USE_LEGACY_API_PORT)
@@ -145,6 +148,9 @@ int main(int argc, char *argv[])
                                   appManager.get());
         srvTxThread = std::thread(tcpServerSendThreadHandler, srv.get(),
                                   appManager.get());
+
+        systemdUpdaterThread = std::thread(&AppManager::update_systemctl_projects_status, std::ref(*appManager));
+
         if (TERMINAL_MODE && !NOCONSOLE_MODE)
         {
             start_stdstream_console();
@@ -345,7 +351,7 @@ void stop_world()
 
 void interrupt_signal_handler(int sig)
 {
-    nos::println("Interrupt signal received.");
+    nos::println("Interrupt signal received. signum: " + std::to_string(sig));
     stop_world();
     exitHandler(sig);
 }

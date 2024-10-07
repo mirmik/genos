@@ -69,7 +69,7 @@ int start_application(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (app)
     {
         app->start();
@@ -92,7 +92,7 @@ int stop_application(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (app)
     {
         app->stop();
@@ -115,7 +115,7 @@ int stop_id_application(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->getApp(args[1].to_int());
+    auto app = appManager->getApp(args[1].to_int());
     if (app)
     {
         app->stop();
@@ -138,7 +138,7 @@ int start_id_application(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->getApp(args[1].to_int());
+    auto app = appManager->getApp(args[1].to_int());
     if (app)
     {
         app->start();
@@ -165,8 +165,8 @@ int list_of_applications(const nos::argv &args, nos::ostream &out, Context)
     }
 
     for (auto &app : apps)
-        nos::fprintln_to(out, "{} : {} : {}", app.name(), app.status_string(),
-                         app.pid());
+        nos::fprintln_to(out, "{} : {} : {}", app->name(), app->status_string(),
+                         app->pid());
     return 0;
 }
 
@@ -202,7 +202,7 @@ int show_application_stdout(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (app)
     {
         const std::string &stdout_string = app->show_stdout();
@@ -226,7 +226,7 @@ int show_application_stdout_stream(const nos::argv &args, nos::ostream &out,
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (app)
     {
         const std::string &stdout_string = app->show_stdout();
@@ -254,7 +254,7 @@ int show_application_stdout_base64(const nos::argv &args, nos::ostream &out,
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (app)
     {
         const std::string &stdout_string = app->show_stdout();
@@ -308,7 +308,7 @@ int app_linked_files(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     const auto &linked_files = app->linked_files();
 
     nos::trent tr(nos::trent::type::list);
@@ -328,7 +328,7 @@ int app_linked_files_b64(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     const auto &linked_files = app->linked_files();
 
     nos::trent tr(nos::trent::type::list);
@@ -348,7 +348,7 @@ int read_linked_file(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (app)
     {
         const auto &linked_files = app->linked_files();
@@ -383,7 +383,7 @@ int read_linked_file_b64(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (app)
     {
         const auto &linked_files = app->linked_files();
@@ -457,7 +457,7 @@ int application_command(const nos::argv &args, nos::ostream &out, Context)
         nos::println_to(out, "Usage: application_command <app_name>");
         return -1;
     }
-    auto *app = appManager->findApp(args[1].to_string());
+    auto app = appManager->findApp(args[1].to_string());
     if (!app)
     {
         nos::println_to(out, "Application not found");

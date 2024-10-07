@@ -84,6 +84,8 @@ cp /usr/lib/x86_64-linux-gnu/libmodbus.so* $RDIR/usr/lib/x86_64-linux-gnu/
 # Add Configs
 cp tools/positioner-configs/applications.json $RDIR/etc/rfdaemon/applications.json
 cp tools/positioner-configs/rfdaemon.service $RDIR/etc/systemd/system/rfdaemon.service
+cp tools/positioner-configs/rfmeas.service $RDIR/etc/systemd/system/rfmeas.service
+cp tools/positioner-configs/dataproxy.service $RDIR/etc/systemd/system/dataproxy.service
 cp tools/positioner-configs/20auto-upgrades $RDIR/etc/apt/apt.conf.d/20auto-upgrades
 #cp tools/positioner-configs/interfaces $RDIR/etc/network/interfaces
 

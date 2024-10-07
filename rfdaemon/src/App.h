@@ -26,28 +26,32 @@ public:
     LinkedFile(const LinkedFile &) = default;
 };
 
-class App
-{
-public:
     enum RestartMode
     {
         ALWAYS = 0,
         ONCE = 1,
     };
 
+class IApp
+{
+};
+
+
+
+class App : public IApp
+{
 private:
     std::string _username = {};
     uid_t _uid = 0;
-    std::vector<std::string> _args;
-    std::vector<LinkedFile> _linked_files;
-    int task_index;
-    std::chrono::time_point<std::chrono::system_clock> _startTime;
-    std::vector<std::string> tokens;
+    std::vector<std::string> _args = {};
+    std::vector<LinkedFile> _linked_files = {};
+    int task_index = {};
+    std::chrono::time_point<std::chrono::system_clock> _startTime = {};
+    std::vector<std::string> tokens = {};
     int32_t _attempts_initializer = 5;
     int32_t _attempts = _attempts_initializer;
     bool _watcher_guard = false;
     std::thread _watcher_thread = {};
-    bool isStopped = true;
     int _exitStatus = 0;
     RestartMode _restartMode = RestartMode::ALWAYS;
     std::string _name = {};
@@ -55,10 +59,15 @@ private:
     // int _pid = 0;
     igris::subprocess proc = {};
     bool cancel_reading = false;
-    std::string _stdout_record;
+    std::string _stdout_record = {};
     std::unordered_map<std::string, std::string> _env;
 
     rxcpp::subjects::subject<std::string> logstream_subject;
+    int systemd_pid = 0;
+
+public:
+    std::string systemd_bind;
+    bool isStopped = true;
 
 public:
     auto logstream_subject_observable()
@@ -75,6 +84,7 @@ public:
     App(App &&) = default;
     App &operator=(App &&) = default;
 
+    bool is_systemctl_process(); 
     void stop();
     void start();
     void restart();
@@ -82,6 +92,7 @@ public:
     void set_user(const std::string &user);
     RestartMode restartMode() const;
     int pid() const;
+    void set_pid(int p);
     const std::string &name() const;
     const std::vector<std::string> &args() const;
     int64_t uptime() const;
@@ -94,6 +105,7 @@ public:
     std::string command() const;
     std::vector<std::string> envp_base_for_execve();
     std::vector<char *> envp_for_execve(const std::vector<std::string> &args);
+    void set_systemd_bind(const std::string& service);
 
     bool need_to_another_attempt() const;
     void increment_attempt_counter();

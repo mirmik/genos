@@ -217,6 +217,24 @@ namespace nos
             storage.push_back(pair(key, T(std::forward<Args>(args)...)));
             return std::make_pair(storage.end() - 1, true);
         }
+
+        void erase(iterator pos)
+        {
+            storage.erase(pos);
+        }
+
+        void erase(const Key &key)
+        {
+            auto it =
+                std::find_if(storage.begin(),
+                             storage.end(),
+                             [&key](const pair &p) { return p.first == key; });
+
+            if (it != storage.end())
+            {
+                storage.erase(it);
+            }
+        }
     };
 }
 

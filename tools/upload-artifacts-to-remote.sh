@@ -1,6 +1,6 @@
 set -ex
 
-./tools/collect-artifacts.sh
+./tools/collect-artifacts-auto.sh
 scp ./artifacts.tar.gz rfmeas@$1:/home/rfmeas/artifacts.tar.gz
 scp ./tools/expand.sh rfmeas@$1:/home/rfmeas/expand.sh
 

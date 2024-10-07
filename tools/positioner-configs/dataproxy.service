@@ -1,0 +1,9 @@
+[Unit]
+Description=Dataproxy
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/dataproxy
+
+[Install]
+WantedBy=multi-user.target

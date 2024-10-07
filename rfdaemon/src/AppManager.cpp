@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 extern bool VERBOSE;
-std::mutex AppManager::ioMutex;
+std::mutex AppManager::ioMutex = {};
 using namespace std::chrono_literals;
 
 AppManager::AppManager(const std::string &appListFileName)
@@ -29,131 +29,112 @@ void AppManager::send_spam(const std::vector<uint8_t> &message)
     spamserver.write(message.data(), message.size());
 }
 
+RestartMode  parse_restart_mode(std::string str) 
+{
+        if (str == "once")
+            return RestartMode::ONCE;
+        else if (str == "always")
+            return RestartMode::ALWAYS;
+        else
+            return RestartMode::ONCE;
+}
+
+std::unordered_map<std::string, std::string> environment_map_parse(
+    const nos::flat_map<std::string, nos::trent>& env 
+) 
+{
+    std::unordered_map<std::string, std::string> env_map;
+    for (const auto &rec : env)
+            env_map[rec.first] = rec.second.as_string();
+    return env_map;    
+}
+
+
+void parse_application_record(nos::trent& apptrent, std::vector<std::shared_ptr<App>>& apps) 
+{
+    std::vector<LinkedFile> linked_files;
+    std::string name = apptrent["name"].as_string();
+    if (name.empty())
+    {
+        nos::println("Error: app name is empty");
+        return;
+    }
+
+    std::string cmd = apptrent["command"].as_string();
+    if (name.empty())
+    {
+        nos::println("Error: app command is empty");
+        return;
+    }
+    
+    if (VERBOSE)
+        nos::fprintln("\t{}", name);
+
+    RestartMode restartMode = parse_restart_mode(
+            apptrent["restart"].as_string_default("once"));
+
+    auto& files = apptrent["files"].as_list();
+    for (const auto &rec : files)
+    {
+        LinkedFile file;
+        file.path = rec["path"].as_string();
+        file.name = rec["name"].as_string();
+        file.editable = rec["editable"].as_bool();
+        linked_files.push_back(file);
+    }
+    
+    auto systemd_bind = apptrent["systemd_bind"].as_string_default("");
+        
+    auto &app = apps.emplace_back(std::make_shared<App>(
+        apps.size(), 
+        name, 
+        cmd, 
+        restartMode, 
+        linked_files,
+        apptrent["user"].as_string_default("")));
+
+    std::unordered_map<std::string, std::string> env_map = environment_map_parse(apptrent["env"].as_dict());
+    app->set_environment_variables(env_map);
+    app->set_systemd_bind(systemd_bind);
+}
+
 bool AppManager::loadConfigFile()
 {
     if (VERBOSE)
         nos::println("loading config file from", appFilename);
 
-    nos::trent root;
-    try
-    {
-        // read json file
-        std::string text;
-        std::ifstream file(appFilename, std::ios::in);
-        if (!file.is_open())
-        {
-            nos::println("failed to open config file", appFilename);
-            perror("read");
-            return false;
-        }
-        // read all text from file
-        std::string line;
-        while (std::getline(file, line))
-        {
-            text += line;
-        }
-        if (VERBOSE)
-        {
-            nos::println("config file content:\n", text);
-        }
+    nos::trent root = nos::json::parse_file(appFilename);
 
-        root = nos::json::parse_file(appFilename);
-    }
-    catch (const std::exception &ex)
-    {
-        nos::println("Error while parsing app list file: ", ex.what());
-        pushError(AppListConfigPath);
-        return true;
-    }
-
-    bool error = false;
-    int arraySize = root["apps"].as_list().size();
-    if (arraySize)
-    {
-        closeApps();
-        apps.clear();
-
-        nos::println("Parse application list:");
-        for (int i = 0; i < arraySize; i++)
-        {
-            auto &apptrent = root["apps"][i];
-
-            std::vector<LinkedFile> linked_files;
-            std::string name = apptrent["name"].as_string();
-            if (name.empty())
-            {
-                nos::println("Error: app name is empty");
-                continue;
-            }
-
-            std::string cmd = apptrent["command"].as_string();
-            if (name.empty())
-            {
-                nos::println("Error: app command is empty");
-                continue;
-            }
-
-            std::string user = apptrent["user"].as_string();
-            auto logs = apptrent["logs"];
-            auto files = apptrent["files"].as_list();
-            auto env = apptrent["env"].as_dict();
-            nos::fprintln("\t{}", name);
-
-            App::RestartMode restartMode;
-            if (apptrent["restart"].as_string() == "once")
-            {
-                restartMode = App::RestartMode::ONCE;
-            }
-            else if (apptrent["restart"].as_string() == "always")
-            {
-                restartMode = App::RestartMode::ALWAYS;
-            }
-            else
-            {
-                nos::println("Unknown restart mode for app", name);
-                restartMode = App::RestartMode::ONCE;
-            }
-
-            if (!files.empty())
-            {
-                for (const auto &rec : apptrent["files"].as_list())
-                {
-                    LinkedFile file;
-                    file.path = rec["path"].as_string();
-                    file.name = rec["name"].as_string();
-                    file.editable = rec["editable"].as_bool();
-                    linked_files.push_back(file);
-                }
-            }
-            apps.emplace_back(apps.size(), name, cmd, restartMode, linked_files,
-                              user);
-            auto &app = apps.back();
-
-            std::unordered_map<std::string, std::string> env_map;
-            for (const auto &rec : env)
-                env_map[rec.first] = rec.second.as_string();
-            app.set_environment_variables(env_map);
-        }
-    }
-    else
+    auto& root_list = root["apps"].as_list();
+    if (root_list.size() == 0)    
     {
         nos::fprintln("No apps found in file '{}'.", appFilename);
-        error = true;
+        return false;
     }
 
-    int sysLogCount = root["sys_logs"].as_list().size();
-    for (int i = 0; i < sysLogCount; i++)
-        systemLogPaths.push_back(root["sys_logs"][i].as_string());
+    closeApps();
+    apps.clear();
 
-    return error;
+    if (VERBOSE)
+        nos::println("Parse application list:");
+    
+    for (auto& apptrent: root_list)
+        parse_application_record(apptrent, apps);
+
+    auto& logs = root["sys_logs"].as_list();
+    for (auto& log : logs)
+        systemLogPaths.push_back(log.as_string());
+
+    return false;
 }
+
 
 void AppManager::runApps()
 {
     for (auto &a : apps)
     {
-        if (a.stopped())
-            a.start();
+        if (a->stopped())
+            a->start();
     }
 }
 
@@ -161,8 +142,8 @@ void AppManager::closeApps()
 {
     for (auto &a : apps)
     {
-        if (!a.stopped())
-            a.stop();
+        if (!a->stopped())
+            a->stop();
     }
     std::lock_guard lock(ioMutex);
     nos::println("All created processes have just been killed.");
@@ -185,30 +166,30 @@ const std::string &AppManager::getAppConfigFilename()
     return appFilename;
 }
 
-std::vector<App> &AppManager::getAppsList()
+std::vector<std::shared_ptr<App>> &AppManager::getAppsList()
 {
     return apps;
 }
 
-App *AppManager::findApp(const std::string &name)
+std::shared_ptr<App> AppManager::findApp(const std::string &name)
 {
     if (std::isdigit(name[0]))
     {
-        return &apps[stoi(name)];
+        return apps[stoi(name)];
     }
 
     for (auto &a : apps)
     {
-        if (!a.name().compare(name))
-            return &a;
+        if (!a->name().compare(name))
+            return a;
     }
     return nullptr;
 }
 
-App *AppManager::getApp(size_t index)
+std::shared_ptr<App> AppManager::getApp(size_t index)
 {
     if (index < apps.size())
-        return &apps[index];
+        return apps[index];
 
     return nullptr;
 }
@@ -246,7 +227,7 @@ std::vector<AppManager::Log> AppManager::packLogs()
     std::vector<std::string> paths = systemLogPaths;
     for (const auto &app : apps)
     {
-        auto logPaths = app.logPaths();
+        auto logPaths = app->logPaths();
         if (!logPaths.empty())
         {
             for (const auto &path : logPaths)
@@ -287,16 +268,18 @@ void AppManager::reload_config()
 
 void AppManager::on_child_finished(pid_t pid)
 {
-    auto *app = get_app_by_pid(pid);
-    app->on_child_finished();
+    auto app = get_app_by_pid(pid);
+
+    if (app)
+        app->on_child_finished();
 }
 
-App *AppManager::get_app_by_pid(pid_t pid)
+std::shared_ptr<App> AppManager::get_app_by_pid(pid_t pid)
 {
     for (auto &a : apps)
     {
-        if (a.pid() == pid)
-            return &a;
+        if (a->pid() == pid)
+            return a;
     }
     return nullptr;
 }

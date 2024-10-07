@@ -5,6 +5,7 @@
 #include <fstream>
 #include <list>
 #include <mutex>
+#include <memory>
 #include <nos/inet/tcpspam_server.h>
 #include <sched.h>
 #include <string>
@@ -15,6 +16,17 @@ constexpr auto APP_MAX_RESTART_ATTEMPTS = 3;
 
 class AppManager
 {
+private:
+    std::vector<std::shared_ptr<App>> apps = {};
+    std::vector<std::string> systemLogPaths = {};
+    std::list<uint8_t> errorList = {};
+    std::string appFilename = {};
+    std::string settingsFilename = "/home/rfmeas/project/settings.json";
+    std::string runtimeSettingsFilename = "/home/rfmeas/project/runtime.json";
+    nos::inet::tcpspam_server spamserver = {};
+    std::mutex spam_mutex = {};
+    static std::mutex ioMutex;
+
 public:
     enum Errors
     {
@@ -28,8 +40,8 @@ public:
     };
     struct Log
     {
-        std::string path;
-        std::vector<uint8_t> data; // First 4 bytes are the size of data
+        std::string path = {};
+        std::vector<uint8_t> data = {}; // First 4 bytes are the size of data
     };
     AppManager(const std::string &appListFileName);
     bool loadConfigFile();
@@ -38,7 +50,7 @@ public:
     void closeApps();
     void stop_all() { closeApps(); }
     void restartApps();
-    std::vector<App> &getAppsList();
+    std::vector<std::shared_ptr<App>> &getAppsList();
     size_t getAppCount() const;
     const std::string &
     getDeviceDescFilename() const; // rfmeask "config.json" file with path
@@ -48,28 +60,19 @@ public:
     std::vector<std::string> &getSystemLogPaths();
     void pushError(Errors error);
     std::vector<AppManager::Log> packLogs();
-    std::vector<App> &applications()
+    std::vector<std::shared_ptr<App>> &applications()
     {
         return apps;
     }
     const std::string &getAppConfigFilename();
-    App *getApp(size_t index);
-    App *findApp(const std::string &name);
+    std::shared_ptr<App> getApp(size_t index);
+    std::shared_ptr<App> findApp(const std::string &name);
     void send_spam(const std::string &message);
     void send_spam(const std::vector<uint8_t> &message);
     void reload_config();
 
     void on_child_finished(pid_t pid);
-    App *get_app_by_pid(pid_t pid);
+    std::shared_ptr<App> get_app_by_pid(pid_t pid);
 
-private:
-    std::vector<App> apps;
-    std::vector<std::string> systemLogPaths;
-    std::list<uint8_t> errorList;
-    std::string appFilename;
-    std::string settingsFilename = "/home/rfmeas/project/settings.json";
-    std::string runtimeSettingsFilename = "/home/rfmeas/project/runtime.json";
-    static std::mutex ioMutex;
-    nos::inet::tcpspam_server spamserver;
-    std::mutex spam_mutex;
+    void update_systemctl_projects_status();
 };
