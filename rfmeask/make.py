@@ -16,7 +16,6 @@ modbus_enabled = False
 # Deprecated params
 lazer = False
 lazer_emulation = False
-netan = False
 #############################
 
 extern_libs = [
@@ -93,7 +92,6 @@ defopts = ["-DSCPI_USER_CONFIG"]
 
 opt_table = {
     "HAVE_CORRECTION_TABLE": correction_table,
-    "HAVE_NETWORK_ANALYZER_PROXY": netan,
     "HAVE_LAZER_PROXY": lazer,
     "LAZER_EMULATION": lazer_emulation,
     "HAVE_MITSUBISHI_BOARD": mitsubishi_board,
