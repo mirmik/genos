@@ -34,6 +34,7 @@ function update_or_clone_with_branch()
 sudo python3 -m pip install licant --upgrade
 python3 -m pip install licant --upgrade --user
 
+# Неактуально после перехода на монорепу.
 # update_or_clone netricks-20.04-env https://github.com/mirmik/netricks-20.04-env-docker
 # update_or_clone igris https://github.com/smitek-robotics/igris
 # update_or_clone nos https://github.com/smitek-robotics/nos

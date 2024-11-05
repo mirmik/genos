@@ -32,6 +32,9 @@ private:
     volatile uint64_t brokenPackage = 0;
     nos::log::logger logger = {};
 
+    std::chrono::time_point<std::chrono::system_clock> last_error_time = {};
+    int count_of_skipped_errors = 0;
+
 public:
     MitsubishiCommunicator();
     MitsubishiCommunicator(const MitsubishiCommunicator &) = delete;

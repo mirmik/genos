@@ -24,7 +24,7 @@ uint16_t RFDAEMON_PORT = DEFAULT_RFDAEMON_PROTO_PORT;
 bool NO_HTTP_SERVER = false;
 int HTTP_SERVER_PORT = RFDAEMON_DEFAULT_HTTP_PORT;
 bool PRINT_LOGS = false;
-std::string VERSION = "0.4.0";
+std::string VERSION = "0.5.0";
 
 std::unique_ptr<AppManager> appManager = {};
 std::unique_ptr<RFDaemonServer> srv = {};

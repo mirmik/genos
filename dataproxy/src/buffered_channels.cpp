@@ -152,10 +152,6 @@ void data_requestor_routine(size_t threadno)
             timequeue.pop();
             mtx.unlock();
 
-            // nos::fprintln(
-            //   "[DEBUG] worker:{} Get token with number {}", threadno,
-            //   number);
-
             std::this_thread::sleep_until(tp);
         }
 
@@ -163,14 +159,9 @@ void data_requestor_routine(size_t threadno)
         if (netantype == "pna")
         {
             std::vector<rawtype> storage;
-            // auto &traces = *bufit;
-
             for (int trace_index = 0; trace_index < traces.size();
                  ++trace_index)
             {
-                // nos::println(
-                //   "read trace:", traces[trace_index], "packno:", packno);
-                // netanlock.lock();
                 int chnum = bufdist + 1 + buffer_channels_offset;
                 if (local_netan.send(nos::format("CALC{}:PAR:SEL \'{}\'",
                                                  chnum,
@@ -198,9 +189,6 @@ void data_requestor_routine(size_t threadno)
             for (int i = 0; i < storage.size(); ++i)
             {
                 datq.push(std::make_pair(storage[i], storage[i]));
-
-                // TODO: Добавить очередь для гарантированного порядка.
-                // predatq.push({storage[i], storage[i], number});
             }
             datmutx.unlock();
 
@@ -241,9 +229,7 @@ void stop_buffered_channels_automate()
 {
     discStart = true;
 
-    nos::println("informer join");
     informer_listener_thread.join();
-    nos::println("requestor join");
     for (auto &thr : workers)
         sem_post(&sem);
 

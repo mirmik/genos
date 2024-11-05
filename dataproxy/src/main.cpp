@@ -261,7 +261,7 @@ void listenerThread_RawMode_Func(void *)
     {
         if (discStart)
             return;
-        // dprln("wait header");
+
         auto ret = read_until_from(informer, {buf, 128}, "\n");
         if (ret.is_ok() && *ret > 0)
             nos::println(nos::buffer(buf, *ret));
@@ -664,7 +664,6 @@ void dataSenderFunc(void *)
     }
 
 __error__:
-    // client.close();
     dprln("dataSenderFunc::dataerror");
     return;
 }

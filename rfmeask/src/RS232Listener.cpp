@@ -172,10 +172,6 @@ std::string RS232Listener::Query(const char *str)
         }
         else
         {
-            nos::fprintln("wrongpack: q:{} a:{} as:{}",
-                          igris::dstring(str, strlen(str)),
-                          igris::dstring(ans),
-                          ans.size());
             if (ans.size() != 0)
                 brokenPackageTotal++;
             auto ret = file.write("\003", 1);
@@ -183,6 +179,26 @@ std::string RS232Listener::Query(const char *str)
             if (ret.is_error())
             {
                 perror("file.write(\003,1)");
+            }
+            
+            auto diff = std::chrono::system_clock::now() - last_error_time;
+            if (diff > 1s)
+            {
+                auto msg = nos::format("wrongpack: q:{} a:{} as:{}",
+                          igris::dstring(str, strlen(str)),
+                          igris::dstring(ans),
+                          ans.size());
+                if (count_of_skipped_errors > 1)
+                {
+                    msg += nos::format(" (+skipped: {})", count_of_skipped_errors);
+                }
+                count_of_skipped_errors = 0;
+                nos::log::warn(msg);
+                last_error_time = std::chrono::system_clock::now();
+            }
+            else
+            {
+                count_of_skipped_errors++;
             }
         }
     }

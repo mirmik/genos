@@ -37,6 +37,9 @@ private:
     struct timespec com_now_time = {};
     int mode = 0;
 
+    std::chrono::time_point<std::chrono::system_clock> last_error_time = {};
+    int count_of_skipped_errors = 0;
+
 public:
     Synchronizer *point_information_listener = nullptr;
 
@@ -44,6 +47,7 @@ public:
     RS232Listener()
     {
         rl.init();
+        last_error_time = std::chrono::system_clock::now();
     }
     void open(const char *str);
     void close();

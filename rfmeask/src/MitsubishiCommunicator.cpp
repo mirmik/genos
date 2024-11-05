@@ -28,6 +28,8 @@ using namespace std;
 MitsubishiCommunicator::MitsubishiCommunicator() :
     logger("MitsubishiCommunicator")
 {
+    
+    last_error_time = std::chrono::system_clock::now();
     tim = chrono::milliseconds(20);
 }
 
@@ -170,10 +172,26 @@ resend:
     //Если посылка невалидна, пробуем еще раз установленное количество раз.
     if (!checkcorrectans(answer, len))
     {
-        brokenPackage = brokenPackage + 1;
-        nos::fprintln("mrs485: unvalid package. (q:{}) (len:{}) Reopen port",
-                      std::string(query, sendlen),
+        auto diff = chrono::system_clock::now() - last_error_time;
+
+        if (diff > 1s)
+        {
+            auto msg = nos::format("mrs485: unvalid package. (q:{}) (len:{})",
+                      igris::dstring(std::string(query, sendlen)),
                       len);
+            if (count_of_skipped_errors > 1)
+            {
+                msg += nos::format(" (+skipped: {})", count_of_skipped_errors);
+            }
+            logger.warn(msg);
+            count_of_skipped_errors = 0;
+            last_error_time = chrono::system_clock::now();
+        }
+        else
+        {
+            count_of_skipped_errors++;
+        }
+        brokenPackage = brokenPackage + 1;
         close();
         open(portstr);
         ++iter;
