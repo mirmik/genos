@@ -113,15 +113,24 @@ std::string execute_and_read_output(const std::string& cmd)
     proc.exec(args[0], args, {});
     int fd = proc.output_fd();
     proc.wait();
-    std::string out;
-    out.resize(1024);
-    int n = read(fd, out.data(), out.size());
-    if (n>=0) {
-        out.resize(n);
-        return out;
+    std::string fullout;
+    
+    while(1) 
+    {
+        std::string out;
+        out.resize(1024);
+        int n = read(fd, out.data(), out.size());
+        if (n>=0) 
+        {
+            out.resize(n);
+            fullout += out;
+        }
+        else
+        { 
+            break;
+        }
     }
-    else 
-        return "";    
+    return fullout;
 }
 
 void App::stop()
@@ -152,14 +161,7 @@ void App::start()
 {
     if (systemd_bind != "") 
     {
-        std::string cmd = "/usr/bin/systemctl start " + systemd_bind;
-        nos::fprintln("Start in systemctl mode: {}", cmd);
-        restart_attempt_counter();
-        std::string out = execute_and_read_output(cmd);
-        nos::println(out);
-        isStopped = false;
-        _startTime = std::chrono::system_clock::now();
-        systemd_pid = 0;
+        start_systemd();
         return;
     }
 
@@ -168,6 +170,30 @@ void App::start()
         restart_attempt_counter();
         run();
     }
+}
+
+void App::start_systemd() 
+{
+        std::string cmd = "/usr/bin/systemctl start " + systemd_bind;
+        nos::fprintln("Start in systemctl mode: {}", cmd);
+        restart_attempt_counter();
+        std::string out = execute_and_read_output(cmd);
+        nos::println(out);
+        isStopped = false;
+        _startTime = std::chrono::system_clock::now();
+        systemd_pid = 0;
+}
+
+std::string App::get_journal_data(int lines_count) 
+{
+    std::string path = "/tmp/journal_cadscasdcv.log";
+    std::string out1 = execute_and_read_output(nos::format(
+        "/usr/bin/journalctl -u rfmeas -n {}", lines_count));
+    nos::println(out1);
+    // std::string out2 = execute_and_read_output(
+    //     nos::format("/usr/bin/cat {}", path));
+    // nos::println(out2);
+    return out1;
 }
 
 std::vector<char *> App::tokens_for_execve(const std::vector<std::string> &args)

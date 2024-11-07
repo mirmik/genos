@@ -106,6 +106,8 @@ public:
     std::vector<std::string> envp_base_for_execve();
     std::vector<char *> envp_for_execve(const std::vector<std::string> &args);
     void set_systemd_bind(const std::string& service);
+    std::string get_journal_data(int lcount);
+    void start_systemd();
 
     bool need_to_another_attempt() const;
     void increment_attempt_counter();

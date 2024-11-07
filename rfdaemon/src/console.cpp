@@ -14,8 +14,8 @@
 #include <nos/trent/json_print.h>
 #include <rxcpp/rx.hpp>
 #include <thread>
+#include <version.h>
 
-const int API_VERSION = 100;
 extern AppManager *appManager;
 std::vector<std::thread> server_threads;
 std::thread userIOThread;
@@ -489,6 +489,76 @@ int b64out(const nos::argv &args, nos::ostream &out, Context ctxt)
     return 0;
 }
 
+int show_journal_base64(const nos::argv &args, nos::ostream &out, Context)
+{
+    nos::println("SHOW JOURNAL BASE64");
+
+    if (args.size() < 3)
+    {
+        nos::println_to(out, "Usage: journal_base64 <app_name> <lcount>");
+        return -1;
+    }
+
+    auto app = appManager->findApp(args[1].to_string());
+    if (app)
+    {
+        int lines_count = args[2].to_int();
+        const std::string &stdout_string = app->get_journal_data(lines_count);
+
+        size_t sz = stdout_string.size();
+        nos::println("Journal size: {}", sz);
+
+        int cursor = 0;
+        while (sz > 0)
+        {
+            size_t chunk = std::min(sz, (size_t)512);
+            nos::println_to(out, 
+                igris::base64_encode(stdout_string.substr(cursor, chunk)));
+            cursor += chunk;
+            sz -= chunk;
+            nos::fprintln("Journal chunk: {} sz:{}", chunk, sz);
+        }
+        nos::println_to(out, 
+            igris::base64_encode("__END_MARKER__"));
+            
+
+        //const std::string &stdout_string = "Journal data";
+        nos::println_to(out, igris::base64_encode(stdout_string));
+    }
+    else
+    {
+        nos::println_to(out, "Application not found: " + args[1].to_string());
+        return -1;
+    }
+
+    return 0;
+}
+
+int is_systemd_process(const nos::argv &args, nos::ostream &out, Context)
+{
+    if (args.size() < 2)
+    {
+        nos::println_to(out, "Usage: is_systemd_process <app_name>");
+        return -1;
+    }
+
+    auto app = appManager->findApp(args[1].to_string());
+    if (app)
+    {
+        if (app->is_systemctl_process())
+            nos::println_to(out, "true");
+        else 
+            nos::println_to(out, "false");
+    }
+    else
+    {
+        nos::println_to(out, "Application not found: " + args[1].to_string());
+        return -1;
+    }
+
+    return 0;
+}
+
 nos::executor_t<Context> executor(std::vector<nos::command_t<Context>>{
     nos::command_t<Context>("hello", "baba is you", &hello),
     nos::command_t<Context>("q", "exit", &exit),
@@ -516,6 +586,12 @@ nos::executor_t<Context> executor(std::vector<nos::command_t<Context>>{
                             &show_application_stdout_stream),
     nos::command_t<Context>("log_base64", "show application stdout",
                             &show_application_stdout_base64),
+                            
+    nos::command_t<Context>("is_systemd_process", "true if systemd process",
+                            &is_systemd_process),
+    nos::command_t<Context>("journal_base64", "show journal text",
+                            &show_journal_base64),
+
     nos::command_t<Context>("spam", "send spam", &send_spam),
     nos::command_t<Context>("api_version", "api version", &api_version),
     nos::command_t<Context>("linkeds", "linked files", &app_linked_files),
