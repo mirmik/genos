@@ -1,4 +1,4 @@
-set -e
+set -ex
 
 sudo python3 -m pip install licant --upgrade
 python3 -m pip install licant --upgrade
