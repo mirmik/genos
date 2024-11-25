@@ -16,6 +16,13 @@ constexpr auto APP_MAX_RESTART_ATTEMPTS = 3;
 
 class AppManager
 {
+public:
+    static AppManager * _instance;
+    static AppManager *instance()
+    {
+        return _instance;
+    }
+
 private:
     std::vector<std::shared_ptr<App>> apps = {};
     std::vector<std::string> systemLogPaths = {};

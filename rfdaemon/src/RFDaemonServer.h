@@ -52,7 +52,6 @@ public:
     std::vector<uint8_t> getLogs(const uint8_t *data, uint32_t size);
     std::vector<uint8_t> getAppsList(const uint8_t *data, uint32_t size);
     std::vector<uint8_t> setAppsList(const uint8_t *data, uint32_t size);
-    void setAppManager(AppManager *manager);
     void addCmd(uint32_t code, std::string name, const cmdfunction &cmd);
 
 private:
@@ -60,6 +59,5 @@ private:
                    uint32_t size);
     std::vector<uint8_t>
     parseReceivedData(const std::vector<uint8_t> &data) final;
-    AppManager *appMgr = NULL;
     std::vector<SrvCmd> commands = {};
 };

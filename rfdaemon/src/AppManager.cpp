@@ -6,15 +6,19 @@
 #include <mutex>
 #include <nos/trent/json.h>
 #include <unistd.h>
+#include <memory>
 
 extern bool VERBOSE;
-std::mutex AppManager::ioMutex = {};
+std::mutex AppManager::ioMutex;
+AppManager * AppManager::_instance;
 using namespace std::chrono_literals;
 
 AppManager::AppManager(const std::string &appListFileName)
 {
+    nos::println("AppManager created");
     appFilename = appListFileName;
     spamserver.start(5001);
+    _instance = this;
 }
 
 void AppManager::send_spam(const std::string &message)
@@ -29,105 +33,125 @@ void AppManager::send_spam(const std::vector<uint8_t> &message)
     spamserver.write(message.data(), message.size());
 }
 
-RestartMode  parse_restart_mode(std::string str) 
-{
-        if (str == "once")
-            return RestartMode::ONCE;
-        else if (str == "always")
-            return RestartMode::ALWAYS;
-        else
-            return RestartMode::ONCE;
-}
-
-std::unordered_map<std::string, std::string> environment_map_parse(
-    const nos::flat_map<std::string, nos::trent>& env 
-) 
-{
-    std::unordered_map<std::string, std::string> env_map;
-    for (const auto &rec : env)
-            env_map[rec.first] = rec.second.as_string();
-    return env_map;    
-}
-
-
-void parse_application_record(nos::trent& apptrent, std::vector<std::shared_ptr<App>>& apps) 
-{
-    std::vector<LinkedFile> linked_files;
-    std::string name = apptrent["name"].as_string();
-    if (name.empty())
-    {
-        nos::println("Error: app name is empty");
-        return;
-    }
-
-    std::string cmd = apptrent["command"].as_string();
-    if (name.empty())
-    {
-        nos::println("Error: app command is empty");
-        return;
-    }
-    
-    if (VERBOSE)
-        nos::fprintln("\t{}", name);
-
-    RestartMode restartMode = parse_restart_mode(
-            apptrent["restart"].as_string_default("once"));
-
-    auto& files = apptrent["files"].as_list();
-    for (const auto &rec : files)
-    {
-        LinkedFile file;
-        file.path = rec["path"].as_string();
-        file.name = rec["name"].as_string();
-        file.editable = rec["editable"].as_bool();
-        linked_files.push_back(file);
-    }
-    
-    auto systemd_bind = apptrent["systemd_bind"].as_string_default("");
-        
-    auto &app = apps.emplace_back(std::make_shared<App>(
-        apps.size(), 
-        name, 
-        cmd, 
-        restartMode, 
-        linked_files,
-        apptrent["user"].as_string_default("")));
-
-    std::unordered_map<std::string, std::string> env_map = environment_map_parse(apptrent["env"].as_dict());
-    app->set_environment_variables(env_map);
-    app->set_systemd_bind(systemd_bind);
-}
-
 bool AppManager::loadConfigFile()
 {
     if (VERBOSE)
         nos::println("loading config file from", appFilename);
 
-    nos::trent root = nos::json::parse_file(appFilename);
-
-    auto& root_list = root["apps"].as_list();
-    if (root_list.size() == 0)    
+    nos::trent root;
+    try
     {
-        nos::fprintln("No apps found in file '{}'.", appFilename);
-        return false;
+        // read json file
+        std::string text;
+        std::ifstream file(appFilename, std::ios::in);
+        if (!file.is_open())
+        {
+            nos::println("failed to open config file", appFilename);
+            perror("read");
+            return false;
+        }
+        // read all text from file
+        std::string line;
+        while (std::getline(file, line))
+        {
+            text += line;
+        }
+        if (VERBOSE)
+        {
+            nos::println("config file content:\n", text);
+        }
+
+        root = nos::json::parse_file(appFilename);
+    }
+    catch (const std::exception &ex)
+    {
+        nos::println("Error while parsing app list file: ", ex.what());
+        pushError(AppListConfigPath);
+        return true;
     }
 
-    closeApps();
-    apps.clear();
+    bool error = false;
+    int arraySize = root["apps"].as_list().size();
+    if (arraySize)
+    {
+        closeApps();
+        apps.clear();
 
-    if (VERBOSE)
         nos::println("Parse application list:");
-    
-    for (auto& apptrent: root_list)
-        parse_application_record(apptrent, apps);
+        for (int i = 0; i < arraySize; i++)
+        {
+            auto &apptrent = root["apps"][i];
 
-    auto& logs = root["sys_logs"].as_list();
-    for (auto& log : logs)
-        systemLogPaths.push_back(log.as_string());
+            std::vector<LinkedFile> linked_files;
+            std::string name = apptrent["name"].as_string();
+            if (name.empty())
+            {
+                nos::println("Error: app name is empty");
+                continue;
+            }
 
-    return false;
+            std::string cmd = apptrent["command"].as_string();
+            if (name.empty())
+            {
+                nos::println("Error: app command is empty");
+                continue;
+            }
+
+            std::string user = apptrent["user"].as_string();
+            auto logs = apptrent["logs"];
+            auto files = apptrent["files"].as_list();
+            auto env = apptrent["env"].as_dict();
+            nos::fprintln("\t{}", name);
+
+            RestartMode restartMode;
+            if (apptrent["restart"].as_string() == "once")
+            {
+                restartMode = RestartMode::ONCE;
+            }
+            else if (apptrent["restart"].as_string() == "always")
+            {
+                restartMode = RestartMode::ALWAYS;
+            }
+            else
+            {
+                nos::println("Unknown restart mode for app", name);
+                restartMode = RestartMode::ONCE;
+            }
+
+            if (!files.empty())
+            {
+                for (const auto &rec : apptrent["files"].as_list())
+                {
+                    LinkedFile file;
+                    file.path = rec["path"].as_string();
+                    file.name = rec["name"].as_string();
+                    file.editable = rec["editable"].as_bool();
+                    linked_files.push_back(file);
+                }
+            }
+            apps.emplace_back(
+                std::make_shared<App>(apps.size(), name, cmd, restartMode, linked_files,
+                              user));
+            auto &app = apps.back();
+
+            std::unordered_map<std::string, std::string> env_map;
+            for (const auto &rec : env)
+                env_map[rec.first] = rec.second.as_string();
+            app->set_environment_variables(env_map);
+        }
+    }
+    else
+    {
+        nos::fprintln("No apps found in file '{}'.", appFilename);
+        error = true;
+    }
+
+    int sysLogCount = root["sys_logs"].as_list().size();
+    for (int i = 0; i < sysLogCount; i++)
+        systemLogPaths.push_back(root["sys_logs"][i].as_string());
+
+    return error;
 }
-
 
 void AppManager::runApps()
 {
@@ -145,7 +169,7 @@ void AppManager::closeApps()
         if (!a->stopped())
             a->stop();
     }
-    std::lock_guard lock(ioMutex);
+    
     nos::println("All created processes have just been killed.");
 }
 
@@ -269,9 +293,7 @@ void AppManager::reload_config()
 void AppManager::on_child_finished(pid_t pid)
 {
     auto app = get_app_by_pid(pid);
-
-    if (app)
-        app->on_child_finished();
+    app->on_child_finished();
 }
 
 std::shared_ptr<App> AppManager::get_app_by_pid(pid_t pid)

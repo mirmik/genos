@@ -24,7 +24,6 @@ uint16_t RFDAEMON_PORT = DEFAULT_RFDAEMON_PROTO_PORT;
 bool NO_HTTP_SERVER = false;
 int HTTP_SERVER_PORT = RFDAEMON_DEFAULT_HTTP_PORT;
 bool PRINT_LOGS = false;
-std::string VERSION = "0.5.0";
 
 std::unique_ptr<AppManager> appManager = {};
 std::unique_ptr<RFDaemonServer> srv = {};
@@ -33,13 +32,10 @@ std::thread srvRxThread;
 std::thread srvTxThread;
 std::string APPLICATION_LIST_FILE_NAME = "/etc/rfdaemon/applications.json";
 
-std::thread systemdUpdaterThread;
-
 void interrupt_signal_handler(int signum);
 
 void interrupt_child(int signum)
 {
-    nos::println("interrupt_child:", signum);
     (void)signum;
     int status;
 
@@ -135,8 +131,8 @@ int main(int argc, char *argv[])
         }
         appManager->runApps();
 
-        // if (!NO_HTTP_SERVER)
-        //     start_httpserver(HTTP_SERVER_PORT);
+        if (!NO_HTTP_SERVER)
+            start_httpserver(HTTP_SERVER_PORT);
 
         start_tcp_console(API_CONSOLE_PORT);
         if (USE_LEGACY_API_PORT)
@@ -146,11 +142,8 @@ int main(int argc, char *argv[])
         }
         srvRxThread = std::thread(tcpServerReceiveThreadHandler, srv.get(),
                                   appManager.get());
-        srvTxThread = std::thread(tcpServerSendThreadHandler, srv.get(),
-                                  appManager.get());
-
-        systemdUpdaterThread = std::thread(&AppManager::update_systemctl_projects_status, std::ref(*appManager));
-
+        // srvTxThread = std::thread(tcpServerSendThreadHandler, srv.get(),
+        //                           appManager.get());
         if (TERMINAL_MODE && !NOCONSOLE_MODE)
         {
             start_stdstream_console();
@@ -325,12 +318,6 @@ bool checkRunArgs(int argc, char *argv[])
     return 0;
 }
 
-int tcpServerSendThreadHandler(RFDaemonServer *srv, AppManager *appManager)
-{
-    srv->setAppManager(appManager);
-    return srv->sendThread();
-}
-
 int tcpServerReceiveThreadHandler(RFDaemonServer *srv, AppManager *)
 {
     while (!srv)
@@ -351,7 +338,7 @@ void stop_world()
 
 void interrupt_signal_handler(int sig)
 {
-    nos::println("Interrupt signal received. signum: " + std::to_string(sig));
+    nos::println("Interrupt signal received.");
     stop_world();
     exitHandler(sig);
 }
