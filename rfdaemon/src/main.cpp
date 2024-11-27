@@ -9,6 +9,7 @@
 #include <iostream>
 #include <signal.h>
 #include <string.h>
+#include <version.h>
 #include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
