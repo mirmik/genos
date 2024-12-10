@@ -499,10 +499,15 @@ int show_journal_base64(const nos::argv &args, nos::ostream &out, Context)
         return -1;
     }
 
-    auto app = appManager->findApp(args[1].to_string());
+    auto app_name = args[1].to_string();
+    auto lines_count = args[2].to_int();
+    nos::fprintln("show_journal_base64: {} {}", app_name, lines_count);
+
+    auto app = appManager->findApp(app_name);
     if (app)
     {
-        int lines_count = args[2].to_int();
+        nos::println("show_journal_base64: NAME:", app->name());
+
         const std::string &stdout_string = app->get_journal_data(lines_count);
 
         size_t sz = stdout_string.size();

@@ -188,7 +188,7 @@ std::string App::get_journal_data(int lines_count)
 {
     std::string path = "/tmp/journal_cadscasdcv.log";
     std::string out1 = execute_and_read_output(nos::format(
-        "/usr/bin/journalctl -u rfmeas -n {}", lines_count));
+        "/usr/bin/journalctl -u {} -n {}", name(), lines_count));
     nos::println(out1);
     // std::string out2 = execute_and_read_output(
     //     nos::format("/usr/bin/cat {}", path));

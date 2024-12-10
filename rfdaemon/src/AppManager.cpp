@@ -129,10 +129,18 @@ bool AppManager::loadConfigFile()
                     linked_files.push_back(file);
                 }
             }
+
+            std::string systemd_bind;
+            if (apptrent["systemd_bind"].is_string()) 
+            {
+                systemd_bind = apptrent["systemd_bind"].as_string();
+            }
+
             apps.emplace_back(
                 std::make_shared<App>(apps.size(), name, cmd, restartMode, linked_files,
                               user));
             auto &app = apps.back();
+            app->set_systemd_bind(systemd_bind);
 
             std::unordered_map<std::string, std::string> env_map;
             for (const auto &rec : env)
