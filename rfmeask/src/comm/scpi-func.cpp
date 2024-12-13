@@ -377,25 +377,7 @@ scpi_result_t SCPIFUNC_deviceArgQ(scpi_t *context)
 
 scpi_result_t SCPIFUNC_SystemIPAddress(scpi_t *context)
 {
-    int arg[4];
-    for (int i = 0; i < 4; i++)
-        if (!SCPI_ParamInt32(context, &arg[i], true))
-            return SCPI_RES_ERR;
-
-    for (int i = 0; i < 4; i++)
-        if (arg[i] < 0 || arg[i] > 255)
-            ILLEGAL_PARAMETR_VALUE_RETURN
-
-    char comstr[80];
-    char ip[40];
-    const char *mask = "255.255.255.0";
-    sprintf(ip, "%d.%d.%d.%d", arg[0], arg[1], arg[2], arg[3]);
-
-    sprintf(comstr, "lua /root/autostart/ipchanger.lua %s %s", ip, mask);
-    printf("change ip: %s\r\n", comstr);
-    int fff = system(comstr);
-    (void)fff;
-
+    // Deprecated and removed
     return SCPI_RES_OK;
 }
 
