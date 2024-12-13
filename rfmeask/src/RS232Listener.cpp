@@ -642,6 +642,7 @@ void RS232Listener::add_compare_table(int xy, const std::vector<double> &points)
 
 void RS232Listener::enable_external_trigger_mode(int xy)
 {
+    // Что такое external_trigger?
     external_trigger_number = 0;
     auto mes = Form(xy * 128 + 57, 1);
     Query(mes.to_buf());
