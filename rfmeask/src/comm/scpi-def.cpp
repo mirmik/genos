@@ -530,11 +530,8 @@ const scpi_command_t scpi_commands[] = {
     },
 
     {"AXIS#:SCAN:COMPTBL:ENable", SCPIFUNC_axis_compare_table_enable},
-
     {"AXIS#:SCAN:COMPTBL:ADD", SCPIFUNC_axis_compare_table_add_point},
-
     {"AXIS#:SCAN:COMPTBL:CLEar", SCPIFUNC_axis_compare_table_clear},
-
     {"AXIS#:SCAN:RESET", SCPIFUNC_axis_scan_subsystem_reset},
 
     {
