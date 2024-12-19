@@ -30,7 +30,8 @@ std::unique_ptr<AppManager> appManager = {};
 std::unique_ptr<RFDaemonServer> srv = {};
 std::unique_ptr<Beam> beam = {};
 std::thread srvRxThread;
-std::thread srvTxThread;
+//std::thread srvTxThread;
+std::thread systemd_updater_thread;
 std::string APPLICATION_LIST_FILE_NAME = "/etc/rfdaemon/applications.json";
 
 void interrupt_signal_handler(int signum);
@@ -143,21 +144,17 @@ int main(int argc, char *argv[])
         }
         srvRxThread = std::thread(tcpServerReceiveThreadHandler, srv.get(),
                                   appManager.get());
-        // srvTxThread = std::thread(tcpServerSendThreadHandler, srv.get(),
-        //                           appManager.get());
+        
+
+        systemd_updater_thread = std::thread(
+            &AppManager::update_systemctl_projects_status, 
+            appManager.get());
+
+
         if (TERMINAL_MODE && !NOCONSOLE_MODE)
         {
             start_stdstream_console();
         }
-        try
-        {
-            srvTxThread.join();
-        }
-        catch (const std::exception &e)
-        {
-            nos::println("Error: {}", e.what());
-        }
-
         try
         {
             srvRxThread.join();
@@ -166,6 +163,8 @@ int main(int argc, char *argv[])
         {
             nos::println("Error: {}", e.what());
         }
+    
+    
     }
     return 0;
 }
