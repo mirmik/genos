@@ -76,9 +76,6 @@ std::vector<uint8_t> RFDaemonServer::restartAllApps(const uint8_t *, uint32_t)
 
 std::vector<uint8_t> RFDaemonServer::getConfig(const uint8_t *, uint32_t)
 {
-    //    if (WITHOUT_RFMEASK)
-    //        return {};
-
     auto settings_path = AppManager::instance()->getDeviceDescFilename();
     auto runtime_path = AppManager::instance()->getDeviceRuntimeFilename();
 

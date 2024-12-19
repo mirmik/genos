@@ -17,7 +17,6 @@
 bool VERBOSE = false;
 bool TERMINAL_MODE = true;
 bool NOCONSOLE_MODE = false;
-bool WITHOUT_RFMEASK = false;
 bool EDIT_MODE = false;
 bool USE_LEGACY_API_PORT = true;
 int API_CONSOLE_PORT = RFDAEMON_DEFAULT_API_PORT;
@@ -250,10 +249,6 @@ bool checkRunArgs(int argc, char *argv[])
 
         case 'N':
             NOCONSOLE_MODE = true;
-            break;
-
-        case 'n':
-            WITHOUT_RFMEASK = true;
             break;
 
         case 'P':
