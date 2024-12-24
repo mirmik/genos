@@ -112,6 +112,7 @@ std::string execute_and_read_output(const std::string& cmd)
     std::vector<std::string> args = igris::split(cmd);
     proc.exec(args[0], args, {});
     int fd = proc.output_fd();
+    nos::println("fd: {}", fd);
     proc.wait();
     std::string fullout;
     
@@ -130,6 +131,8 @@ std::string execute_and_read_output(const std::string& cmd)
             break;
         }
     }
+
+    proc.close();
     return fullout;
 }
 
@@ -152,6 +155,7 @@ void App::stop()
 
 void App::restart()
 {
+    nos::println("Restarting app: {}", name());
     stop();
     std::this_thread::sleep_for(0.5s);
     start();
@@ -345,6 +349,7 @@ void App::watchFunc()
     while (1)
     {
         std::this_thread::sleep_for(10ms);
+        nos::println("appFork", name());
         appFork();
 
         if (!need_to_another_attempt())
@@ -362,6 +367,7 @@ void App::run()
         _watcher_guard = true;
         if (_watcher_thread.joinable())
             _watcher_thread.join();
+        nos::println("Start app '{}'", name());
         _watcher_thread = std::thread(&App::watchFunc, this);
     }
     else
@@ -458,6 +464,7 @@ void AppManager::update_systemctl_projects_status()
             }
         }
 
+        nos::println("Update systemctl projects status");
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
 }

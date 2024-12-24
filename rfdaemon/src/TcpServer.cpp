@@ -92,11 +92,13 @@ TcpServer::~TcpServer()
         }
 
         finish:
+            client.close();
             tcp_server->mark_as_deleted(this);
     }
 
     void ClientStruct::start_receive_thread() 
     {
+        nos::println("Starting receive thread");
         receive_thread = std::thread([this](){ run(); });
     }
 
@@ -125,6 +127,7 @@ int TcpServer::receiveThread()
         perror("Socket bind error.\n");
         nos::println("Socket port:" + std::to_string(usedPort));
         socket.close();
+        nos::println("Exit because of bind error");
         exit(EXIT_FAILURE);
     }
 
@@ -148,6 +151,8 @@ int TcpServer::receiveThread()
         else 
             return -1;
     }
+
+    socket.close();
 }
 
 

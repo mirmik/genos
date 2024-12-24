@@ -634,7 +634,7 @@ void client_spin(nos::inet::tcp_client client)
 {
     client_context context([&](std::string str)
                            { client.send(str.data(), str.size()); });
-    nos::println("Client connected");
+    nos::println("Client connected fd:", client.fd());
     while (true)
     {
         auto expected_line = nos::readline_from(client);
@@ -653,6 +653,7 @@ void client_spin(nos::inet::tcp_client client)
             continue;
         client.write(sb.data(), sb.size());
     }
+    client.close();
     nos::println("Client disconnected");
 }
 
@@ -672,10 +673,13 @@ void server_spin(int port)
         std::thread client_thread(client_spin, client);
         client_thread.detach();
     }
+
+    server.close();
 }
 
 void start_tcp_console(int tcp_console_port)
 {
+    nos::println("Starting tcp console on port", tcp_console_port);
     server_threads.emplace_back(std::thread(server_spin, tcp_console_port));
 }
 
@@ -699,5 +703,6 @@ int userIOThreadHandler()
 
 void start_stdstream_console()
 {
+    nos::println("Starting stdstream console");
     userIOThread = std::thread(userIOThreadHandler);
 }

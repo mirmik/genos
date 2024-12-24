@@ -20,6 +20,7 @@ Beam::Beam()
 void Beam::start()
 {
     beam_thread = std::thread(&Beam::beam_thread_func, this);
+    nos::println("Beam thread started");
 }
 
 void Beam::beam_thread_func()

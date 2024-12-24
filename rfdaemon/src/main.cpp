@@ -141,10 +141,13 @@ int main(int argc, char *argv[])
             nos::fprintln("Legacy API port {} is used", 5000);
             start_tcp_console(5000);
         }
+
+        nos::println("RFDaemon started");
         srvRxThread = std::thread(tcpServerReceiveThreadHandler, srv.get(),
                                   appManager.get());
         
 
+        nos::println("Starting systemd updater thread");
         systemd_updater_thread = std::thread(
             &AppManager::update_systemctl_projects_status, 
             appManager.get());
