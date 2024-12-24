@@ -112,7 +112,6 @@ std::string execute_and_read_output(const std::string& cmd)
     std::vector<std::string> args = igris::split(cmd);
     proc.exec(args[0], args, {});
     int fd = proc.output_fd();
-    nos::println("fd: {}", fd);
     proc.wait();
     std::string fullout;
     
@@ -464,7 +463,6 @@ void AppManager::update_systemctl_projects_status()
             }
         }
 
-        nos::println("Update systemctl projects status");
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
 }
