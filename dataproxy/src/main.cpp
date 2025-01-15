@@ -8,6 +8,7 @@
 #include <cstring>
 #include <getopt.h>
 #include <igris/dprint.h>
+#include <igris/time/systime.h>
 #include <main.h>
 #include <mutex>
 #include <nos/argparse.h>
@@ -16,7 +17,6 @@
 #include <nos/io/buffer_reader.h>
 #include <nos/io/stdfile.h>
 #include <nos/print.h>
-#include <igris/time/systime.h>
 #include <nos/trent/json.h>
 #include <nos/trent/trent.h>
 #include <queue>
@@ -248,116 +248,62 @@ std::string raw_mode_formatdata_choose(const std::string &netantype)
 
 void listenerThread_RawMode_Func(void *)
 {
-    nos::println("RawMode active");
-    static std::shared_ptr<std::string> last_ampdata;
+    __label__ __error__;
 
-    char buf[128];
-    int sts;
-
-    if (netan.send(raw_mode_formatdata_choose(netantype).c_str()) < 0)
-        goto __error__;
-
-    while (true)
+    try
     {
-        if (discStart)
-            return;
+        nos::println("RawMode active");
+        static std::shared_ptr<std::string> last_ampdata;
 
-        auto ret = read_until_from(informer, {buf, 128}, "\n");
-        if (ret.is_ok() && *ret > 0)
-            nos::println(nos::buffer(buf, *ret));
+        char buf[128];
+        int sts;
 
-        if (before_package_delay != 0) 
-        {
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(before_package_delay));
-        }
-
-        if (ret.is_error())
-        {
+        if (netan.send(raw_mode_formatdata_choose(netantype).c_str()) < 0)
             goto __error__;
-        }
-        if (discStart)
-            return;
 
-        std::shared_ptr<std::string> ampdata;
-        std::vector<rawtype> storage;
-
-        for (int trace_index = 0; trace_index < traces.size(); ++trace_index)
+        while (true)
         {
-            netanlock.lock();
-            if (netan.send(raw_mode_parameter_choose(netantype,
-                                                     traces[trace_index].first)
-                               .c_str()) < 0)
-                goto __error__;
-            if (netan.send(raw_mode_getdata_choose(netantype).c_str()) < 0)
-                goto __error__;
+            if (discStart)
+                return;
 
-            
-            ampdata = netan.read_block();
-            if (last_ampdata && *ampdata == *last_ampdata) 
+            auto ret = read_until_from(informer, {buf, 128}, "\n");
+            if (ret.is_ok() && *ret > 0)
+                nos::println(nos::buffer(buf, *ret));
+
+            if (before_package_delay != 0)
             {
-                nos::println("ampdata equaled last_ampdata");
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(before_package_delay));
             }
-            last_ampdata = ampdata;
 
-            if (!ampdata)
+            if (ret.is_error())
             {
                 goto __error__;
             }
+            if (discStart)
+                return;
 
-            netanlock.unlock();
-
-            storage.push_back(ampdata);
-        }
-
-        datmutx.lock();
-        for (int i = 0; i < storage.size(); ++i)
-        {
-            datq.push(std::make_pair(storage[i], storage[i]));
-        }
-        datmutx.unlock();
-    }
-
-__error__:
-    client.write("err", 3);
-    dprln("listenerThreadFunc::dataerror");
-    disconnect();
-    dprln("listenerThreadFunc::after_disc");
-    return;
-}
-
-void listenerThread_LocalMode_Func(void *)
-{
-    nos::println("LocalMode active");
-
-    char buf[128];
-    int sts;
-
-    while (true)
-    {
-        if (discStart)
-            return;
-
-        nos::println("Warn: Maybe need to remove INIT:IMM;*OPC?");
-        netan.query("INIT:IMM;*OPC?");
-
-        std::shared_ptr<std::string> ampdata;
-        if (netantype == "pna")
-        {
+            std::shared_ptr<std::string> ampdata;
             std::vector<rawtype> storage;
 
             for (int trace_index = 0; trace_index < traces.size();
                  ++trace_index)
             {
                 netanlock.lock();
-                if (netan.send(nos::format("CALC1:PAR:SEL \'{}\'",
-                                           traces[trace_index].first)
+                if (netan.send(raw_mode_parameter_choose(
+                                   netantype, traces[trace_index].first)
                                    .c_str()) < 0)
                     goto __error__;
-                if (netan.send("CALC1:DATA:NSW:FIRS? SDATA, 1") < 0)
+                if (netan.send(raw_mode_getdata_choose(netantype).c_str()) < 0)
                     goto __error__;
 
                 ampdata = netan.read_block();
+                if (last_ampdata && *ampdata == *last_ampdata)
+                {
+                    nos::println("ampdata equaled last_ampdata");
+                }
+                last_ampdata = ampdata;
+
                 if (!ampdata)
                 {
                     goto __error__;
@@ -375,18 +321,107 @@ void listenerThread_LocalMode_Func(void *)
             }
             datmutx.unlock();
         }
-        else if (netantype == "ena")
-        {
-            dprln("ena point");
-        }
-        else
-        {
-            dprln("wrong netan type");
-        }
+    }
+    catch (const std::exception &ex)
+    {
+        goto __error__;
     }
 
 __error__:
-    client.write("err", 3);
+
+    try
+    {
+        client.write("err", 3);
+    }
+    catch (const std::exception &ex)
+    {
+    }
+
+    try
+    {
+        disconnect();
+    }
+    catch (const std::exception &ex)
+    {
+    }
+
+    return;
+}
+
+void listenerThread_LocalMode_Func(void *)
+{
+    try
+    {
+        nos::println("LocalMode active");
+
+        char buf[128];
+        int sts;
+
+        while (true)
+        {
+            if (discStart)
+                return;
+
+            nos::println("Warn: Maybe need to remove INIT:IMM;*OPC?");
+            netan.query("INIT:IMM;*OPC?");
+
+            std::shared_ptr<std::string> ampdata;
+            if (netantype == "pna")
+            {
+                std::vector<rawtype> storage;
+
+                for (int trace_index = 0; trace_index < traces.size();
+                     ++trace_index)
+                {
+                    netanlock.lock();
+                    if (netan.send(nos::format("CALC1:PAR:SEL \'{}\'",
+                                               traces[trace_index].first)
+                                       .c_str()) < 0)
+                        goto __error__;
+                    if (netan.send("CALC1:DATA:NSW:FIRS? SDATA, 1") < 0)
+                        goto __error__;
+
+                    ampdata = netan.read_block();
+                    if (!ampdata)
+                    {
+                        goto __error__;
+                    }
+
+                    netanlock.unlock();
+
+                    storage.push_back(ampdata);
+                }
+
+                datmutx.lock();
+                for (int i = 0; i < storage.size(); ++i)
+                {
+                    datq.push(std::make_pair(storage[i], storage[i]));
+                }
+                datmutx.unlock();
+            }
+            else if (netantype == "ena")
+            {
+                dprln("ena point");
+            }
+            else
+            {
+                dprln("wrong netan type");
+            }
+        }
+    }
+    catch (const std::exception &ex)
+    {
+        goto __error__;
+    }
+
+__error__:
+    try
+    {
+        client.write("err", 3);
+    }
+    catch (const std::exception &ex)
+    {
+    }
     dprln("listenerThreadFunc::dataerror");
     disconnect();
     dprln("listenerThreadFunc::after_disc");
@@ -533,17 +568,16 @@ bool need_swap()
 }
 
 // return : true -> error
-bool send_ampphs_strings(const std::string& amp, const std::string& phs) 
+bool send_ampphs_strings(const std::string &amp, const std::string &phs)
 {
-    if (last_sended_amp == amp) 
+    if (last_sended_amp == amp)
         nos::println("Last sended amp equaled");
-    
-    if (last_sended_phs == phs) 
+
+    if (last_sended_phs == phs)
         nos::println("Last sended phs equaled");
 
     last_sended_amp = amp;
     last_sended_phs = phs;
-    
 
     int32_t fsize = amp.size();
     int32_t ssize = phs.size();
@@ -553,8 +587,7 @@ bool send_ampphs_strings(const std::string& amp, const std::string& phs)
         nos::println("send ampphs: ampsize:{} phssize:{}", fsize, ssize);
     }
 
-    if (client.write((char *)&packageindex, sizeof(int32_t))
-        .is_error())
+    if (client.write((char *)&packageindex, sizeof(int32_t)).is_error())
         return true;
     if (client.write("amp", 3).is_error())
         return true;
@@ -574,7 +607,6 @@ bool send_ampphs_strings(const std::string& amp, const std::string& phs)
     packageindex++;
     return false;
 }
-
 
 bool flag_dataSenderFuncFinish = true;
 bool flag = false;
@@ -656,9 +688,9 @@ void dataSenderFunc(void *)
                     goto __error__;
             }
         }
-        else 
+        else
         {
-        datmutx.unlock();
+            datmutx.unlock();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
