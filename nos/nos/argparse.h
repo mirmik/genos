@@ -61,7 +61,6 @@ namespace nos
     private:
         void set_first(const std::string &first);
         void add_value(const std::string &name, const std::string &value);
-        bool is_valid_namespace() const;
 
         void add_freearg(const std::string &name, const std::string &arg)
         {
@@ -71,6 +70,8 @@ namespace nos
     public:
         argparse_namespace() {}
 
+        std::string error() const;
+        bool is_valid_namespace() const;
         std::string value(const std::string &name);
         bool flag(const std::string &name);
 

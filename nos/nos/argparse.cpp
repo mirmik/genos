@@ -78,6 +78,18 @@ std::string nos::argparse::help()
     return ss.str();
 }
 
+std::string nos::argparse_namespace::error() const
+{
+    nos::stringstream ss;
+    nos::fprint_to(ss, "Usage: {} [options] [args]\n", first);
+    nos::fprint_to(ss, "Unknown keys:\n");
+    for (auto &key : unknown_keys)
+    {
+        nos::fprint_to(ss, "\t{}\n", key);
+    }
+    return ss.str();
+}
+
 nos::argparse_namespace nos::argparse::parse_args(int argc, const char *argv[])
 {
     nos::argparse_namespace ns;

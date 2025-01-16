@@ -915,10 +915,20 @@ int main(int argc, char *argv[])
         "dataproxy", "Utility for network analyzer data bufferization");
     parser.add_argument("blockdump", 'b', "Dump blocks to file");
     parser.add_argument("version", 'v', "Print version");
+    parser.add_argument("help", 'h', "Print help");
     auto args = parser.parse_args(argc, argv);
 
     if (!args)
+    {
+        nos::println(args.error());
         return 0;
+    }
+
+    if (args.flag("help"))
+    {
+        nos::println(parser.help());
+        return 0;
+    }
 
     if (args.flag("blockdump"))
         DUMP_BLOCKS = true;
