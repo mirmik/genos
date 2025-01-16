@@ -24,8 +24,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
-
-#define VERSION "0130"
+#include <version.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -110,93 +109,107 @@ int hello(const nos::trent &tr)
 int k = 0;
 void listenerThread_BufferMode_Func(void *)
 {
-    nos::println("BufferMode active");
-
-    char buf[128];
-    int sts;
-
-    if (netan.send("FORM REAL,32") < 0)
-        goto __error__;
-    if (netan.send("FORM:BORD SWAP") < 0)
-        goto __error__;
-    ;
-    nos::fprintln("idn request: {}", netan.query("*IDN?"));
-
-    while (true)
+    try
     {
-        if (discStart)
-            return;
+        nos::println("BufferMode active");
 
-        auto exret = nos::read_until_from(informer, {buf, 128}, "\n");
+        char buf[128];
+        int sts;
 
-        if (exret.is_error())
+        if (netan.send("FORM REAL,32") < 0)
             goto __error__;
-
-        int ret = *exret;
-
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(before_package_delay));
-
-        if (ret <= 0)
-        {
+        if (netan.send("FORM:BORD SWAP") < 0)
             goto __error__;
-        }
-        if (discStart)
-            return;
+        ;
+        nos::fprintln("idn request: {}", netan.query("*IDN?"));
 
-        std::shared_ptr<std::string> ampdata;
-        if (netantype == "pna")
+        while (true)
         {
-            std::vector<rawtype> storage;
+            if (discStart)
+                return;
 
-            for (int trace_index = 0; trace_index < traces.size();
-                 ++trace_index)
+            auto exret = nos::read_until_from(informer, {buf, 128}, "\n");
+
+            if (exret.is_error())
+                goto __error__;
+
+            int ret = *exret;
+
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(before_package_delay));
+
+            if (ret <= 0)
             {
-                netanlock.lock();
-                int repeats = 0;
-            __readdata__:
-                if (netan.send(
-                        nos::format("SYST:FIFO:DATA? {}", points).c_str()) < 0)
-                    goto __error__;
+                goto __error__;
+            }
+            if (discStart)
+                return;
 
-                ampdata = netan.read_block();
+            std::shared_ptr<std::string> ampdata;
+            if (netantype == "pna")
+            {
+                std::vector<rawtype> storage;
 
-                if (!ampdata)
+                for (int trace_index = 0; trace_index < traces.size();
+                     ++trace_index)
                 {
-                    goto __error__;
+                    netanlock.lock();
+                    int repeats = 0;
+                __readdata__:
+                    if (netan.send(
+                            nos::format("SYST:FIFO:DATA? {}", points).c_str()) <
+                        0)
+                        goto __error__;
+
+                    ampdata = netan.read_block();
+
+                    if (!ampdata)
+                    {
+                        goto __error__;
+                    }
+
+                    //				if (ampdata->size() == 0 && repeats < 5)
+                    //				{
+                    //					nos::println("nulldata. another one
+                    // request."); 					repeats++; goto
+                    // __readdata__;
+                    //				}
+
+                    netanlock.unlock();
+
+                    storage.push_back(ampdata);
                 }
 
-                //				if (ampdata->size() == 0 && repeats < 5)
-                //				{
-                //					nos::println("nulldata. another one
-                // request."); 					repeats++; 					goto
-                // __readdata__;
-                //				}
-
-                netanlock.unlock();
-
-                storage.push_back(ampdata);
+                datmutx.lock();
+                for (int i = 0; i < storage.size(); ++i)
+                {
+                    datq.push(std::make_pair(storage[i], storage[i]));
+                }
+                datmutx.unlock();
             }
-
-            datmutx.lock();
-            for (int i = 0; i < storage.size(); ++i)
+            else if (netantype == "ena")
             {
-                datq.push(std::make_pair(storage[i], storage[i]));
+                dprln("ena point");
             }
-            datmutx.unlock();
+            else
+            {
+                dprln("wrong netan type");
+            }
         }
-        else if (netantype == "ena")
-        {
-            dprln("ena point");
-        }
-        else
-        {
-            dprln("wrong netan type");
-        }
+    }
+    catch (const std::exception &ex)
+    {
+        goto __error__;
     }
 
 __error__:
-    client.write("err", 3);
+    try
+    {
+        client.write("err", 3);
+    }
+    catch (const std::exception &ex)
+    {
+    }
     dprln("listenerThreadFunc::dataerror");
     disconnect();
     dprln("listenerThreadFunc::after_disc");
@@ -897,7 +910,6 @@ void clean()
 int main(int argc, char *argv[])
 {
     nos::cout.flush_on_write(true);
-    nos::log::debug("debug messages enabled");
 
     auto parser = nos::argparse(
         "dataproxy", "Utility for network analyzer data bufferization");
