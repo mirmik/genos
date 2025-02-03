@@ -39,7 +39,11 @@ namespace nos
     template <template <class Allocator> class TAlloc> class trent_basic
     {
     public:
-        static const trent_basic &nil();
+        static const trent_basic &static_nil();
+        static trent_basic nil()
+        {
+            return trent_basic();
+        }
 
         // SPECS
         using type = trent_type;
@@ -272,28 +276,28 @@ namespace nos
         const trent_basic &operator[](const std::string &obj) const
         {
             if (m_type != type::dict || !contains(obj))
-                return nil();
+                return static_nil();
             return at(obj);
         }
 
         const trent_basic &operator[](const nos::buffer &obj) const
         {
             if (m_type != type::dict || !contains(obj))
-                return nil();
+                return static_nil();
             return at(obj);
         }
 
         const trent_basic &operator[](const char *obj) const
         {
             if (m_type != type::dict || !contains(obj))
-                return nil();
+                return static_nil();
             return at(obj);
         }
 
         const trent_basic &operator[](int obj) const
         {
             if (m_type != type::list)
-                return nil();
+                return static_nil();
             return at(obj);
         }
 
@@ -1150,7 +1154,7 @@ namespace nos
     }
 
     template <template <class Allocator> class TAlloc>
-    const trent_basic<TAlloc> &trent_basic<TAlloc>::nil()
+    const trent_basic<TAlloc> &trent_basic<TAlloc>::static_nil()
     {
         static const trent_basic _nil;
         return _nil;

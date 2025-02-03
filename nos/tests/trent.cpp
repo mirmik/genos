@@ -219,7 +219,7 @@ TEST_CASE("const tremt")
     CHECK_EQ(std::stod(tr2.get<std::string>()), 3);
 }
 
-TEST_CASE("const tremt dict")
+TEST_CASE("const trent dict")
 {
     nos::trent tr;
     tr["a"] = 3;
@@ -228,5 +228,36 @@ TEST_CASE("const tremt dict")
     const nos::trent &c = tr2["c"];
     CHECK(c.is_nil());
     CHECK_EQ(c.as_numer_default(42), 42);
-    CHECK_EQ(&c, &nos::trent::nil());
+    CHECK_EQ(&c, &nos::trent::static_nil());
+}
+
+TEST_CASE("nil")
+{
+    nos::trent tr;
+    tr["a"] = nos::trent::nil();
+    CHECK(tr["a"].is_nil());
+    CHECK_EQ(tr["a"].as_numer_default(42), 42);
+
+    tr["a"] = 3;
+    CHECK_EQ(tr["a"].as_numer_default(42), 3);
+}
+
+TEST_CASE("parse nil")
+{
+    nos::trent tr = nos::json::parse("nil");
+    CHECK(tr.is_nil());
+
+    // nil in dict
+    tr = nos::json::parse("{'a': nil}");
+    CHECK(tr["a"].is_nil());
+}
+
+TEST_CASE("parse null")
+{
+    nos::trent tr = nos::json::parse("null");
+    CHECK(tr.is_nil());
+
+    // nil in dict
+    tr = nos::json::parse("{'a': null}");
+    CHECK(tr["a"].is_nil());
 }

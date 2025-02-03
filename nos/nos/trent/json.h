@@ -154,6 +154,10 @@ namespace nos
                 {
                     return false;
                 }
+                if (strcmp("nil", buf) == 0 || strcmp("null", buf) == 0)
+                {
+                    return trent_basic<TAlloc>();
+                }
 
                 throw std::runtime_error("unexpected_mnemonic "s + errloc());
             }
