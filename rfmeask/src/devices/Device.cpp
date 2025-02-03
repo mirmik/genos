@@ -14,7 +14,7 @@
 std::vector<Device *> devices_list;
 DevAlarmLogger *Device::alarmLogger = NULL;
 
-Device::Device(const std::string &name) : m_name(name)
+Device::Device(const std::string &name) : _name(name)
 {
     if (!::runtime_syncer.path().empty())
         runtime_syncer = new nos::trent_syncer_slice(

@@ -22,7 +22,7 @@ class Device;
 
 class LogicalDevice
 {
-    std::string m_name = "undefinedLogicalDevice";
+    std::string _name = "undefinedLogicalDevice";
     std::vector<Device *> _devices = {};
 
 public:
@@ -41,11 +41,11 @@ public:
 
     const auto &name() const
     {
-        return m_name;
+        return _name;
     }
     const char *mnemo()
     {
-        return m_name.c_str();
+        return _name.c_str();
     }
     virtual void on_ready_status_changed(bool ready) = 0;
 

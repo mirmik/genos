@@ -13,7 +13,7 @@ extern nos::trent_syncer_slice runtime_syncer;
 LogicalDevice::LogicalDevice(const std::string &name,
                              const std::string &syncer_prefix) :
 
-    m_name(name),
+    _name(name),
     runtime_syncer(new nos::trent_syncer_slice(
         ::runtime_syncer, nos::format("{}/{}", syncer_prefix, name)))
 {

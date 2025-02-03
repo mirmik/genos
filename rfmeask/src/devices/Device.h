@@ -50,7 +50,7 @@ public:
 
     bool forceAlarm = false;
     int number = -1;
-    std::string m_name = "unnamedDevice";
+    std::string _name = "unnamedDevice";
     nos::trent_syncer_slice *runtime_syncer = nullptr;
 
     // for configuration
@@ -186,7 +186,7 @@ public:
 
     const std::string &name() const
     {
-        return m_name;
+        return _name;
     };
 
     /*  Запрос Alarm кода устройства.
