@@ -66,6 +66,11 @@ std::vector<AbstractAxis *> get_axis_list()
     return axis_list;
 }
 
+std::vector<AbstractAxis *> &axis_list_ref()
+{
+    return axis_list;
+}
+
 void delete_axis(size_t axno)
 {
     if (axno >= axis_list.size())

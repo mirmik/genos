@@ -11,7 +11,6 @@
 #include <FullyClosedGear.h>
 #include <GearSettings.h>
 #include <LogicalDevice.h>
-#include <moveapi/MoveApiClient.h>
 #include <ScanApiClient.h>
 #include <comm/notifymap.h>
 #include <defs.h>
@@ -19,10 +18,12 @@
 #include <igris/event/multiple_delegate.h>
 #include <include_helper.h>
 #include <modes.h>
+#include <moveapi/MoveApiClient.h>
 #include <ndmath/named_cartesian_correction.h>
 #include <nos/shell/argv.h>
 #include <nos/trent/binder.h>
 #include <nos/trent/settings.h>
+#include <plugins/py.h>
 #include <set>
 #include <status.h>
 #include <vector>
@@ -81,11 +82,19 @@ public:
     bool axis_inited = false;
     NotifyTheme isTandemSynchronizedNotifyTheme = {};
 
+    python_script_hook hook_is_moving_allowed;
+
 public:
     Operation operation_status()
     {
         return operation;
     }
+
+private:
+    bool check_is_moving_allowed(double start, double final);
+    void open_hooks();
+
+    static nos::trent compile_system_state_to_trent();
 
 public:
     void operation_finish_callback();
@@ -233,7 +242,7 @@ public:
 
     AbstractAxis(const std::string &name);
 
-    //bool isActive(); // < for HelixAxis only. deprecated
+    // bool isActive(); // < for HelixAxis only. deprecated
 
     double unitBackwardLimit();
     double unitForwardLimit();

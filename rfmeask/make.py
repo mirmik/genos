@@ -66,6 +66,7 @@ SOURCES = """
 		src/groups/*.cpp
 		src/servos/*.cpp
 		src/comm/*.cpp
+		src/plugins/*.cpp
 		src/moveapi/*.cpp
 		src/nos-shell/*.cpp
 		""".split()
@@ -116,6 +117,7 @@ licant.cxx_application("rfmeas",
                            "src/deprecated",
                            "build",
                            "tests",
+                           "/usr/include/python3.8"
                        ],
                        mdepends=[
                            "libscpi",
@@ -125,8 +127,8 @@ licant.cxx_application("rfmeas",
                        "-O0 -Werror=all -pedantic -fPIE -fPIC -g3  -fmax-errors=10",
                        cc_flags="-O0 -DSCPI_USER_CONFIG -Werror=all -fPIE -fPIC -g3 -fmax-errors=10",
                        # -s mc2xxstd_x64.lib mc2xxstd_x64.dll",
-                       ld_flags=" -fPIC -fPIE -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -g3",
-                       libs=["igris", "nos", "crow",
+                       ld_flags=" -fPIC -fPIE -Wl,--whole-archive -pthread -Wl,--no-whole-archive -g3",
+                       libs=["igris", "nos", "crow", "python3.8",
                              "ralgo", "rabbit"] + extern_libs,
                        defines=["RABBIT_REAL_TYPE=double"],
                        )
@@ -134,6 +136,7 @@ licant.cxx_application("rfmeas",
 licant.cxx_application("runtests",
                        sources=SOURCES + [
                            "tests/*.cpp",
+                           "tests/plugins/*.cpp",
                            "tests/nd/*.cpp",
                        ],
                        include_paths=[
@@ -141,6 +144,7 @@ licant.cxx_application("runtests",
                            "tests",
                            "src/deprecated",
                            "build",
+                           "/usr/include/python3.8"
                        ],
                        mdepends=[
                            "libscpi",
@@ -150,8 +154,8 @@ licant.cxx_application("runtests",
                        "-O0 -Werror=all -pedantic -g3 -fPIC -fPIE",
                        cc_flags="-O0 -DSCPI_USER_CONFIG -Werror=all -fPIC -fPIE -g3",
                        # -s mc2xxstd_x64.lib mc2xxstd_x64.dll",
-                       ld_flags=" -fPIC -fPIE -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -g3",
-                       libs=["igris", "nos", "crow",
+                       ld_flags=" -fPIC -fPIE -Wl,--whole-archive -pthread -Wl,--no-whole-archive -g3",
+                       libs=["igris", "nos", "crow", "python3.8",
                              "ralgo", "rabbit", "pthread"] + extern_libs,
                        defines=["RABBIT_REAL_TYPE=double"],
 

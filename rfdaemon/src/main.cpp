@@ -1,7 +1,7 @@
 ﻿#include "main.h"
 #include "AppManager.h"
 #include "RFDaemonServer.h"
-#include <Beam.h>
+//#include <Beam.h>
 #include <console.h>
 #include <defs.h>
 #include <getopt.h>
@@ -27,9 +27,7 @@ bool PRINT_LOGS = false;
 
 std::unique_ptr<AppManager> appManager = {};
 std::unique_ptr<RFDaemonServer> srv = {};
-std::unique_ptr<Beam> beam = {};
 std::thread srvRxThread;
-//std::thread srvTxThread;
 std::thread systemd_updater_thread;
 std::string APPLICATION_LIST_FILE_NAME = "/etc/rfdaemon/applications.json";
 
@@ -99,9 +97,6 @@ int main(int argc, char *argv[])
 
     nos::fprintln("Starting in {} mode.\n",
                   TERMINAL_MODE ? "terminal" : "server");
-
-    beam = std::make_unique<Beam>();
-    beam->start();
 
     if (!TERMINAL_MODE)
         daemonPid = fork();

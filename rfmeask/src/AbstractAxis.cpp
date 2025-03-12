@@ -3,15 +3,16 @@
 */
 
 #include <AbstractAxis.h>
-#include <moveapi/MoveApiClient.h>
 #include <SyncScanApiClient.h>
 #include <comm/notifymap.h>
 #include <defs.h>
 #include <devices/DeviceChecker.h>
 #include <groups/InterpolationGroup.h>
+#include <moveapi/MoveApiClient.h>
 #include <ndmath/util.h>
 #include <nos/log/logger.h>
 #include <nos/trent/binder.h>
+#include <nos/trent/json_print.h>
 #include <nos/trent/settings.h>
 #include <tables.h>
 
@@ -36,6 +37,52 @@ AbstractAxis::AbstractAxis(const std::string &name) :
     unitForwardLimit_syncer = new nos::trent_binder<double>;
     init_runtime_settings();
     load_one_axis_correction_from_runtime();
+
+    open_hooks();
+}
+
+void AbstractAxis::open_hooks()
+{
+    hook_is_moving_allowed.set_script("print('HELLO WORLD')\n"
+                                      "print(indata['system_state'])\n"
+                                      "print(indata['axno'])\n"
+                                      "print(indata['start_position'])\n"
+                                      "print(indata['final_position'])\n"
+                                      "result = True\n");
+}
+
+nos::trent AbstractAxis::compile_system_state_to_trent()
+{
+    nos::trent state;
+    state["axes"].init(nos::trent_type::list);
+
+    auto &list = axis_list_ref();
+
+    for (size_t i = 0; i < list.size(); i++)
+    {
+        state["axes"][i]["name"] = list[i]->name();
+        state["axes"][i]["curpos"] = list[i]->last_unit_position();
+    }
+
+    return state;
+}
+
+bool AbstractAxis::check_is_moving_allowed(double start, double final)
+{
+    nos::trent indata, outdata;
+    nos::trent system_state = compile_system_state_to_trent();
+    indata["system_state"] = system_state;
+    indata["axno"] = number();
+    indata["start_position"] = start;
+    indata["final_position"] = final;
+    hook_is_moving_allowed.execute(indata, outdata);
+    nos::println("IS MOVING ALLOWED: ", nos::json::to_string(outdata));
+    nos::println("IS MOVING ALLOWED: ", outdata["result"].as_bool());
+    if (!outdata["result"].is_bool())
+    {
+        throw AxisLimitException();
+    }
+    return outdata["result"].as_bool();
 }
 
 void AbstractAxis::unitLimits(double back, double forw)
@@ -818,11 +865,16 @@ void AbstractAxis::absoluteUnitMove_delegateToIGroup(double tgtpos)
 
 void AbstractAxis::absoluteUnitMove(double tgtpos)
 {
+    auto curpos = last_unit_position();
+
     if (is_need_to_prevent_moving_to_position(tgtpos, true))
         return;
 
     if (igcontroller)
         return absoluteUnitMove_delegateToIGroup(tgtpos);
+
+    if (!check_is_moving_allowed(curpos, tgtpos))
+        return;
 
     if (correction_table_used())
     {

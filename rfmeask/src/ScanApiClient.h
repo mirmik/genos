@@ -1,6 +1,7 @@
 #ifndef ABSTRACT_SCAN_API_CLIENT_H
 #define ABSTRACT_SCAN_API_CLIENT_H
 
+#include <nos/shell/argv.h>
 #include <stdint.h>
 
 class ScanApiClient

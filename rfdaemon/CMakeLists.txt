@@ -38,8 +38,6 @@ target_link_libraries(rfdaemon
   pthread
   igris
   nos
-  jsoncpp
-  z
   util
 )
 
