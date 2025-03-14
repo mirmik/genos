@@ -2,28 +2,23 @@
     @file
 */
 
-#include <System.h>
-#include <tables.h>
-
-#include <comm/scpi-func.h>
-#include <scpi/scpi.h>
-#include <scriptexec.h>
-
-#include <igris/util/numconvert.h>
-#include <igris/util/string.h>
-#include <ralgo/linalg/vecops.h>
-
 #include <AbstractAxis.h>
 #include <AxisSynchro.h>
-#include <moveapi/CNCMovingClient.h>
 #include <CommonAxis.h>
 #include <SyncScanApiClient.h>
+#include <System.h>
+#include <axes_api.h>
+#include <comm/scpi-func.h>
 #include <devices/DeviceChecker.h>
 #include <groups/InterpolationGroup.h>
+#include <igris/util/numconvert.h>
+#include <igris/util/string.h>
+#include <moveapi/CNCMovingClient.h>
+#include <ralgo/linalg/vecops.h>
+#include <scpi/scpi.h>
+#include <scriptexec.h>
 #include <servos/AbstractServo.h>
-
-// extern std::unordered_map<int32_t, basic_scpi_invoker<SyncScanApiClient> *>
-// ScanApiClient_scpi_invoker_map;
+#include <tables.h>
 
 #define TRY_BEGIN                                                              \
     try                                                                        \
@@ -497,7 +492,6 @@ scpi_func_t SCPIFUNC_devicePositionQ =
     SCPIFUNC_deviceArgQ<double, &Device::last_position>;
 scpi_func_t SCPIFUNC_deviceUnitPositionQ =
     SCPIFUNC_deviceArgQ<double, &Device::last_unit_position>;
-    
 
 scpi_func_t SCPIFUNC_devTriggerPolarity =
     SCPIFUNC_deviceArg<int32_t, &Device::com_trigger_polarity>;
@@ -531,12 +525,10 @@ scpi_func_t SCPIFUNC_deviceAlarmQ =
 scpi_func_t SCPIFUNC_axisTrigReturnTime =
     SCPIFUNC_axisArgQ<int32_t, &AbstractAxis::trigreturn_time>;
 
-
 scpi_func_t SCPIFUNC_axisTriggerPolarity =
     SCPIFUNC_axisArg<int32_t, &AbstractAxis::com_trigger_polarity>;
 scpi_func_t SCPIFUNC_axisTriggerDuration =
     SCPIFUNC_axisArg<int32_t, &AbstractAxis::com_trigger_duration>;
-
 
 scpi_result_t SCPIFUNC_axisSetZero(scpi_t *context)
 {
@@ -645,7 +637,7 @@ scpi_result_t SCPIFUNC_axisIsActiveQ(scpi_t *context)
     int number;
     SCPI_CommandNumbers(context, &number, 1, -1);
 
-    //SCPI_ResultInt32(context, get_axis(number)->isActive());
+    // SCPI_ResultInt32(context, get_axis(number)->isActive());
     SCPI_ResultInt32(context, 1); // Active mechanic removed
     return SCPI_RES_OK;
 }
@@ -1174,6 +1166,53 @@ scpi_result_t SPIFUNC_intgroup_UAbsMove_Partial(scpi_t *context)
     }
 
     intgroup->absmove_parted(args);
+    return SCPI_RES_OK;
+}
+
+scpi_result_t SPIFUNC_axes_UAbsMove_Partial(scpi_t *context)
+{
+    nos::println("Axes_UAbsMove_Partial!!!!!!!!!!!!!!!");
+
+    int number;
+    std::vector<std::pair<int, double>> args;
+    SCPI_CommandNumbers(context, &number, 1, -1);
+
+    // auto intgroup = find_group(number);
+
+    size_t len;
+    bool success;
+    char buf[4000];
+
+    success = SCPI_ParamCopyText(context, buf, 4000, &len, false);
+    buf[len] = 0;
+
+    if (!success)
+    {
+        return SCPI_RES_ERR;
+    }
+
+    auto spl = nos::split(std::string(buf, len), ',');
+
+    for (auto s : spl)
+    {
+        auto pair = nos::split(s, ':');
+        if (pair.size() != 2)
+        {
+            return SCPI_RES_ERR;
+        }
+
+        std::string arg0 = std::string(nos::trim(pair[0]));
+        std::string arg1 = std::string(nos::trim(pair[1]));
+
+        auto num = strtol(arg0.c_str(), nullptr, 10);
+        auto dat = std::stod(arg1);
+        args.push_back({num, dat});
+    }
+
+    TRY_BEGIN
+    GlobalAbsmoveParted(args);
+    TRY_END
+
     return SCPI_RES_OK;
 }
 

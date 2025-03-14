@@ -178,6 +178,7 @@ scpi_result_t SCPIFUNC_axis_compare_table_clear(scpi_t *context);
 scpi_result_t SCPIFUNC_axis_scan_subsystem_reset(scpi_t *context);
 scpi_result_t SCPIFUNC_axisRelativeMove(scpi_t *context);
 scpi_result_t SCPIFUNC_axisAbsoluteMove(scpi_t *context);
+scpi_result_t SPIFUNC_axes_UAbsMove_Partial(scpi_t *context);
 
 scpi_result_t SCPIFUNC_axisPositionQ(scpi_t *context);
 

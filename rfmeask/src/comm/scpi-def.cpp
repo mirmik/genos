@@ -16,7 +16,8 @@
 
 const scpi_command_t scpi_commands[] = {
     //////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////// IEEE Mandated Commands (SCPI std V1999.0 4.1.1) //////////////////////
+    /////////////////////// IEEE Mandated Commands (SCPI std V1999.0 4.1.1)
+    /////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
     {
         "*CLS",
@@ -69,7 +70,8 @@ const scpi_command_t scpi_commands[] = {
     },
 
     //////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////// Required SCPI commands (SCPI std V1999.0 4.2.1) ////////////////////
+    ///////////////////// Required SCPI commands (SCPI std V1999.0 4.2.1)
+    ///////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////
     {
         "SYSTem:ERRor[:NEXT]?",
@@ -101,11 +103,11 @@ const scpi_command_t scpi_commands[] = {
     },
     {
         "SYSTem:IPADDR",
-        SCPIFUNC_SystemIPAddress,  // удалён
+        SCPIFUNC_SystemIPAddress, // удалён
     },
     {
         "SYSTem:STATus?",
-        SCPIFUNC_SystemStatusQ, 
+        SCPIFUNC_SystemStatusQ,
     },
     {
         "SYSTem:STOP",
@@ -122,7 +124,8 @@ const scpi_command_t scpi_commands[] = {
     },
 
     ////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////// AXIS'S API ///////////////////////////////////////
+    ///////////////////////////// AXIS'S API
+    //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     {
         "SYSTem:AXESTOTal?",
@@ -140,6 +143,7 @@ const scpi_command_t scpi_commands[] = {
         "AXIS#:PRESET",
         SCPIFUNC_axisPreset,
     },
+    {"AXES:UMOVe:ABSolute", SPIFUNC_axes_UAbsMove_Partial},
     {
         "AXIS#:TRIGGER",
         SCPIFUNC_axisGenerateTrigger,
@@ -398,11 +402,12 @@ const scpi_command_t scpi_commands[] = {
     },
     {
         "AXIS#:NOTE?",
-        SCPIFUNC_axisNoteQ,                  // Удалена
+        SCPIFUNC_axisNoteQ, // Удалена
     },
     {
         "AXIS#:SETTINGS:USECORRECTION?",
-        SCPIFUNC_axisUseCorrectionQ,          // Сама работа с таблицей коррекции вынесена в отдельный api
+        SCPIFUNC_axisUseCorrectionQ, // Сама работа с таблицей коррекции
+        // вынесена в отдельный api
     },
 
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +447,7 @@ const scpi_command_t scpi_commands[] = {
     },
     {
         "AXIS#:SCAN:BWRDzone",
-        SCPIFUNC_axisScanBackwardZone,      // deprecated
+        SCPIFUNC_axisScanBackwardZone, // deprecated
     },
     {
         "AXIS#:SCAN:UMOVE",
@@ -454,12 +459,12 @@ const scpi_command_t scpi_commands[] = {
     },
     {
         "AXIS#:SCAN:UBWRDzone",
-        SCPIFUNC_axisScanUnitBackwardZone,  // deprecated
+        SCPIFUNC_axisScanUnitBackwardZone, // deprecated
     },
 
     {
         "AXIS#:SCAN:START",
-        SCPIFUNC_axisScanStart,              // deprecated
+        SCPIFUNC_axisScanStart, // deprecated
     },
     {
         "AXIS#:SCAN:COMPSTART",
@@ -480,19 +485,22 @@ const scpi_command_t scpi_commands[] = {
 
     {
         "AXIS#:SCAN:EXTRECORD",
-        SCPIFUNC_axisEnableExternalTriggerRecord,   // хрен его знает, что это
-                                                    // но оно похоже не используется
-                                                    // Может иметь ценность для отладки
+        SCPIFUNC_axisEnableExternalTriggerRecord, // хрен его знает, что это
+                                                  // но оно похоже не
+                                                  // используется Может иметь
+                                                  // ценность для отладки
     },
 
     {
         "AXIS#:SCAN:TRIGDURATION",
-        SCPIFUNC_axisTriggerDuration,              // Длительность ванпульса генерируемого платой
+        SCPIFUNC_axisTriggerDuration, // Длительность ванпульса генерируемого
+        // платой
     },
-    
+
     {
         "AXIS#:SCAN:TRIGPOLARITY",
-        SCPIFUNC_axisTriggerPolarity,              // Полярность ванпульса генерируемого платой
+        SCPIFUNC_axisTriggerPolarity, // Полярность ванпульса генерируемого
+                                      // платой
     },
 
     {
@@ -539,7 +547,6 @@ const scpi_command_t scpi_commands[] = {
         SCPIFUNC_getScanApiVersionQ,
     },
 
-
     {"AXIS#:SCAN:PRGTBL:RESTART", SCPIFUNC_progTableRestart},
     {"AXIS#:SCAN:PRGTBL:RPREF", SCPIFUNC_progTableRestartPrefix},
     {"AXIS#:SCAN:PRGTBL:RCYCLE", SCPIFUNC_progTableRestartCycle},
@@ -549,17 +556,16 @@ const scpi_command_t scpi_commands[] = {
     {"AXIS#:SCAN:PRGTBL:SAVE", SCPIFUNC_progSaveTable},
     {"AXIS#:SCAN:PRGTBL:LOAD", SCPIFUNC_progLoadTable},
 
-    // ручное управление состояниями выводов 
+    // ручное управление состояниями выводов
     {"AXIS#:SCAN:OUTS:SET", SCPIFUNC_scan_outputs_state},
     {"AXIS#:SCAN:OUTS:UNICal", SCPIFUNC_scan_outputs_unical},
     {"AXIS#:SCAN:OUTS:DISable", SCPIFUNC_scan_outputs_disable},
-    
 
     {
         "DEV#:TRIGDURATION",
         SCPIFUNC_devTriggerDuration,
     },
-    
+
     {
         "DEV#:TRIGPOLARITY",
         SCPIFUNC_devTriggerPolarity,
@@ -585,7 +591,8 @@ const scpi_command_t scpi_commands[] = {
     {"IGRP#:AXIDXS?", SPIFUNC_intgroup_get_axesQ},
 
     ////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////// DEVICE'S API ///////////////////////////////////
+    /////////////////////////////////// DEVICE'S API
+    //////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////
     {
         "SYSTem:DEVSTOTal?",
@@ -628,11 +635,8 @@ const scpi_command_t scpi_commands[] = {
     {"DEV#:PARAM?", SCPIFUNC_deviceParameterQ},
     {"DEV#:TYPE?", SCPIFUNC_deviceTypeQ},
 
-    
-    
     {"DEV#:TORQUE?", SCPIFUNC_deviceTorqueQ},
 
-    
     {
         "DEV#:ALMSTR?",
         SCPIFUNC_deviceAlarmStringQ,
@@ -646,11 +650,12 @@ const scpi_command_t scpi_commands[] = {
     {"AXIS#:STAT:TYPE?", SCPIFUNC_axisTypeQ},
 
     //////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////// MEAS //////////////////////////////////////////////
+    ////////////////////////////////////// MEAS
+    /////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////
-    {"MEAS:LASER:TEST", SCPIFUNC_rangefinder_test}, //deprecated
-    {"MEAS:LASER:BIND", SCPIFUNC_rangefinder_bind}, //deprecated
-    {"MEAS:LASER:UNBIND", SCPIFUNC_rangefinder_unbind}, //deprecated
+    {"MEAS:LASER:TEST", SCPIFUNC_rangefinder_test},     // deprecated
+    {"MEAS:LASER:BIND", SCPIFUNC_rangefinder_bind},     // deprecated
+    {"MEAS:LASER:UNBIND", SCPIFUNC_rangefinder_unbind}, // deprecated
 
     SCPI_CMD_LIST_END};
 

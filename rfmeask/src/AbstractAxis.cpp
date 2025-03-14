@@ -4,6 +4,7 @@
 
 #include <AbstractAxis.h>
 #include <SyncScanApiClient.h>
+#include <axes_api.h>
 #include <comm/notifymap.h>
 #include <defs.h>
 #include <devices/DeviceChecker.h>
@@ -69,6 +70,14 @@ nos::trent AbstractAxis::compile_system_state_to_trent()
 
 bool AbstractAxis::check_is_moving_allowed(double start, double final)
 {
+    std::vector<std::pair<int, double>> glbperm;
+    glbperm.push_back(std::make_pair(number(), final));
+    bool global_perm = GlobalMoveAllowed(glbperm);
+    if (!global_perm)
+    {
+        throw AxisLimitException();
+    }
+
     nos::trent indata, outdata;
     nos::trent system_state = compile_system_state_to_trent();
     indata["system_state"] = system_state;

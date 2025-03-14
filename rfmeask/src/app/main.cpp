@@ -34,6 +34,7 @@
 #include <selftest.h>
 #include <tables.h>
 #include <thread>
+#include <util.h>
 #include <version.h>
 
 #if (HAVE_LAZER_PROXY)
@@ -64,34 +65,6 @@ std::string config_path = "settings.json";
 std::string confdir_path = "";
 std::string runtime_path = "runtime.json";
 std::string errFile = "errlog.txt";
-
-// get user directory for unix and windows
-std::string get_user_dir()
-{
-    std::string user_dir;
-#if defined(_WIN32)
-    char *userprofile = getenv("USERPROFILE");
-    if (userprofile != nullptr)
-    {
-        user_dir = userprofile;
-    }
-    else
-    {
-        user_dir = ".";
-    }
-#else
-    char *home = getenv("HOME");
-    if (home != nullptr)
-    {
-        user_dir = home;
-    }
-    else
-    {
-        user_dir = ".";
-    }
-#endif
-    return user_dir;
-}
 
 std::string home = get_user_dir();
 std::string simulator_config_path = home == ""
@@ -130,6 +103,8 @@ DevAlarmLogger devAlarmLogger;
 #include <cankollm/cankollm.h>
 #include <cankollm/canopen.h>
 #include <cankollm/kollmmap.h>
+
+void open_global_hooks();
 
 void rfmeask_start()
 {
@@ -234,6 +209,7 @@ void rfmeask_start()
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     init_interpolation_groups();
+    open_global_hooks();
 
     /*Запуск потоков управления, серверов, коммуникации*/
     start_httpserver(http_port);
@@ -520,10 +496,7 @@ int main(int argc, char **argv)
             break;
 
         case 'v':
-            nos::fprintln("{} SCPI_API:{} ({})",
-                          VERSION,
-                          API_VERSION,
-                          "---");
+            nos::fprintln("{} SCPI_API:{} ({})", VERSION, API_VERSION, "---");
             exit(0);
 
         default:
