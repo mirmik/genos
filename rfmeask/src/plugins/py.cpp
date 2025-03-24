@@ -1,4 +1,5 @@
 #include <Python.h>
+#include <filesystem>
 #include <iostream>
 #include <nos/trent/json.h>
 #include <nos/trent/json_print.h>
@@ -54,11 +55,38 @@ python_executor::~python_executor()
     }
 }
 
-python_script_hook::python_script_hook(){};
+void python_script_hook::init(std::string path, std::string default_script)
+{
+    _script = default_script;
+    _path = path;
+
+    if (path.empty())
+    {
+        set_script(default_script);
+        return;
+    }
+
+    if (std::filesystem::exists(path))
+    {
+        open_file(path);
+    }
+    else
+    {
+        set_script(default_script);
+        save_to_file();
+    }
+}
+
+python_script_hook::python_script_hook(std::string path,
+                                       std::string default_script)
+{
+    init(path, default_script);
+}
 
 void python_script_hook::open_file(const std::string &path)
 {
     nos::file file(path.c_str(), O_RDONLY);
+    _path = path;
     if (!file.good())
     {
         is_existed = false;
@@ -74,9 +102,24 @@ void python_script_hook::set_script(const std::string &script)
     is_existed = true;
 }
 
-python_script_hook::~python_script_hook()
+void python_script_hook::save_to_file()
 {
-    // Do nothing
+    // make directory
+    std::filesystem::create_directories(
+        std::filesystem::path(_path).parent_path());
+
+    nos::file file(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+    if (!file.good())
+    {
+        return;
+    }
+    file.write(_script.c_str(), _script.size());
+    is_existed = true;
+
+    int fd = file.fd();
+
+    // set file permissions 666
+    fchmod(fd, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 }
 
 void PyObjectToTrent(PyObject *input, nos::trent &output)
@@ -177,6 +220,7 @@ nos::trent GetResultFromGlobal(PyObject *pLocal)
 
 PyObject *PyObjectFromTrent(const nos::trent &input)
 {
+    nos::println("PyObjectFromTrent", nos::json::to_string(input));
     if (input.is_numer())
     {
         double value = input.as_numer();
@@ -190,7 +234,10 @@ PyObject *PyObjectFromTrent(const nos::trent &input)
     else if (input.is_string())
     {
         const char *value = input.as_string().c_str();
-        return PyUnicode_FromString(value);
+        PyObject *out = PyUnicode_FromString(value);
+        const char *out_str = PyUnicode_AsUTF8(out);
+        nos::println("PyObjectFromTrent   UTF:", out_str);
+        return out;
     }
     else if (input.is_dict())
     {
@@ -204,6 +251,30 @@ PyObject *PyObjectFromTrent(const nos::trent &input)
             Py_DECREF(pValue);
         }
         return pDict;
+
+        // PyObject *pObj =
+        //     PyObject_CallObject((PyObject *)&PyBaseObject_Type, NULL);
+        // for (auto &pair : input.as_dict())
+        // {
+        //     PyObject *pKey = PyUnicode_FromString(pair.first.c_str());
+        //     PyObject *pValue = PyObjectFromTrent(pair.second);
+        //     PyObject_SetAttr(pObj, pKey, pValue);
+        //     Py_DECREF(pKey);
+        //     Py_DECREF(pValue);
+        // }
+        // return pObj;
+
+        // as object. not dict. We need state.a instead of state["a"]
+        // PyObject *pDict = PyObject_New(PyObject, nullptr);
+        // for (auto &pair : input.as_dict())
+        // {
+        //     PyObject *pKey = PyUnicode_FromString(pair.first.c_str());
+        //     PyObject *pValue = PyObjectFromTrent(pair.second);
+        //     PyObject_SetAttr(pDict, pKey, pValue);
+        //     Py_DECREF(pKey);
+        //     Py_DECREF(pValue);
+        // }
+        // return pDict;
     }
     else if (input.is_list())
     {
@@ -212,7 +283,9 @@ PyObject *PyObjectFromTrent(const nos::trent &input)
         for (size_t i = 0; i < list.size(); i++)
         {
             PyObject *pValue = PyObjectFromTrent(input[i]);
+            nos::println("P1.1: ", Py_REFCNT(pValue));
             PyList_SetItem(pList, i, pValue);
+            nos::println("P1.2: ", Py_REFCNT(pValue));
         }
         return pList;
     }

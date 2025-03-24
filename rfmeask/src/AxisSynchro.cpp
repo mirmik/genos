@@ -46,6 +46,8 @@ void AxisSynchro::on_ready_status_changed(bool ready)
 
 void AxisSynchro::operationStatusSlot(uint8_t status)
 {
+    // Обработка статуса движения сервоусилителя.
+
     std::lock_guard<std::recursive_mutex> lock(updmtx);
     if (milliseconds_from_last_operation_start() < 300)
         return;
@@ -53,14 +55,15 @@ void AxisSynchro::operationStatusSlot(uint8_t status)
     if (operation_status() == Operation::USERMOVE &&
         status == AbstractServo::STOPED)
     {
-        if (scan_mode && (!scanStop || !lastPoint))
-        {
-            nos::println("Moving was finished. Wait for last scan point");
-            return;
-        }
+        // if (scan_mode && (!scanStop || !lastPoint))
+        // {
+        //     nos::println("Moving was finished. Wait for last scan point");
+        //     return;
+        // }
 
-        nos::log::info("operation finish correct");
-        operationCorrectFinish_SyncAxis();
+        // nos::log::info("operation finish correct");
+        // operationCorrectFinish_SyncAxis();
+        moving_finished_handler();
     }
 }
 
@@ -114,29 +117,47 @@ void AxisSynchro::operationCorrectStart()
     start_operation_notify();
 }
 
-void AxisSynchro::operationCorrectFinish_SyncAxis()
+// void AxisSynchro::operationCorrectFinish_SyncAxis()
+// {
+//     // nos::println("AXIS SYNCRO OPERATION CORRECT FINISH");
+//     std::lock_guard<std::recursive_mutex> lock(updmtx);
+//     // nos::log::debug("operation correct finish");
+//     //Отписка от уведомлений.
+//     // scanPointSignal.erase(&AxisSynchro::scanPointHandler, this);
+//     descanSignal -= igris::make_delegate(&AxisSynchro::stopScanHandler,
+//     this); wrongScanPointSignal -=
+//         igris::make_delegate(&AxisSynchro::wrongScanPointHandler, this);
+
+//     // mover->operationFinishRoutine();
+//     double curpos = mover->currentPosition();
+//     scan_mode = false;
+//     update_current_position_handler_with_reverse_if_need(curpos /
+//     unitRatio(),
+//                                                          true);
+
+//     //Уведомление о нормальном завершении, и возврат к нулевой операции.
+
+//     if (mover->operationStatus() == AbstractServo::STOPED)
+//     {
+//         operationStopTypeNotify.notify(NOTIFY_STOP_NORMAL);
+//         operation_finish_callback();
+//     }
+// }
+
+void AxisSynchro::moving_finished_handler()
 {
-    // nos::println("AXIS SYNCRO OPERATION CORRECT FINISH");
     std::lock_guard<std::recursive_mutex> lock(updmtx);
-    // nos::log::debug("operation correct finish");
-    //Отписка от уведомлений.
-    // scanPointSignal.erase(&AxisSynchro::scanPointHandler, this);
+    Axis::operationCorrectFinish();
+}
+
+void AxisSynchro::scanning_finished_handler()
+{
+    std::lock_guard<std::recursive_mutex> lock(updmtx);
     descanSignal -= igris::make_delegate(&AxisSynchro::stopScanHandler, this);
     wrongScanPointSignal -=
         igris::make_delegate(&AxisSynchro::wrongScanPointHandler, this);
 
-    // mover->operationFinishRoutine();
-    double curpos = mover->currentPosition();
-    scan_mode = false;
-    update_current_position_handler_with_reverse_if_need(curpos / unitRatio(),
-                                                         true);
-
-    //Уведомление о нормальном завершении, и возврат к нулевой операции.
-    
-    if (mover -> operationStatus() == AbstractServo::STOPED) {
-        operationStopTypeNotify.notify(NOTIFY_STOP_NORMAL);
-        operation_finish_callback();
-    }
+    scanFinishNotify.notify();
 }
 
 void AxisSynchro::generate_trigger()
@@ -281,16 +302,15 @@ std::vector<double> AxisSynchro::prepare_correction_table_for_scan_device()
     double distance_unit = static_cast<double>(scanMove()) / unitRatio();
     double forward_zone_unit = static_cast<double>(scanUnitForwardZone());
 
-    double finish_position = 
-        current_position_unit + distance_unit;
-    
+    double finish_position = current_position_unit + distance_unit;
+
     auto uniform_points =
-        ralgo::linspace(
-            current_position_unit + forward_zone_unit, 
-            finish_position, scanPoints())
+        ralgo::linspace(current_position_unit + forward_zone_unit,
+                        finish_position,
+                        scanPoints())
             .to_vector();
 
-    for (auto p : uniform_points) 
+    for (auto p : uniform_points)
     {
         nos::println("ppppp:", p);
     }
@@ -302,11 +322,10 @@ std::vector<double> AxisSynchro::prepare_correction_table_for_scan_device()
     {
         auto vec = ndmath::vector({uniform_points[i + start_index]});
         auto pnt = one_axis_correction_table.corrected_point(vec)[0];
-        corrected_points[i] = 
-            (pnt - raw_current_position_unit - forward_zone_unit) * 
-            unitRatio();
-            // *
-            //(is_reversed() ? (-1) : (1));
+        corrected_points[i] =
+            (pnt - raw_current_position_unit - forward_zone_unit) * unitRatio();
+        // *
+        //(is_reversed() ? (-1) : (1));
     }
 
     return corrected_points;
@@ -340,7 +359,7 @@ void AxisSynchro::scanCompareStart()
     if (correction_table_used())
     {
         auto table = prepare_correction_table_for_scan_device();
-        for (auto d : table) 
+        for (auto d : table)
         {
             nos::fprintln("table point: {}", d);
         }
@@ -407,7 +426,8 @@ void AxisSynchro::stopScanHandler()
     {
         lastPoint = false;
         scanStop = false;
-        operationCorrectFinish_SyncAxis();
+        // operationCorrectFinish_SyncAxis();
+        scanning_finished_handler();
     }
 }
 
@@ -434,15 +454,16 @@ void AxisSynchro::scanPointHandler(int num)
     {
         lastPoint = false;
         scanStop = false;
-        operationCorrectFinish_SyncAxis_from_scanPointHandler();
+        // operationCorrectFinish_SyncAxis_from_scanPointHandler();
+        scanning_finished_handler();
         return;
     }
 }
 
-void AxisSynchro::operationCorrectFinish_SyncAxis_from_scanPointHandler()
-{
-    operationCorrectFinish_SyncAxis();
-}
+// void AxisSynchro::operationCorrectFinish_SyncAxis_from_scanPointHandler()
+// {
+//     operationCorrectFinish_SyncAxis();
+// }
 
 int32_t AxisSynchro::trigreturn_time()
 {

@@ -62,6 +62,7 @@ protected:
     NotifyTheme torqueNotifyTheme = {};
     NotifyTheme limitSwitchStatusNotify = {};
     NotifyTheme scanPointNotify = {};
+    NotifyTheme scanFinishNotify = {};
     NotifyTheme scanTrigErrorNotify = {};
 
     std::mutex last_data_mutex = {};

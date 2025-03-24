@@ -19,6 +19,7 @@ file(GLOB SOURCES
 	src/utilxx/*.cpp
 	src/servos/*.cpp
 	src/groups/*.cpp
+	src/plugins/*.cpp
 	src/moveapi/*.cpp
 	src/comm/*.cpp
 	src/devices/*.cpp
@@ -38,13 +39,14 @@ add_executable(rfmeas
 	${SOURCES} 
 	ircc_resources.gen.cpp
 )
-target_link_libraries(rfmeas PRIVATE pthread igris nos ralgo rabbit crow)
+target_link_libraries(rfmeas PRIVATE pthread igris nos ralgo rabbit crow python3.8)
 
 target_include_directories(rfmeas PRIVATE 
 	src
 	src/deprecated
 	lib/libscpi/inc
 	tests
+	"/usr/include/python3.8"
 )
 
 add_definitions(

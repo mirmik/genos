@@ -16,8 +16,7 @@ result["test"] = my_module.get_testvariable()
 result["b"] = indata["a"] + 1
 )";
 
-    python_script_hook hook;
-    hook.set_script(script);
+    python_script_hook hook(script);
     nos::trent indata;
     nos::trent outdata;
     indata["a"] = 321;

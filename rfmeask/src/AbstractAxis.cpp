@@ -173,6 +173,11 @@ void AbstractAxis::notifiesRegistry()
               number(),
               NPattern_AxisScanPoint,
               Tag_AxisScanPoint);
+    notifyreg(scanFinishNotify,
+              "AxisScanFinish(%d)",
+              number(),
+              NPattern_AxisScanFinish,
+              Tag_AxisScanFinish);
     notifyreg(scanTrigErrorNotify,
               "AxisScanTrigError(%d)",
               number(),

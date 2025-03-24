@@ -55,17 +55,25 @@ public:
             return;
         run(indata, outdata);
     }
+
+    virtual ~hook() {}
 };
 
 class python_script_hook : public hook
 {
+    std::string _path;
     std::string _script;
 
 public:
-    python_script_hook();
-    ~python_script_hook();
+    python_script_hook() {}
+    python_script_hook(std::string script) : python_script_hook("", script) {}
+    python_script_hook(std::string path, std::string default_script);
+    ~python_script_hook() override {}
+
+    void init(std::string path, std::string default_script);
 
     void open_file(const std::string &path);
+    void save_to_file();
     void set_script(const std::string &script);
 
     void run(const nos::trent &indata, nos::trent &outdata) override

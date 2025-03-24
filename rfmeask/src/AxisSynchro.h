@@ -94,20 +94,23 @@ public:
     }
 
 public:
-    void com_trigger_polarity(int val) 
+    void com_trigger_polarity(int val)
     {
         synchro->com_trigger_polarity(val);
     }
-    
-    void com_trigger_duration(int val) 
+
+    void com_trigger_duration(int val)
     {
         synchro->com_trigger_duration(val);
     }
 
 private:
     void operationCorrectStart();
-    void operationCorrectFinish_SyncAxis();
+    // void operationCorrectFinish_SyncAxis();
     void operationCorrectFinish_SyncAxis_from_scanPointHandler();
+
+    void moving_finished_handler();
+    void scanning_finished_handler();
 };
 
 #endif

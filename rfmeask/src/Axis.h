@@ -278,7 +278,7 @@ public:
         return std::vector<double>();
     }
 
-private:
+protected:
     void operationCorrectStart(bool ctrl = true);
     void operationCorrectFinish();
 

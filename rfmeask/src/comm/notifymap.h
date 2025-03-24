@@ -23,6 +23,7 @@
 #define NPattern_DeviceAlarm "NOT:DEVice#:ALARM"
 #define NPattern_DeviceReady "NOT:DEVice#:READY"
 #define NPattern_AxisScanPoint "NOT:AXIS#:SCAN:POINT"
+#define NPattern_AxisScanFinish "NOT:AXIS#:SCAN:FINISH"
 #define NPattern_AxisScanTrigError "NOT:AXIS#:SCAN:TRIGERROR"
 #define NPattern_AxisLimitSwitch "NOT:AXIS#:LSWItch"
 #define NPattern_AxisTorque "NOT:AXIS#:TORQ"
@@ -37,7 +38,6 @@
 #define Tag_AxisInfoSpeed 0
 #define Tag_AxisInfoPosition 1
 #define Tag_AxisOperationStatus 3
-#define Tag_AxisOperationStopType 16
 #define Tag_TestTheme 5
 #define Tag_SystemStatus 6
 #define Tag_AxisStatus 8
@@ -46,6 +46,7 @@
 #define Tag_AxisUnitPosition 13
 #define Tag_AxisScanPoint 14
 #define Tag_AxisScanTrigError 15
+#define Tag_AxisOperationStopType 16
 #define Tag_AxisLimitSwitch 17
 #define Tag_AxisTorque 18
 #define Tag_DeviceAlarm 19
@@ -59,5 +60,6 @@
 #define Tag_AxisTandemSynchronized 27
 #define Tag_AxisUnitPositionNotCorrected 28
 #define Tag_ServoNonCorrectedUnitPosition 29
+#define Tag_AxisScanFinish 30
 
 #endif

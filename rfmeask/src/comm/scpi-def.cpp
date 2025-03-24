@@ -718,6 +718,7 @@ const scpi_command_t ncpi_commands[] = {
     SMOOTHNOTIFY_REGISTRY(AxisPosition),
 
     NOTIFY_REGISTRY(AxisScanPoint),
+    NOTIFY_REGISTRY(AxisScanFinish),
     NOTIFY_REGISTRY(AxisScanTrigError),
 
     NOTIFY_REGISTRY(AxisLimitSwitch),
