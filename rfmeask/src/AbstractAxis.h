@@ -91,9 +91,10 @@ public:
         return operation;
     }
 
+    void init_hooks();
+
 private:
     bool check_is_moving_allowed(double start, double final);
-    void open_hooks();
 
 public:
     static nos::trent compile_system_state_to_trent();

@@ -13,9 +13,6 @@ class AbstractAxis;
 class AbstractSyncro;
 class AbstractServo;
 
-constexpr int32_t TAG_SCAN_TAGTEST0 = 42;
-constexpr int32_t TAG_SCAN_TAGTEST1 = 43;
-
 class SyncScanApiClient : public ScanApiClient
 {
     AbstractAxis *parent = nullptr;

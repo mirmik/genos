@@ -19,8 +19,8 @@
 #include <devices/Device.h>
 #include <igris/util/bug.h>
 #include <interrupt.h>
-#include <mutex>
 #include <modes.h>
+#include <mutex>
 #include <optional>
 
 extern std::recursive_mutex updmtx;
@@ -72,6 +72,8 @@ protected:
 
     int64_t update_iteration = 0;
     bool limit_switch_update_needed = false;
+
+    virtual std::recursive_mutex &bus_mutex() = 0;
 
 public:
     bool encoderType_external = false;
@@ -511,6 +513,7 @@ public:
 
     void resetSpeed()
     {
+        nos::println("resetSpeed");
         // What is it?
         setSpeed_native(settedSpeed_native());
     }

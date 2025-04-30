@@ -36,7 +36,7 @@ class KollmorgenServoControl : public AbstractServo
     int savepos_fd = -1;
     int32_t speedToSet(int32_t spd);
     int last_status = 520;
-    std::mutex kupdmtx;
+    std::recursive_mutex kupdmtx;
 
     bool _last_voltage_status = false;
     bool _last_forward_hardware_limit = false;
@@ -139,6 +139,11 @@ public:
     bool is_fully_closed_mode() const override
     {
         return false;
+    }
+
+    std::recursive_mutex &bus_mutex() override
+    {
+        return kupdmtx;
     }
 };
 

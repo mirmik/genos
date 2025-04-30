@@ -10,13 +10,23 @@ python_script_hook hook_is_global_move_allowed2;
 void open_global_hooks()
 {
     nos::println("Open global hooks");
-    // if file $HOME/.rfmeask/hooks/is_global_move_allowed.py exists, load it
+
     std::string hooks_dir = "/home/rfmeas/.rfmeask/hooks";
     std::string hook_file = hooks_dir + "/is_global_move_allowed.py";
     std::string hook2_file = hooks_dir + "/is_global_move_allowed2.py";
 
     hook_is_global_move_allowed.init(hook_file, "result = True\n");
     hook_is_global_move_allowed2.init(hook2_file, "result = True\n");
+}
+
+void open_hooks()
+{
+    auto &axesList = axis_list_ref();
+
+    for (auto &axis : axesList)
+    {
+        axis->init_hooks();
+    }
 }
 
 bool GlobalMoveAllowed(std::vector<std::pair<int, double>> args)

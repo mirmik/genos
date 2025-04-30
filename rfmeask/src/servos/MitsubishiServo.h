@@ -77,6 +77,8 @@ public:
         return "mitsuservo";
     }
 
+    std::recursive_mutex &bus_mutex() override;
+
     void enable_power_off_position_keeping(int64_t period,
                                            const std::string &name);
 

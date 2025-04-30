@@ -1,10 +1,11 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define API_VERSION "05-40"
-#define VERSION "1.14.0"
+#define API_VERSION "05-60"
+#define VERSION "1.16.0"
 
 // Changelog
+// 1.16.0/5-60 Добавлена поддержка нескольких шин RS485
 // 1.15.0/5-50 Изменена семантика сигнала NOT:AXIS0:OPSTAT для сканирующей оси.
 //             Теперь смысл сигнала не зависит от сканирования, а повторяет
 //             работу обычной оси.

@@ -31,14 +31,7 @@ public:
         return *_instance;
     }
 
-    static void destroy_instance()
-    {
-        if (_instance != nullptr)
-        {
-            delete _instance;
-            _instance = nullptr;
-        }
-    }
+    static void destroy_instance();
 };
 
 class hook

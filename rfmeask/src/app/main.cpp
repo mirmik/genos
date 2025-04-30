@@ -72,7 +72,7 @@ std::string simulator_config_path = home == ""
                                         : home + "/.rfmeask/simulator-configs";
 
 // TelemetryMonitor telemetry_monitor;
-MitsubishiCommunicator mrs;
+// MitsubishiCommunicator mrs;
 std::list<std::thread> threadlist;
 
 std::optional<int> simulator_test;
@@ -104,11 +104,13 @@ DevAlarmLogger devAlarmLogger;
 #include <cankollm/canopen.h>
 #include <cankollm/kollmmap.h>
 
+void open_hooks();
 void open_global_hooks();
+void open_mitsuservo_communicator_ports();
 
 void rfmeask_start()
 {
-    crow_configure(crow_port);
+    // crow_configure(crow_port);
 
     messageBusNotify->setNCPIHeader(NPattern_MessageBus,
                                     std::vector<int32_t>({}));
@@ -134,17 +136,14 @@ void rfmeask_start()
     nos::log::info("init communication ports");
 
     /*Открытие портов для коммуникаторов*/
-    if (have_mrs && have_mrs_modbus)
-    {
-        nos::println("have_mrs with have_mrs_modbus");
-    }
+    // if (have_mrs)
+    // {
+    //     nos::log::info("open mrs port");
+    //     mrs.open(
+    //         config_settings.node()["paths"]["mrs"].as_string_except().c_str());
+    // }
 
-    if (have_mrs)
-    {
-        nos::log::info("open mrs port");
-        mrs.open(
-            config_settings.node()["paths"]["mrs"].as_string_except().c_str());
-    }
+    open_mitsuservo_communicator_ports();
 
 #if MODBUS_ENABLED == 1
     if (have_mrs_modbus)
@@ -210,6 +209,7 @@ void rfmeask_start()
 
     init_interpolation_groups();
     open_global_hooks();
+    open_hooks();
 
     /*Запуск потоков управления, серверов, коммуникации*/
     start_httpserver(http_port);

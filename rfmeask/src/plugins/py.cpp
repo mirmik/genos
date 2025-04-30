@@ -21,6 +21,15 @@ void set_testvariable(int new_state)
     state = new_state;
 }
 
+void python_executor::destroy_instance()
+{
+    if (_instance != nullptr)
+    {
+        delete _instance;
+        _instance = nullptr;
+    }
+}
+
 // Оборачиваем код в pybind11
 PYBIND11_MODULE(my_module, m)
 {
@@ -126,31 +135,26 @@ void PyObjectToTrent(PyObject *input, nos::trent &output)
 {
     if (PyBool_Check(input))
     {
-        nos::println("BOOL");
         bool value = PyObject_IsTrue(input);
         output = value;
     }
     else if (PyLong_Check(input))
     {
-        nos::println("LONG");
         long value = PyLong_AsLong(input);
         output = value;
     }
     else if (PyFloat_Check(input))
     {
-        nos::println("FLOAT");
         double value = PyFloat_AsDouble(input);
         output = value;
     }
     else if (PyUnicode_Check(input))
     {
-        nos::println("STRING");
         const char *value = PyUnicode_AsUTF8(input);
         output = value;
     }
     else if (PyDict_Check(input))
     {
-        nos::println("DICT");
         PyObject *pKeys = PyDict_Keys(input);
         PyObject *pValues = PyDict_Values(input);
 
@@ -173,7 +177,6 @@ void PyObjectToTrent(PyObject *input, nos::trent &output)
     }
     else if (PyList_Check(input))
     {
-        nos::println("LIST");
         Py_ssize_t n = PyList_Size(input);
         for (Py_ssize_t i = 0; i < n; i++)
         {
@@ -185,7 +188,6 @@ void PyObjectToTrent(PyObject *input, nos::trent &output)
     }
     else if (PyTuple_Check(input))
     {
-        nos::println("TUPLE");
         Py_ssize_t n = PyTuple_Size(input);
         for (Py_ssize_t i = 0; i < n; i++)
         {
@@ -220,7 +222,6 @@ nos::trent GetResultFromGlobal(PyObject *pLocal)
 
 PyObject *PyObjectFromTrent(const nos::trent &input)
 {
-    nos::println("PyObjectFromTrent", nos::json::to_string(input));
     if (input.is_numer())
     {
         double value = input.as_numer();
@@ -236,7 +237,7 @@ PyObject *PyObjectFromTrent(const nos::trent &input)
         const char *value = input.as_string().c_str();
         PyObject *out = PyUnicode_FromString(value);
         const char *out_str = PyUnicode_AsUTF8(out);
-        nos::println("PyObjectFromTrent   UTF:", out_str);
+        (void)out_str; // suppress unused variable warning
         return out;
     }
     else if (input.is_dict())
@@ -283,9 +284,7 @@ PyObject *PyObjectFromTrent(const nos::trent &input)
         for (size_t i = 0; i < list.size(); i++)
         {
             PyObject *pValue = PyObjectFromTrent(input[i]);
-            nos::println("P1.1: ", Py_REFCNT(pValue));
             PyList_SetItem(pList, i, pValue);
-            nos::println("P1.2: ", Py_REFCNT(pValue));
         }
         return pList;
     }

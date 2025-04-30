@@ -190,6 +190,7 @@ double Axis::pulses_to_units(double pulses) const
 
 void Axis::absoluteUnitMove_impl(double dist, bool ctrl)
 {
+    nos::println("Axis::absoluteUnitMove_impl");
     std::lock_guard<std::recursive_mutex> lock(updmtx);
 
     // Mitsubishi Servo работает с INT32
@@ -237,6 +238,8 @@ void Axis::absoluteUnitMove_over_unit(double dist, bool ctrl)
     if (operation_status() != Operation::NONE)
         stopLastOperation(StopType::ABORT);
     mover->resetSpeed();
+
+    nos::println("Axis::absoluteUnitMove_over_unit2", dist);
     mover->absolute_unit_move(dist);
     AXIS_TRY_END
     operationCorrectStart(ctrl);

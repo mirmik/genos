@@ -18,17 +18,15 @@
 #define MRS_NOTCONNECTION 1
 #define MRS_ALARMERROR 2
 
-extern std::recursive_mutex rs485_mutex;
-
 class MitsubishiCommunicator
 {
 public:
-    std::recursive_mutex &mtx = rs485_mutex;
+    std::recursive_mutex bus_mutex;
 
 private:
     nos::serial_port serport = {};
     std::chrono::milliseconds tim = {};
-    const char *portstr = nullptr;
+    std::string portname = {};
     volatile uint64_t brokenPackage = 0;
     nos::log::logger logger = {};
 
@@ -37,6 +35,7 @@ private:
 
 public:
     MitsubishiCommunicator();
+    MitsubishiCommunicator(std::string port);
     MitsubishiCommunicator(const MitsubishiCommunicator &) = delete;
     MitsubishiCommunicator &operator=(const MitsubishiCommunicator &) = delete;
 

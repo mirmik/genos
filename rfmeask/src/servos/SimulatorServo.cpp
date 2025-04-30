@@ -16,6 +16,8 @@
     return simulator_state.feedpos;
 }*/
 
+std::recursive_mutex SimulatorServo::_bus_mutex;
+
 int64_t SimulatorServo::request_position()
 {
     transactionConnectionSuccess();

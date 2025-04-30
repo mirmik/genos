@@ -18,7 +18,7 @@
 using namespace nos::argument_literal;
 
 bool prevent_updates = false;
-std::recursive_mutex updmtx;
+std::recursive_mutex updmtx; // глобальная мьютекс
 
 AbstractServo::AbstractServo(const std::string &name) :
     Device(name),
@@ -39,7 +39,7 @@ AbstractServo::AbstractServo(const std::string &name) :
 }
 
 #if USE_LAST_ALARM
-void AbstractServo::save_last_alarm_code(int code) 
+void AbstractServo::save_last_alarm_code(int code)
 {
     _last_alarm_runtime_binder.update(code);
 }
@@ -180,19 +180,25 @@ void AbstractServo::notifiesRegistry(NotifyBrocker &brocker)
 */
 void AbstractServo::updaterThreadFunc()
 {
+    // auto &busmtx = bus_mutex();
+
     while (1)
     {
+        // nos::println(
+        //     "updaterThreadFunc", name(), "iteration", update_iteration);
+
         update_iteration++;
         uint8_t last_operationStatus = m_operationStatus;
         uint8_t last_limitSwitchStatus = m_limitSwitchStatus;
         int64_t last_currentPosition = m_currentPosition;
         if (prevent_updates)
         {
+            // nos::println("Prevent updates");
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
 
-        updmtx.lock();
+        // busmtx.lock();
         if (updaterThreadFunc_local())
             goto end;
 
@@ -203,42 +209,31 @@ void AbstractServo::updaterThreadFunc()
                 transactionAlarmError("simulation");
                 goto end;
             }
+
             m_currentPosition = request_position();
-            updmtx.unlock();
+            // busmtx.unlock();
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            updmtx.lock();
+            // busmtx.lock();
 
             if (limit_switch_update_needed)
             {
                 m_limitSwitchStatus = request_limit_switch_status();
-                updmtx.unlock();
+                // busmtx.unlock();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                updmtx.lock();
+                // busmtx.lock();
             }
 
-            // int32_t position_diff = last_currentPosition - m_currentPosition;
-            /*if (std::abs(position_diff) > 10)
-            {
-                m_operationStatus = OperationStatus::MOVED;
-            }
-            else
-            {
-                m_operationStatus = OperationStatus::STOPED;
-            }*/
-
-            // if (update_iteration % 3 == 0)
-            //{
             m_operationStatus = request_operation_status();
-            updmtx.unlock();
+            // busmtx.unlock();
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            updmtx.lock();
-            //}
+            // busmtx.lock();
         }
         catch (const DeviceRefuseException &)
         {
             goto end;
         };
 
+        updmtx.lock(); // обновляем статусы под глобальным мьютексом
         if (use_pulse_position_notification())
             positionUpdated(m_currentPosition);
         else
@@ -254,13 +249,14 @@ void AbstractServo::updaterThreadFunc()
                 (float)last_unit_position_invert_corrected_if_need());
             nonCorrectedUnitPositionNotify.notify((float)last_unit_position());
         }
+        updmtx.unlock();
 
         if (torqueNotify.has_subscribers())
         {
             auto torque = current_torque();
-            updmtx.unlock();
+            // busmtx.unlock();
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            updmtx.lock();
+            // busmtx.lock();
             torqueNotify.notify(torque);
         }
 
@@ -288,7 +284,7 @@ void AbstractServo::updaterThreadFunc()
         }
 
     end:
-        updmtx.unlock();
+        // busmtx.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }

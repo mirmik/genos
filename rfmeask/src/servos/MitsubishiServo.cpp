@@ -8,9 +8,9 @@
 #include <exception.h>
 #include <igris/result.h>
 #include <igris/util/bits.h>
+#include <modes.h>
 #include <nos/print.h>
 #include <nos/trace.h>
-#include <modes.h>
 #include <servos/MitsubishiServo.h>
 
 using namespace igris::result_type;
@@ -61,9 +61,9 @@ void MitsubishiServo::errstatAnalyze(uint8_t &errstat, uint8_t critical)
     if ((errstat & MRS_ALARMERROR) || forceAlarm)
     {
         uint16_t alarm_code = getAlarmStatus();
-    #if USE_LAST_ALARM
+#if USE_LAST_ALARM
         AbstractServo::save_last_alarm_code((int)alarm_code);
-    #endif
+#endif
         if (alarm_code < 0x90)
         {
             std::string alarm_code_str = std::to_string(alarm_code);
@@ -144,6 +144,7 @@ void MitsubishiServo::enable_impulse_control_mode()
 
 void MitsubishiServo::absolute_move(double _arg)
 {
+    nos::println("absolute_move", _arg);
     int32_t arg = _arg;
     auto pos = request_position();
     nos::println("absolute_move", arg, pos);
@@ -158,6 +159,8 @@ void MitsubishiServo::relative_unit_move(double dist)
 
 void MitsubishiServo::absolute_unit_move(double dist)
 {
+    nos::println("absolute_unit_move", dist);
+
     if (_correction_enabled)
         dist = unit_position_correct(dist);
 
@@ -259,7 +262,7 @@ uint8_t MitsubishiServo::request_limit_switch_status()
         ret = 1;
     else if (lsp)
         ret = 2;
-    else 
+    else
         ret = 0;
 
     errstatAnalyze(errstat, NONCRITICAL);
@@ -328,17 +331,15 @@ void MitsubishiServo::preset()
             request_pulse_position_in_command_units_without_keeping());
     }
 
-
 #if USE_LAST_ALARM
     int last_alarm_code = _last_alarm_runtime_binder.get();
-    if (last_alarm_code == 0x25) 
+    if (last_alarm_code == 0x25)
     {
         nos::log::info("SET ZERO POSITION because LAST_ALARM_CODE == 0x25");
         set_zero_position();
         _last_alarm_runtime_binder.update(0);
     }
 #endif
-
 }
 
 void MitsubishiServo::on_first_connection()
@@ -564,7 +565,7 @@ int MitsubishiServo::updateParameters(const nos::trent &devtr)
     MitsubishiCommunicator::read_parameter_s rets;
     MitsubishiCommunicator::write_parameter_s wr;
 
-    std::lock_guard<std::recursive_mutex> lock(m_mrs->mtx);
+    std::lock_guard<std::recursive_mutex> lock(m_mrs->bus_mutex);
 
     bool automatic_shaft_resonanse_supress =
         atoi(get_named_trent(devtr["PB"], "PB17")["value"]
@@ -688,7 +689,7 @@ double MitsubishiServo::current_torque()
 std::pair<std::string, std::string>
 MitsubishiServo::get_parameter(const std::string &mnemo)
 {
-    std::lock_guard<std::recursive_mutex> lk(m_mrs->mtx);
+    std::lock_guard<std::recursive_mutex> lk(m_mrs->bus_mutex);
 
     uint8_t errstat;
     MitsubishiCommunicator::read_parameter_s param;
@@ -710,12 +711,17 @@ MitsubishiServo::get_parameter(const std::string &mnemo)
     return parsed;
 }
 
+std::recursive_mutex &MitsubishiServo::bus_mutex()
+{
+    return m_mrs->bus_mutex;
+}
+
 void MitsubishiServo::set_parameter(const std::string &mnemo,
                                     const std::string &value,
                                     const std::string &format)
 {
     MitsubishiCommunicator::read_parameter_s param;
-    std::lock_guard<std::recursive_mutex> lk(m_mrs->mtx);
+    std::lock_guard<std::recursive_mutex> lk(m_mrs->bus_mutex);
 
     uint8_t errstat;
 
@@ -851,7 +857,9 @@ void MitsubishiServo::command(const nos::argv &args, nos::ostream &os)
     {
         std::string parameter = args[1];
         auto val_and_type = get_parameter(parameter);
-        nos::println_to(os, nos::format("{} : {}", val_and_type.first, val_and_type.second));
+        nos::println_to(
+            os,
+            nos::format("{} : {}", val_and_type.first, val_and_type.second));
         return;
     }
 

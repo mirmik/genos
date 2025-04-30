@@ -1,10 +1,69 @@
+#include <MitsubishiCommunicator.h>
 #include <modes.h>
-#include <servos/MitsubishiServo.h>
 #include <servos/MRJ5Servo.h>
+#include <servos/MitsubishiServo.h>
 #include <tables.h>
 
-extern MitsubishiCommunicator mrs;
+// extern MitsubishiCommunicator mrs;
 std::set<std::string> encoder_type_set = {"internal", "external"};
+std::unordered_map<std::string, std::unique_ptr<MitsubishiCommunicator>>
+    mitsu_communicator_for_port;
+
+MitsubishiCommunicator *get_mitsuservo_communicator(std::string com_port_name)
+{
+    com_port_name = nos::trim(com_port_name);
+
+    if (com_port_name.empty())
+    {
+        throw std::invalid_argument("com_port_name is empty");
+    }
+
+    MitsubishiCommunicator *mrs = nullptr;
+    if (mitsu_communicator_for_port.find(com_port_name) ==
+        mitsu_communicator_for_port.end())
+    {
+        mrs = new MitsubishiCommunicator(com_port_name.c_str());
+        mitsu_communicator_for_port[com_port_name].reset(mrs);
+    }
+    else
+    {
+        mrs = mitsu_communicator_for_port[com_port_name].get();
+    }
+    return mrs;
+}
+
+void open_mitsuservo_communicator_ports()
+{
+    for (auto &pair : mitsu_communicator_for_port)
+    {
+        pair.second->open(pair.first.c_str());
+    }
+}
+
+std::string port_converter(std::string port)
+{
+    if (port == "COM1")
+    {
+        return "/dev/ttyS0";
+    }
+    else if (port == "COM2")
+    {
+        return "/dev/ttyS1";
+    }
+    else if (port == "COM3")
+    {
+        return "/dev/ttyS2";
+    }
+    else if (port == "COM4")
+    {
+        return "/dev/ttyS3";
+    }
+    else
+    {
+        return port;
+    }
+    return port;
+}
 
 void initialize_mitsuservo(const std::string &name, const nos::trent &dict)
 {
@@ -17,8 +76,12 @@ void initialize_mitsuservo(const std::string &name, const nos::trent &dict)
     address = dict["address"].as_numer_except();
     updateTime = dict["updateTime"].as_numer_default(50);
 
+    std::string com_port_name =
+        port_converter(dict["com"].as_string_default("/dev/ttyS3"));
+    MitsubishiCommunicator *mrs = get_mitsuservo_communicator(com_port_name);
+
     //Создаем и инициализируем объект устройства.
-    auto servo = new MitsubishiServo(name.c_str(), &mrs, address);
+    auto servo = new MitsubishiServo(name.c_str(), mrs, address);
     servo->updaterTimeout(updateTime);
 
     if (dict.contains("PA") &&
@@ -50,7 +113,6 @@ void initialize_mitsuservo(const std::string &name, const nos::trent &dict)
                    updateTime);
 }
 
-
 void initialize_mitsuservo_j5(const std::string &name, const nos::trent &dict)
 {
     ::have_mrs = true;
@@ -62,8 +124,12 @@ void initialize_mitsuservo_j5(const std::string &name, const nos::trent &dict)
     address = dict["address"].as_numer_except();
     updateTime = dict["updateTime"].as_numer_default(50);
 
+    std::string com_port_name =
+        port_converter(dict["com"].as_string_default("/dev/tty3"));
+    MitsubishiCommunicator *mrs = get_mitsuservo_communicator(com_port_name);
+
     //Создаем и инициализируем объект устройства.
-    auto servo = new MRJ5Servo(name.c_str(), &mrs, address);
+    auto servo = new MRJ5Servo(name.c_str(), mrs, address);
     servo->updaterTimeout(updateTime);
 
     if (dict.contains("power_off_periodical_correction_period"))

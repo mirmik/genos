@@ -117,33 +117,6 @@ void AxisSynchro::operationCorrectStart()
     start_operation_notify();
 }
 
-// void AxisSynchro::operationCorrectFinish_SyncAxis()
-// {
-//     // nos::println("AXIS SYNCRO OPERATION CORRECT FINISH");
-//     std::lock_guard<std::recursive_mutex> lock(updmtx);
-//     // nos::log::debug("operation correct finish");
-//     //Отписка от уведомлений.
-//     // scanPointSignal.erase(&AxisSynchro::scanPointHandler, this);
-//     descanSignal -= igris::make_delegate(&AxisSynchro::stopScanHandler,
-//     this); wrongScanPointSignal -=
-//         igris::make_delegate(&AxisSynchro::wrongScanPointHandler, this);
-
-//     // mover->operationFinishRoutine();
-//     double curpos = mover->currentPosition();
-//     scan_mode = false;
-//     update_current_position_handler_with_reverse_if_need(curpos /
-//     unitRatio(),
-//                                                          true);
-
-//     //Уведомление о нормальном завершении, и возврат к нулевой операции.
-
-//     if (mover->operationStatus() == AbstractServo::STOPED)
-//     {
-//         operationStopTypeNotify.notify(NOTIFY_STOP_NORMAL);
-//         operation_finish_callback();
-//     }
-// }
-
 void AxisSynchro::moving_finished_handler()
 {
     std::lock_guard<std::recursive_mutex> lock(updmtx);

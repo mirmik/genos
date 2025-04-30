@@ -20,6 +20,8 @@ class SimulatorServo : public AbstractServo
     // heimer::axis_controller simulator;
     // heimer::axis_stub_processor stub_processor;
 
+    static std::recursive_mutex _bus_mutex;
+
     double m_speed = 0;
     uint32_t m_accel_ms = 50000;
     double gear = 1;
@@ -32,6 +34,11 @@ public:
     bool is_absolute_moving_recomended() override
     {
         return true;
+    }
+
+    std::recursive_mutex &bus_mutex() override
+    {
+        return _bus_mutex;
     }
 
     SimulatorServo(const std::string &name) : AbstractServo(name), node_name()

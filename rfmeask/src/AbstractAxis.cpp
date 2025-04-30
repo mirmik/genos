@@ -39,17 +39,21 @@ AbstractAxis::AbstractAxis(const std::string &name) :
     init_runtime_settings();
     load_one_axis_correction_from_runtime();
 
-    open_hooks();
+    // open_hooks();
 }
 
-void AbstractAxis::open_hooks()
+void AbstractAxis::init_hooks()
 {
-    hook_is_moving_allowed.set_script("print('HELLO WORLD')\n"
-                                      "print(indata['system_state'])\n"
-                                      "print(indata['axno'])\n"
-                                      "print(indata['start_position'])\n"
-                                      "print(indata['final_position'])\n"
-                                      "result = True\n");
+    nos::println("!!!!!!!!!!!!!!Init hooks for axis: ", name());
+    std::string hooks_dir = "/home/rfmeas/.rfmeask/hooks";
+    std::string filename = hooks_dir + "/is_moving_allowed_" + name() + ".py";
+    hook_is_moving_allowed.init(filename,
+                                "print('HELLO WORLD')\n"
+                                "print(indata['system_state'])\n"
+                                "print(indata['axno'])\n"
+                                "print(indata['start_position'])\n"
+                                "print(indata['final_position'])\n"
+                                "result = True\n");
 }
 
 nos::trent AbstractAxis::compile_system_state_to_trent()

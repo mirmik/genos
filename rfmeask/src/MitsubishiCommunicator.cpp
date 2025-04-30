@@ -15,7 +15,6 @@
 #include <thread>
 
 extern bool emulate_mode;
-std::recursive_mutex rs485_mutex;
 
 #ifdef __WIN32__
 #define O_NOCTTY 0
@@ -28,14 +27,23 @@ using namespace std;
 MitsubishiCommunicator::MitsubishiCommunicator() :
     logger("MitsubishiCommunicator")
 {
-    
+
+    last_error_time = std::chrono::system_clock::now();
+    tim = chrono::milliseconds(20);
+}
+
+MitsubishiCommunicator::MitsubishiCommunicator(std::string port) :
+    portname(port.c_str()), logger("MitsubishiCommunicator")
+{
+
     last_error_time = std::chrono::system_clock::now();
     tim = chrono::milliseconds(20);
 }
 
 void MitsubishiCommunicator::open(const char *str)
 {
-    portstr = str;
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
+    portname = str;
 
     int err = serport.open(str, 115200, 'e', 8, 1);
     // file.nodelay(true);
@@ -64,7 +72,7 @@ void MitsubishiCommunicator::close()
 
 void MitsubishiCommunicator::rawSend(const char *str, uint8_t len)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     auto ans = serport.write(str, len);
     if (ans.is_error())
     {
@@ -80,7 +88,7 @@ void MitsubishiCommunicator::rawSend(const char *str, uint8_t len)
 
 void MitsubishiCommunicator::rawSend(const char *str)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     rawSend(str, strlen(str));
 }
 
@@ -94,7 +102,7 @@ int MitsubishiCommunicator::rawTimeredRecv(char *data,
 {
     // Вопрос о том, как правильно забирать данные, строго говоря, требует
     // проработки.
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
 
     serport.nonblock(true);
     this_thread::sleep_for(chrono::milliseconds(14));
@@ -108,7 +116,7 @@ int MitsubishiCommunicator::rawTimeredRecv(char *data,
 
 int MitsubishiCommunicator::rawQuery(const char *str, char *ans)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
 
     rawSend(str);
     int len = rawTimeredRecv(ans, 128, tim);
@@ -154,7 +162,7 @@ int MitsubishiCommunicator::ackRawQuery(const char *query, char *answer)
     int len;
     int sendlen = strlen(query);
     int iter = 0;
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     if (!serport.good())
         return 0;
 resend:
@@ -177,8 +185,8 @@ resend:
         if (diff > 1s)
         {
             auto msg = nos::format("mrs485: unvalid package. (q:{}) (len:{})",
-                      igris::dstring(std::string(query, sendlen)),
-                      len);
+                                   igris::dstring(std::string(query, sendlen)),
+                                   len);
             if (count_of_skipped_errors > 1)
             {
                 msg += nos::format(" (+skipped: {})", count_of_skipped_errors);
@@ -193,7 +201,7 @@ resend:
         }
         brokenPackage = brokenPackage + 1;
         close();
-        open(portstr);
+        open(portname.c_str());
         ++iter;
         if (iter == 10)
         {
@@ -297,7 +305,7 @@ std::string MitsubishiCommunicator::Query(uint8_t &errstat,
 {
     char answer[1024];
     memset(answer, 0, 1024);
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     charbuf<10> buf = Form(stantion, command, datano);
     int len = ackRawQuery(buf.to_buf(), answer);
     if (len == -1)
@@ -316,7 +324,7 @@ std::string MitsubishiCommunicator::Query4(
 {
     char answer[1024];
     memset(answer, 0, 1024);
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     charbuf<14> buf = Form4(stantion, command, datano, data);
     int len = ackRawQuery(buf.to_buf(), answer);
     if (len == -1)
@@ -334,7 +342,7 @@ std::string MitsubishiCommunicator::Query4(
 {
     char answer[1024];
     memset(answer, 0, 1024);
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     charbuf<14> buf = Form4(stantion, command, datano, data);
     int len = ackRawQuery(buf.to_buf(), answer);
     if (len == -1)
@@ -351,7 +359,7 @@ std::string MitsubishiCommunicator::Query8(
     uint8_t &errstat, int stantion, int command, int datano, int32_t data)
 {
     char answer[1024];
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     charbuf<18> buf = Form8(stantion, command, datano, data);
     int len = ackRawQuery(buf.to_buf(), answer);
     if (len == -1)
@@ -372,7 +380,7 @@ std::string MitsubishiCommunicator::Query12(uint8_t &errstat,
                                             int32_t data)
 {
     char answer[1024];
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     charbuf<22> buf = Form12(stantion, command, datano, predata, data);
     nos::println("message:", buf.to_buf());
     int len = ackRawQuery(buf.to_buf(), answer);
@@ -389,7 +397,7 @@ std::string MitsubishiCommunicator::Query12(uint8_t &errstat,
 void MitsubishiCommunicator::jog(
     uint8_t &errstat, int stantion, int speed, int acceleration, int direction)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
 
     Query4(errstat, stantion, 0x8B, 0x00, (int16_t)0x0000);
     if (errstat)
@@ -419,7 +427,9 @@ void MitsubishiCommunicator::epos(uint8_t &errstat,
                                   int direction,
                                   DistanceUnit distunit)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    nos::println("epos:", distance, speed, acceleration, direction);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
+    nos::println("epos lock");
 
     Query4(errstat, stantion, 0x8B, 0x00, 0x0002);
     Query4(errstat, stantion, 0xA0, 0x10, speed);
@@ -444,19 +454,19 @@ void MitsubishiCommunicator::epos(uint8_t &errstat,
 
 void MitsubishiCommunicator::impmode(uint8_t &errstat, int stantion)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     Query4(errstat, stantion, 0x8B, 0x00, (int16_t)0x0000);
 }
 
 void MitsubishiCommunicator::temporary_stop(uint8_t &errstat, int stantion)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     Query4(errstat, stantion, 0xA0, 0x41, "STOP");
 }
 
 void MitsubishiCommunicator::stop(uint8_t &errstat, int stantion)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     Query8(errstat, stantion, 0x92, 0x00, 0x00000007);
 }
 
@@ -470,11 +480,16 @@ int16_t MitsubishiCommunicator::Parse4(std::string str, int bias)
     return static_cast<int16_t>(hexcode_to_uint16(str.c_str() + bias));
 }
 
+volatile int32_t iterg = 0;
 int32_t MitsubishiCommunicator::abspos_encoder_side(uint8_t &errstat,
                                                     int stantion,
                                                     DistanceUnit distunit)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    int iter = iterg;
+    iterg = (iter + 1) % 1000;
+    // nos::println("abspos_encoder_side", iter);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
+    // nos::println("abspos_encoder_side2 lock", iter);
     std::string str =
         Query(errstat,
               stantion,
@@ -482,6 +497,7 @@ int32_t MitsubishiCommunicator::abspos_encoder_side(uint8_t &errstat,
               distunit == DistanceUnit::CommandUnit ? 0x91 : 0x90);
     // if (errstat)
     //    return 0;
+    // nos::println("abspos_encoder_side3 str:", str, iter);
     return Parse8(str, 3);
 }
 
@@ -491,7 +507,7 @@ int32_t MitsubishiCommunicator::abspos_encoder_side(uint8_t &errstat,
 int16_t MitsubishiCommunicator::parametr_group_read(uint8_t &errstat,
                                                     int stantion)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     std::string str = Query(errstat, stantion, 0x04, 0x01);
     if (errstat == MRS_NOTCONNECTION)
         return 0;
@@ -502,7 +518,7 @@ void MitsubishiCommunicator::parametr_group_set(uint8_t &errstat,
                                                 int stantion,
                                                 int16_t group)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     Query4(errstat, stantion, 0x85, 0x00, group);
 }
 
@@ -514,7 +530,7 @@ void MitsubishiCommunicator::write_string_parametr(
     uint16_t hdata;
     int decimal_point_position = 0;
     char *cp;
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
 
     printf("write_string_parametr: %s", data);
 
@@ -564,7 +580,7 @@ void MitsubishiCommunicator::write_parametr(uint8_t &errstat,
                                             uint8_t decimal_point_position,
                                             int32_t data)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
 
     int16_t predata;
 
@@ -589,7 +605,7 @@ uint32_t MitsubishiCommunicator::read_parametr(uint8_t &errstat,
                                                int stantion,
                                                int16_t param)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     std::string str = Query(errstat, stantion, 0x15, param);
     if (errstat == MRS_NOTCONNECTION)
         return 0;
@@ -601,7 +617,7 @@ int MitsubishiCommunicator::read_parameter_2(uint8_t &errstat,
                                              int16_t param,
                                              struct read_parameter_s *rets)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     std::string str = Query(errstat, stantion, 0x15, param);
 
     if (errstat == MRS_NOTCONNECTION)
@@ -631,7 +647,7 @@ int MitsubishiCommunicator::read_parameter_2(uint8_t &errstat,
 int MitsubishiCommunicator::write_parameter_2(
     struct MitsubishiCommunicator::write_parameter_s *wr)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     uint8_t errstat;
 
     uint16_t predata;
@@ -669,7 +685,7 @@ std::string datastring(struct MitsubishiCommunicator::read_parameter_s *rets)
 
 int8_t MitsubishiCommunicator::read_lastAlarm(uint8_t &errstat, int stantion)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     std::string str = Query(errstat, stantion, 0x02, 0x00);
     if (str.length() >= 7)
         return std::stoi(str.substr(5, 2), nullptr, 16);
@@ -685,7 +701,7 @@ void MitsubishiCommunicator::gear_numerator(uint8_t &errstat,
                                             int stantion,
                                             int32_t data)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     parametr_group_set(errstat, stantion, 0);
     write_parametr(errstat, stantion, 6, 1, 0, data);
 }
@@ -694,7 +710,7 @@ void MitsubishiCommunicator::gear_denumerator(uint8_t &errstat,
                                               int stantion,
                                               int32_t data)
 {
-    lock_guard<recursive_mutex> lk(mtx);
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     parametr_group_set(errstat, stantion, 0); // set group PA
     write_parametr(errstat, stantion, 7, 1, 0, data);
 }
