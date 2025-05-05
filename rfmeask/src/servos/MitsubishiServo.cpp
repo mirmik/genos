@@ -291,6 +291,13 @@ uint8_t MitsubishiServo::request_operation_status()
 */
 void MitsubishiServo::setSpeed_native_impl(double spd)
 {
+    if (spd < 0)
+    {
+        throw std::runtime_error("Speed < 0");
+    }
+
+    if (spd < 1)
+        spd = 1;
     m_speed = spd;
 }
 

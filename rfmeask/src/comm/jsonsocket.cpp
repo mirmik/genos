@@ -414,6 +414,12 @@ void JsonApiClient::run()
         socket().disconnect();
 }
 
+void execute_script(const nos::trent &tr)
+{
+    std::string script = tr["script"].as_string();
+    nos::println("execute_script: ", script);
+}
+
 void JsonApiServer::init_wf_collection()
 {
     interpreter.add("system_idn", std::function<std::string()>(system_idn));
@@ -427,6 +433,10 @@ void JsonApiServer::init_wf_collection()
         "set_oneaxis_correction_2",
         std::function<void(const nos::trent &)>(set_oneaxis_correction_2),
         {"args"});
+
+    interpreter.add("execute_script",
+                    std::function<void(const nos::trent &)>(execute_script),
+                    {"args"});
 
     // interpreter.add("get_multiaxes_correction",
     //                 std::function<nos::trent(const std::string &)>(

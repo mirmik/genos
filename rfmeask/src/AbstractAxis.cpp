@@ -47,13 +47,7 @@ void AbstractAxis::init_hooks()
     nos::println("!!!!!!!!!!!!!!Init hooks for axis: ", name());
     std::string hooks_dir = "/home/rfmeas/.rfmeask/hooks";
     std::string filename = hooks_dir + "/is_moving_allowed_" + name() + ".py";
-    hook_is_moving_allowed.init(filename,
-                                "print('HELLO WORLD')\n"
-                                "print(indata['system_state'])\n"
-                                "print(indata['axno'])\n"
-                                "print(indata['start_position'])\n"
-                                "print(indata['final_position'])\n"
-                                "result = True\n");
+    hook_is_moving_allowed.init(filename, "result = True\n");
 }
 
 nos::trent AbstractAxis::compile_system_state_to_trent()

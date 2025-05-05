@@ -263,7 +263,8 @@ int32_t Axis::getSpeed_rpm() const
 // TODO: Add protect speed
 void Axis::setSpeed_unitPerSecond(double arg)
 {
-    mover->setSpeed_cups(arg * unitRatio_by_gear());
+    double gain = unitRatio_by_gear();
+    mover->setSpeed_cups(arg * gain);
     mover->optional_setRawUnitSpeed(arg);
 }
 

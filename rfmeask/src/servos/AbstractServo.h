@@ -486,7 +486,9 @@ public:
 
     void setSpeed_cups(double arg)
     {
-        setSpeed_native(arg * cupsToSpdKoeff() * velocity_multiplier());
+        auto _cupsToSpdKoeff = cupsToSpdKoeff();
+        auto _velocity_multiplier = velocity_multiplier();
+        setSpeed_native(arg * _cupsToSpdKoeff * _velocity_multiplier);
     }
 
     void setSpeed_cupm(double arg)
