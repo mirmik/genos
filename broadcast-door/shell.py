@@ -6,6 +6,42 @@ import random
 import subprocess
 import os
 import base64 as b64
+import uuid
+import hashlib
+import platform
+import subprocess
+
+def get_mac_address():
+    mac = uuid.getnode()
+    return f"{mac:012x}"
+
+def get_cpu_serial():
+#     try:
+#         if platform.system() == "Windows":
+#             output = subprocess.check_output("wmic cpu get ProcessorId", shell=True)
+#             return output.decode().split("\n")[1].strip()
+#         elif platform.system() == "Linux":
+#             output = subprocess.check_output("cat /proc/cpuinfo", shell=True).decode()
+#             for line in output.split("\n"):
+#                 if "Serial" in line or "ID" in line:
+#                     return line.split(":")[1].strip()
+#         elif platform.system() == "Darwin":  # macOS
+#             output = subprocess.check_output("ioreg -l | grep IOPlatformSerialNumber", shell=True)
+#             return output.decode().split('"')[-2]
+#     except Exception:
+        return None
+
+def generate_machine_id():
+    mac = get_mac_address()
+    # cpu = get_cpu_serial() or "unknown"
+    base = mac #+ cpu
+    hash = hashlib.sha256(base.encode()).hexdigest()
+    return hash[:20]  # Return a shortened version of the hash for uniqueness
+
+
+print ("Mac Address: " + get_mac_address())
+print ("CPU Serial: " + (get_cpu_serial() or "N/A"))
+print ("Machine ID: " + generate_machine_id())
 
 MAXSIZE = 2048
 broadcast_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -17,18 +53,21 @@ broadcast_server.bind(('', 11722))
 def random_string(length):
     return ''.join(random.choice(string.ascii_letters) for m in range(length))
 
+# def get_unique_id():
+#     unique_id_fname = ".broadcast_shell_unique_id"
+#     unique_id_path = os.path.join("~", unique_id_fname)
+#     unique_id_path = os.path.expanduser(unique_id_path)
+#     if os.path.exists(unique_id_path):
+#         with open(unique_id_path, 'r') as f:
+#             unique_id = f.read()
+#     else:
+#         unique_id = random_string(20)
+#         with open(unique_id_path, 'w') as f:
+#             f.write(unique_id)
+#     return unique_id
+
 def get_unique_id():
-    unique_id_fname = ".broadcast_shell_unique_id"
-    unique_id_path = os.path.join("~", unique_id_fname)
-    unique_id_path = os.path.expanduser(unique_id_path)
-    if os.path.exists(unique_id_path):
-        with open(unique_id_path, 'r') as f:
-            unique_id = f.read()
-    else:
-        unique_id = random_string(20)
-        with open(unique_id_path, 'w') as f:
-            f.write(unique_id)
-    return unique_id
+    return generate_machine_id()
 
 unique_id = get_unique_id()
 
