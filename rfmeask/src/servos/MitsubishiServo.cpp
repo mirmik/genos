@@ -54,7 +54,7 @@ void MitsubishiServo::errstatAnalyze(uint8_t &errstat, uint8_t critical)
     if (errstat & MRS_NOTCONNECTION)
     {
         transactionRefuseError();
-        throw DeviceRefuseException();
+        throw DeviceRefuseException("DeviceRefuse: errstatAnalyze");
     };
     transactionConnectionSuccess();
 

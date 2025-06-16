@@ -8,6 +8,12 @@
 #include <nos/trent/trent.h>
 #include <pybind11/pybind11.h>
 
+enum class PythonExecutionState
+{
+    Success,
+    Failure,
+};
+
 class python_executor
 {
     static python_executor *_instance;
@@ -20,9 +26,9 @@ class python_executor
 public:
     python_executor();
     ~python_executor();
-    void run(const std::string &script,
-             const nos::trent &indata,
-             nos::trent &outdata);
+    PythonExecutionState run_script(const std::string &script,
+                                    const nos::trent &indata,
+                                    nos::trent &outdata);
 
     static python_executor &instance()
     {
@@ -40,13 +46,14 @@ protected:
     bool is_existed = false;
 
 public:
-    virtual void run(const nos::trent &indata, nos::trent &outdata) = 0;
+    virtual PythonExecutionState run_script(const nos::trent &indata,
+                                            nos::trent &outdata) = 0;
 
     void execute(const nos::trent &indata, nos::trent &outdata)
     {
         if (!is_existed)
             return;
-        run(indata, outdata);
+        run_script(indata, outdata);
     }
 
     virtual ~hook() {}
@@ -69,9 +76,10 @@ public:
     void save_to_file();
     void set_script(const std::string &script);
 
-    void run(const nos::trent &indata, nos::trent &outdata) override
+    PythonExecutionState run_script(const nos::trent &indata,
+                                    nos::trent &outdata) override
     {
-        python_executor::instance().run(_script, indata, outdata);
+        return python_executor::instance().run_script(_script, indata, outdata);
     }
 };
 

@@ -50,22 +50,6 @@ void AbstractAxis::init_hooks()
     hook_is_moving_allowed.init(filename, "result = True\n");
 }
 
-nos::trent AbstractAxis::compile_system_state_to_trent()
-{
-    nos::trent state;
-    state["axes"].init(nos::trent_type::list);
-
-    auto &list = axis_list_ref();
-
-    for (size_t i = 0; i < list.size(); i++)
-    {
-        state["axes"][i]["name"] = list[i]->name();
-        state["axes"][i]["curpos"] = list[i]->last_unit_position();
-    }
-
-    return state;
-}
-
 bool AbstractAxis::check_is_moving_allowed(double start, double final)
 {
     std::vector<std::pair<int, double>> glbperm;
@@ -73,23 +57,21 @@ bool AbstractAxis::check_is_moving_allowed(double start, double final)
     bool global_perm = GlobalMoveAllowed(glbperm);
     if (!global_perm)
     {
-        throw AxisLimitException();
+        throw GlobalHookPreventionException();
     }
 
     nos::trent indata, outdata;
     nos::trent system_state = compile_system_state_to_trent();
-    indata["system_state"] = system_state;
+    indata["system"] = system_state;
     indata["axno"] = number();
     indata["start_position"] = start;
     indata["final_position"] = final;
     hook_is_moving_allowed.execute(indata, outdata);
-    nos::println("IS MOVING ALLOWED: ", nos::json::to_string(outdata));
-    nos::println("IS MOVING ALLOWED: ", outdata["result"].as_bool());
-    if (!outdata["result"].is_bool())
+    if (!outdata.is_bool())
     {
-        throw AxisLimitException();
+        throw AxisHookPreventionException();
     }
-    return outdata["result"].as_bool();
+    return outdata.as_bool();
 }
 
 void AbstractAxis::unitLimits(double back, double forw)
@@ -907,11 +889,13 @@ void AbstractAxis::absoluteUnitMove(double tgtpos)
         throw AxisLimitException();
     }
 
+    _last_target = tgtpos;
+    _last_target_inited = true;
+
     if (is_reversed())
     {
         tgtpos = -tgtpos;
     }
-
     absoluteUnitMove_impl(tgtpos, true);
 }
 
@@ -1021,9 +1005,6 @@ void AbstractAxis::update_current_position_handler(double noncorrected_unitpos,
         nos::fprintln("UnitRatio is zero. axname{}", name());
     }
 
-    assert(!isinf(noncorrected_unitpos));
-    assert(unitRatio() != 0);
-
     {
         double unitpos_reverse_correction;
         if (igcontroller)
@@ -1040,6 +1021,12 @@ void AbstractAxis::update_current_position_handler(double noncorrected_unitpos,
         std::lock_guard<std::mutex> lock(last_data_mutex);
         _last_position_unit = unitpos_reverse_correction;
         _last_position_unit_not_corrected = noncorrected_unitpos;
+
+        if (_last_target_inited == false)
+        {
+            _last_target_inited = true;
+            _last_target = _last_position_unit;
+        }
     }
 
     // positionNotify.notifySmooth(_last_position, force);
@@ -1059,6 +1046,7 @@ void AbstractAxis::stop()
     {
         stop_impl();
     }
+    _last_target_inited = false;
 }
 
 bool AbstractAxis::correction_table_used()

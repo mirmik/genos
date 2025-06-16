@@ -22,12 +22,25 @@ namespace nos
             int lineno = 1;
             char onebuf = 0;
 
-            class unexpected_symbol : public std::runtime_error
+            class unexpected_symbol : public std::exception
             {
+                std::string strerror = {};
+
             public:
-                unexpected_symbol(char symb)
-                    : std::runtime_error(std::string("unexpected:") + symb)
+                unexpected_symbol(char symb, int lineno, int symbno)
                 {
+                    std::ostringstream oss;
+
+                    std::string symbs = std::to_string((int)symb);
+
+                    oss << "unexpected symbol: with code " << symbs
+                        << " at line: " << lineno << " column: " << symbno;
+                    strerror = oss.str();
+                }
+
+                const char *what() const noexcept override
+                {
+                    return strerror.c_str();
                 }
             };
 
@@ -127,8 +140,7 @@ namespace nos
                 if (isalpha(onebuf))
                     return parse_mnemonic();
 
-                throw std::runtime_error("unexpected_symbol "s + onebuf +
-                                         errloc());
+                throw unexpected_symbol(onebuf, lineno, symbno);
             }
 
             template <template <class Allocator> class TAlloc = std::allocator>

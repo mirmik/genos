@@ -92,7 +92,7 @@ public:
         catch (const DeviceRefuseException &excpt)
         {
             transactionRefuseError();
-            throw DeviceRefuseException();
+            throw DeviceRefuseException("DeviceRefuse: invoke decorator");
         }
         catch (const DeviceAlarmException &excpt)
         {
@@ -145,12 +145,12 @@ public:
     std::string info() override;
     std::string command_help() override;
 
-    void com_trigger_polarity(int val) override 
+    void com_trigger_polarity(int val) override
     {
         drv->com_trigger_polarity(val);
     }
 
-    void com_trigger_duration(int val) override 
+    void com_trigger_duration(int val) override
     {
         drv->com_trigger_duration(val);
     }

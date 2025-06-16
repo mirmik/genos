@@ -67,6 +67,9 @@ protected:
 
     std::mutex last_data_mutex = {};
 
+    double _last_target = 0;
+    bool _last_target_inited = false;
+
     bool m_reversed = false;
 
 private:
@@ -93,11 +96,16 @@ public:
 
     void init_hooks();
 
+    double last_target_position()
+    {
+        return _last_target;
+    }
+
 private:
     bool check_is_moving_allowed(double start, double final);
 
 public:
-    static nos::trent compile_system_state_to_trent();
+    // static nos::trent compile_system_state_to_trent();
 
 public:
     void operation_finish_callback();

@@ -180,17 +180,18 @@ std::string RS232Listener::Query(const char *str)
             {
                 perror("file.write(\003,1)");
             }
-            
+
             auto diff = std::chrono::system_clock::now() - last_error_time;
             if (diff > 1s)
             {
                 auto msg = nos::format("wrongpack: q:{} a:{} as:{}",
-                          igris::dstring(str, strlen(str)),
-                          igris::dstring(ans),
-                          ans.size());
+                                       igris::dstring(str, strlen(str)),
+                                       igris::dstring(ans),
+                                       ans.size());
                 if (count_of_skipped_errors > 1)
                 {
-                    msg += nos::format(" (+skipped: {})", count_of_skipped_errors);
+                    msg +=
+                        nos::format(" (+skipped: {})", count_of_skipped_errors);
                 }
                 count_of_skipped_errors = 0;
                 nos::log::warn(msg);
@@ -203,7 +204,7 @@ std::string RS232Listener::Query(const char *str)
         }
     }
     nos::log::warn("error on request: {}", str);
-    throw DeviceRefuseException();
+    throw DeviceRefuseException("DeviceRefuse: RS232Listener::Query");
 }
 
 void RS232Listener::exec(char c)
@@ -648,14 +649,13 @@ void RS232Listener::enable_external_trigger_mode(int xy)
     Query(mes.to_buf());
 }
 
-
-void RS232Listener::com_trigger_polarity(int val) 
+void RS232Listener::com_trigger_polarity(int val)
 {
     auto mes = Form(82, val);
     Query(mes.to_buf());
 }
 
-void RS232Listener::com_trigger_duration(int val) 
+void RS232Listener::com_trigger_duration(int val)
 {
     auto mes = Form(83, val);
     Query(mes.to_buf());

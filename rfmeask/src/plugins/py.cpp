@@ -1,3 +1,4 @@
+#include <MessageBus.h>
 #include <Python.h>
 #include <filesystem>
 #include <iostream>
@@ -21,6 +22,11 @@ void set_testvariable(int new_state)
     state = new_state;
 }
 
+void python_msgbus(std::string message)
+{
+    message_bus_notify(message);
+}
+
 void python_executor::destroy_instance()
 {
     if (_instance != nullptr)
@@ -36,6 +42,7 @@ PYBIND11_MODULE(my_module, m)
     m.doc() = "Example module with shared state";
     m.def("get_testvariable", &get_testvariable, "Get the current state");
     m.def("set_testvariable", &set_testvariable, "Set a new state");
+    m.def("msgbus", &python_msgbus, "Send a message to the message bus");
 }
 
 python_executor::python_executor()
@@ -51,7 +58,7 @@ python_executor::python_executor()
         return;
     }
     _inited = true;
-    PyDict_SetItemString(_sys_modules, "my_module", _my_module);
+    PyDict_SetItemString(_sys_modules, "smitek", _my_module);
     PyOS_setsig(SIGINT, SIG_DFL);
 }
 
@@ -161,6 +168,7 @@ void PyObjectToTrent(PyObject *input, nos::trent &output)
         Py_ssize_t nKeys = PyList_Size(pKeys);
         // Py_ssize_t nValues = PyList_Size(pValues);
 
+        output.init(nos::trent_type::dict);
         for (Py_ssize_t i = 0; i < nKeys; i++)
         {
             PyObject *pKey = PyList_GetItem(pKeys, i);
@@ -189,6 +197,7 @@ void PyObjectToTrent(PyObject *input, nos::trent &output)
     else if (PyTuple_Check(input))
     {
         Py_ssize_t n = PyTuple_Size(input);
+        output.init(nos::trent_type::list);
         for (Py_ssize_t i = 0; i < n; i++)
         {
             PyObject *pValue = PyTuple_GetItem(input, i);
@@ -203,12 +212,27 @@ void PyObjectToTrent(PyObject *input, nos::trent &output)
     }
 }
 
-nos::trent GetResultFromGlobal(PyObject *pLocal)
+nos::trent GetResultFromGlobal(PyObject *pLocal, std::string &message)
 {
     nos::trent result;
 
-    PyObject *pResult = PyDict_GetItemString(pLocal, "result");
+    PyObject *pMessage = PyDict_GetItemString(pLocal, "message");
+    if (pMessage != nullptr)
+    {
+        if (PyUnicode_Check(pMessage))
+        {
+            const char *value = PyUnicode_AsUTF8(pMessage);
+            message = value ? value : "";
+        }
+        else
+        {
+            std::cerr << "Expected a string for 'message', got "
+                      << Py_TYPE(pMessage)->tp_name << std::endl;
+            message.clear();
+        }
+    }
 
+    PyObject *pResult = PyDict_GetItemString(pLocal, "result");
     if (pResult == nullptr)
     {
         std::cerr << "Failed to get result from Python script" << std::endl;
@@ -216,7 +240,6 @@ nos::trent GetResultFromGlobal(PyObject *pLocal)
     }
 
     PyObjectToTrent(pResult, result);
-
     return result;
 }
 
@@ -308,12 +331,12 @@ void SetIndataToGlobal(const nos::trent &indata, PyObject *pGlobal)
     Py_DECREF(pIndata);
 }
 
-void python_executor::run(const std::string &script,
-                          const nos::trent &indata,
-                          nos::trent &outdata)
+PythonExecutionState python_executor::run_script(const std::string &script,
+                                                 const nos::trent &indata,
+                                                 nos::trent &outdata)
 {
     if (!_inited)
-        return;
+        return PythonExecutionState::Failure;
 
     PyObject *pGlobal = PyDict_New();
     PyObject *pLocal = PyDict_New();
@@ -327,15 +350,32 @@ void python_executor::run(const std::string &script,
     {
         nos::println(PyErr_Occurred());
         PyErr_Print();
-        std::cerr << "LALALA:: Failed to run Python script" << std::endl;
+        std::cerr << "Failed to run Python script" << std::endl;
+
+        return PythonExecutionState::Failure;
     }
 
-    auto result = GetResultFromGlobal(pLocal);
+    std::string message;
+    auto result = GetResultFromGlobal(pLocal, message);
 
-    outdata.init(nos::trent_type::dict);
-    outdata["result"] = result;
+    if (!message.empty())
+    {
+        std::cout << "Message from Python script: " << message << std::endl;
+        message_bus_notify("Hook: {}", message);
+    }
+
+    // outdata.init(nos::trent_type::dict);
+    // outdata["result"] = result;
+    outdata = result;
+
+    if (outdata.is_nil())
+    {
+        std::cerr << "Failed to get result from Python script" << std::endl;
+        return PythonExecutionState::Failure;
+    }
 
     // 6. Очистка
     Py_DECREF(pGlobal);
     Py_DECREF(pLocal);
+    return PythonExecutionState::Success;
 }

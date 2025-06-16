@@ -1,7 +1,9 @@
 #include <AbstractAxis.h>
+#include <axes_api.h>
 #include <comm/jsonsocket.h>
 #include <fstream>
 #include <groups/InterpolationGroup.h>
+#include <igris/util/base64.h>
 #include <iostream>
 #include <ndmath/util.h>
 #include <nos/inet/tcp_client.h>
@@ -345,9 +347,11 @@ void JsonApiClient::json_handler(const std::string &msg)
     nos::trent reply;
     try
     {
+        nos::println("JSON2:", msg);
         nos::trent ret = *interpreter.execute_json_protocol(tr);
         reply["success"] = true;
         reply["result"] = ret;
+        nos::println("REPLY:", nos::json::to_string(reply));
         nos::println_to(socket(), nos::json::to_string(reply));
         return;
     }
@@ -414,10 +418,37 @@ void JsonApiClient::run()
         socket().disconnect();
 }
 
-void execute_script(const nos::trent &tr)
+nos::trent execute_script(const std::string &b64_script)
 {
-    std::string script = tr["script"].as_string();
+    std::string script = igris::base64_decode(b64_script);
     nos::println("execute_script: ", script);
+
+    nos::trent outdata;
+    nos::trent indata;
+
+    indata["system"] = compile_system_state_to_trent();
+    indata["axno"] = 0;
+    indata["start_position"] = 0;
+    indata["final_position"] = 10;
+
+    auto status =
+        python_executor::instance().run_script(script, indata, outdata);
+
+    nos::trent result;
+    if (status == PythonExecutionState::Success)
+    {
+        result["success"] = true;
+        result["result"] = outdata;
+    }
+    else
+    {
+        result["success"] = false;
+        result["result"] = "__failure__";
+        result["error"] = "Python script execution failed";
+    }
+
+    nos::println("execute_script result: ", nos::json::to_string(result));
+    return result;
 }
 
 void JsonApiServer::init_wf_collection()
@@ -434,9 +465,10 @@ void JsonApiServer::init_wf_collection()
         std::function<void(const nos::trent &)>(set_oneaxis_correction_2),
         {"args"});
 
-    interpreter.add("execute_script",
-                    std::function<void(const nos::trent &)>(execute_script),
-                    {"args"});
+    interpreter.add(
+        "execute_script",
+        std::function<nos::trent(const std::string &)>(execute_script),
+        {"args"});
 
     // interpreter.add("get_multiaxes_correction",
     //                 std::function<nos::trent(const std::string &)>(

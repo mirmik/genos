@@ -29,10 +29,29 @@ void open_hooks()
     }
 }
 
+nos::trent compile_system_state_to_trent()
+{
+    nos::trent state;
+    state["axes"].init(nos::trent_type::list);
+
+    auto &list = axis_list_ref();
+
+    for (size_t i = 0; i < list.size(); i++)
+    {
+        state["axes"][i]["name"] = list[i]->name();
+        state["axes"][i]["curpos"] = list[i]->last_unit_position();
+        state["axes"][i]["moving"] =
+            list[i]->operation_status() == Operation::USERMOVE;
+        state["axes"][i]["target"] = list[i]->last_target_position();
+    }
+
+    return state;
+}
+
 bool GlobalMoveAllowed(std::vector<std::pair<int, double>> args)
 {
     nos::trent indata, outdata;
-    nos::trent system_state = AbstractAxis::compile_system_state_to_trent();
+    nos::trent system_state = compile_system_state_to_trent();
 
     indata["system_state"] = system_state;
     indata["args"].init(nos::trent_type::list);
@@ -53,12 +72,12 @@ bool GlobalMoveAllowed(std::vector<std::pair<int, double>> args)
         return false;
     }
 
-    if (!outdata["result"].is_bool())
+    if (!outdata.is_bool())
     {
         return false;
     }
 
-    return outdata["result"].as_bool();
+    return outdata.as_bool();
 }
 
 void GlobalAbsmoveParted(std::vector<std::pair<int, double>> args)

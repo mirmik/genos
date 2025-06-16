@@ -190,7 +190,6 @@ double Axis::pulses_to_units(double pulses) const
 
 void Axis::absoluteUnitMove_impl(double dist, bool ctrl)
 {
-    nos::println("Axis::absoluteUnitMove_impl");
     std::lock_guard<std::recursive_mutex> lock(updmtx);
 
     // Mitsubishi Servo работает с INT32
@@ -219,7 +218,6 @@ void Axis::absoluteUnitMove_impl(double dist, bool ctrl)
 
 void Axis::absoluteUnitMove_over_pulse(double pulses, bool ctrl)
 {
-    nos::println("Axis::absoluteUnitMove_over_pulse");
     std::lock_guard<std::recursive_mutex> lock(updmtx);
     AXIS_TRY_BEGIN
     if (operation_status() != Operation::NONE)
@@ -232,14 +230,12 @@ void Axis::absoluteUnitMove_over_pulse(double pulses, bool ctrl)
 
 void Axis::absoluteUnitMove_over_unit(double dist, bool ctrl)
 {
-    nos::println("Axis::absoluteUnitMove_over_unit");
     std::lock_guard<std::recursive_mutex> lock(updmtx);
     AXIS_TRY_BEGIN
     if (operation_status() != Operation::NONE)
         stopLastOperation(StopType::ABORT);
     mover->resetSpeed();
 
-    nos::println("Axis::absoluteUnitMove_over_unit2", dist);
     mover->absolute_unit_move(dist);
     AXIS_TRY_END
     operationCorrectStart(ctrl);
@@ -322,16 +318,24 @@ void Axis::maxSpeed_rpm(uint32_t maxspd)
 
 void Axis::preset()
 {
-    checkAxisIsReady();
-    mover->preset();
-    setSpeed_rpm(m_defaultSpeed_rpm);
-    setAccel_ms(protect_accel(m_defaultAccel_ms));
-    mover->presetTandem();
+    try
+    {
+        checkAxisIsReady();
+        mover->preset();
+        setSpeed_rpm(m_defaultSpeed_rpm);
+        setAccel_ms(protect_accel(m_defaultAccel_ms));
+        mover->presetTandem();
 
-    nos::println("AXIS PRESET");
-    operation_finish_callback();
+        nos::println("AXIS PRESET");
+        operation_finish_callback();
 
-    axis_inited = true;
+        axis_inited = true;
+        _last_target_inited = false;
+    }
+    catch (const std::exception &ex)
+    {
+        nos::println(ex.what());
+    }
 }
 
 // Count of command??? impulses per unit.

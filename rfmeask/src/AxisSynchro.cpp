@@ -176,38 +176,47 @@ bool AxisSynchro::haveScan()
 // Merge AxisSynchro::preset with Axis::preset
 void AxisSynchro::preset()
 {
-    nos::println("AXIS SYNCRO PRESET");
-    checkAxisIsReady();
-    mover->preset();
+    try
+    {
+        nos::println("AXIS SYNCRO PRESET");
+        checkAxisIsReady();
+        mover->preset();
 
-    double loadGain = mover->load_side_per_servo_side_multiplier();
+        double loadGain = mover->load_side_per_servo_side_multiplier();
 
-    setSpeed_rpm(m_defaultSpeed_rpm);
-    setAccel_ms(protect_accel(m_defaultAccel_ms));
+        setSpeed_rpm(m_defaultSpeed_rpm);
+        setAccel_ms(protect_accel(m_defaultAccel_ms));
 
-    synchro->preset();
-    synchro->setLoadGain(loadGain);
+        synchro->preset();
+        synchro->setLoadGain(loadGain);
 
-    // synchro->set_enc_numer(mover->enc_numer());
-    // synchro->set_enc_denum(mover->enc_denum());
+        // synchro->set_enc_numer(mover->enc_numer());
+        // synchro->set_enc_denum(mover->enc_denum());
 
-    mover->bindSyncro(synchro);
-    synchro->binded_ax = this;
+        mover->bindSyncro(synchro);
+        synchro->binded_ax = this;
 
-    scanMove(40000000);
-    scanForwardZone(0);
-    scanBackwardZone(0);
-    scanPoints(20);
+        scanMove(40000000);
+        scanForwardZone(0);
+        scanBackwardZone(0);
+        scanPoints(20);
 
-    lastPoint = false;
-    scanStop = false;
-    scan_mode = false;
+        lastPoint = false;
+        scanStop = false;
+        scan_mode = false;
 
-    mover->presetTandem();
-    axis_inited = true;
+        mover->presetTandem();
+        axis_inited = true;
+        _last_target_inited = false;
 
-    initial_encoder_position = synchro->initial_encoder_position;
-    operation_finish_callback();
+        initial_encoder_position = synchro->initial_encoder_position;
+        operation_finish_callback();
+    }
+    catch (const ProjectException &err)
+    {
+        nos::log::error("AxisSynchro::preset: {}", err.what());
+        //    throw;
+    }
 }
 
 void AxisSynchro::scanMove(int32_t arg)

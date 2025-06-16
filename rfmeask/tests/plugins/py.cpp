@@ -21,8 +21,7 @@ result["b"] = indata["a"] + 1
     nos::trent outdata;
     indata["a"] = 321;
     hook.execute(indata, outdata);
-    CHECK(outdata.contains("result"));
-    CHECK(outdata["result"].is_dict());
-    CHECK_EQ(outdata["result"]["test"].as_integer(), 102);
-    CHECK_EQ(outdata["result"]["b"].as_integer(), 322);
+    CHECK(outdata.is_dict());
+    CHECK_EQ(outdata["test"].as_integer(), 102);
+    CHECK_EQ(outdata["b"].as_integer(), 322);
 }

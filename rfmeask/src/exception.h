@@ -15,6 +15,7 @@ struct ProjectException : public std::exception
     std::string str = {};
 
     ProjectException(const char *str) : std::exception(), str(str){};
+    ProjectException(const std::string &str) : std::exception(), str(str){};
     ProjectException() : std::exception(){};
 
     const char *what() const noexcept override
@@ -64,6 +65,7 @@ struct AxisLimitException : public AxisException
 struct DeviceException : public ProjectException
 {
     DeviceException(const char *str) : ProjectException(str) {}
+    DeviceException(const std::string &str) : ProjectException(str) {}
     DeviceException() : ProjectException() {}
 };
 
@@ -74,9 +76,18 @@ struct DeviceAlarmException : public DeviceException
 struct DeviceRefuseException : public DeviceException
 {
     DeviceRefuseException() : DeviceException("DeviceRefuseException") {}
+    DeviceRefuseException(const std::string &a) : DeviceException(a){};
 };
 
 struct CommunicationException : public ProjectException
+{
+};
+
+struct AxisHookPreventionException : public ProjectException
+{
+};
+
+struct GlobalHookPreventionException : public ProjectException
 {
 };
 
