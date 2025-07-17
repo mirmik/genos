@@ -7,5 +7,7 @@
 std::string system_idn();
 void set_idn_from_string(const std::string &str);
 void set_idn_from_array(const std::array<std::string, 4> idn);
+std::string get_first_mac_address();
+std::string unical_identifier();
 
 #endif

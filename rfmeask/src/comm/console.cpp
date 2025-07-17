@@ -2,6 +2,7 @@
 #include <comm/console.h>
 #include <devices/Device.h>
 #include <groups/InterpolationGroup.h>
+#include <idn.h>
 #include <nos-shell/standart.h>
 #include <nos/io/stdfile.h>
 #include <nos/log.h>
@@ -148,6 +149,29 @@ int console_exit(const nos::argv &args, nos::ostream &out)
 {
     exit(0);
 }
+
+int mac_cmd(const nos::argv &args, nos::ostream &out)
+{
+    auto mac = get_first_mac_address();
+    if (mac.empty())
+    {
+        nos::fprintln_to(out, "MAC address not found");
+        return 1;
+    }
+
+    auto unical_id = unical_identifier();
+    if (unical_id.empty())
+    {
+        nos::fprintln_to(out, "Unical identifier not found");
+        return 1;
+    }
+
+    nos::fprintln_to(out, "MAC address: {}", mac);
+    nos::fprintln_to(out, "Unical identifier: {}", unical_id);
+    nos::fprintln_to(out, "System IDN: {}", system_idn());
+    return 0;
+}
+
 nos::executor executor({{"hello", "helloworld", hello},
                         {"quit", "", console_exit},
                         {"q", "", console_exit},
@@ -160,6 +184,7 @@ nos::executor executor({{"hello", "helloworld", hello},
                         {"devlist", "", devlist},
                         {"axlist", "", axlist},
                         {"grplist", "", grplist},
+                        {"mac", "", mac_cmd},
                         {"info", "", info}});
 
 nos::cancel_token_source global_cancel;

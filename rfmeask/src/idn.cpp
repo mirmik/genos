@@ -66,7 +66,9 @@ std::string unical_identifier()
         mac = "0" + mac;
 
     // Обрезаем до 8 символов
-    return mac.substr(0, 8);
+    // return mac.substr(0, 8);
+
+    return mac;
 }
 
 std::string system_idn()
@@ -96,5 +98,5 @@ void set_idn_from_array(const std::array<std::string, 4> idn)
     for (unsigned int i = 0; i < idn.size(); i++)
         scpi_idn[i] = idn[i];
 
-    scpi_idn[2] = unical_identifier().substr(0, 8);
+    scpi_idn[2] = unical_identifier();
 }
