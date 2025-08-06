@@ -59,7 +59,6 @@ public:
     std::string rawQuery(const char *str);
     bool check_correct_frame(std::string str);
     std::string Query(const char *str);
-    void exec(char c);
     void impulse(int xy, int32_t imp);
     void speed(int xy, int32_t imp);
     void stop(int xy);
@@ -99,8 +98,14 @@ public:
 
     void com_trigger_polarity(int val);
     void com_trigger_duration(int val);
+
+public:
+    void rs232listener_func();
+    void exec(char c);
+    char rsymb();
+    void start_listener_thread();
 };
 
-extern RS232Listener drv;
+// extern RS232Listener drv;
 
 #endif

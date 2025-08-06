@@ -26,7 +26,7 @@
 #include <utilxx/ascii_convert.h>
 
 //#include <igris/serial/serial.h>
-RS232Listener drv;
+// RS232Listener drv;
 
 #ifdef __WIN32__
 #define O_NOCTTY 0
@@ -427,10 +427,16 @@ void RS232Listener::eventctr_load_table(int xy, uint32_t no)
     Query(mes.to_buf());
 }
 
-char rsymb()
+void RS232Listener::start_listener_thread()
+{
+    std::thread rs232_thread(&RS232Listener::rs232listener_func, this);
+    rs232_thread.detach();
+}
+
+char RS232Listener::rsymb()
 {
     char c;
-    auto ret = drv.file.read(&c, 1);
+    auto ret = file.read(&c, 1);
 
     if (ret.is_error())
     {
@@ -475,11 +481,11 @@ void handle_external_trigger_point_information(std::string information)
 
     try
     {
-        int64_t dbl = std::stol(information);
-        if (drv.point_information_listener)
+        // int64_t dbl = std::stol(information);
+        if (true) // drv.point_information_listener)
         {
-            nos::println("point_information_listener add point");
-            drv.point_information_listener->push_point_information(dbl);
+            nos::println("TODO: point_information_listener add point");
+            // drv.point_information_listener->push_point_information(dbl);
         }
     }
     catch (...)
@@ -487,7 +493,7 @@ void handle_external_trigger_point_information(std::string information)
     }
 }
 
-void rs232listener_func()
+void RS232Listener::rs232listener_func()
 {
     char c;
     char sparc_lsymb = 'Z';
@@ -507,7 +513,7 @@ void rs232listener_func()
     clock_gettime(CLOCK_REALTIME, &sparc_last_time2);
     clock_gettime(CLOCK_REALTIME, &sparc_last_time3);
 
-    drv.rl.init();
+    rl.init();
 
     while (1)
     {
@@ -606,7 +612,7 @@ void rs232listener_func()
             continue;
         }
 
-        drv.exec(c);
+        exec(c);
     };
 }
 

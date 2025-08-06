@@ -154,12 +154,12 @@ void rfmeask_start()
     }
 #endif
 
-    if (have_drv)
-    {
-        nos::log::info("open drv port");
-        drv.open(
-            config_settings.node()["paths"]["drv"].as_string_except().c_str());
-    }
+    // if (have_drv)
+    // {
+    //     nos::log::info("open drv port");
+    //     drv.open(
+    //         config_settings.node()["paths"]["drv"].as_string_except().c_str());
+    // }
 
     if (have_can)
     {
@@ -222,8 +222,8 @@ void rfmeask_start()
     if (have_can)
         threadlist.emplace_back(+[]() { can.recv_func(); });
 
-    if (have_drv)
-        threadlist.emplace_back(rs232listener_func);
+    // if (have_drv)
+    //     threadlist.emplace_back(rs232listener_func);
 
     // telemetry_monitor.start_spin();
     if (WITH_CONSOLE)
