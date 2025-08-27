@@ -41,7 +41,14 @@ void open_mitsuservo_communicator_ports()
     }
 }
 
-void initialize_mitsuservo(const std::string &name, const nos::trent &dict)
+std::string default_mrs_port(const nos::trent &full_settings)
+{
+    return full_settings["paths"]["mrs"].as_string_default("/dev/ttyS3");
+}
+
+void initialize_mitsuservo(const std::string &name,
+                           const nos::trent &dict,
+                           const nos::trent &full_settings)
 {
     ::have_mrs = true;
 
@@ -52,8 +59,8 @@ void initialize_mitsuservo(const std::string &name, const nos::trent &dict)
     address = dict["address"].as_numer_except();
     updateTime = dict["updateTime"].as_numer_default(50);
 
-    std::string com_port_name =
-        port_converter(dict["com"].as_string_default("/dev/ttyS3"));
+    std::string com_port_name = port_converter(
+        dict["com"].as_string_default(default_mrs_port(full_settings)));
     MitsubishiCommunicator *mrs = get_mitsuservo_communicator(com_port_name);
 
     //Создаем и инициализируем объект устройства.

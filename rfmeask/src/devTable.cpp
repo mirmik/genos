@@ -42,7 +42,9 @@ std::map<std::string, void (*)(const std::string &name, const nos::trent &dict)>
 std::map<std::string, void (*)(const std::string &name, const nos::trent &dict)>
     intgroups_initializers;
 
-void initialize_mitsuservo(const std::string &name, const nos::trent &dict);
+void initialize_mitsuservo(const std::string &name,
+                           const nos::trent &dict,
+                           const nos::trent &settings);
 void initialize_mitsuservo_j5(const std::string &name, const nos::trent &dict);
 void initialize_sync(const std::string &name, const nos::trent &dict);
 void initialize_mitsuservo_board(const std::string &name,
@@ -77,7 +79,8 @@ std::list<std::string> optional_axis_opts{"reverse"};
 
 std::vector<std::string> devices_types;
 
-void initialize_devices(const nos::trent &devices_config)
+void initialize_devices(const nos::trent &devices_config,
+                        const nos::trent &config)
 {
     nos::log::info("Devices initialization");
     for (auto &p : devices_config.as_list_except())
@@ -95,7 +98,7 @@ void initialize_devices(const nos::trent &devices_config)
         //Дальнейшая инициализации выполняется в зависимости от объявленного
         //типа.
         if (type == "mitsuservo" || type == "mitsuservo_type_A")
-            initialize_mitsuservo(name, p);
+            initialize_mitsuservo(name, p, config);
         else if (type == "mitsuservo-MR_J5_A")
             initialize_mitsuservo_j5(name, p);
         else if (type == "mitsuservo_board" || type == "mitsuservo_type_B")
@@ -184,7 +187,8 @@ void initialize_the_system_according_to_the_configuration()
                std::back_inserter(devices_types));
 
     initialize_idn(config_settings.node()["idn"]);
-    initialize_devices(config_settings.node()["devices"]);
+    initialize_devices(config_settings.node()["devices"],
+                       config_settings.node());
     initialize_axes(config_settings.node()["axes"]);
 
     if (!config_settings.node().contains("intgroups"))
