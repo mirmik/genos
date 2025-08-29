@@ -209,7 +209,7 @@ void AxisSynchro::preset()
         axis_inited = true;
         _last_target_inited = false;
 
-        initial_encoder_position = synchro->initial_encoder_position;
+        // initial_encoder_position = synchro->initial_encoder_position;
         operation_finish_callback();
     }
     catch (const ProjectException &err)

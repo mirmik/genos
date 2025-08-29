@@ -42,6 +42,8 @@ MitsubishiCommunicator::MitsubishiCommunicator(std::string port) :
 
 void MitsubishiCommunicator::open(const char *str)
 {
+    nos::log::info("MitsubishiCommunicator::open {}", std::string(str));
+
     std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     portname = str;
 
@@ -106,20 +108,39 @@ int MitsubishiCommunicator::rawTimeredRecv(char *data,
 
     serport.nonblock(true);
     this_thread::sleep_for(chrono::milliseconds(14));
-    int size = *serport.read(data, len);
+    auto sts = serport.read(data, len);
+
+    if (sts.is_error())
+    {
+        auto txt = nos::format("mrs read error: port:{}", portname);
+        perror(txt.c_str());
+        return 0;
+    }
+
+    int size = *sts;
     if (size < 0)
     {
-        // perror("mrs read");
+        auto txt = nos::format("mrs read error: port:{}", portname);
+        perror(txt.c_str());
     }
     return size;
 }
 
 int MitsubishiCommunicator::rawQuery(const char *str, char *ans)
 {
-    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
+    auto tp = chrono::system_clock::now();
 
+    std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     rawSend(str);
     int len = rawTimeredRecv(ans, 128, tim);
+
+    auto diff = chrono::system_clock::now() - tp;
+    auto diff_ms = chrono::duration_cast<chrono::milliseconds>(diff).count();
+    // nos::log::info("rawQuery {} took {} ms (port:{})",
+    //                igris::dstring(str, strlen(str)),
+    //                diff_ms,
+    //                portname);
+
     return len;
 }
 
@@ -159,6 +180,8 @@ bool MitsubishiCommunicator::checkcorrectans(const char *str, int len)
 
 int MitsubishiCommunicator::ackRawQuery(const char *query, char *answer)
 {
+    auto tp = chrono::system_clock::now();
+
     int len;
     int sendlen = strlen(query);
     int iter = 0;
@@ -205,10 +228,26 @@ resend:
         ++iter;
         if (iter == 10)
         {
+            logger.fault("ackRawQuery {} FAILED 10 TIMES (port:{})",
+                         igris::dstring(query, sendlen),
+                         portname);
             return -1;
         };
+        nos::log::debug("ackRawQuery {} FAILED (port:{}) answer:{}",
+                        igris::dstring(query, sendlen),
+                        portname,
+                        igris::dstring(answer, len));
         goto resend;
     };
+
+    auto diff = chrono::system_clock::now() - tp;
+    auto diff_ms = chrono::duration_cast<chrono::milliseconds>(diff).count();
+    // nos::log::info("ackRawQuery {} took {} ms (port:{}) answer:{}",
+    //                igris::dstring(query, sendlen),
+    //                diff_ms,
+    //                portname,
+    //                igris::dstring(answer, len));
+
     return len;
 }
 
@@ -303,6 +342,8 @@ std::string MitsubishiCommunicator::Query(uint8_t &errstat,
                                           int command,
                                           int datano)
 {
+    auto tp = std::chrono::system_clock::now();
+
     char answer[1024];
     memset(answer, 0, 1024);
     std::lock_guard<std::recursive_mutex> lk(bus_mutex);
@@ -314,6 +355,15 @@ std::string MitsubishiCommunicator::Query(uint8_t &errstat,
         return std::string();
     }
     std::string ret = std::string(answer, len);
+
+    auto diff = std::chrono::system_clock::now() - tp;
+    auto diff_ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
+    // nos::log::info("Query {} took {} ms (port:{} station:{})",
+    //                igris::dstring(buf.to_buf(), strlen(buf.to_buf())),
+    //                diff_ms,
+    //                portname,
+    //                stantion);
 
     errstat = islower(answer[2]) ? MRS_ALARMERROR : 0;
     return ret;
@@ -427,9 +477,8 @@ void MitsubishiCommunicator::epos(uint8_t &errstat,
                                   int direction,
                                   DistanceUnit distunit)
 {
-    nos::println("epos:", distance, speed, acceleration, direction);
+    nos::log::info("epos:", distance, speed, acceleration, direction);
     std::lock_guard<std::recursive_mutex> lk(bus_mutex);
-    nos::println("epos lock");
 
     Query4(errstat, stantion, 0x8B, 0x00, 0x0002);
     Query4(errstat, stantion, 0xA0, 0x10, speed);
@@ -532,7 +581,7 @@ void MitsubishiCommunicator::write_string_parametr(
     char *cp;
     std::lock_guard<std::recursive_mutex> lk(bus_mutex);
 
-    printf("write_string_parametr: %s", data);
+    nos::log::debug("write_string_parametr: %s", data);
 
     len = strlen(data);
 

@@ -70,6 +70,9 @@ protected:
     std::chrono::system_clock::time_point last_opstatus_timestamp =
         std::chrono::system_clock::now();
 
+    std::chrono::system_clock::time_point last_update_timestamp =
+        std::chrono::system_clock::now();
+
     int64_t update_iteration = 0;
     bool limit_switch_update_needed = false;
 

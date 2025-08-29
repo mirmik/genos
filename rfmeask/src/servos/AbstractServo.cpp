@@ -184,8 +184,12 @@ void AbstractServo::updaterThreadFunc()
 
     while (1)
     {
-        // nos::println(
-        //     "updaterThreadFunc", name(), "iteration", update_iteration);
+        auto ms_from_last =
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now() - last_update_timestamp)
+                .count();
+
+        last_update_timestamp = std::chrono::system_clock::now();
 
         update_iteration++;
         uint8_t last_operationStatus = m_operationStatus;

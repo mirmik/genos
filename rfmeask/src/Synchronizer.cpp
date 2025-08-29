@@ -50,7 +50,7 @@ void Synchronizer::preset()
     api_version = scanApiVersion();
     stop();
 
-    initial_encoder_position = drv->get_encoder_position(rs232_addr);
+    // initial_encoder_position = drv->get_encoder_position(rs232_addr);
 }
 
 int Synchronizer::getAlarmStatus()

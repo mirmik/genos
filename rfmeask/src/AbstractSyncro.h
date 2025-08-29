@@ -13,7 +13,7 @@ class AbstractSyncro : public Device
 {
 public:
     AbstractAxis *binded_ax = nullptr;
-    int64_t initial_encoder_position;
+    // int64_t initial_encoder_position;
 
     AbstractSyncro(const char *name) : Device(name) {}
     AbstractSyncro(const AbstractSyncro &) = delete;
@@ -54,9 +54,9 @@ public:
     virtual int32_t discrete_output_set_unical(int num) = 0;
     virtual int32_t discrete_output_disable() = 0;
 
-    virtual void com_trigger_polarity(int val) = 0; 
-    virtual void com_trigger_duration(int val) = 0; 
-    
+    virtual void com_trigger_polarity(int val) = 0;
+    virtual void com_trigger_duration(int val) = 0;
+
     virtual int32_t enable_external_trigger_mode()
     {
         return 0;

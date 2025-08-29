@@ -74,17 +74,29 @@ void read_fully_closed_config(Axis *axis, const nos::trent &tr)
     }
 }
 
+AbstractServo *get_registred_servo(const std::string &servo_name)
+{
+    AbstractServo *servo;
+
+    if (devices.count(servo_name) == 0)
+    {
+        nos::log::error("Unregistred device {}", servo_name);
+        // exit(-1);
+        servo = nullptr;
+    }
+    else
+    {
+        servo = dynamic_cast<AbstractServo *>(devices[servo_name]);
+    }
+
+    return servo;
+}
+
 void initialize_axis(const nos::trent &p)
 {
     //Ассоциируем сервоусилитель
     std::string servo_name = p["servo"].as_string();
-    if (devices.count(servo_name) == 0)
-    {
-        nos::log::fault("Unregistred device {}", servo_name);
-        exit(-1);
-    }
-
-    AbstractServo *servo = dynamic_cast<AbstractServo *>(devices[servo_name]);
+    AbstractServo *servo = get_registred_servo(servo_name);
 
     Axis *axis;
     if (devices.count(p["servo"].as_string()))
@@ -138,13 +150,8 @@ void initialize_sync_axis(const nos::trent &p)
 {
     //Ассоциируем сервоусилитель
     std::string servo_name = p["servo"].as_string_except();
-    if (devices.count(servo_name) == 0)
-    {
-        nos::log::fault("Unregistred device {}", servo_name);
-        exit(-1);
-    }
+    AbstractServo *servo = get_registred_servo(servo_name);
 
-    AbstractServo *servo = dynamic_cast<AbstractServo *>(devices[servo_name]);
     if (servo == nullptr)
     {
         nos::log::fault("servo device has invalid type: {}", servo_name);

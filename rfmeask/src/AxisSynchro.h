@@ -28,7 +28,7 @@ public:
     int gen_denum = 0;
     bool scan_mode = false;
 
-    int64_t initial_encoder_position = 0;
+    // int64_t initial_encoder_position = 0;
 
 public:
     void on_ready_status_changed(bool ready) override;
