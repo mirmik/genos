@@ -1,8 +1,8 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define API_VERSION "05-70"
-#define VERSION "1.17.0"
+#define API_VERSION "05-81"
+#define VERSION "1.18.1"
 
 // Changelog
 // 1.18.1/5-81 Удалён запрос начального счётчика энкодера платы
