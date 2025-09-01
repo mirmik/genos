@@ -41,10 +41,6 @@
 extern LaserProxy laser_proxy;
 #endif
 
-#if HAVE_MITSUBISHI_BOARD
-#include <MitsubishiBoard.h>
-#endif
-
 #if __has_include(<filesystem>)
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -83,10 +79,6 @@ int ncpi_port = -1; // default: 5026
 int proto_socket_port = 5800; // default: 5800
 int http_port = 9003;         // default: 9003
 int crow_port = 0;            // default: dynamic
-
-#if (HAVE_MITSUBISHI_BOARD)
-MitsubishiBoard mboard;
-#endif
 
 #include "modes.h"
 

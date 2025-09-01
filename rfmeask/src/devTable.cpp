@@ -101,10 +101,6 @@ void initialize_devices(const nos::trent &devices_config,
             initialize_mitsuservo(name, p, config);
         else if (type == "mitsuservo-MR_J5_A")
             initialize_mitsuservo_j5(name, p);
-        else if (type == "mitsuservo_board" || type == "mitsuservo_type_B")
-            initialize_mitsuservo_board(name, p);
-        else if (type == "mitsuservo_board_tandem")
-            initialize_mitsuservo_board_tandem(name, p);
         else if (type == "sync")
             initialize_sync(name, p);
         else if (device_initializers.count(type))

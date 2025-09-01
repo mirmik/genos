@@ -20,8 +20,6 @@ extern bool emulate_mode;
 #define O_NOCTTY 0
 #endif
 
-#define TRACE_COMMUNICATION 0
-
 using namespace std;
 
 MitsubishiCommunicator::MitsubishiCommunicator() :
@@ -128,18 +126,9 @@ int MitsubishiCommunicator::rawTimeredRecv(char *data,
 
 int MitsubishiCommunicator::rawQuery(const char *str, char *ans)
 {
-    auto tp = chrono::system_clock::now();
-
     std::lock_guard<std::recursive_mutex> lk(bus_mutex);
     rawSend(str);
     int len = rawTimeredRecv(ans, 128, tim);
-
-    auto diff = chrono::system_clock::now() - tp;
-    auto diff_ms = chrono::duration_cast<chrono::milliseconds>(diff).count();
-    // nos::log::info("rawQuery {} took {} ms (port:{})",
-    //                igris::dstring(str, strlen(str)),
-    //                diff_ms,
-    //                portname);
 
     return len;
 }
@@ -180,8 +169,6 @@ bool MitsubishiCommunicator::checkcorrectans(const char *str, int len)
 
 int MitsubishiCommunicator::ackRawQuery(const char *query, char *answer)
 {
-    auto tp = chrono::system_clock::now();
-
     int len;
     int sendlen = strlen(query);
     int iter = 0;
@@ -190,15 +177,7 @@ int MitsubishiCommunicator::ackRawQuery(const char *query, char *answer)
         return 0;
 resend:
     answer[0] = 0;
-    if (TRACE_COMMUNICATION)
-    {
-        nos::println("query:", igris::dstring(query, strlen(query)));
-    }
     len = rawQuery(query, answer);
-    if (TRACE_COMMUNICATION)
-    {
-        nos::println("answer:", igris::dstring(answer, strlen(answer)));
-    }
     //Проверяем корректность посылки.
     //Если посылка невалидна, пробуем еще раз установленное количество раз.
     if (!checkcorrectans(answer, len))
@@ -239,14 +218,6 @@ resend:
                         igris::dstring(answer, len));
         goto resend;
     };
-
-    auto diff = chrono::system_clock::now() - tp;
-    auto diff_ms = chrono::duration_cast<chrono::milliseconds>(diff).count();
-    // nos::log::info("ackRawQuery {} took {} ms (port:{}) answer:{}",
-    //                igris::dstring(query, sendlen),
-    //                diff_ms,
-    //                portname,
-    //                igris::dstring(answer, len));
 
     return len;
 }
@@ -342,8 +313,6 @@ std::string MitsubishiCommunicator::Query(uint8_t &errstat,
                                           int command,
                                           int datano)
 {
-    auto tp = std::chrono::system_clock::now();
-
     char answer[1024];
     memset(answer, 0, 1024);
     std::lock_guard<std::recursive_mutex> lk(bus_mutex);
@@ -355,15 +324,6 @@ std::string MitsubishiCommunicator::Query(uint8_t &errstat,
         return std::string();
     }
     std::string ret = std::string(answer, len);
-
-    auto diff = std::chrono::system_clock::now() - tp;
-    auto diff_ms =
-        std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
-    // nos::log::info("Query {} took {} ms (port:{} station:{})",
-    //                igris::dstring(buf.to_buf(), strlen(buf.to_buf())),
-    //                diff_ms,
-    //                portname,
-    //                stantion);
 
     errstat = islower(answer[2]) ? MRS_ALARMERROR : 0;
     return ret;

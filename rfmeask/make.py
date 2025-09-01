@@ -83,11 +83,6 @@ if lazer or lazer_emulation:
 	""".split())
     # deprecated/dataproxy.cpp
 
-if mitsubishi_board:
-    SOURCES.extend("""
-		src/MitsubishiBoard.cpp
-	""".split())
-
 defopts = ["-DSCPI_USER_CONFIG"]
 #           f"-DLAST_COMMIT_DATETIME='{last_commit_datetime}'"]
 

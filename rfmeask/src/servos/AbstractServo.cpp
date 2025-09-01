@@ -184,11 +184,6 @@ void AbstractServo::updaterThreadFunc()
 
     while (1)
     {
-        auto ms_from_last =
-            std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::system_clock::now() - last_update_timestamp)
-                .count();
-
         last_update_timestamp = std::chrono::system_clock::now();
 
         update_iteration++;
