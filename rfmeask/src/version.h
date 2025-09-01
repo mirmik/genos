@@ -1,10 +1,11 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define API_VERSION "05-81"
-#define VERSION "1.18.1"
+#define API_VERSION "05-90"
+#define VERSION "1.19.0"
 
 // Changelog
+// 1.19.0/5-90 Удалёна поддержка mitsubishi board
 // 1.18.1/5-81 Удалён запрос начального счётчика энкодера платы
 // 1.18.0/5-80 Починены дефолтные пути для шин RS485
 // 1.17.0/5-70 Поддержка хуков для индийского проекта доведена до ума.
