@@ -1,10 +1,11 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define API_VERSION "05-90"
-#define VERSION "1.19.0"
+#define API_VERSION "06-00"
+#define VERSION "1.20.0"
 
 // Changelog
+// 1.20.0/6-00 INP для mrj5 заменён на ZSP
 // 1.19.0/5-90 Удалёна поддержка mitsubishi board
 // 1.18.1/5-81 Удалён запрос начального счётчика энкодера платы
 // 1.18.0/5-80 Починены дефолтные пути для шин RS485
