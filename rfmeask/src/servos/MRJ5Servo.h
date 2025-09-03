@@ -3,13 +3,12 @@
 
 #include <servos/MitsubishiServo.h>
 
-
 class MRJ5Servo : public MitsubishiServo
 {
 
     static constexpr int c_drive_pulse_per_rotation = 67108864; //< 2**26
 
- public:   
+public:
     double drive_impulse_per_round() const override
     {
         return c_drive_pulse_per_rotation;
@@ -20,12 +19,11 @@ class MRJ5Servo : public MitsubishiServo
         return "mitsuservo-MR_J5_A";
     }
 
-    MRJ5Servo(const char *name,
-                    MitsubishiCommunicator *mrs,
-                    uint8_t rs485addr);
+    MRJ5Servo(const char *name, MitsubishiCommunicator *mrs, uint8_t rs485addr);
     MRJ5Servo(const MitsubishiServo &) = delete;
     MRJ5Servo &operator=(const MitsubishiServo &) = delete;
 
+    uint8_t request_operation_status();
 };
 
 #endif // MRJ5_SERVO

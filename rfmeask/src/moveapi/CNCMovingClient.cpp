@@ -1,8 +1,8 @@
-#include <moveapi/CNCMovingClient.h>
 #include <CommonAxis.h>
 #include <MessageBus.h>
 #include <comm/Notify.h>
 #include <logging.h>
+#include <moveapi/CNCMovingClient.h>
 #include <ralgo/linalg/vecops.h>
 #include <ranges>
 #include <utilxx/range.h>
@@ -30,9 +30,9 @@ void CNCTandemMovingClient::init(CommonAxis *parent)
     MoveApiClient::init(parent);
 
     cnc_driver->stop_operation_callback += igris::make_delegate(
-        &MoveApiClient::operation_finish_callback, (MoveApiClient*)this);
+        &MoveApiClient::operation_finish_callback, (MoveApiClient *)this);
     cnc_driver->start_operation_callback += igris::make_delegate(
-        &MoveApiClient::operation_start_callback, (MoveApiClient*)this);
+        &MoveApiClient::operation_start_callback, (MoveApiClient *)this);
 
     for (auto &record : records)
     {

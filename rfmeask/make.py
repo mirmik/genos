@@ -117,7 +117,7 @@ licant.cxx_application("rfmeas",
                        mdepends=[
                            "libscpi",
                        ],
-                       cxxstd="c++20",
+                       cxxstd="c++23",
                        cxx_flags=" ".join(defopts) +
                        "-O0 -Werror=all -pedantic -fPIE -fPIC -g3  -fmax-errors=10",
                        cc_flags="-O0 -DSCPI_USER_CONFIG -Werror=all -fPIE -fPIC -g3 -fmax-errors=10",
@@ -144,7 +144,7 @@ licant.cxx_application("runtests",
                        mdepends=[
                            "libscpi",
                        ],
-                       cxxstd="c++20",
+                       cxxstd="c++23",
                        cxx_flags=" ".join(defopts) +
                        "-O0 -Werror=all -pedantic -g3 -fPIC -fPIE",
                        cc_flags="-O0 -DSCPI_USER_CONFIG -Werror=all -fPIC -fPIE -g3",

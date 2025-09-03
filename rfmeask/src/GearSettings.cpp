@@ -5,9 +5,11 @@
 #include <GearSettings.h>
 #include <MessageBus.h>
 #include <nos/fprint.h>
+#include <nos/io/sstream.h>
 #include <nos/log.h>
 #include <nos/trent/trent.h>
-#include <nos/io/sstream.h> 
+#include <ranges>
+#include <stdexcept>
 
 using namespace std::string_literals;
 using namespace nos::argument_literal;
@@ -36,11 +38,12 @@ void GearSettings::set_is_linear(bool isLinear)
     this->isLinear = isLinear;
 }
 
-    std::string GearSettings::info() const {
-        nos::stringstream ss;
-        print_to(ss);
-        return ss.str(); 
-    }
+std::string GearSettings::info() const
+{
+    nos::stringstream ss;
+    print_to(ss);
+    return ss.str();
+}
 
 std::unique_ptr<GearLink> GearSettings::parse_gear_link(const nos::trent &t)
 {
@@ -134,12 +137,17 @@ std::unique_ptr<GearLink> GearSettings::parse_gear_link(const nos::trent &t)
 std::vector<std::unique_ptr<GearLink>>
 GearSettings::parse_gear_link_array(const nos::trent &t)
 {
-    std::vector<std::unique_ptr<GearLink>> ret;
-    for (auto &i : t.as_list_except())
-    {
-        ret.push_back(parse_gear_link(i));
-    }
-    return ret;
+    // std::vector<std::unique_ptr<GearLink>> ret;
+    // for (auto &i : t.as_list_except())
+    // {
+    //     ret.push_back(parse_gear_link(i));
+    // }
+
+    auto rng = std::ranges::views::transform(
+        t.as_list_except(),
+        [](const nos::trent &i) { return parse_gear_link(i); });
+
+    return std::vector<std::unique_ptr<GearLink>>(rng.begin(), rng.end());
 }
 
 void GearSettings::parse_auto_mode_trent(const nos::trent &tr)

@@ -269,7 +269,7 @@ uint8_t MitsubishiServo::request_limit_switch_status()
     return ret;
 }
 
-/*  Запрос статуса движения выключаетелей. */
+/*  Запрос статуса движения на основе сигнала inposition. */
 uint8_t MitsubishiServo::request_operation_status()
 {
     uint8_t errstat = 0;

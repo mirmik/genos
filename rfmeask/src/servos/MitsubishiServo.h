@@ -34,6 +34,7 @@ class MitsubishiServo : public AbstractServo
         SCAN_FALSE,
     };
 
+protected:
     std::mutex internal_mutex;
     uint8_t m_rs485addr = 0;
     MitsubishiCommunicator *m_mrs = nullptr;
