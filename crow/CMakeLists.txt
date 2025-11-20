@@ -1,109 +1,135 @@
-cmake_minimum_required(VERSION 3.5.1)
-project(crow)
+cmake_minimum_required(VERSION 3.12)
 
-file(GLOB HEADERS
-	crow/*.h
+set(CROW_TOP_LEVEL OFF)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(CROW_TOP_LEVEL ON)
+endif()
+
+project(crow LANGUAGES CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+if(CROW_TOP_LEVEL)
+    set(CMAKE_VERBOSE_MAKEFILE ON)
+endif()
+
+include(GNUInstallDirs)
+find_package(Threads REQUIRED)
+
+option(CROW_BUILD_APPS "Build crow command line utilities" ${CROW_TOP_LEVEL})
+option(CROW_BUILD_TESTS "Build crow tests" ${CROW_TOP_LEVEL})
+
+if(STATIC_LIBS)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libstdc++")
+endif()
+
+add_compile_definitions(CROW_USE_ASYNCIO=1)
+if(WIN32)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+else()
+    add_compile_definitions(CROW_REALTIME_THREADS=1)
+endif()
+
+file(GLOB CROW_HEADERS
+    crow/*.h
 )
 
-file(GLOB SOURCES
-	crow/src/*.cpp
-	crow/src/*.c
+file(GLOB CROW_SOURCES CONFIGURE_DEPENDS
+    crow/src/*.cpp
+    crow/src/*.c
 	crow/src/variants/allocation_malloc.cpp
 	crow/src/variants/crow_print.cpp
 	crow/src/variants/warn.cpp
 	crow/src/variants/stdtime.cpp
-	crow/pubsub/*.cpp
-	crow/nodes/*.cpp
-	crow/proto/*.cpp
-	crow/gates/udpgate.cpp
-	crow/gates/chardev/*.cpp
-	crow/brocker/*.cpp
+    crow/pubsub/*.cpp
+    crow/nodes/*.cpp
+    crow/proto/*.cpp
+    crow/gates/udpgate.cpp
+    crow/gates/tcpgate.cpp
+    crow/gates/chardev/*.cpp
+    crow/brocker/*.cpp
 )
 
-if(!WIN32)
-	file(GLOB SOURCES
-		${SOURCES}
-		crow/gates/serial_gstuff.cpp
-	)
+if(NOT WIN32)
+    list(APPEND CROW_SOURCES crow/gates/serial_gstuff.cpp)
 endif()
 
-file(GLOB SOURCES_TEST
-	${SOURCES}
-	tests/*.cpp
+add_library(crow SHARED ${CROW_SOURCES})
+
+target_include_directories(crow
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include>
 )
 
-if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
-	set(CMAKE_VERBOSE_MAKEFILE on)
-	set(CMAKE_CXX_STANDARD 20)
-	set(CMAKE_CC_STANDARD 11)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCROW_USE_ASYNCIO=1 -g")
+if(ADDITIONAL_INCLUDES_IGRIS)
+    target_include_directories(crow PRIVATE ${ADDITIONAL_INCLUDES_IGRIS})
+endif()
 
-	if(${STATIC_LIBS})
-		set(CMAKE_SHARED_LINKER_FLAGS "-static-libstdc++")
-	endif()
+if(ADDITIONAL_INCLUDES_NOS)
+    target_include_directories(crow PRIVATE ${ADDITIONAL_INCLUDES_NOS})
+endif()
 
-	set(PLATFORM_SOURCES)
+if(IGRIS_LIBRARY_PATH)
+    target_link_directories(crow PUBLIC ${IGRIS_LIBRARY_PATH}/build-android)
+endif()
 
-	if(WIN32 OR WIN64)
-		set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS")
-	else()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCROW_REALTIME_THREADS=1")
-	endif()
+if(NOS_LIBRARY_PATH)
+    target_link_directories(crow PUBLIC ${NOS_LIBRARY_PATH}/build-android)
+endif()
 
-	add_library(crow SHARED ${SOURCES} ${PLATFORM_SOURCES})
-	target_include_directories(crow PRIVATE . ${ADDITIONAL_INCLUDES_IGRIS} ${ADDITIONAL_INCLUDES_NOS})
+target_link_libraries(crow
+    PUBLIC
+        igris
+        nos
+        Threads::Threads
+)
 
-	target_link_directories(crow PUBLIC
-		${IGRIS_LIBRARY_PATH}/build-android
-		${NOS_LIBRARY_PATH}/build-android
-	)
-	target_link_libraries(crow igris nos)
+if(WIN32)
+    target_link_libraries(crow PRIVATE ws2_32)
+endif()
 
-	if(NOT DEFINED WITHOUT_TESTS)
-		add_executable(crow_test ${SOURCES_TEST})
-		target_include_directories(crow_test PRIVATE . tests)
-		target_link_libraries(crow_test igris nos pthread)
-	endif()
+if(CROW_BUILD_APPS)
+    add_executable(ctrans apps/ctrans/main.cpp)
+    target_link_libraries(ctrans PRIVATE crow)
+    target_include_directories(ctrans PRIVATE apps/ctrans)
 
-	if(WIN32)
-		target_include_directories(crow PRIVATE . "C:/Program Files (x86)/igris/include")
-		target_include_directories(crow PRIVATE . "C:/Program Files (x86)/nos/include")
-		target_link_directories(crow PRIVATE . "C:/Program Files (x86)/igris/bin")
-		target_link_directories(crow PRIVATE . "C:/Program Files (x86)/nos/bin")
-		target_link_libraries(crow ws2_32)
+    add_executable(crowker
+        apps/crowker/main.cpp
+        apps/crowker/control_node.cpp
+    )
+    target_link_libraries(crowker PRIVATE crow)
+    target_include_directories(crowker PRIVATE apps/crowker)
+endif()
 
-		target_include_directories(crow_test PRIVATE . "C:/Program Files (x86)/igris/include")
-		target_include_directories(crow_test PRIVATE . "C:/Program Files (x86)/nos/include")
-		target_link_directories(crow_test PRIVATE . "C:/Program Files (x86)/igris/bin")
-		target_link_directories(crow_test PRIVATE . "C:/Program Files (x86)/nos/bin")
-		target_link_libraries(crow_test ws2_32)
-	endif()
+if(CROW_BUILD_TESTS)
+    enable_testing()
+    file(GLOB CROW_TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp )
+    add_executable(crow_test ${CROW_TEST_SOURCES})
+    target_link_libraries(crow_test PRIVATE crow)
+    target_include_directories(crow_test PRIVATE tests)
+    add_test(NAME crow_test COMMAND crow_test)
+endif()
 
-	if(UNIX AND NOT APPLE)
-		install(TARGETS ${PROJECT_NAME}
-			LIBRARY DESTINATION /usr/lib
-		)
+install(TARGETS crow
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
-		install(DIRECTORY ${PROJECT_NAME}
-			DESTINATION /usr/local/include
-			PATTERN "*HIDE*" EXCLUDE
-		)
-	endif()
+install(DIRECTORY crow
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    PATTERN "*HIDE*" EXCLUDE
+)
 
-	if(APPLE)
-		install(TARGETS ${PROJECT_NAME}
-			LIBRARY DESTINATION /usr/local/lib
-		)
+if(CROW_BUILD_APPS)
+    install(TARGETS ctrans crowker
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+endif()
 
-		install(DIRECTORY ${PROJECT_NAME}
-			DESTINATION /usr/local/include
-			PATTERN "*HIDE*" EXCLUDE
-		)
-	endif()
-
-	enable_testing()
-	add_test(NAME crow_test COMMAND crow_test)
-else()
-	set(CROW_SOURCES ${SOURCES} PARENT_SCOPE)
+if(NOT CROW_TOP_LEVEL)
+    set(CROW_SOURCES ${CROW_SOURCES} PARENT_SCOPE)
+    set(CROW_HEADERS ${CROW_HEADERS} PARENT_SCOPE)
 endif()
