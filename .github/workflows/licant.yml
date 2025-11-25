@@ -2,9 +2,9 @@ name: Licant
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -20,53 +20,53 @@ jobs:
 
     strategy:
       matrix:
-        compiler: 
-          - { CXX: g++-11, CC: gcc-11 } 
-      
+        compiler:
+          - { CXX: g++-11, CC: gcc-11 }
+
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup dependencies
-      run: |
-        sudo apt-get update && sudo apt-get install -y g++-11 clang-12
-        sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/${{matrix.compiler.CXX}} 100
-        sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/${{matrix.compiler.CC}} 100
-        sudo python3 -m pip install licant
+      - name: Setup dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y g++-11
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/${{matrix.compiler.CXX}} 100
+          sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/${{matrix.compiler.CC}} 100
+          sudo python3 -m pip install licant
 
-    - name: Install igris library
-      run: |
-        git clone https://github.com/mirmik/igris
-        cd igris
-        ./make.py
-        sudo ./make.py install
-        sudo licant-libs .
-        cd ..
+      - name: Install igris library
+        run: |
+          git clone https://github.com/mirmik/igris
+          cd igris
+          ./make.py
+          sudo ./make.py install
+          sudo licant-libs .
+          cd ..
 
-    - name: Install nos library
-      run: |
-        git clone https://github.com/mirmik/nos
-        cd nos
-        ./make.py
-        sudo ./make.py install
-        sudo licant-libs .
-        cd ..
+      - name: Install nos library
+        run: |
+          git clone https://github.com/mirmik/nos
+          cd nos
+          ./make.py
+          sudo ./make.py install
+          sudo licant-libs .
+          cd ..
 
-    - name: Install onboardtest library
-      run: |
-        git clone https://github.com/mirmik/onboardtest
-        cd onboardtest
-        sudo licant-libs .
-        cd ..
+      - name: Install onboardtest library
+        run: |
+          git clone https://github.com/mirmik/onboardtest
+          cd onboardtest
+          sudo licant-libs .
+          cd ..
 
-    - name: Install zillot library
-      run: |
-        git clone https://github.com/mirmik/zillot
-        cd zillot
-        sudo licant-libs .
-        cd ..
+      - name: Install zillot library
+        run: |
+          git clone https://github.com/mirmik/zillot
+          cd zillot
+          sudo licant-libs .
+          cd ..
 
-    - name: Build
-      run: python3 ./make.py
+      - name: Build
+        run: python3 ./make.py
 
-    - name: Test
-      run: ./runtests
+      - name: Test
+        run: ./runtests
