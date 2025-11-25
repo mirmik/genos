@@ -1,4 +1,4 @@
-name: Licant
+name: Licant CI
 
 on:
   push:
@@ -6,67 +6,85 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
-
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        compiler:
-          - { CXX: g++-11, CC: gcc-11 }
-
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout genos
+        uses: actions/checkout@v4
 
-      - name: Setup dependencies
+      - name: Checkout igris
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/igris
+          path: igris
+          fetch-depth: 1
+
+      - name: Checkout nos
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/nos
+          path: nos
+          fetch-depth: 1
+
+      - name: Checkout zillot
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/zillot
+          path: zillot
+          fetch-depth: 1
+
+      - name: Checkout onboardtest
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/onboardtest
+          path: onboardtest
+          fetch-depth: 1
+
+      - name: Install toolchain and Python
         run: |
-          sudo apt-get update && sudo apt-get install -y g++-11
-          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/${{matrix.compiler.CXX}} 100
-          sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/${{matrix.compiler.CC}} 100
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            python3 python3-pip
+
+      - name: Install licant
+        run: |
           sudo python3 -m pip install licant
 
       - name: Install igris library
         run: |
-          git clone https://github.com/mirmik/igris
           cd igris
-          ./make.py
-          sudo ./make.py install
+          python3 make.py
+          sudo python3 make.py install
           sudo licant-libs .
           cd ..
 
       - name: Install nos library
         run: |
-          git clone https://github.com/mirmik/nos
           cd nos
-          ./make.py
-          sudo ./make.py install
+          python3 make.py
+          sudo python3 make.py install
           sudo licant-libs .
           cd ..
 
-      - name: Install onboardtest library
+      - name: Register onboardtest library
         run: |
-          git clone https://github.com/mirmik/onboardtest
           cd onboardtest
           sudo licant-libs .
           cd ..
 
-      - name: Install zillot library
+      - name: Register zillot library
         run: |
-          git clone https://github.com/mirmik/zillot
           cd zillot
           sudo licant-libs .
           cd ..
 
-      - name: Build
-        run: python3 ./make.py
+      - name: Build genos
+        run: |
+          python3 make.py
 
-      - name: Test
-        run: ./runtests
+      - name: Run tests
+        run: |
+          ./runtests
