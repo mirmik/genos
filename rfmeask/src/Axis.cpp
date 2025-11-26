@@ -492,7 +492,7 @@ void Axis::operationCorrectStart(bool ctrl)
     // if (ctrl)
     //    lock_mode_notify();
 
-    last_operation_start_time - std::chrono::system_clock::now();
+    last_operation_start_time = std::chrono::system_clock::now();
     opstatus_changer_count = 0;
 }
 

@@ -42,14 +42,20 @@ void DeviceChecker::statusUpdate(Device *dev)
     {
         statusNotify.notify(0);
         m_status = Ready;
-        std::thread([&]() { parent->on_ready_status_changed(true); }).detach();
+        std::thread([parent = this->parent]() {
+            if (parent)
+                parent->on_ready_status_changed(true);
+        }).detach();
         return;
     }
     else if (m_status != Unready)
     {
         statusNotify.notify(1);
         m_status = Unready;
-        std::thread([&]() { parent->on_ready_status_changed(false); }).detach();
+        std::thread([parent = this->parent]() {
+            if (parent)
+                parent->on_ready_status_changed(false);
+        }).detach();
         return;
     }
 }
@@ -63,16 +69,15 @@ void DeviceChecker::setDevices(const std::vector<Device *> &val)
         if (dev != nullptr)
         {
             devmap.insert(std::make_pair(dev, dev->deviceStatus()));
-            dev->get_device_status_observable().subscribe([&](auto pair) {
-                auto &[sts, dev] = pair;
-                this->statusUpdate(dev);
-            });
+            dev->get_device_status_observable().subscribe(
+                [this](auto pair) { this->statusUpdate(pair.second); });
         }
     }
 }
 
 DeviceStatus DeviceChecker::status()
 {
+    std::lock_guard<std::mutex> lock(mtx);
     if (m_status == Ready)
     {
         return DeviceStatus::Ready;
