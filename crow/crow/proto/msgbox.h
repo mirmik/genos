@@ -16,7 +16,7 @@ namespace crow
 {
     class msgbox : public crow::node
     {
-        sem_t message_lock = {};
+        igris_sem_t message_lock = {};
         struct dlist_head messages = DLIST_HEAD_INIT(messages);
 
     public:
