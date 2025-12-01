@@ -1,7 +1,10 @@
 
 src/**
+CMakeLists.txt
+tests/**
 
 
 [TREE]
-
+CMakeLists.txt
 src/**
+tests/**
