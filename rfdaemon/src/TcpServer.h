@@ -71,6 +71,7 @@ public:
 
     void delete_marked()
     {
+        std::lock_guard<std::mutex> lock(mQueue);
         for (auto client : marked_for_delete)
         {
             delete_client(client);
@@ -80,10 +81,11 @@ public:
 
     void delete_client(ClientStruct *client)
     {   
-        mQueue.lock();
-        client->receive_thread.join();
+        if (client->receive_thread.joinable())
+        {
+            client->receive_thread.join();
+        }
         delete client;
-        mQueue.unlock();
     }
 
 public:

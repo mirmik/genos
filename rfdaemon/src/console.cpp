@@ -16,7 +16,7 @@
 #include <thread>
 #include <version.h>
 
-extern AppManager *appManager;
+extern std::unique_ptr<AppManager> appManager;
 std::vector<std::thread> server_threads;
 std::thread userIOThread;
 

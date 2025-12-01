@@ -205,14 +205,32 @@ std::vector<std::shared_ptr<App>> &AppManager::getAppsList()
 
 std::shared_ptr<App> AppManager::findApp(const std::string &name)
 {
-    if (std::isdigit(name[0]))
+    if (name.empty())
     {
-        return apps[stoi(name)];
+        return nullptr;
+    }
+
+    if (std::isdigit(static_cast<unsigned char>(name[0])))
+    {
+        try
+        {
+            std::size_t pos = 0;
+            int idx = std::stoi(name, &pos);
+            if (pos == name.size() && idx >= 0 &&
+                static_cast<std::size_t>(idx) < apps.size())
+            {
+                return apps[static_cast<std::size_t>(idx)];
+            }
+        }
+        catch (const std::exception &)
+        {
+            // Игнорируем и пробуем поиск по имени ниже
+        }
     }
 
     for (auto &a : apps)
     {
-        if (!a->name().compare(name))
+        if (a->name() == name)
             return a;
     }
     return nullptr;

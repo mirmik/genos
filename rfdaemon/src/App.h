@@ -142,7 +142,10 @@ public:
         try
         {
             stop();
-            _watcher_thread.join();
+            if (_watcher_thread.joinable())
+            {
+                _watcher_thread.join();
+            }
         }
         catch (...)
         {

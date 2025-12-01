@@ -12,7 +12,7 @@
 #include <thread>
 #include <unistd.h>
 
-extern AppManager *appManager;
+extern std::unique_ptr<AppManager> appManager;
 
 // std::mutex App::ioMutex;
 using namespace std::chrono_literals;
@@ -112,25 +112,23 @@ std::string execute_and_read_output(const std::string& cmd)
     std::vector<std::string> args = igris::split(cmd);
     proc.exec(args[0], args, {});
     int fd = proc.output_fd();
-    proc.wait();
     std::string fullout;
-    
-    while(1) 
+
+    for (;;)
     {
-        std::string out;
-        out.resize(1024);
-        int n = read(fd, out.data(), out.size());
-        if (n>=0) 
+        char buf[1024];
+        ssize_t n = ::read(fd, buf, sizeof(buf));
+        if (n > 0)
         {
-            out.resize(n);
-            fullout += out;
+            fullout.append(buf, static_cast<size_t>(n));
         }
         else
-        { 
+        {
             break;
         }
     }
 
+    proc.wait();
     proc.close();
     return fullout;
 }

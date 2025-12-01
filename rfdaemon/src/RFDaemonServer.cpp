@@ -229,9 +229,15 @@ std::vector<uint8_t>
 RFDaemonServer::parseReceivedData(const std::vector<uint8_t> &data)
 {
     std::vector<uint8_t> answer;
+
+    if (data.size() < 2)
+    {
+        return answer;
+    }
+
     bool fromClientToSrv = data[0] != 0;
     uint8_t cmdNum = data[1];
-    uint32_t argOffset =
+    uint32_t headerSize =
         2 + cmdNum * (uint32_t)(sizeof(uint16_t) + sizeof(uint32_t));
 
     if (VERBOSE)
@@ -240,29 +246,57 @@ RFDaemonServer::parseReceivedData(const std::vector<uint8_t> &data)
         nos::print_dump(data.data(), data.size());
     }
 
-    if (fromClientToSrv && (data.size() >= argOffset))
+    if (!fromClientToSrv || data.size() < headerSize)
     {
-        uint16_t *pCmdList = (uint16_t *)(data.data() + 2);
-        uint32_t *pArgSizeList =
-            (uint32_t *)(data.data() + 2 + cmdNum * sizeof(uint16_t));
-        answer.resize(2 + cmdNum * (sizeof(uint16_t) + sizeof(uint32_t)));
-        answer[0] =
-            0; // '0' is indicating that this is answer from server to client
-        answer[1] = cmdNum; // Number of commands
+        return answer;
+    }
 
-        for (size_t i = 0; i < cmdNum; i++)
+    uint32_t argOffset = headerSize;
+
+    const uint16_t *pCmdList =
+        reinterpret_cast<const uint16_t *>(data.data() + 2);
+    const uint32_t *pArgSizeList =
+        reinterpret_cast<const uint32_t *>(data.data() + 2 +
+                                           cmdNum * sizeof(uint16_t));
+
+    answer.resize(2 + cmdNum * (sizeof(uint16_t) + sizeof(uint32_t)));
+    answer[0] =
+        0; // '0' is indicating that this is answer from server to client
+    answer[1] = cmdNum; // Number of commands
+
+    for (size_t i = 0; i < cmdNum; i++)
+    {
+        uint16_t cmdIndex = pCmdList[i];
+
+        if (cmdIndex >= commands.size())
         {
-            answer[i * 2 + 2] = (uint8_t)pCmdList[i];
-            auto cmd = commands[pCmdList[i]];
-            if (VERBOSE)
-                nos::println("Command: ", cmd.name);
-            auto cmdRet = cmd.cmd(data.data() + argOffset, pArgSizeList[i]);
-            argOffset += pArgSizeList[i];
-            *(uint32_t *)(answer.data() + i * sizeof(uint32_t) + 2 +
-                          cmdNum * sizeof(uint16_t)) = (uint32_t)cmdRet.size();
-            if (cmdRet.size() != 0)
-                answer.insert(answer.end(), cmdRet.begin(), cmdRet.end());
+            // Неверный индекс команды — игнорируем пакет
+            answer.clear();
+            return answer;
         }
+
+        uint32_t argSize = pArgSizeList[i];
+
+        if (argOffset + argSize > data.size())
+        {
+            // Неверный размер аргумента — игнорируем пакет
+            answer.clear();
+            return answer;
+        }
+
+        answer[i * 2 + 2] = static_cast<uint8_t>(cmdIndex);
+        auto &cmd = commands[cmdIndex];
+
+        if (VERBOSE)
+            nos::println("Command: ", cmd.name);
+
+        auto cmdRet = cmd.cmd(data.data() + argOffset, argSize);
+        argOffset += argSize;
+        *(uint32_t *)(answer.data() + i * sizeof(uint32_t) + 2 +
+                      cmdNum * sizeof(uint16_t)) =
+            (uint32_t)cmdRet.size();
+        if (!cmdRet.empty())
+            answer.insert(answer.end(), cmdRet.begin(), cmdRet.end());
     }
     return answer;
 }
