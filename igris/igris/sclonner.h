@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-//#include <sys/wait.h>
 #include <algorithm>
 #include <igris/datastruct/argvc.h>
 #include <igris/event/delegate.h>
@@ -33,8 +32,7 @@ namespace igris
     {
     public:
         int _pid = 0;
-        int _ipipe = 0;
-        int _opipe = 0;
+        int _master_fd = -1;  // PTY master fd (для чтения и записи)
 
         igris::delegate<void> on_close = {};
 
@@ -43,6 +41,11 @@ namespace igris
         subprocess(const char *data)
         {
             exec(data);
+        }
+        
+        ~subprocess()
+        {
+            close();
         }
 
         void sigchld()
@@ -62,55 +65,50 @@ namespace igris
 
         void invalidate()
         {
-            if (_pid != 0)
-            {
-                terminate();
-            }
-
-            _pid = _ipipe = _opipe = 0;
+            close();
+            _pid = 0;
+            _master_fd = -1;
         }
 
         void terminate()
         {
-            ::kill(_pid, SIGTERM);
+            if (_pid > 0)
+                ::kill(_pid, SIGTERM);
         }
 
         void kill()
         {
-            ::kill(_pid, SIGKILL);
+            if (_pid > 0)
+                ::kill(_pid, SIGKILL);
         }
 
-        void wait()
+        int wait()
         {
-            int status;
-            waitpid(_pid, &status, WCONTINUED);
-        }
-
-        void set_pipe_fds(int ipipe, int opipe)
-        {
-            this->_ipipe = ipipe;
-            this->_opipe = opipe;
+            if (_pid <= 0)
+                return -1;
+            int status = 0;
+            waitpid(_pid, &status, 0);
+            _pid = 0;
+            return WEXITSTATUS(status);
         }
 
         int input_fd()
         {
-            return _opipe;
+            return _master_fd;
         }
 
         int output_fd()
         {
-            return _ipipe;
+            return _master_fd;
         }
-
-        // void enable_terminal_policy()
-        // {
-        //     ioctl(STDOUT_FILENO, TIOC, )
-        // }
 
         void close()
         {
-            ::close(_ipipe);
-            ::close(_opipe);
+            if (_master_fd >= 0)
+            {
+                ::close(_master_fd);
+                _master_fd = -1;
+            }
         }
 
         
@@ -125,8 +123,8 @@ namespace igris
                 cargs.push_back(const_cast<char *>(arg.c_str()));
             cargs.push_back(nullptr);
 
-            for (auto &env : env)
-                cenv.push_back(const_cast<char *>(env.c_str()));
+            for (auto &e : env)
+                cenv.push_back(const_cast<char *>(e.c_str()));
             cenv.push_back(nullptr);
 
             exec(name, cargs, cenv);
@@ -136,84 +134,107 @@ namespace igris
                   const std::vector<char *> &args,
                   const std::vector<char *> &env)
         {
-            int sts;
-            // int pipes_host_in_child_out[2];
-            // int pipes_host_out_child_in[2];
-            // pipe2(pipes_host_in_child_out, O_NONBLOCK | O_DIRECT);
-            // pipe2(pipes_host_out_child_in, O_NONBLOCK | O_DIRECT);
-            int fd;
-            int pid = forkpty(&fd, 0, 0, 0);
+            // Закрываем старый fd если был
+            close();
+            
+            int master_fd;
+            int pid = forkpty(&master_fd, nullptr, nullptr, nullptr);
+            
+            if (pid < 0)
+            {
+                perror("forkpty");
+                return;
+            }
+            
             if (pid == 0)
             {
-                // close(pipes_host_in_child_out[0]);
-                // close(pipes_host_out_child_in[1]);
-                // lose(STDOUT_FILENO);
-
-                // sts = dup2(pipes_host_in_child_out[1], STDOUT_FILENO);
-                char *cmd = strdup(name.c_str());
-                // char *argv[10];
-                //  int argc = argvc_internal_split(cmd, argv, 10);
-                //  argv[argc] = 0;
-
-                struct termios settings;
-                tcgetattr(STDOUT_FILENO, &settings);
-                settings.c_oflag &= ~OPOST;
-                settings.c_oflag &= ~ONLCR;
-                tcgetattr(STDOUT_FILENO, &settings);
-
-                sts = execve(cmd, args.data(), env.data());
-                if (sts == -1)
+                // Child process
+                // Используем execvp/execvpe для поиска в PATH
+                if (env.empty() || env[0] == nullptr)
                 {
-                    perror("occasion");
+                    execvp(name.c_str(), args.data());
                 }
-
-                exit(0);
-                // unreached
+                else
+                {
+                    // execvpe - расширение GNU для execve с поиском в PATH
+                    execvpe(name.c_str(), args.data(), env.data());
+                }
+                
+                // Если exec* не удался
+                perror("exec");
+                _exit(127);
             }
 
-            // close(pipes_host_out_child_in[0]);
-            // close(pipes_host_in_child_out[1]);
-
-            set_pid(pid);
-            set_pipe_fds(fd, fd);
+            // Parent process
+            _pid = pid;
+            _master_fd = master_fd;
         }
 
         void exec(const char *ccmd)
         {
-            int sts;
+            // Закрываем старый fd если был  
+            close();
+            
             int pipes_host_in_child_out[2];
             int pipes_host_out_child_in[2];
-            pipe(pipes_host_in_child_out);
-            pipe(pipes_host_out_child_in);
+            
+            if (pipe(pipes_host_in_child_out) < 0)
+            {
+                perror("pipe");
+                return;
+            }
+            if (pipe(pipes_host_out_child_in) < 0)
+            {
+                perror("pipe");
+                ::close(pipes_host_in_child_out[0]);
+                ::close(pipes_host_in_child_out[1]);
+                return;
+            }
+            
             int pid = fork();
+            if (pid < 0)
+            {
+                perror("fork");
+                ::close(pipes_host_in_child_out[0]);
+                ::close(pipes_host_in_child_out[1]);
+                ::close(pipes_host_out_child_in[0]);
+                ::close(pipes_host_out_child_in[1]);
+                return;
+            }
+            
             if (pid == 0)
             {
+                // Child process
                 ::close(pipes_host_in_child_out[0]);
                 ::close(pipes_host_out_child_in[1]);
-                ::close(STDOUT_FILENO);
+                
+                dup2(pipes_host_in_child_out[1], STDOUT_FILENO);
+                dup2(pipes_host_in_child_out[1], STDERR_FILENO);
+                dup2(pipes_host_out_child_in[0], STDIN_FILENO);
+                
+                ::close(pipes_host_in_child_out[1]);
+                ::close(pipes_host_out_child_in[0]);
 
-                sts = dup2(pipes_host_in_child_out[1], STDOUT_FILENO);
                 char *cmd = strdup(ccmd);
                 char *argv[10];
                 int argc = argvc_internal_split(cmd, argv, 10);
-                argv[argc] = 0;
+                argv[argc] = nullptr;
 
-                sts = ::execve(argv[0], argv, NULL);
-                if (sts == -1)
-                {
-                    perror("occasion");
-                }
-
-                exit(0);
-                // unreached
+                execv(argv[0], argv);
+                perror("execv");
+                free(cmd);
+                _exit(127);
             }
 
+            // Parent process
             ::close(pipes_host_out_child_in[0]);
             ::close(pipes_host_in_child_out[1]);
 
-            set_pid(pid);
-            set_pipe_fds(pipes_host_in_child_out[0],
-                         pipes_host_out_child_in[1]);
+            _pid = pid;
+            // Для простого pipe используем только read pipe как master_fd
+            // (write pipe закрываем, т.к. обычно не нужен)
+            _master_fd = pipes_host_in_child_out[0];
+            ::close(pipes_host_out_child_in[1]);
         }
     };
 

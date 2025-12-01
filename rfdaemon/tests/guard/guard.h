@@ -621,23 +621,9 @@ namespace guard::test
             bool test_passed = true;
             std::string test_error;
 
-            // Перехватываем std::cout на время выполнения теста
+            // Перехват std::cout отключён для отладки
             std::ostringstream captured_stdout;
-            struct CoutRedirect
-            {
-                std::ostream &os;
-                std::streambuf *old_buf;
-
-                CoutRedirect(std::ostream &os_, std::streambuf *new_buf)
-                    : os(os_), old_buf(os_.rdbuf(new_buf))
-                {
-                }
-
-                ~CoutRedirect()
-                {
-                    os.rdbuf(old_buf);
-                }
-            } _guard_cout_redirect(std::cout, captured_stdout.rdbuf());
+            (void)captured_stdout; // unused
 
             GUARD_CHECK_ENV_START()
             {

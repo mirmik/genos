@@ -11,6 +11,8 @@
 #include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
+#include <poll.h>
+#include <fcntl.h>
 
 extern std::unique_ptr<AppManager> appManager;
 
@@ -146,19 +148,22 @@ void App::stop()
         return;
     }
 
-    if (isStopped)
+    if (isStopped && !_watcher_guard)
     {
         nos::fprintln("App '{}' is already stopped", name());
+        return;
     }
 
     if (_watcher_guard)
     {
         _attempts = 0;
+        cancel_reading = true;
         proc.kill();
+        
+        // Ждем завершения watcher thread
+        if (_watcher_thread.joinable())
+            _watcher_thread.join();
     }
-
-    cancel_reading = true;
-    isStopped = true;
 }
 
 void App::restart()
@@ -259,8 +264,6 @@ void App::appFork()
     auto envp = envp_for_execve(envp_base);
     auto args = tokens_for_execve(tokens);
 
-    nos::println("Start subprocess:", name());
-    nos::println("tokens:", tokens);
     proc.exec(tokens[0].data(), args, envp);
     int fd = proc.output_fd();
 
@@ -268,43 +271,113 @@ void App::appFork()
     char buf[1024];
     buffer.reserve(2048);
 
+    // Если fd невалидный, просто ждем завершения процесса
+    if (fd < 0)
+    {
+        nos::println("No valid output fd, waiting for process to finish");
+        proc.wait();
+        cancel_reading = false;
+        nos::println("Finish subprocess:", name());
+        return;
+    }
+
+    // Используем poll для неблокирующего ожидания данных
+    struct pollfd pfd;
+    pfd.fd = fd;
+    pfd.events = POLLIN;
+
     while (true)
     {
-        int n = read(fd, buf, sizeof(buf));
-        if (n > 0)
-        {
-            logdata_append(buf, n);
-            buffer.clear();
-            buffer.push_back((uint8_t)task_index);
-            buffer.push_back((uint8_t)name().size());
-            buffer.insert(buffer.end(), _name.begin(), _name.end());
-            uint16_t len = n;
-            buffer.push_back((uint8_t)(len >> 8));
-            buffer.push_back((uint8_t)(len & 0xFF));
-            buffer.insert(buffer.end(), buf, buf + n);
-            appManager->send_spam(buffer);
-        }
-        else if (n == 0)
-        {
-            nos::println("EOF from subprocess:", name());
-            break;
-        }
-        else
-        {
-            perror("read");
-            break;
-        }
-
         if (cancel_reading)
         {
             nos::println("stopped because reading was canceled");
             break;
         }
 
-        std::this_thread::sleep_for(100ms);
+        // poll с таймаутом 100ms
+        int poll_result = poll(&pfd, 1, 100);
+        
+        if (poll_result < 0)
+        {
+            if (errno == EINTR)
+                continue;
+            perror("poll");
+            break;
+        }
+        
+        if (poll_result == 0)
+        {
+            // Таймаут - проверяем жив ли процесс
+            int status;
+            pid_t result = waitpid(proc.pid(), &status, WNOHANG);
+            if (result > 0)
+            {
+                nos::println("Process finished with status:", WEXITSTATUS(status));
+                break;
+            }
+            continue;
+        }
+
+        // Есть данные для чтения или ошибка
+        if (pfd.revents & (POLLERR | POLLHUP | POLLNVAL))
+        {
+            // PTY закрыт или ошибка - процесс вероятно завершился
+            int status;
+            pid_t result = waitpid(proc.pid(), &status, WNOHANG);
+            if (result > 0)
+            {
+                nos::println("Process finished with status:", WEXITSTATUS(status));
+            }
+            break;
+        }
+
+        if (pfd.revents & POLLIN)
+        {
+            int n = read(fd, buf, sizeof(buf));
+            if (n > 0)
+            {
+                logdata_append(buf, n);
+                buffer.clear();
+                buffer.push_back((uint8_t)task_index);
+                buffer.push_back((uint8_t)name().size());
+                buffer.insert(buffer.end(), _name.begin(), _name.end());
+                uint16_t len = n;
+                buffer.push_back((uint8_t)(len >> 8));
+                buffer.push_back((uint8_t)(len & 0xFF));
+                buffer.insert(buffer.end(), buf, buf + n);
+                if (appManager)
+                    appManager->send_spam(buffer);
+            }
+            else if (n == 0)
+            {
+                nos::println("EOF from subprocess:", name());
+                break;
+            }
+            else
+            {
+                if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)
+                    continue;
+                    
+                // EIO означает что slave PTY закрыт
+                if (errno == EIO)
+                {
+                    int status;
+                    pid_t result = waitpid(proc.pid(), &status, WNOHANG);
+                    if (result > 0)
+                    {
+                        nos::println("Process finished with status:", WEXITSTATUS(status));
+                    }
+                    break;
+                }
+                perror("read");
+                break;
+            }
+        }
     }
 
-    isStopped = true;
+    // Убедимся, что процесс полностью завершился
+    proc.wait();
+    
     cancel_reading = false;
     nos::println("Finish subprocess:", name());
 }
@@ -368,12 +441,18 @@ void App::watchFunc()
     while (1)
     {
         std::this_thread::sleep_for(10ms);
+        if (cancel_reading)
+            break;
+        
         nos::println("appFork", name());
         appFork();
 
         if (!need_to_another_attempt())
             break;
     }
+    
+    isStopped = true;
+    cancel_reading = false;
     _watcher_guard = false;
     //_pid = 0;
     proc.invalidate();

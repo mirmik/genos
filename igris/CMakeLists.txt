@@ -1,19 +1,15 @@
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.12)
 project(igris)
-
-#set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang++.exe")
-#set(CMAKE_CXX_COMPILER "C:\\Program Files\\LLVM\\bin\\clang++.exe")
 
 message("${CMAKE_INSTALL_INCLUDEDIR}/igris")
 
-file(GLOB HEADERS 
-	igris/util/*.h	
-	igris/dprint/*.h
-	igris/event/*.h
-	igris/datastruct/*.h
+# Используем CONFIGURE_DEPENDS чтобы cmake автоматически 
+# перезапускался при изменении файлов
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS
+	igris/*.h
 )
 
-file(GLOB IGRIS_SOURCES 
+file(GLOB IGRIS_SOURCES CONFIGURE_DEPENDS
 	igris/util/*.cpp 
 	igris/series/*.cpp  
 	igris/container/*.cpp  
@@ -45,17 +41,17 @@ file(GLOB IGRIS_SOURCES
 	igris/path/path.cpp
 )
 
-file(GLOB IGRIS_HEADERS 
+file(GLOB IGRIS_HEADERS CONFIGURE_DEPENDS
 	igris/*.h 
 	igris/util/*.h 
 )
 
-file(GLOB IGRIS_SOURCES_PLUS 
+file(GLOB IGRIS_SOURCES_PLUS CONFIGURE_DEPENDS
 	igris/dprint/dprint_stdout.c
 )
 
 if (UNIX)
-	file(GLOB PLATFORM_SOURCES 
+	file(GLOB PLATFORM_SOURCES CONFIGURE_DEPENDS
 		igris/osutil/src/posix.cpp
 		igris/osutil/realtime.c
 		igris/sclonner.cpp
@@ -63,7 +59,7 @@ if (UNIX)
 	)
 endif()
 
-file(GLOB SOURCES_TEST 
+file(GLOB SOURCES_TEST CONFIGURE_DEPENDS
 	${IGRIS_SOURCES}
 	tests/*.cpp
 	container/*.cpp
