@@ -1,10 +1,10 @@
 #include "App.h"
 #include "guard/guard.h"
 
-#include <string>
-#include <vector>
-#include <thread>
 #include <chrono>
+#include <string>
+#include <thread>
+#include <vector>
 
 TEST_CASE(
     "LinkedFile::to_trent: корректное отображение полей в трент-структуру")
@@ -68,7 +68,7 @@ TEST_CASE("App::stop корректно завершает процесс и п�
     // Останавливаем процесс
     app.stop();
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    
+
     // Проверяем что процесс остановлен
     CHECK_EQ(app.stopped(), true);
     CHECK_EQ(app.status_string(), std::string("stopped"));
@@ -82,18 +82,18 @@ TEST_CASE("App::start/stop цикл работает корректно")
 
     // Проверяем начальное состояние
     CHECK_EQ(app.stopped(), true);
-    
+
     // Запускаем процесс
     app.start();
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     CHECK_EQ(app.stopped(), false);
-    
+
     // Останавливаем процесс
     app.stop();
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
     CHECK_EQ(app.stopped(), true);
-    
+
     // Проверяем что можно запустить снова (но без многократных итераций)
-    // Примечание: многократные start/stop могут быть нестабильны из-за 
+    // Примечание: многократные start/stop могут быть нестабильны из-за
     // особенностей igris::subprocess
 }

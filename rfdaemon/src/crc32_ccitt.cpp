@@ -44,8 +44,7 @@ static const uint32_t crc32_table[256] = {
     0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9,
     0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605, 0xCDD706B3,
     0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
-    0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
-};
+    0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D};
 
 uint32_t crc32_ccitt(const void *data, uint32_t length, uint32_t crc_init)
 {
@@ -53,12 +52,12 @@ uint32_t crc32_ccitt(const void *data, uint32_t length, uint32_t crc_init)
         return crc_init;
 
     const uint8_t *p = static_cast<const uint8_t *>(data);
-    uint32_t crc = crc_init ^ 0xFFFFFFFF;  // Инвертируем начальное значение
+    uint32_t crc = crc_init ^ 0xFFFFFFFF; // Инвертируем начальное значение
 
     while (length--)
     {
         crc = crc32_table[(crc ^ *p++) & 0xFF] ^ (crc >> 8);
     }
 
-    return crc ^ 0xFFFFFFFF;  // Инвертируем результат
+    return crc ^ 0xFFFFFFFF; // Инвертируем результат
 }

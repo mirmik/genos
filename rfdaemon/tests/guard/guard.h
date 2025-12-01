@@ -33,9 +33,9 @@ struct guard_location
 // Вся среда проверки в одной структуре
 struct guard_check_env_t
 {
-std::string error_msg;
-unsigned long long assert_total = 0;
-unsigned long long assert_failed = 0;
+    std::string error_msg;
+    unsigned long long assert_total = 0;
+    unsigned long long assert_failed = 0;
 };
 
 // Глобальный (на процесс) экземпляр среды, реализованный через
@@ -78,10 +78,10 @@ inline void GUARD_CHECK_ENV_RAISE_IMPL()
 }
 inline void GUARD_CHECK_ENV_COUNT_ASSERT(bool success)
 {
-guard_check_env_t &env = guard_check_env();
-++env.assert_total;
-if (!success)
-    ++env.assert_failed;
+    guard_check_env_t &env = guard_check_env();
+    ++env.assert_total;
+    if (!success)
+        ++env.assert_failed;
 }
 
 // Добавление сообщения об ошибке (для "мягких" CHECK)
@@ -195,7 +195,6 @@ namespace guard
 // guard/check.h
 #ifndef GUARD_CHECK_H
 #define GUARD_CHECK_H
-
 
 #include <sstream>
 #include <string>
@@ -576,19 +575,20 @@ namespace guard::test
 
         // Копируем и сортируем тесты по файлу, строке и имени
         auto tests = registry();
-        std::sort(tests.begin(), tests.end(), [](const TestCase &lhs, const TestCase &rhs) {
-            const std::string lhs_file(lhs.file ? lhs.file : "");
-            const std::string rhs_file(rhs.file ? rhs.file : "");
-            if (lhs_file < rhs_file)
-                return true;
-            if (rhs_file < lhs_file)
-                return false;
-            if (lhs.line != rhs.line)
-                return lhs.line < rhs.line;
-            const std::string lhs_name(lhs.name ? lhs.name : "");
-            const std::string rhs_name(rhs.name ? rhs.name : "");
-            return lhs_name < rhs_name;
-        });
+        std::sort(tests.begin(), tests.end(),
+                  [](const TestCase &lhs, const TestCase &rhs) {
+                      const std::string lhs_file(lhs.file ? lhs.file : "");
+                      const std::string rhs_file(rhs.file ? rhs.file : "");
+                      if (lhs_file < rhs_file)
+                          return true;
+                      if (rhs_file < lhs_file)
+                          return false;
+                      if (lhs.line != rhs.line)
+                          return lhs.line < rhs.line;
+                      const std::string lhs_name(lhs.name ? lhs.name : "");
+                      const std::string rhs_name(rhs.name ? rhs.name : "");
+                      return lhs_name < rhs_name;
+                  });
 
         for (const auto &tc : tests)
         {
@@ -647,7 +647,8 @@ namespace guard::test
                 }
                 catch (const guard_check_exception &)
                 {
-                    // REQUIRE/FAIL бросают guard_check_exception — пробрасываем наружу
+                    // REQUIRE/FAIL бросают guard_check_exception — пробрасываем
+                    // наружу
                     throw;
                 }
                 catch (const std::exception &ex)
@@ -679,14 +680,13 @@ namespace guard::test
             const auto asserts_after_total = env.assert_total;
             const auto asserts_after_failed = env.assert_failed;
             mod.asserts_total += (asserts_after_total - asserts_before_total);
-            mod.asserts_failed += (asserts_after_failed - asserts_before_failed);
+            mod.asserts_failed +=
+                (asserts_after_failed - asserts_before_failed);
 
             if (!test_passed)
             {
-                failures.push_back(TestSummary{
-                    &tc,
-                    std::move(test_error),
-                    captured_stdout.str()});
+                failures.push_back(TestSummary{&tc, std::move(test_error),
+                                               captured_stdout.str()});
             }
         }
 
@@ -696,19 +696,17 @@ namespace guard::test
         {
             const auto &mod = entry.second;
 
-            Color mod_color =
-                (mod.tests_failed > 0 || mod.asserts_failed > 0)
-                    ? Color::Red
-                    : Color::Green;
+            Color mod_color = (mod.tests_failed > 0 || mod.asserts_failed > 0)
+                                  ? Color::Red
+                                  : Color::Green;
 
             {
                 ColorScope scope(os, mod_color);
                 os << mod.file << ":\n";
             }
 
-            os << "  Tests   : " << mod.tests_total
-               << " (passed " << mod.tests_passed
-               << ", failed " << mod.tests_failed << ")\n";
+            os << "  Tests   : " << mod.tests_total << " (passed "
+               << mod.tests_passed << ", failed " << mod.tests_failed << ")\n";
             os << "  Asserts : " << mod.asserts_total;
             if (mod.asserts_failed > 0)
                 os << " (failed " << mod.asserts_failed << ")";
@@ -718,7 +716,8 @@ namespace guard::test
         guard_check_env_t &env = guard_check_env();
         os << "=======================\n";
         {
-            ColorScope summary_scope(os, stats.failed == 0 ? Color::Green : Color::Red);
+            ColorScope summary_scope(os, stats.failed == 0 ? Color::Green
+                                                           : Color::Red);
 
             os << "Overall summary:\n";
 
@@ -726,20 +725,22 @@ namespace guard::test
 
             os << "Passed    : ";
             {
-                ColorScope passed_scope(os, stats.passed > 0 ? Color::Green : Color::Default);
+                ColorScope passed_scope(os, stats.passed > 0 ? Color::Green
+                                                             : Color::Default);
                 os << stats.passed;
             }
             os << "\n";
 
             os << "Failed    : ";
             {
-                ColorScope failed_scope(os, stats.failed > 0 ? Color::Red : Color::Default);
+                ColorScope failed_scope(os, stats.failed > 0 ? Color::Red
+                                                             : Color::Default);
                 os << stats.failed;
             }
             os << "\n";
         }
-        os << "Asserts   : " << env.assert_total
-           << " (failed " << env.assert_failed << ")\n";
+        os << "Asserts   : " << env.assert_total << " (failed "
+           << env.assert_failed << ")\n";
 
         os << "=======================\n";
         {
@@ -756,8 +757,8 @@ namespace guard::test
             {
                 {
                     ColorScope scope(os, Color::Red);
-                    os << f.tc->file << ":" << f.tc->line
-                       << " in test \"" << f.tc->name << "\"\n";
+                    os << f.tc->file << ":" << f.tc->line << " in test \""
+                       << f.tc->name << "\"\n";
                 }
                 if (!f.error.empty())
                     os << f.error << "\n";
@@ -792,9 +793,7 @@ namespace guard::test
     static void GUARD_TEST_CONCAT(guard_test_func_, __LINE__)();               \
     static ::guard::test::Registrar GUARD_TEST_CONCAT(guard_test_reg_,         \
                                                       __LINE__)(               \
-        name,                                                                  \
-        __FILE__,                                                              \
-        __LINE__,                                                              \
+        name, __FILE__, __LINE__,                                              \
         &GUARD_TEST_CONCAT(guard_test_func_, __LINE__));                       \
     static void GUARD_TEST_CONCAT(guard_test_func_, __LINE__)()
 
