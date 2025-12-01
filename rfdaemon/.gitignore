@@ -79,3 +79,5 @@ errlog.txt
 *.gen.cpp
 
 .vscode/*
+
+rfdaemon_tests

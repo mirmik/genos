@@ -149,7 +149,6 @@ void App::stop()
     if (isStopped)
     {
         nos::fprintln("App '{}' is already stopped", name());
-        return;
     }
 
     if (_watcher_guard)
@@ -181,6 +180,7 @@ void App::start()
     if (isStopped)
     {
         restart_attempt_counter();
+        isStopped = false;
         run();
     }
 }
@@ -253,8 +253,6 @@ void App::appFork()
     _exitStatus = 0;
     increment_attempt_counter();
 
-    // int wr[2];
-    // pipe(wr);
     _startTime = std::chrono::system_clock::now();
 
     auto envp_base = envp_base_for_execve();
@@ -270,7 +268,6 @@ void App::appFork()
     char buf[1024];
     buffer.reserve(2048);
 
-    isStopped = false;
     while (true)
     {
         int n = read(fd, buf, sizeof(buf));
@@ -287,13 +284,26 @@ void App::appFork()
             buffer.insert(buffer.end(), buf, buf + n);
             appManager->send_spam(buffer);
         }
+        else if (n == 0)
+        {
+            nos::println("EOF from subprocess:", name());
+            break;
+        }
+        else
+        {
+            perror("read");
+            break;
+        }
 
-        if (cancel_reading) {
+        if (cancel_reading)
+        {
             nos::println("stopped because reading was canceled");
             break;
         }
+
         std::this_thread::sleep_for(100ms);
     }
+
     isStopped = true;
     cancel_reading = false;
     nos::println("Finish subprocess:", name());
