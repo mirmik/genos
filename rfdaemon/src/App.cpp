@@ -135,19 +135,31 @@ std::string execute_and_read_output(const std::string& cmd)
 
 void App::stop()
 {
-    if (systemd_bind != "") 
+    if (systemd_bind != "")
     {
         std::string cmd = "/usr/bin/systemctl stop " + systemd_bind;
+        nos::fprintln("Stop in systemctl mode: {}", cmd);
         std::string out = execute_and_read_output(cmd);
         nos::println(out);
+        isStopped = true;
+        systemd_pid = 0;
         return;
     }
 
-    if (!isStopped)
+    if (isStopped)
+    {
+        nos::fprintln("App '{}' is already stopped", name());
+        return;
+    }
+
+    if (_watcher_guard)
     {
         _attempts = 0;
         proc.kill();
     }
+
+    cancel_reading = true;
+    isStopped = true;
 }
 
 void App::restart()

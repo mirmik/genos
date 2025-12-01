@@ -4,8 +4,8 @@
 #include <chrono>
 #include <fstream>
 #include <list>
-#include <mutex>
 #include <memory>
+#include <mutex>
 #include <nos/inet/tcpspam_server.h>
 #include <sched.h>
 #include <string>
@@ -17,7 +17,7 @@ constexpr auto APP_MAX_RESTART_ATTEMPTS = 3;
 class AppManager
 {
 public:
-    static AppManager * _instance;
+    static AppManager *_instance;
     static AppManager *instance()
     {
         return _instance;
@@ -53,9 +53,15 @@ public:
     AppManager(const std::string &appListFileName);
     bool loadConfigFile();
     void runApps();
-    void start_all() { runApps(); }
+    void start_all()
+    {
+        runApps();
+    }
     void closeApps();
-    void stop_all() { closeApps(); }
+    void stop_all()
+    {
+        closeApps();
+    }
     void restartApps();
     std::vector<std::shared_ptr<App>> &getAppsList();
     size_t getAppCount() const;

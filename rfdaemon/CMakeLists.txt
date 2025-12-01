@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(igris)
+enable_testing()
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 add_compile_options(
@@ -17,17 +18,18 @@ add_custom_command(
     DEPENDS ${RESOURCE_LIST}
 )
 
-file(GLOB SOURCES
+file(GLOB SOURCES CONFIGURE_DEPENDS
   src/*.cpp
 )
 
-file(GLOB SOURCES_RFDAEMONCTL
+file(GLOB SOURCES_RFDAEMONCTL CONFIGURE_DEPENDS
   src/rfdaemonctl/*.cpp
 )
 
 add_executable(rfdaemon 
   ircc_resources.gen.cpp
-  ${SOURCES})
+  ${SOURCES}
+  src/app/main.cpp)
 target_include_directories(rfdaemon PRIVATE src)
 
 add_executable(rfdaemonctl 
@@ -45,3 +47,26 @@ target_link_libraries(rfdaemonctl
   igris
   nos
 )
+
+# Tests
+file(GLOB TEST_SOURCES CONFIGURE_DEPENDS 
+  tests/*.cpp)
+
+if(TEST_SOURCES)
+  add_executable(rfdaemon_tests
+  ircc_resources.gen.cpp
+    ${TEST_SOURCES}
+    ${SOURCES}
+  )
+
+  target_include_directories(rfdaemon_tests PRIVATE src tests)
+
+  target_link_libraries(rfdaemon_tests
+    pthread
+    igris
+    nos
+    util
+  )
+
+  add_test(NAME rfdaemon_tests COMMAND rfdaemon_tests)
+endif()

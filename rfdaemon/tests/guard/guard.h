@@ -545,6 +545,17 @@ namespace guard::test
         unsigned long long asserts_failed = 0;
     };
 
+    inline bool &verbose()
+    {
+        static bool flag = false;
+        return flag;
+    }
+
+    inline void set_verbose(bool value)
+    {
+        verbose() = value;
+    }
+
     // test_filter == nullptr -> запускать все тесты
     inline int run_all(const char *test_filter, std::ostream &os = std::cout)
     {
@@ -584,6 +595,15 @@ namespace guard::test
             if (test_filter &&
                 std::string(tc.name).find(test_filter) == std::string::npos)
                 continue;
+
+            if (verbose())
+            {
+                ColorScope scope(os, Color::Yellow);
+                os << "Running test: \"" << tc.name << "\"";
+                if (tc.file)
+                    os << " (" << tc.file << ":" << tc.line << ")";
+                os << "\n";
+            }
 
             ++stats.total;
 
@@ -941,6 +961,10 @@ namespace guard::test
             else if (std::strcmp(arg, "--test-case") == 0 && i + 1 < argc)     \
             {                                                                  \
                 test_filter = argv[++i];                                       \
+            }                                                                  \
+            else if (std::strcmp(arg, "--verbose") == 0)                       \
+            {                                                                  \
+                ::guard::test::set_verbose(true);                              \
             }                                                                  \
         }                                                                      \
         return ::guard::test::run_all(test_filter);                            \
