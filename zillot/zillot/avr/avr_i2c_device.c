@@ -16,7 +16,7 @@ static inline void send_start_flag() { send_flags(1, 0, 0); }
 
 void avr_i2c_device_operation_finish(struct avr_i2c_device *i2c)
 {
-    sem_post(&i2c->internal_lock);
+    igris_sem_post(&i2c->internal_lock);
 }
 
 void avr_i2c_device_error_handler(struct avr_i2c_device *i2c)
@@ -48,7 +48,7 @@ int avr_i2c_device_write(struct i2c_bus_device *dev, uint8_t target,
                          const void *data, size_t size)
 {
     struct avr_i2c_device *i2c = mcast_out(dev, struct avr_i2c_device, dev);
-    sem_wait(&i2c->dev.sem);
+    igris_sem_wait(&i2c->dev.sem);
 
     i2c->sendbuf = data;
     i2c->sendlen = size;
@@ -58,8 +58,8 @@ int avr_i2c_device_write(struct i2c_bus_device *dev, uint8_t target,
 
     TWCR = 1 << TWSTA | 0 << TWSTO | 0 << TWEA | COMMON_FLAGS;
 
-    sem_wait(&i2c->internal_lock);
-    sem_post(&i2c->dev.sem);
+    igris_sem_wait(&i2c->internal_lock);
+    igris_sem_post(&i2c->dev.sem);
     return 0;
 }
 
@@ -68,7 +68,7 @@ int avr_i2c_device_writeread(struct i2c_bus_device *dev, uint8_t target,
                              size_t ilen)
 {
     struct avr_i2c_device *i2c = mcast_out(dev, struct avr_i2c_device, dev);
-    sem_wait(&i2c->dev.sem);
+    igris_sem_wait(&i2c->dev.sem);
 
     i2c->recvbuf = in;
     i2c->sendbuf = out;
@@ -82,8 +82,8 @@ int avr_i2c_device_writeread(struct i2c_bus_device *dev, uint8_t target,
 
     TWCR = 1 << TWSTA | 0 << TWSTO | 0 << TWEA | COMMON_FLAGS;
 
-    sem_wait(&i2c->internal_lock);
-    sem_post(&i2c->dev.sem);
+    igris_sem_wait(&i2c->internal_lock);
+    igris_sem_post(&i2c->dev.sem);
     return 0;
 }
 
