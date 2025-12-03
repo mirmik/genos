@@ -1,9 +1,0 @@
-pipeline:
-  - name: "zillot"
-    git:
-      url: https://github.com/mirmik/zillot
-      branch: master
-      name: zillot
-    steps:
-      - name: make
-        run: ./make.py

@@ -1,9 +1,0 @@
-[submodule "RxCpp"]
-	path = RxCpp
-	url = git@github.com:smitek-robotics/RxCpp.git
-[submodule "libmodbus"]
-	path = libmodbus
-	url = https://github.com/stephane/libmodbus
-[submodule "cpp-httplib-static"]
-	path = cpp-httplib-static
-	url = https://github.com/mirmik/cpp-httplib-static

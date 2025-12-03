@@ -31,7 +31,10 @@
 *.out
 *.app
 
-CMakeLists.txt.user
+# Targets
+*target
+
+# CMake
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
@@ -41,43 +44,19 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
-_deps
 
-igris_test
-tests/runtests
-ltest/runtests
-test/runtests_installed
-travis.log
+#Firmware
+*.bin
+firmware
 
-ALL_BUILD.vcxproj
-ALL_BUILD.vcxproj.filters
-RUN_TESTS.vcxproj
-RUN_TESTS.vcxproj.filters
-ZERO_CHECK.vcxproj
-ZERO_CHECK.vcxproj.filters
-*.dir/
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.dir/
-*.vcxproj
-*.vcxproj.filters
-x64
-Debug
-Release
-
-doxygen/html
-doxygen/latex
-
-bindings/arduino/src 
-xxx
-
-runtests
 build
-tests/build
-*.ninja
-.ninja_*
-
 jjj
 
-artifacts.tar.gz
+__configure__.py
+*.pyc
+
+*.elf
+
+tests/runtests
+bindings/arduino/src
+runtests

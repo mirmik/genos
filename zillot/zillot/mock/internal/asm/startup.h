@@ -1,6 +1,0 @@
-#ifndef ZILLOT_MOCK_ASM_STARTUP_H
-#define ZILLOT_MOCK_ASM_STARTUP_H
-
-#define RESET_STACK()
-
-#endif

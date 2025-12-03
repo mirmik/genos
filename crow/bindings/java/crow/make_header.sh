@@ -1,1 +1,0 @@
-javac -h . *.java

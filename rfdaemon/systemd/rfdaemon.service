@@ -1,9 +1,0 @@
-[Unit]
-Description=RFDaemon
-
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/rfdaemon --noconsole --config /etc/rfdaemon/applications.json
-
-[Install]
-WantedBy=multi-user.target

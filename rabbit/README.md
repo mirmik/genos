@@ -1,2 +1,0 @@
-# rabbit
-geometric core

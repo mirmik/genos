@@ -1,7 +1,0 @@
-#ifndef GXX_STD_CASSERT_H
-#define GXX_STD_CASSERT_H
-#include "igris_std_config.hpp"
-
-#include <assert.h>
-
-#endif

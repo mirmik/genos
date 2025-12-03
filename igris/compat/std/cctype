@@ -1,7 +1,0 @@
-#ifndef CCTYPE
-#define CCTYPE
-#include "igris_std_config.hpp"
-
-#include <ctype.h>
-
-#endif

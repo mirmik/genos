@@ -1,8 +1,0 @@
-{
-	"axes": {
-		"Az": {
-			"unitBackwardLimit": -20,
-			"unitForwardLimit": 20
-		}
-	}
-}

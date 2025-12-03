@@ -1,1 +1,0 @@
-pandoc -s -t man -f markdown crow.1.md -o crow.1

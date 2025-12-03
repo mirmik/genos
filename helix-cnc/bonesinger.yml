@@ -1,9 +1,0 @@
-pipeline:
-  - name: helix-cnc
-    git:
-      url: https://radioline.visualstudio.com/_git/helix
-      name: helix-cnc
-      branch: helix-cnc-dev
-    steps:
-      - name: make
-        run: ./make.py

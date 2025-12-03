@@ -1,0 +1,90 @@
+name: Licant CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout genos
+        uses: actions/checkout@v4
+
+      - name: Checkout igris
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/igris
+          path: igris
+          fetch-depth: 1
+
+      - name: Checkout nos
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/nos
+          path: nos
+          fetch-depth: 1
+
+      - name: Checkout zillot
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/zillot
+          path: zillot
+          fetch-depth: 1
+
+      - name: Checkout onboardtest
+        uses: actions/checkout@v4
+        with:
+          repository: mirmik/onboardtest
+          path: onboardtest
+          fetch-depth: 1
+
+      - name: Install toolchain and Python
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            python3 python3-pip
+
+      - name: Install licant
+        run: |
+          sudo python3 -m pip install licant
+
+      - name: Install igris library
+        run: |
+          cd igris
+          python3 make.py
+          sudo python3 make.py install
+          sudo licant-libs .
+          cd ..
+
+      - name: Install nos library
+        run: |
+          cd nos
+          python3 make.py
+          sudo python3 make.py install
+          sudo licant-libs .
+          cd ..
+
+      - name: Register onboardtest library
+        run: |
+          cd onboardtest
+          sudo licant-libs .
+          cd ..
+
+      - name: Register zillot library
+        run: |
+          cd zillot
+          sudo licant-libs .
+          cd ..
+
+      - name: Build genos
+        run: |
+          python3 make.py
+
+      - name: Run tests
+        run: |
+          ./runtests

@@ -1,9 +1,0 @@
-[Unit]
-Description=RFMeask
-
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/rfmeas --config /home/rfmeas/project
-
-[Install]
-WantedBy=multi-user.target
