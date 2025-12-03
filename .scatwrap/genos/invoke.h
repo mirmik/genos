@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>genos/invoke.h</title>
+</head>
+<body>
+<!-- BEGIN SCAT CODE -->
+#ifndef&nbsp;GENOS_INVOKE_H<br>
+#define&nbsp;GENOS_INVOKE_H<br>
+<br>
+#include&nbsp;&lt;string_view&gt;<br>
+<br>
+#define&nbsp;GENOS_DEFAULT_HEAPSTACK_SIZE&nbsp;2048<br>
+<br>
+namespace&nbsp;genos<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;system_utility_func_t&nbsp;=&nbsp;int&nbsp;(*)(int,&nbsp;char&nbsp;**);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;system_utility<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::string&nbsp;_name&nbsp;=&nbsp;{};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system_utility_func_t&nbsp;_func&nbsp;=&nbsp;nullptr;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system_utility(const&nbsp;std::string&nbsp;&amp;name,&nbsp;system_utility_func_t&nbsp;func)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;_name(name),&nbsp;_func(func)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;std::string&nbsp;&amp;name()&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;_name;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;invoke(int&nbsp;argc,&nbsp;char&nbsp;**argv)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;_func(argc,&nbsp;argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;system_utility_aggregator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;system_utility&gt;&nbsp;_utilities&nbsp;=&nbsp;{};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system_utility_aggregator()&nbsp;=&nbsp;default;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;system_utility&gt;&nbsp;&amp;utilities();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;add_utility(const&nbsp;char&nbsp;*name,&nbsp;system_utility_func_t&nbsp;util);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;invoke(const&nbsp;char&nbsp;*cmd,&nbsp;int&nbsp;argc,&nbsp;char&nbsp;**argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;invoke_program(const&nbsp;char&nbsp;*cmd,&nbsp;int&nbsp;argc,&nbsp;const&nbsp;char&nbsp;**argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;system(const&nbsp;char&nbsp;*cmd);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;system_v(const&nbsp;char&nbsp;**cmds);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;system_v_without_displace(const&nbsp;char&nbsp;**argv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;register_system_utility(const&nbsp;char&nbsp;*cmd,&nbsp;system_utility_func_t&nbsp;util);<br>
+}<br>
+<br>
+#endif<br>
+<!-- END SCAT CODE -->
+</body>
+</html>

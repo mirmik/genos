@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>genos/resource/HIIDE/mvfs.c</title>
+</head>
+<body>
+<!-- BEGIN SCAT CODE -->
+#include&nbsp;&lt;genos/resource/file_head.h&gt;<br>
+#include&nbsp;&lt;genos/resource/mvfs.h&gt;<br>
+#include&nbsp;&lt;genos/resource/openres.h&gt;<br>
+#include&nbsp;&lt;genos/schedee.h&gt;<br>
+<br>
+int&nbsp;mvfs_lookup(struct&nbsp;file_head&nbsp;**filp,&nbsp;const&nbsp;char&nbsp;*path)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;sts;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*internal_path;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;struct&nbsp;namespace_head&nbsp;*ns&nbsp;=&nbsp;namespace_lookup(path,&nbsp;&amp;internal_path);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(ns&nbsp;==&nbsp;NULL)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sts&nbsp;=&nbsp;ns-&gt;ns_ops-&gt;lookup(ns,&nbsp;filp,&nbsp;internal_path);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;sts;<br>
+}<br>
+<br>
+int&nbsp;mvfs_open(const&nbsp;char&nbsp;*path,&nbsp;int&nbsp;mode,&nbsp;int&nbsp;flags)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(void)mode;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;sts;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;resindex;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;struct&nbsp;schedee&nbsp;*sch;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;struct&nbsp;openres&nbsp;*res;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;struct&nbsp;file_head&nbsp;*filp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sts&nbsp;=&nbsp;mvfs_lookup(&amp;filp,&nbsp;path);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(sts)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;sts;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!file_head_is_open(filp))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sts&nbsp;=&nbsp;filp-&gt;f_ops-&gt;on_open(filp);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(sts)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;sts;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sch&nbsp;=&nbsp;current_schedee();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;resindex&nbsp;=&nbsp;schedee_get_free_openres(sch,&nbsp;&amp;res);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res-&gt;file&nbsp;=&nbsp;filp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filp-&gt;flags&nbsp;=&nbsp;flags;&nbsp;//&nbsp;TODO:&nbsp;Как&nbsp;должны&nbsp;выставляться&nbsp;флаги?<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;resindex;<br>
+}<br>
+<!-- END SCAT CODE -->
+</body>
+</html>
