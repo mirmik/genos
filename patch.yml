@@ -1,0 +1,241 @@
+description: "Исправление критических и средних багов в ядре Genos: double-free, missing return, NULL checks, опечатки"
+language: "c++"
+operations:
+  - op: replace_c_style_block
+    comment: "Исправление double-free: сбрасываем флаг dynamic_heap после освобождения памяти"
+    path: genos/coop_schedee.cpp
+    marker: |
+      void genos::coop_schedee::finalize()
+      {
+    payload: |
+      void genos::coop_schedee::finalize()
+      {
+          if (dynamic_heap_flag())
+          {
+              free(heap);
+              heap = nullptr;
+              u.f.dynamic_heap = 0;
+          }
+      }
+
+  - op: replace_c_style_block
+    comment: "Исправление логики signal_received: сравниваем future родителя с pid дочернего"
+    path: genos/schedee.cpp
+    marker: |
+      void genos::schedee::signal_received(int sig)
+      {
+    payload: |
+      void genos::schedee::signal_received(int sig)
+      {
+          if (sig == SIGCHLD && sch_state == schedee_state::wait_schedee)
+          {
+              auto *cursch = genos::current_schedee();
+              if (this->future == cursch->pid)
+                  this->start();
+          }
+
+          if (signal_handler)
+              signal_handler(sig);
+      }
+
+  - op: replace_c_style_block
+    comment: "Добавление return 0 в openres::release()"
+    path: genos/resource/openres.h
+    marker: |
+      int release()
+          {
+    payload: |
+      int release()
+      {
+          if (file == nullptr)
+              return -1;
+          file->on_release();
+          return 0;
+      }
+
+  - op: replace_c_style_block
+    comment: "Добавление проверки malloc на NULL"
+    path: genos/coop_schedee.cpp
+    marker: |
+      genos::coop_schedee::coop_schedee(int (*task)(void *),
+                                        void *arg,
+                                        void *heapptr,
+                                        int heapsize,
+                                        void (*destructor)(schedee *))
+          : schedee(destructor)
+      {
+    payload: |
+      genos::coop_schedee::coop_schedee(int (*task)(void *),
+                                        void *arg,
+                                        void *heapptr,
+                                        int heapsize,
+                                        void (*destructor)(schedee *))
+          : schedee(destructor)
+      {
+          assert(heapsize);
+
+          this->heap = heapptr;
+          this->heapsize = heapsize;
+          if (this->heap == nullptr)
+          {
+              this->heap = malloc(this->heapsize);
+              if (this->heap == nullptr)
+              {
+                  abort();
+              }
+              this->set_dynamic_heap_flag();
+          }
+
+          this->task = task;
+          this->arg = arg;
+          this->set_has_context_flag();
+          this->set_is_process_flag();
+
+          context_init(&cntxt,
+                       (uintptr_t)this->heap + heapsize - 1,
+                       coop_schedee_starter,
+                       (void *)this,
+                       1);
+      }
+
+  - op: replace_text
+    comment: "Исправление опечатки в имени функции: sting -> string"
+    path: genos/schedee.cpp
+    marker: |
+      const char *genos::schedee_state_to_sting(genos::schedee_state state)
+    payload: |
+      const char *genos::schedee_state_to_string(genos::schedee_state state)
+
+  - op: replace_text
+    comment: "Исправление опечатки в объявлении функции в заголовке"
+    path: genos/schedee.h
+    marker: |
+      const char *schedee_state_to_sting(genos::schedee_state state);
+    payload: |
+      const char *schedee_state_to_string(genos::schedee_state state);
+
+  - op: replace_c_style_block
+    comment: "Исправление неполного info(): добавлен вывод значения приоритета"
+    path: genos/schedee.cpp
+    marker: |
+      std::string genos::schedee::info()
+      {
+    payload: |
+      std::string genos::schedee::info()
+      {
+          std::string str;
+          str += "pid: ";
+          str += std::to_string(pid);
+          str += " state: ";
+          str += schedee_state_to_string(sch_state);
+          str += " prio: ";
+          str += std::to_string(prio);
+          return str;
+      }
+
+  - op: replace_c_style_block
+    comment: "Добавление проверки current_schedee на NULL в write()"
+    path: genos/posix/unistd.cpp
+    marker: |
+      ssize_t write(int fd, const void *data, size_t size)
+      {
+    payload: |
+      ssize_t write(int fd, const void *data, size_t size)
+      {
+          auto *sch = genos::current_schedee();
+          if (sch == nullptr)
+              return -1;
+
+          genos::resource_table &resources = sch->resource_table();
+
+          if (resources.size() <= fd)
+          {
+              return -1;
+          }
+
+          auto &openr = resources[fd];
+          auto res = openr.write(data, size);
+          return res;
+      }
+
+  - op: replace_c_style_block
+    comment: "Добавление проверки current_schedee на NULL в read()"
+    path: genos/posix/unistd.cpp
+    marker: |
+      ssize_t read(int fd, void *data, size_t size)
+      {
+    payload: |
+      ssize_t read(int fd, void *data, size_t size)
+      {
+          auto *sch = genos::current_schedee();
+          if (sch == nullptr)
+              return -1;
+
+          genos::resource_table &resources = sch->resource_table();
+
+          if (resources.size() <= fd)
+              return -1;
+
+          auto &openr = resources[fd];
+          auto res = openr.read(data, size);
+          return res;
+      }
+
+  - op: replace_c_style_block
+    comment: "Добавление проверки current_schedee на NULL в open()"
+    path: genos/posix/fcntl.cpp
+    marker: |
+      int open(const char *path, int __oflag)
+      {
+    payload: |
+      int open(const char *path, int __oflag)
+      {
+          auto *sch = genos::current_schedee();
+          if (sch == nullptr)
+              return -1;
+
+          auto &res = sch->resource_table();
+          int fd = res.create_openres_fd();
+          auto &ores = res[fd];
+          int sts = ores.open(path, __oflag);
+          if (sts < 0)
+              return sts;
+          return fd;
+      }
+
+  - op: replace_c_style_block
+    comment: "Исправление инициализации union: убрана двойная запись в одну память"
+    path: genos/schedee.cpp
+    marker: |
+      genos::schedee::schedee(void (*destructor)(schedee *sched))
+          : destructor(destructor)
+      {
+    payload: |
+      genos::schedee::schedee(void (*destructor)(schedee *sched))
+          : destructor(destructor)
+      {
+          this->destructor = destructor;
+          u.flags = 0;
+          restbl.clear();
+          local_errno = 0;
+          pid = 0;
+          gid = 0;
+          sch_state = schedee_state::stop;
+          prio = SCHEDEE_PRIORITY_TOTAL - 1;
+          parent = nullptr;
+          signal_handler = nullptr;
+          _mnemo = "undefined";
+          u.f.remove_without_zombie_state = 1;
+      }
+
+  - op: replace_c_style_block
+    comment: "Исправление ktimer::planned() для корректной проверки связанности узла"
+    path: genos/ktimer.cpp
+    marker: |
+      bool genos::ktimer::planned()
+      {
+    payload: |
+      bool genos::ktimer::planned()
+      {
+          return lnk.is_linked();
+      }

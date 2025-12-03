@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>genos/resource/lookup.cpp</title>
+</head>
+<body>
+<!-- BEGIN SCAT CODE -->
+#include&nbsp;&lt;cstring&gt;<br>
+#include&nbsp;&lt;genos/resource/lookup.h&gt;<br>
+#include&nbsp;&lt;genos/resource/namespace.h&gt;<br>
+<br>
+genos::namespace_manager&nbsp;*namespace_lookup(const&nbsp;char&nbsp;*path,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;**internal_path)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;genos::namespace_manager&nbsp;*maxns&nbsp;=&nbsp;NULL;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;maxlen&nbsp;=&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;pathlen&nbsp;=&nbsp;strlen(path);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;(auto&nbsp;&amp;ns&nbsp;:&nbsp;genos::namespace_list)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*aptr&nbsp;=&nbsp;path;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*bptr&nbsp;=&nbsp;ns.path();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;ns_pathlen&nbsp;=&nbsp;strlen(ns.path());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(pathlen&nbsp;&lt;&nbsp;ns_pathlen)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(aptr[i]&nbsp;==&nbsp;bptr[i]&nbsp;&amp;&amp;&nbsp;i&nbsp;&lt;&nbsp;ns_pathlen)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(maxlen&nbsp;&lt;&nbsp;i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxlen&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxns&nbsp;=&nbsp;&amp;ns;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(internal_path)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*internal_path&nbsp;=&nbsp;path&nbsp;+&nbsp;maxlen;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;((**internal_path)&nbsp;==&nbsp;'/')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++(*internal_path);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;maxns;<br>
+}<br>
+<br>
+int&nbsp;genos::mvfs_lookup(struct&nbsp;file_head&nbsp;**filp,&nbsp;const&nbsp;char&nbsp;*path)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*internal_path&nbsp;=&nbsp;path;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;namespace_manager&nbsp;*ns&nbsp;=&nbsp;namespace_lookup(path,&nbsp;&amp;internal_path);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(ns&nbsp;==&nbsp;NULL)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ns-&gt;lookup(filp,&nbsp;internal_path);<br>
+}<br>
+<!-- END SCAT CODE -->
+</body>
+</html>

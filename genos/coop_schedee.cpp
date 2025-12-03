@@ -42,6 +42,7 @@ void genos::coop_schedee::finalize()
     {
         free(heap);
         heap = nullptr;
+        u.f.dynamic_heap = 0;
     }
 }
 
@@ -65,6 +66,10 @@ genos::coop_schedee::coop_schedee(int (*task)(void *),
     if (this->heap == nullptr)
     {
         this->heap = malloc(this->heapsize);
+        if (this->heap == nullptr)
+        {
+            abort();
+        }
         this->set_dynamic_heap_flag();
     }
 

@@ -46,6 +46,7 @@ namespace genos
             if (file == nullptr)
                 return -1;
             file->on_release();
+            return 0;
         }
 
         ssize_t write(const void *data, unsigned int size)

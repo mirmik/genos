@@ -179,7 +179,7 @@ namespace genos
     void schedee_deinit(schedee *sch);
     int schedee_get_free_openres(schedee *sch, struct openres **res);
 
-    const char *schedee_state_to_sting(genos::schedee_state state);
+    const char *schedee_state_to_string(genos::schedee_state state);
 }
 
 __BEGIN_DECLS

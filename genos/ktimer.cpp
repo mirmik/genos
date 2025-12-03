@@ -23,7 +23,7 @@ void genos::ktimer::set_interval_ms(int64_t t)
 
 bool genos::ktimer::planned()
 {
-    return lnk.next_node() != lnk.prev_node();
+    return lnk.is_linked();
 }
 
 void genos::ktimer::unplan()

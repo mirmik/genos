@@ -5,6 +5,9 @@
 int open(const char *path, int __oflag)
 {
     auto *sch = genos::current_schedee();
+    if (sch == nullptr)
+        return -1;
+
     auto &res = sch->resource_table();
     int fd = res.create_openres_fd();
     auto &ores = res[fd];

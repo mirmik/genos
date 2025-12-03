@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>genos/chardev.h</title>
+</head>
+<body>
+<!-- BEGIN SCAT CODE -->
+#ifndef&nbsp;GENOS_CHARDEV_H<br>
+#define&nbsp;GENOS_CHARDEV_H<br>
+<br>
+#include&nbsp;&lt;genos/resource/file_head.h&gt;<br>
+#include&nbsp;&lt;genos/resource/namespace.h&gt;<br>
+#include&nbsp;&lt;igris/container/static_string.h&gt;<br>
+#include&nbsp;&lt;igris/datastruct/dlist.h&gt;<br>
+#include&nbsp;&lt;igris/osinter/wait.h&gt;<br>
+#include&nbsp;&lt;zillot/common/chardev.h&gt;<br>
+<br>
+namespace&nbsp;genos<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;chardev&nbsp;:&nbsp;public&nbsp;genos::file_head<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;igris::static_string&lt;8&gt;&nbsp;_name;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;igris::dlist_node&nbsp;chardev_list_lnk&nbsp;=&nbsp;{};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;reference_counter&nbsp;=&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chardev(const&nbsp;char&nbsp;*name);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~chardev();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*name()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;_name.c_str();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;zillot_chardev&nbsp;:&nbsp;public&nbsp;genos::chardev<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zillot::chardev&nbsp;*zchar&nbsp;=&nbsp;nullptr;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;igris::dlist_base&nbsp;rx_wait&nbsp;=&nbsp;{};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;igris::dlist_base&nbsp;tx_wait&nbsp;=&nbsp;{};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zillot_chardev(zillot::chardev&nbsp;*zchar,&nbsp;const&nbsp;char&nbsp;*name);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;write(const&nbsp;void&nbsp;*data,&nbsp;unsigned&nbsp;int&nbsp;size)&nbsp;override;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;read(void&nbsp;*data,&nbsp;unsigned&nbsp;int&nbsp;size)&nbsp;override;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;on_open()&nbsp;override;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;on_release()&nbsp;override;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;rx_callback();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;tx_callback();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;wait_for_avail()&nbsp;override;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;device_namespace_manager&nbsp;:&nbsp;public&nbsp;genos::namespace_manager<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;device_namespace_manager()&nbsp;:&nbsp;genos::namespace_manager(&quot;/dev&quot;)&nbsp;{}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;lookup(genos::file_head&nbsp;**fh,&nbsp;const&nbsp;char&nbsp;*path)&nbsp;override;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+}<br>
+<br>
+#endif<br>
+<!-- END SCAT CODE -->
+</body>
+</html>
