@@ -42,7 +42,7 @@ void genos::coop_schedee::finalize()
     {
         free(heap);
         heap = nullptr;
-        u.f.dynamic_heap = 0;
+        clear_dynamic_heap_flag();
     }
 }
 

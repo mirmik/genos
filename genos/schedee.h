@@ -113,6 +113,11 @@ namespace genos
             this->prio = prio;
         }
 
+        void clear_dynamic_heap_flag()
+        {
+            u.f.dynamic_heap = 0;
+        }
+
         uint8_t priority()
         {
             return prio;
