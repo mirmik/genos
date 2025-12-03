@@ -31,7 +31,7 @@ void&nbsp;genos::ktimer::set_interval_ms(int64_t&nbsp;t)<br>
 <br>
 bool&nbsp;genos::ktimer::planned()<br>
 {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;lnk.next_node()&nbsp;!=&nbsp;lnk.prev_node();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;lnk.is_linked();<br>
 }<br>
 <br>
 void&nbsp;genos::ktimer::unplan()<br>

@@ -187,7 +187,7 @@ namespace&nbsp;genos<br>
 &nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;schedee_deinit(schedee&nbsp;*sch);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;schedee_get_free_openres(schedee&nbsp;*sch,&nbsp;struct&nbsp;openres&nbsp;**res);<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*schedee_state_to_sting(genos::schedee_state&nbsp;state);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;char&nbsp;*schedee_state_to_string(genos::schedee_state&nbsp;state);<br>
 }<br>
 <br>
 __BEGIN_DECLS<br>

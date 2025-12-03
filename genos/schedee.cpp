@@ -84,7 +84,6 @@ genos::schedee::schedee(void (*destructor)(schedee *sched))
     u.flags = 0;
     restbl.clear();
     local_errno = 0;
-    syslock_counter_save = 0;
     pid = 0;
     gid = 0;
     sch_state = schedee_state::stop;
@@ -245,7 +244,7 @@ void genos::schedee::stop()
     genos::schedee_stop(this);
 }
 
-const char *genos::schedee_state_to_sting(genos::schedee_state state)
+const char *genos::schedee_state_to_string(genos::schedee_state state)
 {
     switch (state)
     {
@@ -267,9 +266,10 @@ std::string genos::schedee::info()
     std::string str;
     str += "pid: ";
     str += std::to_string(pid);
-    str += "state: ";
-    str += schedee_state_to_sting(sch_state);
-    str += "prio: ";
+    str += " state: ";
+    str += schedee_state_to_string(sch_state);
+    str += " prio: ";
+    str += std::to_string(prio);
     return str;
 }
 
@@ -278,8 +278,7 @@ void genos::schedee::signal_received(int sig)
     if (sig == SIGCHLD && sch_state == schedee_state::wait_schedee)
     {
         auto *cursch = genos::current_schedee();
-        int pid = cursch->future;
-        if (pid == cursch->pid)
+        if (this->future == cursch->pid)
             this->start();
     }
 

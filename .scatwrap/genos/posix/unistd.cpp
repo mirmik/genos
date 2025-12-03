@@ -12,8 +12,11 @@
 <br>
 ssize_t&nbsp;write(int&nbsp;fd,&nbsp;const&nbsp;void&nbsp;*data,&nbsp;size_t&nbsp;size)<br>
 {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;genos::resource_table&nbsp;&amp;resources&nbsp;=<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;genos::current_schedee()-&gt;resource_table();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;auto&nbsp;*sch&nbsp;=&nbsp;genos::current_schedee();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(sch&nbsp;==&nbsp;nullptr)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;genos::resource_table&nbsp;&amp;resources&nbsp;=&nbsp;sch-&gt;resource_table();<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(resources.size()&nbsp;&lt;=&nbsp;fd)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;{<br>
@@ -27,8 +30,11 @@ ssize_t&nbsp;write(int&nbsp;fd,&nbsp;const&nbsp;void&nbsp;*data,&nbsp;size_t&nbs
 <br>
 ssize_t&nbsp;read(int&nbsp;fd,&nbsp;void&nbsp;*data,&nbsp;size_t&nbsp;size)<br>
 {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;genos::resource_table&nbsp;&amp;resources&nbsp;=<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;genos::current_schedee()-&gt;resource_table();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;auto&nbsp;*sch&nbsp;=&nbsp;genos::current_schedee();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(sch&nbsp;==&nbsp;nullptr)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;genos::resource_table&nbsp;&amp;resources&nbsp;=&nbsp;sch-&gt;resource_table();<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(resources.size()&nbsp;&lt;=&nbsp;fd)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>

@@ -50,6 +50,7 @@ void&nbsp;genos::coop_schedee::finalize()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free(heap);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;heap&nbsp;=&nbsp;nullptr;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;u.f.dynamic_heap&nbsp;=&nbsp;0;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;}<br>
 }<br>
 <br>
@@ -73,6 +74,10 @@ genos::coop_schedee::coop_schedee(int&nbsp;(*task)(void&nbsp;*),<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(this-&gt;heap&nbsp;==&nbsp;nullptr)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this-&gt;heap&nbsp;=&nbsp;malloc(this-&gt;heapsize);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(this-&gt;heap&nbsp;==&nbsp;nullptr)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abort();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this-&gt;set_dynamic_heap_flag();<br>
 &nbsp;&nbsp;&nbsp;&nbsp;}<br>
 <br>

@@ -92,7 +92,6 @@ genos::schedee::schedee(void&nbsp;(*destructor)(schedee&nbsp;*sched))<br>
 &nbsp;&nbsp;&nbsp;&nbsp;u.flags&nbsp;=&nbsp;0;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;restbl.clear();<br>
 &nbsp;&nbsp;&nbsp;&nbsp;local_errno&nbsp;=&nbsp;0;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;syslock_counter_save&nbsp;=&nbsp;0;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;pid&nbsp;=&nbsp;0;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;gid&nbsp;=&nbsp;0;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;sch_state&nbsp;=&nbsp;schedee_state::stop;<br>
@@ -253,7 +252,7 @@ void&nbsp;genos::schedee::stop()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;genos::schedee_stop(this);<br>
 }<br>
 <br>
-const&nbsp;char&nbsp;*genos::schedee_state_to_sting(genos::schedee_state&nbsp;state)<br>
+const&nbsp;char&nbsp;*genos::schedee_state_to_string(genos::schedee_state&nbsp;state)<br>
 {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;switch&nbsp;(state)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;{<br>
@@ -275,9 +274,10 @@ std::string&nbsp;genos::schedee::info()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;std::string&nbsp;str;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;&quot;pid:&nbsp;&quot;;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;std::to_string(pid);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;&quot;state:&nbsp;&quot;;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;schedee_state_to_sting(sch_state);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;&quot;prio:&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;&quot;&nbsp;state:&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;schedee_state_to_string(sch_state);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;&quot;&nbsp;prio:&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;+=&nbsp;std::to_string(prio);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;str;<br>
 }<br>
 <br>
@@ -286,8 +286,7 @@ void&nbsp;genos::schedee::signal_received(int&nbsp;sig)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(sig&nbsp;==&nbsp;SIGCHLD&nbsp;&amp;&amp;&nbsp;sch_state&nbsp;==&nbsp;schedee_state::wait_schedee)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;{<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auto&nbsp;*cursch&nbsp;=&nbsp;genos::current_schedee();<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;pid&nbsp;=&nbsp;cursch-&gt;future;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(pid&nbsp;==&nbsp;cursch-&gt;pid)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(this-&gt;future&nbsp;==&nbsp;cursch-&gt;pid)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this-&gt;start();<br>
 &nbsp;&nbsp;&nbsp;&nbsp;}<br>
 <br>
