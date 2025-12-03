@@ -13,7 +13,7 @@ int info_cmd(const nos::argv &args, nos::ostream &os)
         nos::print_to(os, " pid: ");
         nos::print_to(os, std::to_string(sch.pid));
         nos::print_to(os, " state: ");
-        nos::print_to(os, schedee_state_to_sting(sch.sch_state));
+        nos::print_to(os, schedee_state_to_string(sch.sch_state));
         nos::print_to(os, " prio: ");
         nos::print_to(os, std::to_string(sch.prio));
         nos::print_to(os, " counter: ");
