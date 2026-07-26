@@ -1,53 +1,63 @@
-/*#include <doctest/doctest.h>
+#include <doctest/doctest.h>
+#include <genos/resource/lookup.h>
 #include <genos/resource/namespace.h>
-#include <genos/drivers/devns.h>
-#include <genos/drivers/virtual/devnull.h>
+#include <string>
 
-#include <genos/resource/mvfs.h>
-
-struct namespace_head ns0, ns1;
-struct devices_namespace  devns;
-struct devnull devnull;
-
-struct namespace_operations ns_ops = {};
-
-
-TEST_CASE("namespace0") 
+class test_namespace : public genos::namespace_manager
 {
-	namespace_init(&ns0, "/dev", &ns_ops);
-	namespace_init(&ns1, "/proc", &ns_ops);
+    int result;
 
-	struct namespace_head * ns = namespace_lookup("/proc/jaja-binks", NULL);	
+public:
+    int calls = 0;
+    std::string internal_path;
 
-	CHECK_EQ(ns, &ns1);
+    test_namespace(const char *path, int result)
+        : namespace_manager(path), result(result)
+    {
+    }
 
-	namespace_deinit(&ns0);
-	namespace_deinit(&ns1);
+    int lookup(genos::file_head **filp, const char *path) override
+    {
+        (void)filp;
+        calls++;
+        internal_path = path;
+        return result;
+    }
+};
+
+TEST_CASE("namespace requires a complete path component match")
+{
+    test_namespace proc("/proc", 41);
+    test_namespace dev("/namespace-regression-dev", 42);
+    genos::file_head *file = nullptr;
+
+    CHECK_EQ(genos::mvfs_lookup(&file, "/pr"), -1);
+    CHECK_EQ(genos::mvfs_lookup(&file, "/namespace-regression-data"), -1);
+    CHECK_EQ(genos::mvfs_lookup(&file, "/namespace-regression-device"), -1);
+    CHECK_EQ(proc.calls, 0);
+    CHECK_EQ(dev.calls, 0);
 }
 
-TEST_CASE("namespace1") 
+TEST_CASE("namespace accepts exact and child paths")
 {
-	namespace_init(&ns0, "/dev", &ns_ops);
-	namespace_init(&ns1, "/proc", &ns_ops);
+    test_namespace ns("/namespace-test", 42);
+    genos::file_head *file = nullptr;
 
-	struct namespace_head * ns = namespace_lookup("/pr", NULL);	
+    CHECK_EQ(genos::mvfs_lookup(&file, "/namespace-test"), 42);
+    CHECK_EQ(ns.internal_path, "");
 
-	CHECK_EQ(ns, (struct namespace_head *)NULL);
-
-	namespace_deinit(&ns0);
-	namespace_deinit(&ns1);
+    CHECK_EQ(genos::mvfs_lookup(&file, "/namespace-test/device"), 42);
+    CHECK_EQ(ns.internal_path, "device");
 }
 
-TEST_CASE("devnull") 
+TEST_CASE("namespace selects the longest complete prefix")
 {
-	devices_namespace_init(&devns, "/dev");
-	devnull_init(&devnull);
-	
-	file_head * filp;
-	mvfs_lookup(&filp, "/dev/null");
+    test_namespace parent("/namespace-tree", 1);
+    test_namespace child("/namespace-tree/deep", 2);
+    genos::file_head *file = nullptr;
 
-	CHECK_EQ(filp, &devnull.dev.fil);
-
-	namespace_deinit(&devns.ns);
+    CHECK_EQ(genos::mvfs_lookup(&file, "/namespace-tree/deep/device"), 2);
+    CHECK_EQ(parent.calls, 0);
+    CHECK_EQ(child.calls, 1);
+    CHECK_EQ(child.internal_path, "device");
 }
-*/

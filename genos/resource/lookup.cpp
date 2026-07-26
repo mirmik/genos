@@ -6,29 +6,31 @@ genos::namespace_manager *namespace_lookup(const char *path,
                                            const char **internal_path)
 {
     genos::namespace_manager *maxns = NULL;
-    int maxlen = 0;
+    size_t maxlen = 0;
 
-    int pathlen = strlen(path);
+    size_t pathlen = strlen(path);
     for (auto &ns : genos::namespace_list)
     {
-        const char *aptr = path;
-        const char *bptr = ns.path();
-
-        int ns_pathlen = strlen(ns.path());
+        const char *ns_path = ns.path();
+        size_t ns_pathlen = strlen(ns_path);
         if (pathlen < ns_pathlen)
             continue;
 
-        int i = 0;
-        while (aptr[i] == bptr[i] && i < ns_pathlen)
-        {
-            ++i;
-        }
+        if (strncmp(path, ns_path, ns_pathlen) != 0)
+            continue;
 
-        if (maxlen < i)
-        {
-            maxlen = i;
-            maxns = &ns;
-        }
+        bool ns_ends_with_separator =
+            ns_pathlen != 0 && ns_path[ns_pathlen - 1] == '/';
+        char path_boundary = path[ns_pathlen];
+        if (!ns_ends_with_separator && path_boundary != '\0' &&
+            path_boundary != '/')
+            continue;
+
+        if (maxlen >= ns_pathlen)
+            continue;
+
+        maxlen = ns_pathlen;
+        maxns = &ns;
     }
 
     if (internal_path)
