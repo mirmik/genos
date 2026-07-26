@@ -131,7 +131,7 @@ void genos::schedee_stop(genos::schedee *sch)
 
 void __schedee_run(genos::schedee *sch)
 {
-    runlist[sch->prio].move_back(*sch);
+    runlist[sch->priority()].move_back(*sch);
 }
 
 void schedee_notify_finalize(genos::schedee *sch)
@@ -179,7 +179,8 @@ void genos::schedee_manager_step()
         if (sch->remove_without_zombie_state_flag())
         {
             schedee_deinit(sch);
-            sch->destructor(sch);
+            if (sch->destructor != nullptr)
+                sch->destructor(sch);
         }
         system_lock();
     }
@@ -208,7 +209,7 @@ void genos::schedee_manager_step()
                 continue;
             }
 
-            runlist[sch->prio].move_back(*sch);
+            runlist[sch->priority()].move_back(*sch);
             system_unlock();
 
             __schedee_execute(sch);
@@ -250,6 +251,10 @@ const char *genos::schedee_state_to_string(genos::schedee_state state)
     {
     case genos::schedee_state::run:
         return "RUN";
+    case genos::schedee_state::wait:
+        return "WAIT";
+    case genos::schedee_state::wait_schedee:
+        return "WAIT_SCHEDEE";
     case genos::schedee_state::stop:
         return "STOP";
     case genos::schedee_state::final:

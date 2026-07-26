@@ -29,6 +29,7 @@ namespace genos
 
         int open(const char *path, int flags)
         {
+            (void)flags;
             if (file != nullptr)
                 return -1;
             int ret = mvfs_lookup(&file, path);

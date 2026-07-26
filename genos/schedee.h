@@ -31,6 +31,8 @@ namespace genos
         schedee *parent = nullptr;
         const char *_mnemo = "undefined";
         void (*signal_handler)(int sig) = nullptr;
+        // A null callback means that the schedee is externally owned.
+        // Factory-created schedees provide a callback that releases the object.
         void (*destructor)(schedee *sched) = nullptr;
 
         genos::execution_monitor _execmon = {};
@@ -40,7 +42,10 @@ namespace genos
         genos::ktimer ktimer;
         intptr_t future;
 
+    private:
         uint8_t prio = SCHEDEE_PRIORITY_TOTAL - 1;
+
+    public:
         schedee_state sch_state = schedee_state::stop;
 
         uint16_t pid = 0;
@@ -108,9 +113,13 @@ namespace genos
         }
         std::string info();
 
-        void set_priority(uint8_t prio)
+        bool set_priority(uint8_t prio)
         {
+            if (prio >= SCHEDEE_PRIORITY_TOTAL)
+                return false;
+
             this->prio = prio;
+            return true;
         }
 
         void clear_dynamic_heap_flag()
@@ -118,7 +127,7 @@ namespace genos
             u.f.dynamic_heap = 0;
         }
 
-        uint8_t priority()
+        uint8_t priority() const
         {
             return prio;
         }
