@@ -23,12 +23,17 @@ void genos::ktimer::set_interval_ms(int64_t t)
 
 bool genos::ktimer::planned()
 {
-    return lnk.is_linked();
+    system_lock();
+    bool result = lnk.is_linked();
+    system_unlock();
+    return result;
 }
 
 void genos::ktimer::unplan()
 {
+    system_lock();
     lnk.unlink();
+    system_unlock();
 }
 
 void genos::ktimer::plan()
@@ -36,7 +41,7 @@ void genos::ktimer::plan()
     int64_t final = start + interval;
 
     system_lock();
-    unplan();
+    lnk.unlink();
 
     auto it = ktimer_list.begin();
     for (; it != ktimer_list.end(); ++it)
@@ -50,34 +55,30 @@ void genos::ktimer::plan()
     system_unlock();
 }
 
-void ktimer_execute(genos::ktimer *tim)
-{
-    tim->lnk.unlink();
-    tim->act(tim->arg, tim);
-}
-
 void genos::ktimer_manager_step(int64_t now)
 {
-    system_lock();
-
-    while (!ktimer_list.empty())
+    while (true)
     {
-        genos::ktimer *it = &ktimer_list.first();
-        system_unlock();
+        system_lock();
 
-        if (it->check(now))
+        if (ktimer_list.empty())
         {
-            ktimer_execute(it);
-        }
-        else
-        {
+            system_unlock();
             return;
         }
 
-        system_lock();
-    }
+        genos::ktimer *tim = &ktimer_list.first();
+        if (!tim->check(now))
+        {
+            system_unlock();
+            return;
+        }
 
-    system_unlock();
+        tim->lnk.unlink();
+        system_unlock();
+
+        tim->act(tim->arg, tim);
+    }
 }
 
 void genos::ktimer_manager_step()
@@ -88,10 +89,15 @@ void genos::ktimer_manager_step()
 
 size_t genos::ktimer_manager_planed_count()
 {
-    return ktimer_list.size();
+    system_lock();
+    size_t count = ktimer_list.size();
+    system_unlock();
+    return count;
 }
 
 void genos::ktimer_manager_init()
 {
-    // pass
+    system_lock();
+    ktimer_list.clear();
+    system_unlock();
 }

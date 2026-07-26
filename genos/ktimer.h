@@ -70,7 +70,7 @@ namespace genos
 
         void deinit()
         {
-            lnk.unlink();
+            unplan();
         }
     };
 
