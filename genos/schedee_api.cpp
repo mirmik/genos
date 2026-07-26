@@ -92,6 +92,8 @@ void genos::current_schedee_msleep_without_displace(unsigned int ms)
 
 void genos::send_signal_to_group(int gid, int sig)
 {
+    (void)gid;
+    (void)sig;
     // pass
 }
 

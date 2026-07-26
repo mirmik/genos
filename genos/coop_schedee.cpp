@@ -19,6 +19,7 @@ static void coop_schedee_starter(void *priv)
     genos::coop_schedee *csch2 =
         (genos::coop_schedee *)genos::current_schedee();
     csch2->ret = ret;
+    csch2->exit_code = ret;
     genos::current_schedee_exit();
 }
 

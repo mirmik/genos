@@ -40,7 +40,8 @@ namespace genos
         igris::dlist_node control_lnk;
         struct waiter waiter;
         genos::ktimer ktimer;
-        intptr_t future;
+        intptr_t future = 0;
+        int exit_code = 0;
 
     private:
         uint8_t prio = SCHEDEE_PRIORITY_TOTAL - 1;
@@ -173,6 +174,14 @@ namespace genos
         {
             return u.f.remove_without_zombie_state;
         }
+        void preserve_zombie_state()
+        {
+            u.f.remove_without_zombie_state = 0;
+        }
+        void remove_without_zombie_state()
+        {
+            u.f.remove_without_zombie_state = 1;
+        }
 
         void signal_received(int sig);
 
@@ -191,6 +200,7 @@ namespace genos
     void schedee_stop(schedee *sch);
     void schedee_pause(schedee *sch);
     void schedee_deinit(schedee *sch);
+    void schedee_release(schedee *sch);
     int schedee_get_free_openres(schedee *sch, struct openres **res);
 
     const char *schedee_state_to_string(genos::schedee_state state);

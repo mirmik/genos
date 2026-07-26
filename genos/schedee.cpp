@@ -136,8 +136,55 @@ void __schedee_run(genos::schedee *sch)
 
 void schedee_notify_finalize(genos::schedee *sch)
 {
-    if (sch && sch->parent)
-        sch->parent->signal_received(SIGCHLD);
+    if (sch == nullptr || sch->parent == nullptr)
+        return;
+
+    genos::schedee *parent = sch->parent;
+    if (parent->sch_state == genos::schedee_state::wait_schedee &&
+        parent->future == sch->pid)
+        parent->start();
+
+    if (parent->signal_handler != nullptr)
+        parent->signal_handler(SIGCHLD);
+}
+
+void detach_schedee_children(genos::schedee *parent)
+{
+    while (true)
+    {
+        genos::schedee *zombie = nullptr;
+
+        system_lock();
+        for (auto &child : genos::schedee_list)
+        {
+            if (&child == parent || child.parent != parent)
+                continue;
+
+            child.parent = nullptr;
+            child.remove_without_zombie_state();
+            if (child.sch_state == genos::schedee_state::zombie)
+            {
+                child.control_lnk.unlink();
+                child.schedee_list_lnk.unlink();
+                zombie = &child;
+                break;
+            }
+        }
+        system_unlock();
+
+        if (zombie == nullptr)
+            return;
+
+        genos::schedee_release(zombie);
+    }
+}
+
+void genos::schedee_release(genos::schedee *sch)
+{
+    detach_schedee_children(sch);
+    schedee_deinit(sch);
+    if (sch->destructor != nullptr)
+        sch->destructor(sch);
 }
 
 void genos::__schedee_final(genos::schedee *sch)
@@ -146,7 +193,6 @@ void genos::__schedee_final(genos::schedee *sch)
     __current_schedee = sch;
     system_lock();
     sch->sch_state = schedee_state::final;
-    schedee_notify_finalize(sch);
     finallist.move_back(*sch);
     system_unlock();
     __current_schedee = tmp_current;
@@ -164,27 +210,32 @@ void genos::schedee_manager_step()
     genos::schedee *sch;
 
     // Отрабатываем логику завершения процессов.
-    system_lock();
-    while (!finallist.empty())
+    while (true)
     {
+        system_lock();
+        if (finallist.empty())
+        {
+            system_unlock();
+            break;
+        }
+
         sch = &finallist.front();
         sch->control_lnk.unlink();
-        sch->schedee_list_lnk.unlink();
-
         system_unlock();
 
-        sch->sch_state = schedee_state::zombie;
         sch->finalize();
 
-        if (sch->remove_without_zombie_state_flag())
-        {
-            schedee_deinit(sch);
-            if (sch->destructor != nullptr)
-                sch->destructor(sch);
-        }
         system_lock();
+        sch->sch_state = schedee_state::zombie;
+        bool release_immediately = sch->remove_without_zombie_state_flag();
+        if (release_immediately)
+            sch->schedee_list_lnk.unlink();
+        schedee_notify_finalize(sch);
+        system_unlock();
+
+        if (release_immediately)
+            schedee_release(sch);
     }
-    system_unlock();
 
     // Перемещаем процессы, объявленные запущенными в основные листы.
     system_lock();
@@ -280,13 +331,6 @@ std::string genos::schedee::info()
 
 void genos::schedee::signal_received(int sig)
 {
-    if (sig == SIGCHLD && sch_state == schedee_state::wait_schedee)
-    {
-        auto *cursch = genos::current_schedee();
-        if (this->future == cursch->pid)
-            this->start();
-    }
-
     if (signal_handler)
         signal_handler(sig);
 }

@@ -6,7 +6,7 @@
 #include <genos/schedee_api.h>
 #include <igris/osinter/ctrobj.h>
 #include <igris/util/string.h>
-//#include <nos/print.h>
+// #include <nos/print.h>
 
 extern "C" unsigned char is_interrupt_context();
 
@@ -18,6 +18,8 @@ int genos::clone(int (*fn)(void *), void *arg, void *stack, size_t stack_size)
     auto *sch = genos::current_schedee();
     auto *ncsch = genos::create_coop_schedee(fn, arg, stack, stack_size);
     ncsch->set_priority(sch->priority());
+    ncsch->parent = sch;
+    ncsch->preserve_zombie_state();
     genos::force_set_current_schedee(ncsch);
     ncsch->copy_open_resources_from(sch);
     genos::force_set_current_schedee(sch);
@@ -58,36 +60,3 @@ int genos::execute(const char *cmd)
     auto splited = igris::split(cmd);
     return genos::execute(splited);
 }*/
-
-int genos::waitpid(intptr_t pid)
-{
-    genos::schedee *sch;
-    sch = genos::current_schedee();
-
-    sch->sch_state = genos::schedee_state::wait_schedee;
-
-    system_lock();
-    sch->control_lnk.unlink();
-    system_unlock();
-
-    sch->future = pid;
-    genos::current_schedee_displace();
-
-    return 0;
-}
-
-int genos::waitpid_without_displace(intptr_t pid)
-{
-    genos::schedee *sch;
-    sch = genos::current_schedee();
-
-    sch->sch_state = genos::schedee_state::wait_schedee;
-
-    system_lock();
-    sch->control_lnk.unlink();
-    system_unlock();
-
-    sch->future = pid;
-
-    return 0;
-}
